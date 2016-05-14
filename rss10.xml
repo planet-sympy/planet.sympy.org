@@ -7,6 +7,54 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=94</guid>
+      <title>GSoC Community Bonding Period Week 3</title>
+      <author>Sampad Saha (sampadsaha5)</author>
+      <pubDate>Sat, 14 May 2016 16:33:04 GMT</pubDate>
+      <link>https://sampadblog.wordpress.com/2016/05/14/gsoc-community-bonding-period-week-3/</link>
+      <description>&lt;p&gt;Hi there ! This week was great. I got to learn about many new things. I have mentioned in my last post, about my goals for this week, let us see what I have done so far.&lt;/p&gt;
+&lt;h3&gt;&lt;em&gt;&lt;strong&gt;So far&lt;/strong&gt;&lt;/em&gt;&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;In&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/10863"&gt;PR 10863&lt;/a&gt;, implementation of &amp;#160;&lt;code&gt;_eval_expand_diracdelta&lt;/code&gt;&amp;#160;is almost done . A final review is needed. But at the same time, I was forgetting about the fact that the &amp;#160;&amp;#160;&lt;code&gt;simplify&lt;/code&gt;&amp;#160; method has to be deprecated in order to make things backwards compatible. Thanks&amp;#160;&lt;a href="http://www.github.com/moorepants"&gt;Jason&lt;/a&gt;&amp;#160;for the suggestion.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I have made&amp;#160;the &lt;code&gt;simplify()&lt;/code&gt; method call the&amp;#160;&lt;code&gt;_eval_expand_diracdelta()&lt;/code&gt;&amp;#160;method and raise a deprecation warning. I have also added the tests for this method by catching the deprecation warnings properly. The API works like this:-&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-py"&gt;In [&lt;span class="hljs-number"&gt;3&lt;/span&gt;]: DiracDelta(x*y).simplify(x)
+/home/ahappyidiot/anaconda2/bin/ipython:&lt;span class="hljs-number"&gt;1&lt;/span&gt;: SymPyDeprecationWarning: 
+
+simplify has been deprecated since SymPy &lt;span class="hljs-number"&gt;1.0&lt;/span&gt;&lt;span class="hljs-number"&gt;.1&lt;/span&gt;. Use
+expand(diracdelta=&lt;span class="hljs-keyword"&gt;True&lt;/span&gt;, wrt=x) instead.
+
+  &lt;span class="hljs-comment"&gt;#!/home/ahappyidiot/anaconda2/bin/python&lt;/span&gt;
+Out[&lt;span class="hljs-number"&gt;3&lt;/span&gt;]: DiracDelta(x)/Abs(y)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;These commits are needed to be reviewed properly in order to merge&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/10863"&gt;PR 10863&lt;/a&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&amp;#160;&lt;code&gt;rewrite(Piecewise)&lt;/code&gt;&amp;#160;:- In &lt;a href="https://github.com/sympy/sympy/pull/11103"&gt;PR 11103&lt;/a&gt;, I have implemented a new method under DiracDelta class which would successfully&amp;#160;output a Piecewise representation of a DiracDelta Object. For this pull request also,&amp;#160;a final review is needed. The&amp;#160;API works as:-&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class="language-py"&gt;&lt;span class="hljs-prompt"&gt;In [4]: DiracDelta(x).rewrite(Piecewise)&lt;/span&gt;
+Out[4]:
+&lt;/code&gt;&amp;#9127;  oo       &lt;span class="pl-k"&gt;for&lt;/span&gt; x &lt;span class="pl-k"&gt;=&lt;/span&gt; 0&lt;span class="pl-c1"&gt;
+&lt;/span&gt;&amp;#9128; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160;&amp;#160;
+&amp;#9129;  &lt;span class="pl-c1"&gt;0&lt;/span&gt;        otherwise&amp;#160;
+
+&lt;code class="language-py"&gt;&lt;span class="hljs-prompt"&gt;In [4]: DiracDelta(x - 5).rewrite(Piecewise)&lt;/span&gt;
+Out[4]:
+&lt;/code&gt;&amp;#9127;  oo       &lt;span class="pl-k"&gt;for&lt;/span&gt; x - 5 &lt;span class="pl-k"&gt;=&lt;/span&gt; 0&lt;span class="pl-c1"&gt;
+&lt;/span&gt;&amp;#9128; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160;&amp;#160;
+&amp;#9129;  &lt;span class="pl-c1"&gt;0&lt;/span&gt;        otherwise&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;I have also reviewed&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11065" target="_blank"&gt;PR 11065&lt;/a&gt;, I personally think that the implementation is a great idea.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;&lt;em&gt;&lt;strong&gt;Next Week&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
+&lt;p&gt;My plans for next weeks are:-&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Polish both&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11103"&gt;PR 11103&lt;/a&gt;&amp;#160;and&amp;#160;&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/10863"&gt;PR 10863&lt;/a&gt;&amp;#160;and get these pull requests merged&lt;/li&gt;
+&lt;li&gt;Improve doc strings of the &lt;code&gt;DircaDelta&lt;/code&gt; and &lt;code&gt;Heaviside&lt;/code&gt; classes and methods.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;I will again get back by the end of the next week. Cheers !!!&lt;/p&gt;
+&lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/94/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/94/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=94&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=23</guid>
       <title>GSoC Community Bonding Period Week 2</title>
       <author>Sampad Saha (sampadsaha5)</author>
@@ -2037,36 +2085,6 @@ The idea is to tell the user about the domain of solution returned.&lt;/p&gt;
 
 &lt;p&gt;
 That's all for now, looking forward for week #8. :grinning:&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sartajsingh.me/gsoc-update-week-7</guid>
-      <title>GSoC: Update Week-7</title>
-      <author>Sartaj Singh (leosartaj)</author>
-      <pubDate>Tue, 14 Jul 2015 17:11:22 GMT</pubDate>
-      <link>https://sartajsingh.me/gsoc-update-week-7</link>
-      <description>&lt;h3&gt;Highlights:&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;I opened &lt;a href="https://github.com/sympy/sympy/pull/9639"&gt;#9639&lt;/a&gt; bringing in the rest of the algorithm for computing
-Formal Power Series. There are still some &lt;a href="https://github.com/sympy/sympy/pull/9639#issue-94189385"&gt;un-implemented&lt;/a&gt; features.
-I hope to complete them in this week.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Few of my PR's got merged this week(&lt;a href="https://github.com/sympy/sympy/pull/9622"&gt;#9622&lt;/a&gt;, &lt;a href="https://github.com/sympy/sympy/pull/9615"&gt;#9615&lt;/a&gt;
-and &lt;a href="https://github.com/sympy/sympy/pull/9599"&gt;#9599&lt;/a&gt;). Thanks &lt;a href="https://github.com/jcrist"&gt;@jcrist&lt;/a&gt;, &lt;a href="https://github.com/aktech"&gt;@aktech&lt;/a&gt;
-and &lt;a href="https://github.com/pbrady"&gt;@pbrady&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Opened &lt;a href="https://github.com/sympy/sympy/pull/9643"&gt;#9643&lt;/a&gt; for adding the docs related to Fourier Series.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-
-
-&lt;h3&gt;Tasks:&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Polish &lt;a href="https://github.com/sympy/sympy/pull/9572"&gt;#9572&lt;/a&gt; and get it ready to be merged.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Complete &lt;a href="https://github.com/sympy/sympy/pull/9639"&gt;#9639&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Get docs of Fourier Series merged.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;That's it. See you all next week. Happy Coding!&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

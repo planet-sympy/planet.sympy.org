@@ -89,6 +89,111 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">May 14, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-05db50a0 feed-" id="item-70afd1e7">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/sampad.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Sampad Saha (sampadsaha5) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://sampadblog.wordpress.com/2016/05/14/gsoc-community-bonding-period-week-3/">16:33, Saturday, 14 May UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://sampadblog.wordpress.com/2016/05/14/gsoc-community-bonding-period-week-3/">GSoC Community Bonding Period Week 3</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/sampad.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Sampad Saha (sampadsaha5) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://sampadblog.wordpress.com/2016/05/14/gsoc-community-bonding-period-week-3/">16:33, Saturday, 14 May UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://sampadblog.wordpress.com/2016/05/14/gsoc-community-bonding-period-week-3/">GSoC Community Bonding Period Week 3</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Hi there ! This week was great. I got to learn about many new things. I have mentioned in my last post, about my goals for this week, let us see what I have done so far.</p>
+<h3><em><strong>So far</strong></em></h3>
+<ul>
+<li>In&#160;<a href="https://github.com/sympy/sympy/pull/10863">PR 10863</a>, implementation of &#160;<code>_eval_expand_diracdelta</code>&#160;is almost done . A final review is needed. But at the same time, I was forgetting about the fact that the &#160;&#160;<code>simplify</code>&#160; method has to be deprecated in order to make things backwards compatible. Thanks&#160;<a href="http://www.github.com/moorepants">Jason</a>&#160;for the suggestion.</li>
+</ul>
+<p>I have made&#160;the <code>simplify()</code> method call the&#160;<code>_eval_expand_diracdelta()</code>&#160;method and raise a deprecation warning. I have also added the tests for this method by catching the deprecation warnings properly. The API works like this:-</p>
+<pre><code class="language-py">In [<span class="hljs-number">3</span>]: DiracDelta(x*y).simplify(x)
+/home/ahappyidiot/anaconda2/bin/ipython:<span class="hljs-number">1</span>: SymPyDeprecationWarning: 
+
+simplify has been deprecated since SymPy <span class="hljs-number">1.0</span><span class="hljs-number">.1</span>. Use
+expand(diracdelta=<span class="hljs-keyword">True</span>, wrt=x) instead.
+
+  <span class="hljs-comment">#!/home/ahappyidiot/anaconda2/bin/python</span>
+Out[<span class="hljs-number">3</span>]: DiracDelta(x)/Abs(y)</code></pre>
+<p>These commits are needed to be reviewed properly in order to merge&#160;<a href="https://github.com/sympy/sympy/pull/10863">PR 10863</a>.</p>
+<ul>
+<li>&#160;<code>rewrite(Piecewise)</code>&#160;:- In <a href="https://github.com/sympy/sympy/pull/11103">PR 11103</a>, I have implemented a new method under DiracDelta class which would successfully&#160;output a Piecewise representation of a DiracDelta Object. For this pull request also,&#160;a final review is needed. The&#160;API works as:-</li>
+</ul>
+<pre><code class="language-py"><span class="hljs-prompt">In [4]: DiracDelta(x).rewrite(Piecewise)</span>
+Out[4]:
+</code>&#9127;  oo       <span class="pl-k">for</span> x <span class="pl-k">=</span> 0<span class="pl-c1">
+</span>&#9128; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;&#160;
+&#9129;  <span class="pl-c1">0</span>        otherwise&#160;
+
+<code class="language-py"><span class="hljs-prompt">In [4]: DiracDelta(x - 5).rewrite(Piecewise)</span>
+Out[4]:
+</code>&#9127;  oo       <span class="pl-k">for</span> x - 5 <span class="pl-k">=</span> 0<span class="pl-c1">
+</span>&#9128; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160; &#160;&#160;
+&#9129;  <span class="pl-c1">0</span>        otherwise</pre>
+<ul>
+<li>I have also reviewed&#160;<a href="https://github.com/sympy/sympy/pull/11065" target="_blank">PR 11065</a>, I personally think that the implementation is a great idea.</li>
+</ul>
+<h4><em><strong>Next Week</strong></em></h4>
+<p>My plans for next weeks are:-</p>
+<ul>
+<li>Polish both&#160;<a href="https://github.com/sympy/sympy/pull/11103">PR 11103</a>&#160;and&#160;&#160;<a href="https://github.com/sympy/sympy/pull/10863">PR 10863</a>&#160;and get these pull requests merged</li>
+<li>Improve doc strings of the <code>DircaDelta</code> and <code>Heaviside</code> classes and methods.</li>
+</ul>
+<p>&nbsp;</p>
+<p>I will again get back by the end of the next week. Cheers !!!</p>
+<p>Happy Coding.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/94/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/94/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&#038;blog=102728326&#038;post=94&#038;subd=sampadblog&#038;ref=&#038;feed=1" width="1" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">May 10, 2016</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -3769,90 +3874,6 @@ That's all for now, looking forward for week #8. :grinning:</p>
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-9a9be172 feed-" id="item-61390857">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/leosartaj.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Sartaj Singh (leosartaj) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://sartajsingh.me/gsoc-update-week-7">17:11, Tuesday, 14 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://sartajsingh.me/gsoc-update-week-7">GSoC: Update Week-7</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/leosartaj.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Sartaj Singh (leosartaj) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://sartajsingh.me/gsoc-update-week-7">17:11, Tuesday, 14 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://sartajsingh.me/gsoc-update-week-7">GSoC: Update Week-7</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<h3>Highlights:</h3>
-
-<ul>
-<li><p>I opened <a href="https://github.com/sympy/sympy/pull/9639">#9639</a> bringing in the rest of the algorithm for computing
-Formal Power Series. There are still some <a href="https://github.com/sympy/sympy/pull/9639#issue-94189385">un-implemented</a> features.
-I hope to complete them in this week.</p></li>
-<li><p>Few of my PR's got merged this week(<a href="https://github.com/sympy/sympy/pull/9622">#9622</a>, <a href="https://github.com/sympy/sympy/pull/9615">#9615</a>
-and <a href="https://github.com/sympy/sympy/pull/9599">#9599</a>). Thanks <a href="https://github.com/jcrist">@jcrist</a>, <a href="https://github.com/aktech">@aktech</a>
-and <a href="https://github.com/pbrady">@pbrady</a>.</p></li>
-<li><p>Opened <a href="https://github.com/sympy/sympy/pull/9643">#9643</a> for adding the docs related to Fourier Series.</p></li>
-</ul>
-
-
-
-<h3>Tasks:</h3>
-
-<ul>
-<li><p>Polish <a href="https://github.com/sympy/sympy/pull/9572">#9572</a> and get it ready to be merged.</p></li>
-<li><p>Complete <a href="https://github.com/sympy/sympy/pull/9639">#9639</a>.</p></li>
-<li><p>Get docs of Fourier Series merged.</p></li>
-</ul>
-
-<p>That's it. See you all next week. Happy Coding!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -3881,80 +3902,80 @@ and <a href="https://github.com/pbrady">@pbrady</a>.</p></li>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>16:21, Saturday, 14 May</td>
-<td>16:36, Saturday, 14 May</td>
+<td>16:41, Saturday, 14 May</td>
+<td>16:56, Saturday, 14 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>16:21, Saturday, 14 May</td>
-<td>16:36, Saturday, 14 May</td>
+<td>16:41, Saturday, 14 May</td>
+<td>16:56, Saturday, 14 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>16:21, Saturday, 14 May</td>
-<td>16:36, Saturday, 14 May</td>
+<td>16:41, Saturday, 14 May</td>
+<td>16:56, Saturday, 14 May</td>
 </tr>
 <tr class="feedsrow">
 <td>http://s-hacker.info/blog/gsoc16/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://s-hacker.info/blog/gsoc16/feeds/sympy.xml">XML</a></td>
-<td>16:21, Saturday, 14 May</td>
-<td>16:36, Saturday, 14 May</td>
+<td>16:41, Saturday, 14 May</td>
+<td>16:56, Saturday, 14 May</td>
 </tr>
 <tr class="feedsrow">
 <td>https://shubhamtibra.wordpress.com/feed/</td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>16:21, Saturday, 14 May</td>
-<td>16:36, Saturday, 14 May</td>
+<td>16:41, Saturday, 14 May</td>
+<td>16:56, Saturday, 14 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>16:21, Saturday, 14 May</td>
-<td>16:36, Saturday, 14 May</td>
+<td>16:41, Saturday, 14 May</td>
+<td>16:56, Saturday, 14 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>16:21, Saturday, 14 May</td>
-<td>16:36, Saturday, 14 May</td>
+<td>16:41, Saturday, 14 May</td>
+<td>16:56, Saturday, 14 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>16:21, Saturday, 14 May</td>
-<td>16:36, Saturday, 14 May</td>
+<td>16:41, Saturday, 14 May</td>
+<td>16:56, Saturday, 14 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>16:21, Saturday, 14 May</td>
-<td>16:36, Saturday, 14 May</td>
+<td>16:41, Saturday, 14 May</td>
+<td>16:56, Saturday, 14 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sartajsingh.me/">Sartaj Singh</a></td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>16:21, Saturday, 14 May</td>
-<td>16:36, Saturday, 14 May</td>
+<td>16:41, Saturday, 14 May</td>
+<td>16:56, Saturday, 14 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>16:21, Saturday, 14 May</td>
-<td>16:36, Saturday, 14 May</td>
+<td>16:41, Saturday, 14 May</td>
+<td>16:56, Saturday, 14 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>16:21, Saturday, 14 May</td>
-<td>16:36, Saturday, 14 May</td>
+<td>16:41, Saturday, 14 May</td>
+<td>16:56, Saturday, 14 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>16:21, Saturday, 14 May</td>
-<td>16:36, Saturday, 14 May</td>
+<td>16:41, Saturday, 14 May</td>
+<td>16:56, Saturday, 14 May</td>
 </tr>
 </table>
 
