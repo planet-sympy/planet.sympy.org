@@ -1525,6 +1525,14 @@ After the decision of adding &lt;code&gt;domain&lt;/code&gt; argument, Harsh fig
 Thanks to Aaron, Ondrej, and last but not the least my fellow GSoCer's at SymPy &lt;a href="http://github.com/leosartaj"&gt;leosartaj&lt;/a&gt;, &lt;a href="http://github.com/debugger22"&gt;debugger22&lt;/a&gt;, &lt;a href="http://github.com/sumith1896"&gt;sumith1896&lt;/a&gt;, &lt;a href="http://github.com/shivamvats"&gt;shivamvats&lt;/a&gt;, &lt;a href="https://github.com/abinashmeher999"&gt;abinashmeher999&lt;/a&gt;. Special Thanks to whole SymPy team and Community for a wonderful collaboration experience. Kudos!&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">tag:blogger.com,1999:blog-8848761645772749389.post-1932585002089180237</guid>
+      <title>GSoc 2015 Week 12 &amp; 13</title>
+      <author>Isuru Fernando (isuruf)</author>
+      <pubDate>Sun, 23 Aug 2015 15:59:50 GMT</pubDate>
+      <link>http://isuruf.blogspot.com/2015/08/gsoc-2015-week-12-13.html</link>
+      <description>&lt;div dir="ltr" style="text-align: left;"&gt;&lt;div style="background-color: white; color: #333333; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 25.6000003814697px; margin-bottom: 16px;"&gt;This week we announced the release of SymEngine on Sage list. For that, I made some changes into the build system for versioning and to use SymEngine from other C/C++ projects.&lt;/div&gt;&lt;div style="background-color: white; color: #333333; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 25.6000003814697px; margin-bottom: 16px;"&gt;First, SymEngineConfig.cmake would output a set of flags, imported dependencies, etc. SymEngineConfigVersion.cmake would check that the version is compatible and if the 32/64-bitness is correct of the SymEngine project and the other CMake project. When SymEngine is only built, then these files would be at the root level and when installed they would be at /lib/cmake/symengine. An excerpt from the wiki page, I wrote at,&amp;nbsp;&lt;a href="https://github.com/sympy/symengine/wiki/Using-SymEngine-from-a-Cpp-project" style="background-color: transparent; color: #4078c0; text-decoration: none;"&gt;https://github.com/sympy/symengine/wiki/Using-SymEngine-from-a-Cpp-project&lt;/a&gt;&lt;/div&gt;&lt;h5 style="background-color: white; color: #333333; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 1em; line-height: 1.4; margin-bottom: 16px; margin-top: 1em;"&gt;&lt;a class="anchor" href="https://github.com/sympy/symengine/wiki/_new#using-symengine-in-another-cmake-project" id="user-content-using-symengine-in-another-cmake-project"&gt;&lt;/a&gt;Using SymEngine in another CMake project&lt;/h5&gt;&lt;div style="background-color: white; color: #333333; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 25.6000003814697px; margin-bottom: 16px;"&gt;To use SymEngine from another CMake project include the following in your&lt;code&gt;CMakeLists.txt&lt;/code&gt;&amp;nbsp;file&lt;/div&gt;&lt;pre style="background-color: #f7f7f7; border-radius: 3px; color: #333333; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; line-height: 1.45; margin-bottom: 16px; overflow: auto; padding: 16px;"&gt;&lt;code style="background: transparent; border-radius: 3px; border: 0px; display: inline; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; line-height: inherit; margin: 0px; overflow: initial; padding: 0px;"&gt;find_package(SymEngine 0.1.0 CONFIG)&lt;br /&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div style="background-color: white; color: #333333; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 25.6000003814697px; margin-bottom: 16px;"&gt;You can give the path to the SymEngine installation directory if it was installed to a non standard location by,&lt;/div&gt;&lt;pre style="background-color: #f7f7f7; border-radius: 3px; color: #333333; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; line-height: 1.45; margin-bottom: 16px; overflow: auto; padding: 16px;"&gt;&lt;code style="background: transparent; border-radius: 3px; border: 0px; display: inline; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; line-height: inherit; margin: 0px; overflow: initial; padding: 0px;"&gt;find_package(SymEngine 0.1.0 CONFIG PATHS /path/to/install/dir/lib/cmake/symengine)&lt;br /&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div style="background-color: white; color: #333333; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 25.6000003814697px; margin-bottom: 16px;"&gt;Alternatively, you can give the path to the build directory.&lt;/div&gt;&lt;pre style="background-color: #f7f7f7; border-radius: 3px; color: #333333; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; line-height: 1.45; margin-bottom: 16px; overflow: auto; padding: 16px;"&gt;&lt;code style="background: transparent; border-radius: 3px; border: 0px; display: inline; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; line-height: inherit; margin: 0px; overflow: initial; padding: 0px;"&gt;find_package(SymEngine 0.1.0 CONFIG PATHS /path/to/build/dir)&lt;br /&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div style="background-color: white; color: #333333; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 25.6000003814697px; margin-bottom: 16px;"&gt;An example project would be,&lt;/div&gt;&lt;pre style="background-color: #f7f7f7; border-radius: 3px; color: #333333; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; line-height: 1.45; margin-bottom: 16px; overflow: auto; padding: 16px;"&gt;&lt;code style="background: transparent; border-radius: 3px; border: 0px; display: inline; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; line-height: inherit; margin: 0px; overflow: initial; padding: 0px;"&gt;cmake_minimum_required(VERSION 2.8)&lt;br /&gt;find_package(symengine 0.1.0 CONFIG)&lt;br /&gt;set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE} "-std=c++0x")&lt;br /&gt;&lt;br /&gt;include_directories(${SYMENGINE_INCLUDE_DIRS})&lt;br /&gt;add_executable(example main.cpp)&lt;br /&gt;target_link_libraries(example ${SYMENGINE_LIBRARIES})&lt;br /&gt;&lt;/code&gt;&lt;/pre&gt;&lt;div style="background-color: white; color: #333333; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 25.6000003814697px; margin-bottom: 16px;"&gt;More options are&amp;nbsp;&lt;a href="https://github.com/sympy/symengine/blob/master/cmake/SymEngineConfig.cmake.in" style="background-color: transparent; color: #4078c0; text-decoration: none;"&gt;here&lt;/a&gt;&lt;/div&gt;&lt;h5 style="background-color: white; color: #333333; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 1em; line-height: 1.4; margin-bottom: 16px; margin-top: 1em;"&gt;&lt;a class="anchor" href="https://github.com/sympy/symengine/wiki/_new#using-symengine-in-non-cmake-projects" id="user-content-using-symengine-in-non-cmake-projects"&gt;&lt;/a&gt;Using SymEngine in Non CMake projects&lt;/h5&gt;&lt;div style="background-color: white; color: #333333; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 25.6000003814697px; margin-bottom: 16px;"&gt;You can get the include flags and link flags needed for SymEngine using the command line CMake.&lt;/div&gt;&lt;pre style="background-color: #f7f7f7; border-radius: 3px; color: #333333; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; line-height: 1.45; margin-bottom: 16px; overflow: auto; padding: 16px;"&gt;&lt;code style="background: transparent; border-radius: 3px; border: 0px; display: inline; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 13.6000003814697px; line-height: inherit; margin: 0px; overflow: initial; padding: 0px;"&gt;compile_flags=`cmake --find-package -DNAME=SymEngine -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=COMPILE`&lt;br /&gt;link_flags=`cmake --find-package -DNAME=SymEngine -DCOMPILER_ID=GNU -DLANGUAGE=CXX -DMODE=LINK`&lt;br /&gt;&lt;br /&gt;g++ $compile_flags main.cpp $link_flags&lt;br /&gt;&lt;/code&gt;&lt;/pre&gt;&lt;h5 style="background-color: white; color: #333333; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 1em; line-height: 1.4; margin-bottom: 16px; margin-top: 1em;"&gt;&lt;a class="anchor" href="https://github.com/sympy/symengine/wiki/_new#python-wrapeprs" id="user-content-python-wrapeprs"&gt;&lt;/a&gt;Python wrappers&lt;/h5&gt;&lt;div style="background-color: white; color: #333333; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 25.6000003814697px; margin-bottom: 16px;"&gt;There was a suggestion to make the Python wrappers separate, so that in a distribution like Gentoo, the package sources can be distributed separately.&lt;/div&gt;&lt;div style="background-color: white; color: #333333; font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 25.6000003814697px;"&gt;So, I worked on the Python wrappers to get them to be built independently or with the main repo. Now, the python wrappers directory along with the setup.py file from the root folder can be packaged and they would work without a problem.&lt;/div&gt;&lt;/div&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://sumith1896.github.io//GSoC-Wrapping-Up</guid>
       <title>GSoC - Wrapping Up</title>
       <author>Sumith (sumith1896)</author>
@@ -1632,6 +1640,14 @@ and &lt;code&gt;_mul_hashset&lt;/code&gt; multiplies the two &lt;code&gt;hash_se
 
 &lt;p&gt;That's all I have &lt;br /&gt;
 &lt;strong&gt;See ya&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">tag:blogger.com,1999:blog-8848761645772749389.post-4250966876299216441</guid>
+      <title>GSoC week 10 and 11</title>
+      <author>Isuru Fernando (isuruf)</author>
+      <pubDate>Sat, 15 Aug 2015 18:11:54 GMT</pubDate>
+      <link>http://isuruf.blogspot.com/2015/08/gsoc-week-10-and-11.html</link>
+      <description>&lt;div dir="ltr" style="text-align: left;"&gt;symengine-0.1.0 beta version was released this week and these two weeks were spent on making sure symengine works without a problem on Sage.&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;One issue was the linking of the python libraries in Sage. In binary releases of sage, the variable&amp;nbsp;&lt;span style="background-color: #fafafa; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 12px; line-height: 16.7999992370605px; white-space: pre;"&gt;distutils.sysconfig.get_config_var('LIBDIR') &lt;/span&gt;&amp;nbsp;is wrong. It is set to the build machine's location. In Windows this is set to empty. Earlier, to link the python libraries into the python wrappers, python library was found using the above variable, but in some cases like Sage and Windows this method fails. To fix this, CMake now looks in `sys.prefix`/libs and `sys.prefix`/lib as well to find the python libraries.&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;Another issue that came up was cmake generating bad link flags. When installing in Sage, it is important to make sure the libraries in Sage are linked and not the system wide libraries. To do that libraries were searched for in the sage directories ignoring the system wide libraries. When given the full path of the libraries to link, we noticed a strange behaviour. `/path/to/sage/local/lib/libgmp.so` was changed to `-lgmp` causing the linker to pick up the system-wide gmp library.&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;After reading through CMake documentation, I realized that this was due to `find_library` giving wrong locations of system libraries where there are multiple libraries of the same name for different architectures. For example if the output of `find_library(math NAMES m)` was given to find the standard math library, it may find a `libm.so` that was intended for a different architecture. Therefore when cmake realizes that the library being linked to is a system library then the full path is converted to `-lm` to delegate the task to the linker to find the correct library.&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;This behaviour is useful for some scenarios, but in our case, this was not the behaviour I needed. Fortunately there was a workaround for this mentioned in the documentation. Using IMPORTED target feature in CMake, I was able to get CMake to use the full path of the library.&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;R7 and R8 benchmarks from symbench benchmarks of sage were added to benchmark SymEngine-C++&amp;nbsp;against GiNaC and also SymEngine-Python against SymPy and Sage.&lt;/div&gt;&lt;/div&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://iamit.in/blog/GSoC : This week in SymPy #10 &amp;11</guid>
@@ -1790,6 +1806,14 @@ Here are the modules, I covered, as of now:&lt;/p&gt;
 
 &lt;p&gt;
 That's all for now, looking forward for week #10. :grinning:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">tag:blogger.com,1999:blog-8848761645772749389.post-3483803282136966920</guid>
+      <title>GSoC Week 8 and 9</title>
+      <author>Isuru Fernando (isuruf)</author>
+      <pubDate>Sat, 25 Jul 2015 12:04:22 GMT</pubDate>
+      <link>http://isuruf.blogspot.com/2015/07/gsoc-week-8-and-9.html</link>
+      <description>&lt;div dir="ltr" style="text-align: left;"&gt;These two weeks me and Ondrej started adding support for different compilers.&lt;br /&gt;&lt;br /&gt;I added support for MinGW and MinGW-w64. There were some documented, but not yet fixed bugs in MinGW that I encountered. When including cmath, there were errors saying `_hypot` not defined, and `off64_t` not defied. I added flags `-D_hypot=hypot -Doff64_t=_off64_t` to fix this temporarily. With that symengine was successfully built.&lt;br /&gt;&lt;br /&gt;For python wrappers in windows, after building there was a wrapper not found error which was the result of not having the extension name as pyd in windows. Another problem faced was that, python distribution's `libpython27.a` for x64 was compiled for 32 bit architecture and there were linking errors. I found some patched files at http://www.lfd.uci.edu/~gohlke/pythonlibs/#libpython and python wrappers were built successfully. Also added continuous integration for MinGW using appveyor.&lt;br /&gt;&lt;br /&gt;With MinGW, to install gmp all you had to do was run the command `mingw-get install mingw32-gmp`. For MinGW-w64, I had to compile gmp. For this appveyor came in handy. I started a build in appveyor, stopped it and then logged into the appveyor machine remotely using `remmina` (Each VM was shutdown after 40 minutes. Within that 40 minutes you can login and debug the building). I compiled gmp using msys and mingw-w64 and then downloaded them to my machine. For appveyor runs, these pre-compiled binaries of gmp were used to test MinGW-w64&lt;br /&gt;&lt;br /&gt;Ondrej and I worked together to make sure SymEngine could be built using MSVC in Debug mode. Since gmp couldn't be used out of the box in MSVC, we used MPIR project's sources which included visual studio project files. MPIR is a fork of GMP and provides MSVC support. We used it to build SymEngine in MSVC. Later I added support for Release mode and also added continuous integration for both build types and platform types.&lt;br /&gt;&lt;br /&gt;Python extension can also be built with MSVC. We are testing the Python extensions in Release mode only right now, because appveyor has only python release mode libraries and therefore when building the extension in Debug mode it gives an error saying python27_d.lib is not found.&lt;br /&gt;&lt;br /&gt;I also improved the wrappers for Matrix by adding `__getitem__` and `__setitem__` so that the matrices can be used easily in Python.&lt;br /&gt;&lt;br /&gt;Another improvement to SymEngine was the automatic simplification of expressions like `0.0*x` and `x**0.0`. These expressions are not simplified more in master, so I 'm proposing a patch to simplify them to `0.0` and `1.0` respectively.&lt;/div&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://sumith1896.github.io//GSoC-Progress-Week-9</guid>
@@ -2043,211 +2067,6 @@ and &lt;a href="https://github.com/pbrady"&gt;@pbrady&lt;/a&gt;.&lt;/p&gt;&lt;/l
 &lt;/ul&gt;
 
 &lt;p&gt;That's it. See you all next week. Happy Coding!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://sumith1896.github.io//GSoC-Progress-Week-7</guid>
-      <title>GSoC Progress - Week 7</title>
-      <author>Sumith (sumith1896)</author>
-      <pubDate>Mon, 13 Jul 2015 00:00:00 GMT</pubDate>
-      <link>http://sumith1896.github.io//GSoC-Progress-Week-7</link>
-      <description>&lt;p&gt;Hello. Sorry for the really late post. As I was moving from home to Mumbai back and also part of the grading team of International Physics Olympiad(IPhO), I could not contribute as much as I had thought I could. Here is what I have for this week.&lt;/p&gt;
-
-&lt;h3&gt;Progress&lt;/h3&gt;
-
-&lt;p&gt;The &lt;code&gt;Expression&lt;/code&gt; class was built upon the initial works of Francesco. I made a SymEngine patch with his as an initial commit. We now have a top-level value class.&lt;/p&gt;
-
-&lt;p&gt;The slowdowns finally got tackled. It was Piranha that needed amendment. The slowdown, as discussed previously, was due to the class &lt;code&gt;thread_pool&lt;/code&gt;. This was resolved was templatizing &lt;code&gt;thread_pool&lt;/code&gt; i.e. replace &lt;code&gt;class thread_pool: private detail::thread_pool_base&amp;lt;&amp;gt;&lt;/code&gt; with &lt;code&gt;template &amp;lt;typename = void&amp;gt; class thread_pool_: private detail::thread_pool_base&amp;lt;&amp;gt;&lt;/code&gt;. This basically saw to it that inclusion of individual headers. Including single &lt;code&gt;piranha.hpp&lt;/code&gt; still had this problem. The problem was &lt;code&gt;piranha.hpp&lt;/code&gt; includes &lt;code&gt;settings.hpp&lt;/code&gt;, which in turn defines a non-template function called &lt;code&gt;set_n_threads()&lt;/code&gt; which internally invokes the thread pool. This was resolved by a similar fix, the &lt;code&gt;setting&lt;/code&gt; class to &lt;code&gt;&amp;lt;typename = void&amp;gt; class settings_&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Many things were reported until now, hence &lt;a href="https://github.com/certik"&gt;Ond&amp;#345;ej&lt;/a&gt; suggested a documentation of all the decisions taken. The wiki page, &lt;a href="https://github.com/sympy/symengine/wiki/En-route-to-Polynomial"&gt;En route to Polynomial&lt;/a&gt; was hence made.&lt;/p&gt;
-
-&lt;h3&gt;Report&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;WIP&lt;/strong&gt; &lt;br /&gt;
-* &lt;a href="https://github.com/sympy/symengine/pull/511"&gt;#511&lt;/a&gt; - Polynomial Wrapper &lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Merged&lt;/strong&gt; &lt;br /&gt;
-* &lt;a href="https://github.com/sympy/symengine/pull/512"&gt;#512&lt;/a&gt; - Add Francesco to AUTHORS &lt;br /&gt;
-* &lt;a href="https://github.com/sympy/symengine/pull/500"&gt;#500&lt;/a&gt; - Expression wrapper. &lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Documentation&lt;/strong&gt; &lt;br /&gt;
-&lt;a href="https://github.com/sympy/symengine/wiki/En-route-to-Polynomial"&gt;En route to Polynomial&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3&gt;Targets for Week 8&lt;/h3&gt;
-
-&lt;p&gt;Get the &lt;code&gt;Polynomial&lt;/code&gt; wrapper merged.&lt;/p&gt;
-
-&lt;p&gt;Points to be noted: &lt;br /&gt;
-* Use standard library alternates to Piranha constructs so that we can have something even when there is no Piranha as dependency. &lt;br /&gt;
-* Basic class in, so that &lt;a href="https://github.com/shivamvats"&gt;Shivam&lt;/a&gt; can start some work in SymEngine. &lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;I am thankful to &lt;a href="https://github.com/certik"&gt;Ond&amp;#345;ej&lt;/a&gt; and the &lt;code&gt;SymEngine&lt;/code&gt; team for bearing with my delays. I hope I can compensate in the coming week. &lt;/p&gt;
-
-&lt;p&gt;That's all this week. &lt;br /&gt;
-&lt;strong&gt;Ad&amp;#233;u&lt;/strong&gt;&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sartajsingh.me/gsoc-update-week-6</guid>
-      <title>GSoC: Update Week-6</title>
-      <author>Sartaj Singh (leosartaj)</author>
-      <pubDate>Tue, 07 Jul 2015 17:56:40 GMT</pubDate>
-      <link>https://sartajsingh.me/gsoc-update-week-6</link>
-      <description>&lt;p&gt;Midterm evaluations are complete. I got to say Google was fairly
-quick in mailing the results. It was just after a few minutes
-after the deadline, I received a mail telling me I had passed. Yay!&lt;/p&gt;
-
-&lt;p&gt;Here's my report for week 6.&lt;/p&gt;
-
-
-
-&lt;h3&gt;Highlights:&lt;/h3&gt;
-
-&lt;h4&gt;1. Formal Power Series:&lt;/h4&gt;
-
-&lt;p&gt;For the most of the week I worked towards improving the implementation for the second part of the algorithm.
-I was able to increase the range of admissible functions.
-For this I had to write a custom solver for solving the RE of &lt;a href="http://sartajsingh.me/gsoc-update-week-3/#RE"&gt;hypergeometric&lt;/a&gt; type.
-It's lot faster and better in solving the specific type of RE's this algorithm generates in comparison to
-just using &lt;code&gt;rsolve&lt;/code&gt; for all the cases. However, it still has some issues.
-It's currently in testing phase and probably will be PR ready by the end of this week.&lt;/p&gt;
-
-&lt;p&gt;The code can be found &lt;a href="https://github.com/leosartaj/sympy/tree/hyper2"&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;While working on it, I also added some more features to &lt;code&gt;FormalPowerSeries&lt;/code&gt;(&lt;a href="https://github.com/sympy/sympy/pull/9572"&gt;#9572&lt;/a&gt;).&lt;/p&gt;
-
-&lt;p&gt;Some working examples.
-(All the examples were run in isympy)&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;code class="language-text"&gt;In [1]: fps(sin(x), x)
-Out[1]: x - x**3/6 + x**5/120 + O(x**6)
-In [2]: fps(cos(x), x)
-Out[2]: 1 - x**2/2 + x**4/24 + O(x**6)
-In [3]: fps(exp(acosh(x))
-Out[3]: I + x - I*x**2/2 - I*x**4/8 + O(x**6)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h4&gt;2. rsolve:&lt;/h4&gt;
-
-&lt;p&gt;During testing, I found that &lt;code&gt;rsolve&lt;/code&gt; raises exceptions
-while trying to solve RE's, like &lt;code&gt;(k + 1)*g(k)&lt;/code&gt;
-and &lt;code&gt;(k + 1)*g(k) + (k + 3)*g(k+1) + (k + 5)*g(k+2)&lt;/code&gt; rather
-than simply returning &lt;code&gt;None&lt;/code&gt; which it generally does
-incase it is unable to solve a particular RE.
-The first and the second RE are formed by functions &lt;code&gt;1/x&lt;/code&gt; and
-&lt;code&gt;(x**2 + x + 1)/x**3&lt;/code&gt; respectively which can often come up in practice. So, to solve
-this I opened &lt;a href="https://github.com/sympy/sympy/pull/9615"&gt;#9615&lt;/a&gt;. It is still under review.&lt;/p&gt;
-
-&lt;h4&gt;3. Fourier Series:&lt;/h4&gt;
-
-&lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/9523"&gt;#9523&lt;/a&gt; introduced &lt;code&gt;SeriesBase&lt;/code&gt; class and &lt;code&gt;FourierSeries&lt;/code&gt;.
-Both &lt;code&gt;FormalPowerSeries&lt;/code&gt; and &lt;code&gt;FourierSeries&lt;/code&gt; are based on &lt;code&gt;SeriesBase&lt;/code&gt;.
-Thanks &lt;a href="https://github.com/flacjacket"&gt;@flacjacket&lt;/a&gt; and &lt;a href="https://github.com/jcrist"&gt;@jcrist&lt;/a&gt;
-for reviewing and merging this.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;code class="language-text"&gt;In [1]: f = Piecewise((0, x &amp;lt;= 0), (1, True))
-In [2]: fourier_series(f, (x, -pi, pi)
-Out[2]: 2*sin(x)/pi + 2*sin(3*x)/(3*pi) + 1/2 + ...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h4&gt;4. Sequences:&lt;/h4&gt;
-
-&lt;p&gt;While playing around with sequences, I realized periodic
-sequences can be made more powerful. They can now be used for 
-periodic formulas(&lt;a href="https://github.com/sympy/sympy/pull/9613"&gt;#9613&lt;/a&gt;).&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;code class="language-text"&gt;In [1]: sequence((k, k**2, k**3))
-Out[2]: [0, 1, 8, 3, ...]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h4&gt;5. Others:&lt;/h4&gt;
-
-&lt;p&gt;Well I got tired with &lt;code&gt;FormalPowerSeries&lt;/code&gt;(I am just a human), so
-I took a little detour from my regular project work and opened 
-&lt;a href="https://github.com/sympy/sympy/pull/9622"&gt;#9622&lt;/a&gt; and &lt;a href="https://github.com/sympy/sympy/pull/9626"&gt;#9626&lt;/a&gt;
-The first one deals with inconsistent diff of Polys while
-while the second adds more assumption handler's like &lt;code&gt;is_positive&lt;/code&gt;
-to &lt;code&gt;Min/Max&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h3&gt;Tasks Week-7:&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Test and polish &lt;a href="https://github.com/leosartaj/sympy/tree/hyper2"&gt;hyper2&lt;/a&gt; branch. Complete the algorithm.&lt;/li&gt;
-&lt;li&gt;Add sphinx docs for &lt;code&gt;FourierSeries&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;Start thinking on the operations that can be performed on &lt;code&gt;FormalPowerSeries&lt;/code&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;That's it. See you all next week. Happy Coding!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://iamit.in/blog/GSoC : This week in SymPy #6</guid>
-      <title>GSoC : This week in SymPy #6</title>
-      <author>Amit Kumar (aktech)</author>
-      <pubDate>Sun, 05 Jul 2015 18:30:00 GMT</pubDate>
-      <link>http://iamit.in/blog/GSoC-week-6</link>
-      <description>&lt;p&gt;Hi there! It's been six weeks into &lt;a href="https://en.wikipedia.org/wiki/Google_Summer_of_Code"&gt;GSoC&lt;/a&gt;,
-and it marks the half of GSoC. The Mid term evaluations have been done now, Google has been preety quick doing this, I recieved the passing mail within 15 minutes after the deadline to fill up evaluations, so basically GSoC Admin did the following, (I guess):&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;code class="language-sql"&gt;&lt;span class="k"&gt;SELECT&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="n"&gt;GSoCStudents&lt;/span&gt;
-&lt;span class="k"&gt;WHERE&lt;/span&gt; &lt;span class="n"&gt;EvaluationResult&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s1"&gt;'PASS'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class="highlight"&gt;&lt;pre&gt;&lt;code class="language-sql"&gt;&lt;span class="k"&gt;and&lt;/span&gt; &lt;span class="n"&gt;SendThemMail&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;(Don't Judge my SQL, I am not good at it!)&lt;/p&gt;
-
-&lt;h3&gt;&amp;nbsp; &lt;strong&gt;Progress of Week 6&lt;/strong&gt; &lt;img src="http://iamit.in/assets/gsoc/pr.png" style="float: left;" /&gt;&lt;/h3&gt;
-
-&lt;p&gt;
-Last week my &lt;code&gt;Linsolve&lt;/code&gt; &lt;a href="https://github.com/sympy/sympy/pull/9438"&gt;PR #9438&lt;/a&gt;
-finally got Merged Thanks! to &lt;a href="http://github.com/hargup"&gt;@hargup&lt;/a&gt; &lt;a href="http://github.com/moorepants"&gt;@moorepants&lt;/a&gt; &lt;a href="http://github.com/flacjacket"&gt;@flacjacket&lt;/a&gt; &lt;a href="http://github.com/debugger22"&gt;@debugger22&lt;/a&gt; for reviewing it and suggesting constructive changes.&lt;/p&gt;
-
-&lt;p&gt;This week I worked on Intersection's of &lt;code&gt;FiniteSet&lt;/code&gt; with symbolic elements, which was a blocking issue for lot of things, I managed to Fix the failing test which I mentioned in my last post. Eventually this PR got Merged as well, which has opened doors for lot of improvements.&lt;/p&gt;
-
-&lt;p&gt;Thanks to &lt;a href="https://github.com/jksuom"&gt;@jksuom&lt;/a&gt; &amp;amp; &lt;a href="https://github.com/hargup"&gt;@hargup&lt;/a&gt; for iterating over this PR, and making some very useful comments for improving it to make it Mergeable.&lt;/p&gt;
-
-&lt;p&gt;I had a couple of hangout meeting with &lt;a href="https://github.com/hargup"&gt;@hargup&lt;/a&gt; this week, (though now he has left for SciPy for a couple of weeks), we discussed about the further plan, for making &lt;code&gt;solveset&lt;/code&gt; more robust, such as like returning the domain of invert while calling the &lt;code&gt;invert_real&lt;/code&gt; , See &lt;a href="https://github.com/sympy/sympy/issues/9617"&gt;#9617&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Motivation for this:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;code class="language-python"&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Symbol&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'x'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;real&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Symbol&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'n'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;real&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;12&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;solveset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;12&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The solution returned above is not actually complete, unless, somehow we state &lt;code&gt;n&lt;/code&gt; should be positive for the output set to be non-Empty. See &lt;a href="https://github.com/sympy/sympy/issues/9588"&gt;#9588&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3&gt;&lt;strong&gt;from &lt;strong&gt;future&lt;/strong&gt; import plan&lt;/strong&gt;  Week #7:&lt;/h3&gt;
-
-&lt;p&gt;This week I plan to work on making &lt;code&gt;invert_real&lt;/code&gt; more robust.&lt;/p&gt;
-
-&lt;p&gt;Relavant Issue:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href="https://github.com/sympy/sympy/issues/9617"&gt;#9617&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://github.com/sympy/sympy/issues/9588"&gt;#9588&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3&gt;&lt;strong&gt;$ git log&lt;/strong&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;img align="left" src="http://iamit.in/assets/gsoc/opr.png" /&gt; &amp;nbsp; &lt;a href="https://github.com/sympy/sympy/pull/9618"&gt;PR #9618&lt;/a&gt; : Add test for &lt;code&gt;solveset(x**2 + a, x)&lt;/code&gt; issue 9557&lt;/p&gt;
-
-&lt;p&gt;
-&lt;img align="left" src="http://iamit.in/assets/gsoc/opr.png" /&gt; &amp;nbsp; &lt;a href="https://github.com/sympy/sympy/pull/9587"&gt;PR #9587&lt;/a&gt; : Add Linsolve Docs&lt;/p&gt;
-
-&lt;p&gt;
-&lt;img align="left" src="http://iamit.in/assets/gsoc/opr.png" /&gt; &amp;nbsp; &lt;a href="https://github.com/sympy/sympy/pull/9500"&gt;PR #9500&lt;/a&gt; :  Documenting &lt;code&gt;solveset&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;
-&lt;img align="left" src="http://iamit.in/assets/gsoc/mpr.png" /&gt; &amp;nbsp; &lt;a href="https://github.com/sympy/sympy/pull/9612"&gt;PR #9612&lt;/a&gt; : solveset return solution for &lt;code&gt;solveset(True, ..)&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;
-&lt;img align="left" src="http://iamit.in/assets/gsoc/mpr.png" /&gt; &amp;nbsp; &lt;a href="https://github.com/sympy/sympy/pull/9540"&gt;PR #9540&lt;/a&gt; : Intersection's of FiniteSet with symbolic elements&lt;/p&gt;
-
-&lt;p&gt;
-&lt;img align="left" src="http://iamit.in/assets/gsoc/mpr.png" /&gt; &amp;nbsp; &lt;a href="https://github.com/sympy/sympy/pull/9438"&gt;PR #9438&lt;/a&gt; : Linsolve&lt;/p&gt;
-
-&lt;p&gt;
-&lt;img align="left" src="http://iamit.in/assets/gsoc/mpr.png" /&gt; &amp;nbsp; &lt;a href="https://github.com/sympy/sympy/pull/9463"&gt;PR #9463&lt;/a&gt; : ComplexPlane &lt;/p&gt;
-
-&lt;p&gt;
-&lt;img src="http://iamit.in/assets/gsoc/mpr.png" style="float: left;" /&gt; &amp;nbsp; &lt;a href="https://github.com/sympy/sympy/pull/9527"&gt;PR #9527&lt;/a&gt; : Printing of ProductSets   &lt;/p&gt;
-
-&lt;p&gt;
-&lt;img src="http://iamit.in/assets/gsoc/mpr.png" style="float: left;" /&gt; &amp;nbsp; &lt;a href="https://github.com/sympy/sympy/pull/9524"&gt;PR # 9524&lt;/a&gt; : Fix solveset returned solution making denom zero &lt;/p&gt;
-
-&lt;p&gt;
-That's all for now, looking forward for week #7. :grinning:&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
