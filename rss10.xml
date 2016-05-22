@@ -29,6 +29,33 @@
 &lt;/ul&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/196/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/196/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=196&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://srajangarg.github.io//Pre-GSoC</guid>
+      <title>Pre GSoC Discussions &amp;amp; Work</title>
+      <author>Srajan Garg (srajangarg)</author>
+      <pubDate>Sat, 21 May 2016 00:00:00 GMT</pubDate>
+      <link>http://srajangarg.github.io//Pre-GSoC/</link>
+      <description>&lt;p&gt;I started off my work by reading through the existing &lt;code class="highlighter-rouge"&gt;mul_poly&lt;/code&gt; function. It uses the Kronecker Substitution technique to multiply two polynomials. An insight can be gained by looking at the slides &lt;a href="http://web.maths.unsw.edu.au/~davidharvey/talks/kronecker-talk.pdf"&gt;here&lt;/a&gt;. Think of it this way,
+&amp;gt; &amp;#8220;If you evaluate a polynomial at a large enough power of 10, I bet you can tell all it&amp;#8217;s coefficients just by looking at the result!&amp;#8221;
+The mentioned slides call this the KS1 algorithm. Another algorithm it proposes is the KS2 algorithm, which evaluates the polynomial at two points (in contrast to just one) to interpolate the polynomial. A more mathematical explanation on the two techniques can be found &lt;a href="http://arxiv.org/pdf/0712.4046v1.pdf"&gt;here&lt;/a&gt;. I implemented the algorithm, and it wasn&amp;#8217;t too difficult, as it was a a slight modification to the already existing multiplication technique. Later, I added a benchmark test for comparing the two techniques, KS1 &amp;amp; KS2. The benchmark (roughly) calculates the ratio of the time required for multiplying two polynomials using the two algorithms. Both the polynomial length (from 1 to 10,000) and the bit length of the coefficients (5, 10, 15, 20 bits) were varied. The graphs of the benchmarking are as follows.&lt;/p&gt;
+
+&lt;p&gt;Log scale :
+&lt;img alt="" src="http://i.imgur.com/uSjTrKg.png" /&gt;&lt;/p&gt;
+
+&lt;p&gt;Linear scale :
+&lt;img alt="" src="http://i.imgur.com/JhRGgyk.png" /&gt;&lt;/p&gt;
+
+&lt;p&gt;During this time, I was asked by Isuru to switch work towards the polynomial interface with FLINT &amp;amp; Piranha (and shift the polynomial manipulations to the end of summer). So, the PR hasn&amp;#8217;t been merged in yet, and no conclusions and observations have been made between the two algorithms as of yet. Will be done later during the summer. Here&amp;#8217;s the PR &lt;a href="https://github.com/symengine/symengine/pull/930"&gt;#930&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;I also started work on Dictionary wrappers for SymEngine. One was already made, for the &lt;code class="highlighter-rouge"&gt;UnivariatePolynomial&lt;/code&gt; class aka the class for univariate polynomials with symbolic coefficients. It is a map from &lt;code class="highlighter-rouge"&gt;int -&amp;gt; Expression&lt;/code&gt;. We needed another wrapper for the &lt;code class="highlighter-rouge"&gt;uint -&amp;gt; integer_class&lt;/code&gt; map, so that the &lt;code class="highlighter-rouge"&gt;UnivariateIntPolynomial&lt;/code&gt; class can be structured the same way as the former. Now that we need almost the same functionality, why not temlatize the wrapper? (suggested by Isuru) That&amp;#8217;s what I did, and the PR &lt;a href="https://github.com/symengine/symengine/pull/946"&gt;#946&lt;/a&gt; is almost merged in. More on wrappers next time!&lt;/p&gt;
+
+&lt;p&gt;Most of my work during this period revolved around reading the existing polynomial class, and refactor it and removed any redundancies. Some of the miscellaneous work that was done :
+- Some refactoring was done in the &lt;code class="highlighter-rouge"&gt;dict.cpp&lt;/code&gt; file. There were some redundancy in the functions which was removed. Templatized methods for checking equality and comparing vectors (and sets) were made. Other specific &lt;code class="highlighter-rouge"&gt;eq&lt;/code&gt; &amp;amp; &lt;code class="highlighter-rouge"&gt;compare&lt;/code&gt; methods became derived methods of these base classes. &lt;a href="https://github.com/symengine/symengine/pull/933"&gt;#933&lt;/a&gt;
+- Initially, the &lt;code class="highlighter-rouge"&gt;mul_poly&lt;/code&gt; method was constructing a vector of coefficients for the resulting multiplied polynomial (thus, implicitly storing it in a dense representation for a while). However, it was returned as a sparse represented polynomial, using a dictionary. This was changed, so that the dictionary is directly created, and the intermediate vector isn&amp;#8217;t requireds. Also, some changes in variable names for clarity, as well as removing the redundant function &lt;code class="highlighter-rouge"&gt;dict_add_term&lt;/code&gt;. &lt;a href="https://github.com/symengine/symengine/pull/928"&gt;#928&lt;/a&gt;
+- A redundant function &lt;code class="highlighter-rouge"&gt;create&lt;/code&gt; was removed. All it was doing was calling &lt;code class="highlighter-rouge"&gt;from_vec&lt;/code&gt; within the same class. &lt;a href="https://github.com/symengine/symengine/pull/941"&gt;#941&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;See you next week, Goodbye!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://jbm950.github.io//2016/05/20/Community-Bonding.html</guid>
       <title>Community Bonding Period</title>
       <author>James Milam (jbm950)</author>
@@ -2112,42 +2139,6 @@ See &lt;a href="https://github.com/aktech/sympy/tree/diff-cal"&gt;diff-cal&lt;/a
 
 &lt;p&gt;
 That's all for now, looking forward for week #12. :grinning:&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sartajsingh.me/gsoc-update-week-8-and-9</guid>
-      <title>GSoC: Update Week 8 and 9</title>
-      <author>Sartaj Singh (leosartaj)</author>
-      <pubDate>Wed, 29 Jul 2015 18:20:56 GMT</pubDate>
-      <link>https://sartajsingh.me/gsoc-update-week-8-and-9</link>
-      <description>&lt;p&gt;It's been a long time since my last post. Holidays are now over and 
-my classes have started. Last few days have been hectic for me.
-Here's the highlights of my last two weeks with SymPy.&lt;/p&gt;
-
-
-
-&lt;h3&gt;Highlights:&lt;/h3&gt;
-
-&lt;p&gt;My implementation of the algorithm to compute formal
-power series is finally done. As a result &lt;a href="http://github.com/sympy/sympy/pull/9639"&gt;#9639&lt;/a&gt;
-finally got merged. Thanks Jim and Sean for all the help. 
-As &lt;a href="http://github.com/sympy/sympy/pull/9639"&gt;#9639&lt;/a&gt; brought in all the necessary changes
-&lt;a href="http://github.com/sympy/sympy/pull/9572"&gt;#9572&lt;/a&gt; was closed.&lt;/p&gt;
-
-&lt;p&gt;In the SymPy master,&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;code class="language-text"&gt;&amp;gt;&amp;gt;&amp;gt; fps(sin(x), x)
-x - x**3/6 + x**5/120 + O(x**6)
-&amp;gt;&amp;gt;&amp;gt; fps(1/(1-x), x)
-1 + x + x**2 + x**3 + x**4 + x**5 + O(x**6)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;On a side note, I was invited for Push access by Aaron.
-Thanks Aaron. :)&lt;/p&gt;
-
-&lt;h3&gt;Tasks:&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Improve test coverage of &lt;code&gt;series.formal&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;Start working on operations on Formal Power Series.&lt;/li&gt;
-&lt;/ul&gt;</description>
     </item>
   </channel>
 </rss>

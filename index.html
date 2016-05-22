@@ -168,6 +168,90 @@
 	</div>
 </div></div>
 <div class="day">
+<h2 class="dayform">May 21, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-17a50a72">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/srajangarg.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Srajan Garg (srajangarg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://srajangarg.github.io//Pre-GSoC/">00:00, Saturday, 21 May UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://srajangarg.github.io//Pre-GSoC/">Pre GSoC Discussions &amp;amp; Work</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/srajangarg.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Srajan Garg (srajangarg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://srajangarg.github.io//Pre-GSoC/">00:00, Saturday, 21 May UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://srajangarg.github.io//Pre-GSoC/">Pre GSoC Discussions &amp;amp; Work</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>I started off my work by reading through the existing <code class="highlighter-rouge">mul_poly</code> function. It uses the Kronecker Substitution technique to multiply two polynomials. An insight can be gained by looking at the slides <a href="http://web.maths.unsw.edu.au/~davidharvey/talks/kronecker-talk.pdf">here</a>. Think of it this way,
+&gt; &#8220;If you evaluate a polynomial at a large enough power of 10, I bet you can tell all it&#8217;s coefficients just by looking at the result!&#8221;
+The mentioned slides call this the KS1 algorithm. Another algorithm it proposes is the KS2 algorithm, which evaluates the polynomial at two points (in contrast to just one) to interpolate the polynomial. A more mathematical explanation on the two techniques can be found <a href="http://arxiv.org/pdf/0712.4046v1.pdf">here</a>. I implemented the algorithm, and it wasn&#8217;t too difficult, as it was a a slight modification to the already existing multiplication technique. Later, I added a benchmark test for comparing the two techniques, KS1 &amp; KS2. The benchmark (roughly) calculates the ratio of the time required for multiplying two polynomials using the two algorithms. Both the polynomial length (from 1 to 10,000) and the bit length of the coefficients (5, 10, 15, 20 bits) were varied. The graphs of the benchmarking are as follows.</p>
+
+<p>Log scale :
+<img alt="" src="http://i.imgur.com/uSjTrKg.png" /></p>
+
+<p>Linear scale :
+<img alt="" src="http://i.imgur.com/JhRGgyk.png" /></p>
+
+<p>During this time, I was asked by Isuru to switch work towards the polynomial interface with FLINT &amp; Piranha (and shift the polynomial manipulations to the end of summer). So, the PR hasn&#8217;t been merged in yet, and no conclusions and observations have been made between the two algorithms as of yet. Will be done later during the summer. Here&#8217;s the PR <a href="https://github.com/symengine/symengine/pull/930">#930</a></p>
+
+<p>I also started work on Dictionary wrappers for SymEngine. One was already made, for the <code class="highlighter-rouge">UnivariatePolynomial</code> class aka the class for univariate polynomials with symbolic coefficients. It is a map from <code class="highlighter-rouge">int -&gt; Expression</code>. We needed another wrapper for the <code class="highlighter-rouge">uint -&gt; integer_class</code> map, so that the <code class="highlighter-rouge">UnivariateIntPolynomial</code> class can be structured the same way as the former. Now that we need almost the same functionality, why not temlatize the wrapper? (suggested by Isuru) That&#8217;s what I did, and the PR <a href="https://github.com/symengine/symengine/pull/946">#946</a> is almost merged in. More on wrappers next time!</p>
+
+<p>Most of my work during this period revolved around reading the existing polynomial class, and refactor it and removed any redundancies. Some of the miscellaneous work that was done :
+- Some refactoring was done in the <code class="highlighter-rouge">dict.cpp</code> file. There were some redundancy in the functions which was removed. Templatized methods for checking equality and comparing vectors (and sets) were made. Other specific <code class="highlighter-rouge">eq</code> &amp; <code class="highlighter-rouge">compare</code> methods became derived methods of these base classes. <a href="https://github.com/symengine/symengine/pull/933">#933</a>
+- Initially, the <code class="highlighter-rouge">mul_poly</code> method was constructing a vector of coefficients for the resulting multiplied polynomial (thus, implicitly storing it in a dense representation for a while). However, it was returned as a sparse represented polynomial, using a dictionary. This was changed, so that the dictionary is directly created, and the intermediate vector isn&#8217;t requireds. Also, some changes in variable names for clarity, as well as removing the redundant function <code class="highlighter-rouge">dict_add_term</code>. <a href="https://github.com/symengine/symengine/pull/928">#928</a>
+- A redundant function <code class="highlighter-rouge">create</code> was removed. All it was doing was calling <code class="highlighter-rouge">from_vec</code> within the same class. <a href="https://github.com/symengine/symengine/pull/941">#941</a></p>
+
+<p>See you next week, Goodbye!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">May 20, 2016</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -3788,99 +3872,6 @@ That's all for now, looking forward for week #12. :grinning:</p>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">July 29, 2015</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-9a9be172 feed-" id="item-08560f21">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/leosartaj.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Sartaj Singh (leosartaj) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://sartajsingh.me/gsoc-update-week-8-and-9">18:20, Wednesday, 29 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://sartajsingh.me/gsoc-update-week-8-and-9">GSoC: Update Week 8 and 9</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/leosartaj.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Sartaj Singh (leosartaj) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://sartajsingh.me/gsoc-update-week-8-and-9">18:20, Wednesday, 29 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://sartajsingh.me/gsoc-update-week-8-and-9">GSoC: Update Week 8 and 9</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>It's been a long time since my last post. Holidays are now over and 
-my classes have started. Last few days have been hectic for me.
-Here's the highlights of my last two weeks with SymPy.</p>
-
-
-
-<h3>Highlights:</h3>
-
-<p>My implementation of the algorithm to compute formal
-power series is finally done. As a result <a href="http://github.com/sympy/sympy/pull/9639">#9639</a>
-finally got merged. Thanks Jim and Sean for all the help. 
-As <a href="http://github.com/sympy/sympy/pull/9639">#9639</a> brought in all the necessary changes
-<a href="http://github.com/sympy/sympy/pull/9572">#9572</a> was closed.</p>
-
-<p>In the SymPy master,</p>
-<div class="highlight"><pre><code class="language-text">&gt;&gt;&gt; fps(sin(x), x)
-x - x**3/6 + x**5/120 + O(x**6)
-&gt;&gt;&gt; fps(1/(1-x), x)
-1 + x + x**2 + x**3 + x**4 + x**5 + O(x**6)
-</code></pre></div>
-<p>On a side note, I was invited for Push access by Aaron.
-Thanks Aaron. :)</p>
-
-<h3>Tasks:</h3>
-
-<ul>
-<li>Improve test coverage of <code>series.formal</code>.</li>
-<li>Start working on operations on Formal Power Series.</li>
-</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3908,80 +3899,80 @@ Thanks Aaron. :)</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>17:57, Sunday, 22 May</td>
-<td>18:12, Sunday, 22 May</td>
+<td>18:17, Sunday, 22 May</td>
+<td>18:32, Sunday, 22 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>17:57, Sunday, 22 May</td>
-<td>18:12, Sunday, 22 May</td>
+<td>18:17, Sunday, 22 May</td>
+<td>18:32, Sunday, 22 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>17:57, Sunday, 22 May</td>
-<td>18:12, Sunday, 22 May</td>
+<td>18:17, Sunday, 22 May</td>
+<td>18:32, Sunday, 22 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>17:57, Sunday, 22 May</td>
-<td>18:12, Sunday, 22 May</td>
+<td>18:17, Sunday, 22 May</td>
+<td>18:32, Sunday, 22 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>17:57, Sunday, 22 May</td>
-<td>18:12, Sunday, 22 May</td>
+<td>18:17, Sunday, 22 May</td>
+<td>18:32, Sunday, 22 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>17:57, Sunday, 22 May</td>
-<td>18:12, Sunday, 22 May</td>
+<td>18:17, Sunday, 22 May</td>
+<td>18:32, Sunday, 22 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>17:57, Sunday, 22 May</td>
-<td>18:12, Sunday, 22 May</td>
+<td>18:17, Sunday, 22 May</td>
+<td>18:32, Sunday, 22 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sartajsingh.me/">Sartaj Singh</a></td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>17:57, Sunday, 22 May</td>
-<td>18:12, Sunday, 22 May</td>
+<td>18:17, Sunday, 22 May</td>
+<td>18:32, Sunday, 22 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://s-hacker.info">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://s-hacker.info/blog/gsoc16/feeds/sympy.xml">XML</a></td>
-<td>17:57, Sunday, 22 May</td>
-<td>18:12, Sunday, 22 May</td>
+<td>18:17, Sunday, 22 May</td>
+<td>18:32, Sunday, 22 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>17:57, Sunday, 22 May</td>
-<td>18:12, Sunday, 22 May</td>
+<td>18:17, Sunday, 22 May</td>
+<td>18:32, Sunday, 22 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>17:57, Sunday, 22 May</td>
-<td>18:12, Sunday, 22 May</td>
+<td>18:17, Sunday, 22 May</td>
+<td>18:32, Sunday, 22 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>17:57, Sunday, 22 May</td>
-<td>18:12, Sunday, 22 May</td>
+<td>18:17, Sunday, 22 May</td>
+<td>18:32, Sunday, 22 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>17:57, Sunday, 22 May</td>
-<td>18:12, Sunday, 22 May</td>
+<td>18:17, Sunday, 22 May</td>
+<td>18:32, Sunday, 22 May</td>
 </tr>
 </table>
 
