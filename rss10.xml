@@ -7,6 +7,66 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/Community-Bonding-Period</guid>
+      <title>Community Bonding Period</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Mon, 23 May 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/Community-Bonding-Period/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;I have been selected for GSoC&amp;#8217;16 to work with &lt;a href="http://www.sympy.org/"&gt;Sympy&lt;/a&gt; on &lt;strong&gt;Implementing Finite Fields and Set module in SymEngine&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;a href="https://github.com/sympy/symengine"&gt;SymEngine&lt;/a&gt; is a standalone fast C++ symbolic manipulation library.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h1 id="about-the-proposal"&gt;About the Proposal&lt;/h1&gt;
+
+&lt;p&gt;We all know that Polynomial factorization is one of the fundamental tools of the computer algebra systems. And in symbolic mathematics, it is one of the basic requirement over which other algorithms can be implemented.&lt;br /&gt;
+Currently, SymEngine has the implementation of Univariate Polynomial class, which provides us the basic functionality to add, multiply and subtract two polynomials.&lt;br /&gt;
+Now, comes the problem of factoring the polynomials.&lt;br /&gt;
+We have explicit solution formulas only till polynomials of degree four(the Quadtratic formula for degree 2, &lt;a href="http://en.wikipedia.org/wiki/Cardano_formula#Cardano.27s_method"&gt;the Cardano formulas&lt;/a&gt; for third-degree equations, and &lt;a href="http://en.wikipedia.org/wiki/Quartic_function#The_general_case.2C_along_Ferrari.27s_lines"&gt;the Ferrari formula&lt;/a&gt; for degree 4).&lt;br /&gt;
+For sure, we need a different way out for higher degree polynomials.
+We see that there are algorithms for factorization in finite fields:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Cantor%E2%80%93Zassenhaus_algorithm"&gt;Cantor&amp;#8211;Zassenhaus algorithm&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Berlekamp's_algorithm"&gt;Berlekamp&amp;#8217;s algorithm&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So, this summers I will be working on converting a polynomial in integer field to finite field, then factorizing them. After which we have to do &lt;a href="https://en.wikipedia.org/wiki/Hensel's_lemma"&gt;Hensel Lifting&lt;/a&gt; to bring back the factored polynomial to integer field.&lt;/p&gt;
+
+&lt;p&gt;Furthermore, I will be working on implementing Sets module. These two together will help us to create a basic infrastructure over which we can develop a solvers module in SymEngine.&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;My proposal can be found &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Application-Nishant-Nikhil:-Implementing-Finite-Fields-and-Set-module-in-SymEngine"&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h1 id="community-bonding-period"&gt;Community Bonding Period&lt;/h1&gt;
+
+&lt;p&gt;I have been alloted &lt;a href="https://github.com/isuruf"&gt;Isuru Fernando&lt;/a&gt;, &lt;a href="https://github.com/thilinarmtb"&gt;Thilina Rathnayake&lt;/a&gt;, &lt;a href="https://github.com/Sumith1896"&gt;Sumith&lt;/a&gt; and &lt;a href="https://github.com/certik"&gt;Ond&amp;#345;ej &amp;#268;ert&amp;#237;k&lt;/a&gt; as mentors.&lt;br /&gt;
+The SymEngine community is very fast in reachability.
+We had a discussion on &lt;a href="https://gitter.im/symengine/symengine"&gt;gitter channel of SymEngine&lt;/a&gt;, about the proceedings of our Proposals. As SymEngine has an implementaion of sparse polynomials, I will be working on changing them to Finite Fields. Like:&lt;br /&gt;&lt;br /&gt;
+&lt;code class="highlighter-rouge"&gt;
+GaloisField::GaloisField(std::map&amp;lt;unsigned, int&amp;gt; &amp;amp;dict, unsigned modulo) : modulo_(modulo)
+{
+	unsigned temp;
+	for (auto iter : dict) {
+		temp = iter.second % modulo;
+		if (temp != 0)
+			dict_[iter.first] = temp;
+	}
+}
+&lt;/code&gt;
+&lt;br /&gt;
+where &lt;code class="highlighter-rouge"&gt;dict&lt;/code&gt; is the dictionary of Univariate Polynomial representation and, &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; stores its finite field representation modulo &lt;code class="highlighter-rouge"&gt;modulo_&lt;/code&gt;.
+I will be implementing this in the first week of GSoC period.&lt;/p&gt;
+
+&lt;h1 id="work-already-done"&gt;Work already Done&lt;/h1&gt;
+
+&lt;p&gt;During the Community Bonding Period, I worked on implementing &lt;a href="https://github.com/symengine/symengine/pull/934"&gt;&lt;code class="highlighter-rouge"&gt;UniversalSet&lt;/code&gt;&lt;/a&gt; and &lt;a href="https://github.com/symengine/symengine/pull/942"&gt;&lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt;&lt;/a&gt;.&lt;br /&gt;
+&lt;code class="highlighter-rouge"&gt;UniversalSet&lt;/code&gt; is a &lt;a href="https://en.wikipedia.org/wiki/Singleton_pattern"&gt;singleton class&lt;/a&gt; like &lt;code class="highlighter-rouge"&gt;EmptySet&lt;/code&gt;, and while implementing this I learned a lot about Singleton classes.&lt;br /&gt;
+&lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; is a class with a set of &lt;code class="highlighter-rouge"&gt;RCP&amp;lt;const Basic&amp;gt;&lt;/code&gt; as member variable. It can contain any object of &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt; type. While implemeting this, we came on a fix over what to do when we have a interval like [1, 1], i.e. both end points equal. This led to a little change in &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt;&amp;#8217;s code, and now it returns a &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt;. Though this PR is not merged till now. I hope to get it merged in the next few days and along with it keep working on Finite Field implementation.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=196</guid>
       <title>GSoC Community Bonding Period Week 4</title>
       <author>Sampad Saha (sampadsaha5)</author>
@@ -669,7 +729,7 @@ I would not have been able to attend the conference without the generous financi
     </item>
     <item>
       <guid isPermaLink="false">http://nishnik.github.io/Hello-World</guid>
-      <title>Hello World</title>
+      <title>Hello World!</title>
       <author>Nishant Nikhil (nishnik)</author>
       <pubDate>Thu, 24 Mar 2016 00:00:00 GMT</pubDate>
       <link>http://nishnik.github.io/Hello-World/</link>
@@ -2101,56 +2161,6 @@ and &lt;code&gt;_mul_hashset&lt;/code&gt; multiplies the two &lt;code&gt;hash_se
       <pubDate>Sat, 15 Aug 2015 18:11:54 GMT</pubDate>
       <link>http://isuruf.blogspot.com/2015/08/gsoc-week-10-and-11.html</link>
       <description>&lt;div dir="ltr" style="text-align: left;"&gt;symengine-0.1.0 beta version was released this week and these two weeks were spent on making sure symengine works without a problem on Sage.&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;One issue was the linking of the python libraries in Sage. In binary releases of sage, the variable&amp;nbsp;&lt;span style="background-color: #fafafa; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 12px; line-height: 16.7999992370605px; white-space: pre;"&gt;distutils.sysconfig.get_config_var('LIBDIR') &lt;/span&gt;&amp;nbsp;is wrong. It is set to the build machine's location. In Windows this is set to empty. Earlier, to link the python libraries into the python wrappers, python library was found using the above variable, but in some cases like Sage and Windows this method fails. To fix this, CMake now looks in `sys.prefix`/libs and `sys.prefix`/lib as well to find the python libraries.&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;Another issue that came up was cmake generating bad link flags. When installing in Sage, it is important to make sure the libraries in Sage are linked and not the system wide libraries. To do that libraries were searched for in the sage directories ignoring the system wide libraries. When given the full path of the libraries to link, we noticed a strange behaviour. `/path/to/sage/local/lib/libgmp.so` was changed to `-lgmp` causing the linker to pick up the system-wide gmp library.&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;After reading through CMake documentation, I realized that this was due to `find_library` giving wrong locations of system libraries where there are multiple libraries of the same name for different architectures. For example if the output of `find_library(math NAMES m)` was given to find the standard math library, it may find a `libm.so` that was intended for a different architecture. Therefore when cmake realizes that the library being linked to is a system library then the full path is converted to `-lm` to delegate the task to the linker to find the correct library.&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;This behaviour is useful for some scenarios, but in our case, this was not the behaviour I needed. Fortunately there was a workaround for this mentioned in the documentation. Using IMPORTED target feature in CMake, I was able to get CMake to use the full path of the library.&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;R7 and R8 benchmarks from symbench benchmarks of sage were added to benchmark SymEngine-C++&amp;nbsp;against GiNaC and also SymEngine-Python against SymPy and Sage.&lt;/div&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://iamit.in/blog/GSoC : This week in SymPy #10 &amp;11</guid>
-      <title>GSoC : This week in SymPy #10 &amp; #11</title>
-      <author>Amit Kumar (aktech)</author>
-      <pubDate>Mon, 10 Aug 2015 18:30:00 GMT</pubDate>
-      <link>http://iamit.in/blog/GSoC-week-10-11</link>
-      <description>&lt;p&gt;Hi there! It's been 11 weeks into &lt;a href="https://en.wikipedia.org/wiki/Google_Summer_of_Code"&gt;GSoC&lt;/a&gt; 
-and we have reached into the last week before the soft deadline. Here is the Progress so far.&lt;/p&gt;
-
-&lt;h3&gt;&amp;nbsp; &lt;strong&gt;Progress of Week 10 &amp;amp; 11&lt;/strong&gt; &lt;img src="http://iamit.in/assets/gsoc/pr.png" style="float: left;" /&gt;&lt;/h3&gt;
-
-&lt;p&gt;
-Last couple of weeks, I worked mainly on the Documentation of the solveset module. It's very important to let others know what we are doing and why we are doing, so this &lt;a href="http://github.com/sympy/sympy/pull/9500"&gt;PR #9500&lt;/a&gt; is an effort to accomplish that.
-Here are some of the important questions, I have tried to answer in the &lt;a href="http://github.com/sympy/sympy/pull/9500"&gt;PR #9500&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;:check: What was the need of a new solvers module? 
- :check: Why do we use sets as an output type? 
- :check: What is this domain argument about? 
- :check: What will you do with the old solve? 
- :check: What are the general design principles behind the development of solveset? 
- :check: What are the general methods employed by solveset to solve an equation? 
- :check: How do we manipulate and return an infinite solutions? 
- :check: How does solveset ensures that it is not returning any wrong solution? &lt;/p&gt;
-
-&lt;p&gt;There is still some polishing required in this as suggested by &lt;a href="http://github.com/hargup"&gt;@hargup&lt;/a&gt;&lt;/p&gt;
-
-&lt;h4&gt;&lt;strong&gt;Linsolve Docs&lt;/strong&gt;&lt;/h4&gt;
-
-&lt;p&gt;I completed the documentation PR for &lt;code&gt;linsolve&lt;/code&gt;. See &lt;a href="https://github.com/sympy/sympy/pull/9587"&gt;PR #9587&lt;/a&gt;&lt;/p&gt;
-
-&lt;h4&gt;&lt;strong&gt;Differential Calculus Methods&lt;/strong&gt;&lt;/h4&gt;
-
-&lt;p&gt;I have also started working on the differential calculus methods as mentioned in my proposal &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2015-Application-AMiT-Kumar--Solvers-:-Extending-Solveset#week-12"&gt;here&lt;/a&gt;.
-See &lt;a href="https://github.com/aktech/sympy/tree/diff-cal"&gt;diff-cal&lt;/a&gt; branch.&lt;/p&gt;
-
-&lt;h3&gt;&lt;strong&gt;from &lt;strong&gt;future&lt;/strong&gt; import plan&lt;/strong&gt;  Week #12:&lt;/h3&gt;
-
-&lt;p&gt;This week I plan to finish up all the pending work and wrap up the project and get &lt;a href="http://github.com/sympy/sympy/pull/9500"&gt;PR #9500&lt;/a&gt; Merged. &lt;/p&gt;
-
-&lt;h3&gt;&lt;strong&gt;$ git log&lt;/strong&gt;&lt;/h3&gt;
-
-&lt;p&gt;
-&lt;img align="left" src="http://iamit.in/assets/gsoc/opr.png" /&gt; &amp;nbsp; &lt;a href="https://github.com/sympy/sympy/pull/9500"&gt;PR #9500&lt;/a&gt; :  Documenting &lt;code&gt;solveset&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;
-&lt;img align="left" src="http://iamit.in/assets/gsoc/mpr.png" /&gt; &amp;nbsp; &lt;a href="https://github.com/sympy/sympy/pull/9587"&gt;PR #9587&lt;/a&gt; : Add Linsolve Docs&lt;/p&gt;
-
-&lt;p&gt;
-That's all for now, looking forward for week #12. :grinning:&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
