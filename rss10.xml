@@ -67,6 +67,59 @@ I will be implementing this in the first week of GSoC period.&lt;/p&gt;
 &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; is a class with a set of &lt;code class="highlighter-rouge"&gt;RCP&amp;lt;const Basic&amp;gt;&lt;/code&gt; as member variable. It can contain any object of &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt; type. While implemeting this, we came on a fix over what to do when we have a interval like [1, 1], i.e. both end points equal. This led to a little change in &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt;&amp;#8217;s code, and now it returns a &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt;. Though this PR is not merged till now. I hope to get it merged in the next few days and along with it keep working on Finite Field implementation.&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://gxyd.github.io/Community Bonding period ends, starts Coding period</guid>
+      <title>Community Bonding period ends, Coding period starts</title>
+      <author>Gaurav Dhingra (gxyd)</author>
+      <pubDate>Sun, 22 May 2016 18:30:00 GMT</pubDate>
+      <link>https://gxyd.github.io/gsoc2016/coding_period_starts.html</link>
+      <description>&lt;p&gt;
+The Community bonding period comes to an end now. First of all considering the issues described in the last post:
+&lt;ul&gt;
+&lt;li&gt;
+Aaron created a new channel for our GSoC project discussion, &lt;a&gt; href="https://gitter.im/sympy/GroupTheory"&gt;sympy/GroupTheory&lt;/a&gt;.
+&lt;/li&gt;
+&lt;li&gt;
+I have also added rss-feed in my blog.
+&lt;/li&gt;
+&lt;li&gt;
+As for time of meeting, me and Kalevi often have discussion on the gitter channel, but since of quite a bit differene in timings between me and Aaron (I tend to sleep early at 11 PM IST). We three haven't been able to together have a meeting. Though Aaron suggested "Kalevi is the primary mentor, so if you have to meet without me that is fine". I also think that's not too big of an issue now, but his opinion has always helped, since he has best knowledge of sympy core.
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;
+In the past few weeks I wasn't too much productive, since I had a touch of fever, anyways I am okay now. We have now completed the implementation of the &lt;code&gt;FreeGroup&lt;/code&gt; class in &lt;a&gt; href="https://github.com/sympy/sympy/pull/10350"&gt;PR #10350&lt;/a&gt;. I started working on the PR back in January but I halted, since of my semester classes. &lt;code&gt;FreeGroup&lt;/code&gt; is quite similar to the &lt;code&gt;PolyRing&lt;/code&gt; implemented in &lt;code&gt;sympy.polys.rings.py&lt;/code&gt;. We first started with the list of tuples as the data structure for the &lt;code&gt;FreeGroupElm&lt;/code&gt;, where each tuple being &lt;code&gt;(index, exp)&lt;/code&gt;, but since of the mutable nature of lists, Kalevi suggested to go with tuple of tuples. Also as tuples are probably more efficient as there is no 'housekeeping' overhead. Also changed the element from &lt;code&gt;(index, exp)&lt;/code&gt; --&gt; &lt;code&gt;(symbol, exp)&lt;/code&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;
+ Implementing &lt;code&gt;FreeGroupElm&lt;/code&gt; deals elegantly in such a way that it can't be independently created in a public interface. The reason being: every &lt;code&gt;FreeGroupElm&lt;/code&gt; is in itself created only by the &lt;code&gt;dtype&lt;/code&gt; method of &lt;code&gt;FreeGroup&lt;/code&gt; class. The assignment is as follows:
+&lt;br /&gt;
+  &lt;code&gt;obj.dtype = type("FreeGroupElm", (FreeGroupElm,), {"group": obj})&lt;/code&gt;
+&lt;br /&gt;.
+
+Its sort of an advanced usage of &lt;code&gt;type&lt;/code&gt; function as a &lt;a&gt; href="http://www.stackoverflow.com/questions/100003/what-is-a-metaclass-in-python"&gt;metaclass&lt;/a&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;
+Currently the printing code of &lt;code&gt;latex&lt;/code&gt; and &lt;code&gt;pprint&lt;/code&gt; for &lt;code&gt;FreeGroupElm&lt;/code&gt; is a little hacky. I need to work on that as well.
+&lt;/p&gt;
+
+&lt;br /&gt;
+&lt;p&gt;
+&lt;b&gt;&lt;u&gt;Plan for Next few weeks&lt;/u&gt;&lt;/b&gt;
+&lt;br /&gt;&lt;br /&gt;
+Though according to my &lt;a&gt; href="https://github.com/sympy/sympy/wiki/GSoC-2016-Application-Gaurav-Dhingra:-Group-Theory#Proposed_Timeline"&gt;proposal timeline&lt;/a&gt;, we described to go with implementation of other algebraic structures i.e &lt;code&gt;Magma&lt;/code&gt;, &lt;code&gt;SemiGroup&lt;/code&gt;, &lt;code&gt;Monoid&lt;/code&gt;. But we will next move onto &lt;b&gt;"Coset Enumeration"&lt;/b&gt;. It is going to be a big task. That is harder and more important than other algebraic structures. Timline states it to be 5 week task, thats almost half the GSoC coding period. Well how do we go about that? I think of studying the mathematics in parallel with the implementation.
+&lt;/p&gt;
+
+&lt;p&gt;
+We have created a PR for implementation of Finitely Presented Group &lt;a&gt; href="https://github.com/sympy/sympy/pull/11140"&gt;#11140&lt;/a&gt;. Not much code has been added here. Paper on Coset Enumeration using &lt;a&gt; href="http://staff.itee.uq.edu.au/havas/1973cdhw.pdf"&gt;Implementation and Analysis of Todd Coxeter Algorithm&lt;/a&gt; (by John J. Cannon, George Havas), and other paper being the original paper by Todd and Coxeter, "A practical method for enumerating cosets of a finite abstract group" are the ones I am reading. As for the implementation of Todd Coxeter, we will be following the methods described in the book "Handbook of Computational Group Theory" by Derek F. Holt.
+&lt;/p&gt;
+
+&lt;p&gt;
+Also now the "official" coding period begins, good luck to everyone.
+&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=196</guid>
       <title>GSoC Community Bonding Period Week 4</title>
       <author>Sampad Saha (sampadsaha5)</author>
@@ -2153,14 +2206,6 @@ and &lt;code&gt;_mul_hashset&lt;/code&gt; multiplies the two &lt;code&gt;hash_se
 
 &lt;p&gt;That's all I have &lt;br /&gt;
 &lt;strong&gt;See ya&lt;/strong&gt;&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">tag:blogger.com,1999:blog-8848761645772749389.post-4250966876299216441</guid>
-      <title>GSoC week 10 and 11</title>
-      <author>Isuru Fernando (isuruf)</author>
-      <pubDate>Sat, 15 Aug 2015 18:11:54 GMT</pubDate>
-      <link>http://isuruf.blogspot.com/2015/08/gsoc-week-10-and-11.html</link>
-      <description>&lt;div dir="ltr" style="text-align: left;"&gt;symengine-0.1.0 beta version was released this week and these two weeks were spent on making sure symengine works without a problem on Sage.&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;One issue was the linking of the python libraries in Sage. In binary releases of sage, the variable&amp;nbsp;&lt;span style="background-color: #fafafa; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 12px; line-height: 16.7999992370605px; white-space: pre;"&gt;distutils.sysconfig.get_config_var('LIBDIR') &lt;/span&gt;&amp;nbsp;is wrong. It is set to the build machine's location. In Windows this is set to empty. Earlier, to link the python libraries into the python wrappers, python library was found using the above variable, but in some cases like Sage and Windows this method fails. To fix this, CMake now looks in `sys.prefix`/libs and `sys.prefix`/lib as well to find the python libraries.&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;Another issue that came up was cmake generating bad link flags. When installing in Sage, it is important to make sure the libraries in Sage are linked and not the system wide libraries. To do that libraries were searched for in the sage directories ignoring the system wide libraries. When given the full path of the libraries to link, we noticed a strange behaviour. `/path/to/sage/local/lib/libgmp.so` was changed to `-lgmp` causing the linker to pick up the system-wide gmp library.&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;After reading through CMake documentation, I realized that this was due to `find_library` giving wrong locations of system libraries where there are multiple libraries of the same name for different architectures. For example if the output of `find_library(math NAMES m)` was given to find the standard math library, it may find a `libm.so` that was intended for a different architecture. Therefore when cmake realizes that the library being linked to is a system library then the full path is converted to `-lm` to delegate the task to the linker to find the correct library.&amp;nbsp;&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;This behaviour is useful for some scenarios, but in our case, this was not the behaviour I needed. Fortunately there was a workaround for this mentioned in the documentation. Using IMPORTED target feature in CMake, I was able to get CMake to use the full path of the library.&lt;/div&gt;&lt;div&gt;&lt;br /&gt;&lt;/div&gt;&lt;div&gt;R7 and R8 benchmarks from symbench benchmarks of sage were added to benchmark SymEngine-C++&amp;nbsp;against GiNaC and also SymEngine-Python against SymPy and Sage.&lt;/div&gt;&lt;/div&gt;</description>
     </item>
   </channel>
 </rss>

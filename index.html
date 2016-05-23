@@ -210,6 +210,113 @@ I will be implementing this in the first week of GSoC period.</p>
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-b298e897 feed-" id="item-f86d2fdd">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/gxyd.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Gaurav Dhingra (gxyd) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://gxyd.github.io/gsoc2016/coding_period_starts.html">18:30, Sunday, 22 May UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://gxyd.github.io/gsoc2016/coding_period_starts.html">Community Bonding period ends, Coding period starts</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/gxyd.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Gaurav Dhingra (gxyd) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://gxyd.github.io/gsoc2016/coding_period_starts.html">18:30, Sunday, 22 May UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://gxyd.github.io/gsoc2016/coding_period_starts.html">Community Bonding period ends, Coding period starts</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>
+The Community bonding period comes to an end now. First of all considering the issues described in the last post:
+<ul>
+<li>
+Aaron created a new channel for our GSoC project discussion, <a> href="https://gitter.im/sympy/GroupTheory">sympy/GroupTheory</a>.
+</li>
+<li>
+I have also added rss-feed in my blog.
+</li>
+<li>
+As for time of meeting, me and Kalevi often have discussion on the gitter channel, but since of quite a bit differene in timings between me and Aaron (I tend to sleep early at 11 PM IST). We three haven't been able to together have a meeting. Though Aaron suggested "Kalevi is the primary mentor, so if you have to meet without me that is fine". I also think that's not too big of an issue now, but his opinion has always helped, since he has best knowledge of sympy core.
+</li>
+</ul>
+</p>
+
+<p><br />
+In the past few weeks I wasn't too much productive, since I had a touch of fever, anyways I am okay now. We have now completed the implementation of the <code>FreeGroup</code> class in <a> href="https://github.com/sympy/sympy/pull/10350">PR #10350</a>. I started working on the PR back in January but I halted, since of my semester classes. <code>FreeGroup</code> is quite similar to the <code>PolyRing</code> implemented in <code>sympy.polys.rings.py</code>. We first started with the list of tuples as the data structure for the <code>FreeGroupElm</code>, where each tuple being <code>(index, exp)</code>, but since of the mutable nature of lists, Kalevi suggested to go with tuple of tuples. Also as tuples are probably more efficient as there is no 'housekeeping' overhead. Also changed the element from <code>(index, exp)</code> --> <code>(symbol, exp)</code>.
+</p>
+
+<p><br />
+ Implementing <code>FreeGroupElm</code> deals elegantly in such a way that it can't be independently created in a public interface. The reason being: every <code>FreeGroupElm</code> is in itself created only by the <code>dtype</code> method of <code>FreeGroup</code> class. The assignment is as follows:
+<br />
+  <code>obj.dtype = type("FreeGroupElm", (FreeGroupElm,), {"group": obj})</code>
+<br />.
+
+Its sort of an advanced usage of <code>type</code> function as a <a> href="http://www.stackoverflow.com/questions/100003/what-is-a-metaclass-in-python">metaclass</a>.
+</p>
+
+<p><br />
+Currently the printing code of <code>latex</code> and <code>pprint</code> for <code>FreeGroupElm</code> is a little hacky. I need to work on that as well.
+</p>
+
+<br />
+<p>
+<b><u>Plan for Next few weeks</u></b>
+<br /><br />
+Though according to my <a> href="https://github.com/sympy/sympy/wiki/GSoC-2016-Application-Gaurav-Dhingra:-Group-Theory#Proposed_Timeline">proposal timeline</a>, we described to go with implementation of other algebraic structures i.e <code>Magma</code>, <code>SemiGroup</code>, <code>Monoid</code>. But we will next move onto <b>"Coset Enumeration"</b>. It is going to be a big task. That is harder and more important than other algebraic structures. Timline states it to be 5 week task, thats almost half the GSoC coding period. Well how do we go about that? I think of studying the mathematics in parallel with the implementation.
+</p>
+
+<p>
+We have created a PR for implementation of Finitely Presented Group <a> href="https://github.com/sympy/sympy/pull/11140">#11140</a>. Not much code has been added here. Paper on Coset Enumeration using <a> href="http://staff.itee.uq.edu.au/havas/1973cdhw.pdf">Implementation and Analysis of Todd Coxeter Algorithm</a> (by John J. Cannon, George Havas), and other paper being the original paper by Todd and Coxeter, "A practical method for enumerating cosets of a finite abstract group" are the ones I am reading. As for the implementation of Todd Coxeter, we will be following the methods described in the book "Handbook of Computational Group Theory" by Derek F. Holt.
+</p>
+
+<p>
+Also now the "official" coding period begins, good luck to everyone.
+</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-05db50a0 feed-" id="item-c1d23a7c">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -1296,7 +1403,7 @@ Out[4]:
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-b298e897 feed-" id="item-ebbf8b84">
+		    <div class="box" class="item feed-b298e897 feed-" id="item-3c394ce3">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -3829,71 +3936,6 @@ and <code>_mul_hashset</code> multiplies the two <code>hash_set</code>. The spee
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">August 15, 2015</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-46b37cac feed-" id="item-bb702289">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/isuruf.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Isuru Fernando (isuruf) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://isuruf.blogspot.com/2015/08/gsoc-week-10-and-11.html">18:11, Saturday, 15 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://isuruf.blogspot.com/2015/08/gsoc-week-10-and-11.html">GSoC week 10 and 11</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/isuruf.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Isuru Fernando (isuruf) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://isuruf.blogspot.com/2015/08/gsoc-week-10-and-11.html">18:11, Saturday, 15 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://isuruf.blogspot.com/2015/08/gsoc-week-10-and-11.html">GSoC week 10 and 11</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<div dir="ltr" style="text-align: left;">symengine-0.1.0 beta version was released this week and these two weeks were spent on making sure symengine works without a problem on Sage.<div><br /></div><div>One issue was the linking of the python libraries in Sage. In binary releases of sage, the variable&nbsp;<span style="background-color: #fafafa; font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace; font-size: 12px; line-height: 16.7999992370605px; white-space: pre;">distutils.sysconfig.get_config_var('LIBDIR') </span>&nbsp;is wrong. It is set to the build machine's location. In Windows this is set to empty. Earlier, to link the python libraries into the python wrappers, python library was found using the above variable, but in some cases like Sage and Windows this method fails. To fix this, CMake now looks in `sys.prefix`/libs and `sys.prefix`/lib as well to find the python libraries.</div><div><br /></div><div>Another issue that came up was cmake generating bad link flags. When installing in Sage, it is important to make sure the libraries in Sage are linked and not the system wide libraries. To do that libraries were searched for in the sage directories ignoring the system wide libraries. When given the full path of the libraries to link, we noticed a strange behaviour. `/path/to/sage/local/lib/libgmp.so` was changed to `-lgmp` causing the linker to pick up the system-wide gmp library.&nbsp;</div><div><br /></div><div>After reading through CMake documentation, I realized that this was due to `find_library` giving wrong locations of system libraries where there are multiple libraries of the same name for different architectures. For example if the output of `find_library(math NAMES m)` was given to find the standard math library, it may find a `libm.so` that was intended for a different architecture. Therefore when cmake realizes that the library being linked to is a system library then the full path is converted to `-lm` to delegate the task to the linker to find the correct library.&nbsp;</div><div><br /></div><div>This behaviour is useful for some scenarios, but in our case, this was not the behaviour I needed. Fortunately there was a workaround for this mentioned in the documentation. Using IMPORTED target feature in CMake, I was able to get CMake to use the full path of the library.</div><div><br /></div><div>R7 and R8 benchmarks from symbench benchmarks of sage were added to benchmark SymEngine-C++&nbsp;against GiNaC and also SymEngine-Python against SymPy and Sage.</div></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3921,80 +3963,80 @@ and <code>_mul_hashset</code> multiplies the two <code>hash_set</code>. The spee
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>12:25, Monday, 23 May</td>
-<td>12:40, Monday, 23 May</td>
+<td>12:45, Monday, 23 May</td>
+<td>13:00, Monday, 23 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>12:25, Monday, 23 May</td>
-<td>12:40, Monday, 23 May</td>
+<td>12:45, Monday, 23 May</td>
+<td>13:00, Monday, 23 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>12:25, Monday, 23 May</td>
-<td>12:40, Monday, 23 May</td>
+<td>12:45, Monday, 23 May</td>
+<td>13:00, Monday, 23 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>12:25, Monday, 23 May</td>
-<td>12:40, Monday, 23 May</td>
+<td>12:45, Monday, 23 May</td>
+<td>13:00, Monday, 23 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>12:25, Monday, 23 May</td>
-<td>12:40, Monday, 23 May</td>
+<td>12:45, Monday, 23 May</td>
+<td>13:00, Monday, 23 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>12:25, Monday, 23 May</td>
-<td>12:40, Monday, 23 May</td>
+<td>12:45, Monday, 23 May</td>
+<td>13:00, Monday, 23 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>12:25, Monday, 23 May</td>
-<td>12:40, Monday, 23 May</td>
+<td>12:45, Monday, 23 May</td>
+<td>13:00, Monday, 23 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sartajsingh.me/">Sartaj Singh</a></td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>12:25, Monday, 23 May</td>
-<td>12:40, Monday, 23 May</td>
+<td>12:45, Monday, 23 May</td>
+<td>13:00, Monday, 23 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://s-hacker.info">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://s-hacker.info/blog/gsoc16/feeds/sympy.xml">XML</a></td>
-<td>12:25, Monday, 23 May</td>
-<td>12:40, Monday, 23 May</td>
+<td>12:45, Monday, 23 May</td>
+<td>13:00, Monday, 23 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>12:25, Monday, 23 May</td>
-<td>12:40, Monday, 23 May</td>
+<td>12:45, Monday, 23 May</td>
+<td>13:00, Monday, 23 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>12:25, Monday, 23 May</td>
-<td>12:40, Monday, 23 May</td>
+<td>12:45, Monday, 23 May</td>
+<td>13:00, Monday, 23 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>12:25, Monday, 23 May</td>
-<td>12:40, Monday, 23 May</td>
+<td>12:45, Monday, 23 May</td>
+<td>13:00, Monday, 23 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>12:25, Monday, 23 May</td>
-<td>12:40, Monday, 23 May</td>
+<td>12:45, Monday, 23 May</td>
+<td>13:00, Monday, 23 May</td>
 </tr>
 </table>
 
