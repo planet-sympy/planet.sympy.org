@@ -3816,27 +3816,27 @@ Also the high level value class <code>Expression</code> was implemented in <code
 	</div>
 </div></div>
 <div class="day">
-<h2 class="dayform">August 20, 2015</h2>
+<h2 class="dayform">August 16, 2015</h2>
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-9a9be172 feed-" id="item-63699aa5">
+		    <div class="box" class="item feed-7eb48802 feed-" id="item-637a4a1b">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
 			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
 			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/leosartaj.jpg"/> 
+				    				 <img src="hackergotchi/sumith1896.png"/> 
 				    				
 				    			</div>
 			    			</td>
 			    			<td style="vertical-align:bottom;">
 			    				<div class="row" style="margin-top:15px;">
 					    			<div class="col-md-8">
-							    		<a href="">Sartaj Singh (leosartaj) </a>
+							    		<a href="">Sumith (sumith1896) </a>
 							    	</div>
 							    	<div class="col-md-4 dtdate">
-							    		<a href="https://sartajsingh.me/gsoc-update-week-10-11-and-12">14:28, Thursday, 20 August UTC</a>
+							    		<a href="http://sumith1896.github.io//GSoC-Progress-Week-10-&amp;-11">00:00, Sunday, 16 August UTC</a>
 							    	</div>
 							    </div>
 			    			</td>
@@ -3845,75 +3845,58 @@ Also the high level value class <code>Expression</code> was implemented in <code
 			    			<td style="vertical-align:bottom;">
 			    				<div class="row">
 							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://sartajsingh.me/gsoc-update-week-10-11-and-12">GSoC: Update Week-10, 11 and 12</a></h4>
+							    		<h4><a class="boxh2" href="http://sumith1896.github.io//GSoC-Progress-Week-10-&amp;-11">GSoC Progress - Week 10 and 11</a></h4>
 							    	</div>
 							    </div>
 			    			</td>
 			    		</tr>
 			    	</table>
 			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/leosartaj.jpg"/> 
+			    		 <img src="hackergotchi/sumith1896.png"/> 
 			    		
 			    	</div>
 			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
 			    		<div class="row">
 			    			<div class="col-md-8">
-					    		<a href="">Sartaj Singh (leosartaj) </a>
+					    		<a href="">Sumith (sumith1896) </a>
 					    	</div>
 					    	<div class="col-md-4 dtdate">
-					    		<a href="https://sartajsingh.me/gsoc-update-week-10-11-and-12">14:28, Thursday, 20 August UTC</a>
+					    		<a href="http://sumith1896.github.io//GSoC-Progress-Week-10-&amp;-11">00:00, Sunday, 16 August UTC</a>
 					    	</div>
 					    </div>
 					    <div class="row">
 					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://sartajsingh.me/gsoc-update-week-10-11-and-12">GSoC: Update Week-10, 11 and 12</a></h4>
+					    		<h4><a class="boxh2" href="http://sumith1896.github.io//GSoC-Progress-Week-10-&amp;-11">GSoC Progress - Week 10 and 11</a></h4>
 					    	</div>
 					    </div>
 				    </div-->
 				</div>
 				<div class="row">
 					<div class="col-md-12 col-xs-12 descript">
-						<p>This is the 12th week. Hard deadline is this Friday. GSoC is coming to an end leaving behind a wonderful experience.
-Well here's how my past few weeks went.</p>
+						<p>Hello all. Here are the most recent developments in the Polynomial wrappers.</p>
 
-
-
-<h3>Highlights:</h3>
-
-<p>Work on Formal Power Series:</p>
+<h3>Report</h3>
 
 <ul>
-<li><a href="https://github.com/sympy/sympy/pull/9776">#9776</a> added the <code>fps</code> method in <code>Expr</code> class. Instead of
-<code>fps(sin(x))</code>, user can now simply do <code>sin(x).fps()</code>.</li>
-<li><a href="https://github.com/sympy/sympy/pull/9782">#9782</a> implements some basic operations like addition, subtraction
-on <code>FormalPowerSeries</code>. The review is almost complete and should get
-merged soon.</li>
-<li><a href="https://github.com/sympy/sympy/pull/9783">#9783</a> added the sphinx docs for the <code>series.formal</code> module.</li>
-<li><a href="https://github.com/sympy/sympy/pull/9789">#9789</a> replaced all the <code>solve</code> calls in the <code>series.formal</code> with the
-new <code>solveset</code> function.</li>
+<li><p>The Polynomial wrappers was using <code>piranha::hash_set</code> as the <code>Polynomial</code> wrappers, hence when there was no <code>Piranha</code> as a dependence, the <code>Polynomial</code> wouldn't compile. The fix to this was to use <code>std::unordered_set</code> with <code>-DWITH_PIRANHA=no</code> so that there would be atleast a slow version available.</p></li>
+<li><p>Another issue was Travis testing of <code>Polynomial</code>. Since we depend on <code>Piranha</code>, we had to setup Travis testing with <code>Piranha</code> included and <code>Polynomial</code> tests run. This was done in the merged PR <a href="https://github.com/sympy/symengine/pull/585">585</a>.</p></li>
+<li><p>Before we get the <code>Polynomial</code> merged we have to add <code>mul_poly</code>, improve printing, and test exhaustively. The <code>mul_poly</code> is ready <a href="https://github.com/shivamvats/symengine/pull/4">here</a>, will be merged once more tests are prepared.</p></li>
 </ul>
 
-<p>Work on computing limits of sequences:</p>
+<p>For <code>mul_poly</code>, previously we never checked the variables corresponding to the <code>hash_set</code>s, which implies you could only multiply a <code>n</code> variable polynomial with another <code>n</code> variable polynomial with the variable symbols same in both. When the variables of two hash_sets are different, a work around would be needed. This would result in slow down if done directly.</p>
 
-<p>This is the second part of my GSoC project aiming to implement the algorithm
-for computing limits of sequences as described in the poster
-<em>Computing Limits Of Sequences</em> by <em>Manuel Kauers</em>.</p>
+<p>As suggested by <a href="https://github.com/certik">Ond&#345;ej</a>, <code>mul_poly</code> now calls two functions <code>_normalize_mul</code> and <code>_mul_hashest</code>. Here <code>_noramlize_mul</code> sees to it that the <code>hash_set</code>s satisfy the afore mentioned criteria and then <code>_mul_hashset</code> operates  <br />
+For example, say <code>mul_poly</code> is called,
+then <code>_normalize_mul</code> converts <code>{1, 2, 3}</code> of <code>x, y, z</code> and <code>{4, 5, 6}</code> of <code>p, q, r</code> to <code>{1, 2, 3, 0, 0, 0}</code> and <code>{0, 0, 0, 4, 5, 6}</code>
+and <code>_mul_hashset</code> multiplies the two <code>hash_set</code>. The speed of benchmarks determined by <code>_mul_hashset</code>.</p>
 
 <ul>
-<li><a href="https://github.com/sympy/sympy/pull/9803">#9803</a> implemented the <code>difference_delta</code> function.
-<code>difference_delta(a(n), n)</code> is defined as <code>a(n + 1) - a(n)</code>. It is the
-discrete analogous of differentiation.</li>
-<li><a href="https://github.com/sympy/sympy/pull/9836">#9836</a> aims at completing the implementation of the algorithm.
-It is still under review and hopefully it will be in soon.</li>
+<li><p>The printing needs improvement. As of now the polynomial <code>2*x + 2*y</code> gets printed as <code>2*y**1*x**0 + 2*y**0*x**1</code>.</p></li>
+<li><p>Not all that was planned could be completed this summers, mostly because of my hectic schedule after the vacations ended and institure began. I am planning to work after the program ends too, when the workload eases. As the final deadline week of GSoC is coming up, I need to ensure at least the PRs on hold gets merged.I am planning to continue after the period ends so as </p></li>
 </ul>
 
-<h3>Final Tasks:</h3>
-
-<p>Get <a href="https://github.com/sympy/sympy/pull/9782">#9782</a> and <a href="https://github.com/sympy/sympy/pull/9836">#9836</a> merged soon.</p>
-
-<h3>Upcoming:</h3>
-
-<p>A thank you post ;)</p>
+<p>That's all I have <br />
+<strong>See ya</strong></p>
 					</div>
 				</div>
 			</div>
@@ -3947,80 +3930,80 @@ It is still under review and hopefully it will be in soon.</li>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>18:41, Thursday, 26 May</td>
-<td>18:56, Thursday, 26 May</td>
+<td>19:01, Thursday, 26 May</td>
+<td>19:16, Thursday, 26 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>18:41, Thursday, 26 May</td>
-<td>18:56, Thursday, 26 May</td>
+<td>19:01, Thursday, 26 May</td>
+<td>19:16, Thursday, 26 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>18:41, Thursday, 26 May</td>
-<td>18:56, Thursday, 26 May</td>
+<td>19:01, Thursday, 26 May</td>
+<td>19:16, Thursday, 26 May</td>
+</tr>
+<tr class="feedsrow">
+<td>http://sartajsingh.me/feeds/sympy.xml</td>
+<td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
+<td>19:01, Thursday, 26 May</td>
+<td>19:16, Thursday, 26 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>18:41, Thursday, 26 May</td>
-<td>18:56, Thursday, 26 May</td>
+<td>19:01, Thursday, 26 May</td>
+<td>19:16, Thursday, 26 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>18:41, Thursday, 26 May</td>
-<td>18:56, Thursday, 26 May</td>
+<td>19:01, Thursday, 26 May</td>
+<td>19:16, Thursday, 26 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>18:41, Thursday, 26 May</td>
-<td>18:56, Thursday, 26 May</td>
+<td>19:01, Thursday, 26 May</td>
+<td>19:16, Thursday, 26 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>18:41, Thursday, 26 May</td>
-<td>18:56, Thursday, 26 May</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://sartajsingh.me/">Sartaj Singh</a></td>
-<td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>18:41, Thursday, 26 May</td>
-<td>18:56, Thursday, 26 May</td>
+<td>19:01, Thursday, 26 May</td>
+<td>19:16, Thursday, 26 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://s-hacker.info">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://s-hacker.info/blog/gsoc16/feeds/sympy.xml">XML</a></td>
-<td>18:41, Thursday, 26 May</td>
-<td>18:56, Thursday, 26 May</td>
+<td>19:01, Thursday, 26 May</td>
+<td>19:16, Thursday, 26 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>18:41, Thursday, 26 May</td>
-<td>18:56, Thursday, 26 May</td>
+<td>19:01, Thursday, 26 May</td>
+<td>19:16, Thursday, 26 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>18:41, Thursday, 26 May</td>
-<td>18:56, Thursday, 26 May</td>
+<td>19:01, Thursday, 26 May</td>
+<td>19:16, Thursday, 26 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>18:41, Thursday, 26 May</td>
-<td>18:56, Thursday, 26 May</td>
+<td>19:01, Thursday, 26 May</td>
+<td>19:16, Thursday, 26 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>18:41, Thursday, 26 May</td>
-<td>18:56, Thursday, 26 May</td>
+<td>19:01, Thursday, 26 May</td>
+<td>19:16, Thursday, 26 May</td>
 </tr>
 </table>
 

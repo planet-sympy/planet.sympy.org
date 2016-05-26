@@ -2144,52 +2144,35 @@ Also the high level value class &lt;code&gt;Expression&lt;/code&gt; was implemen
 &lt;strong&gt;Bye&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://sartajsingh.me/gsoc-update-week-10-11-and-12</guid>
-      <title>GSoC: Update Week-10, 11 and 12</title>
-      <author>Sartaj Singh (leosartaj)</author>
-      <pubDate>Thu, 20 Aug 2015 14:28:44 GMT</pubDate>
-      <link>https://sartajsingh.me/gsoc-update-week-10-11-and-12</link>
-      <description>&lt;p&gt;This is the 12th week. Hard deadline is this Friday. GSoC is coming to an end leaving behind a wonderful experience.
-Well here's how my past few weeks went.&lt;/p&gt;
+      <guid isPermaLink="false">http://sumith1896.github.io//GSoC-Progress-Week-10-&amp;-11</guid>
+      <title>GSoC Progress - Week 10 and 11</title>
+      <author>Sumith (sumith1896)</author>
+      <pubDate>Sun, 16 Aug 2015 00:00:00 GMT</pubDate>
+      <link>http://sumith1896.github.io//GSoC-Progress-Week-10-&amp;-11</link>
+      <description>&lt;p&gt;Hello all. Here are the most recent developments in the Polynomial wrappers.&lt;/p&gt;
 
-
-
-&lt;h3&gt;Highlights:&lt;/h3&gt;
-
-&lt;p&gt;Work on Formal Power Series:&lt;/p&gt;
+&lt;h3&gt;Report&lt;/h3&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/9776"&gt;#9776&lt;/a&gt; added the &lt;code&gt;fps&lt;/code&gt; method in &lt;code&gt;Expr&lt;/code&gt; class. Instead of
-&lt;code&gt;fps(sin(x))&lt;/code&gt;, user can now simply do &lt;code&gt;sin(x).fps()&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/9782"&gt;#9782&lt;/a&gt; implements some basic operations like addition, subtraction
-on &lt;code&gt;FormalPowerSeries&lt;/code&gt;. The review is almost complete and should get
-merged soon.&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/9783"&gt;#9783&lt;/a&gt; added the sphinx docs for the &lt;code&gt;series.formal&lt;/code&gt; module.&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/9789"&gt;#9789&lt;/a&gt; replaced all the &lt;code&gt;solve&lt;/code&gt; calls in the &lt;code&gt;series.formal&lt;/code&gt; with the
-new &lt;code&gt;solveset&lt;/code&gt; function.&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The Polynomial wrappers was using &lt;code&gt;piranha::hash_set&lt;/code&gt; as the &lt;code&gt;Polynomial&lt;/code&gt; wrappers, hence when there was no &lt;code&gt;Piranha&lt;/code&gt; as a dependence, the &lt;code&gt;Polynomial&lt;/code&gt; wouldn't compile. The fix to this was to use &lt;code&gt;std::unordered_set&lt;/code&gt; with &lt;code&gt;-DWITH_PIRANHA=no&lt;/code&gt; so that there would be atleast a slow version available.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Another issue was Travis testing of &lt;code&gt;Polynomial&lt;/code&gt;. Since we depend on &lt;code&gt;Piranha&lt;/code&gt;, we had to setup Travis testing with &lt;code&gt;Piranha&lt;/code&gt; included and &lt;code&gt;Polynomial&lt;/code&gt; tests run. This was done in the merged PR &lt;a href="https://github.com/sympy/symengine/pull/585"&gt;585&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Before we get the &lt;code&gt;Polynomial&lt;/code&gt; merged we have to add &lt;code&gt;mul_poly&lt;/code&gt;, improve printing, and test exhaustively. The &lt;code&gt;mul_poly&lt;/code&gt; is ready &lt;a href="https://github.com/shivamvats/symengine/pull/4"&gt;here&lt;/a&gt;, will be merged once more tests are prepared.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Work on computing limits of sequences:&lt;/p&gt;
+&lt;p&gt;For &lt;code&gt;mul_poly&lt;/code&gt;, previously we never checked the variables corresponding to the &lt;code&gt;hash_set&lt;/code&gt;s, which implies you could only multiply a &lt;code&gt;n&lt;/code&gt; variable polynomial with another &lt;code&gt;n&lt;/code&gt; variable polynomial with the variable symbols same in both. When the variables of two hash_sets are different, a work around would be needed. This would result in slow down if done directly.&lt;/p&gt;
 
-&lt;p&gt;This is the second part of my GSoC project aiming to implement the algorithm
-for computing limits of sequences as described in the poster
-&lt;em&gt;Computing Limits Of Sequences&lt;/em&gt; by &lt;em&gt;Manuel Kauers&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;As suggested by &lt;a href="https://github.com/certik"&gt;Ond&amp;#345;ej&lt;/a&gt;, &lt;code&gt;mul_poly&lt;/code&gt; now calls two functions &lt;code&gt;_normalize_mul&lt;/code&gt; and &lt;code&gt;_mul_hashest&lt;/code&gt;. Here &lt;code&gt;_noramlize_mul&lt;/code&gt; sees to it that the &lt;code&gt;hash_set&lt;/code&gt;s satisfy the afore mentioned criteria and then &lt;code&gt;_mul_hashset&lt;/code&gt; operates  &lt;br /&gt;
+For example, say &lt;code&gt;mul_poly&lt;/code&gt; is called,
+then &lt;code&gt;_normalize_mul&lt;/code&gt; converts &lt;code&gt;{1, 2, 3}&lt;/code&gt; of &lt;code&gt;x, y, z&lt;/code&gt; and &lt;code&gt;{4, 5, 6}&lt;/code&gt; of &lt;code&gt;p, q, r&lt;/code&gt; to &lt;code&gt;{1, 2, 3, 0, 0, 0}&lt;/code&gt; and &lt;code&gt;{0, 0, 0, 4, 5, 6}&lt;/code&gt;
+and &lt;code&gt;_mul_hashset&lt;/code&gt; multiplies the two &lt;code&gt;hash_set&lt;/code&gt;. The speed of benchmarks determined by &lt;code&gt;_mul_hashset&lt;/code&gt;.&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/9803"&gt;#9803&lt;/a&gt; implemented the &lt;code&gt;difference_delta&lt;/code&gt; function.
-&lt;code&gt;difference_delta(a(n), n)&lt;/code&gt; is defined as &lt;code&gt;a(n + 1) - a(n)&lt;/code&gt;. It is the
-discrete analogous of differentiation.&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/9836"&gt;#9836&lt;/a&gt; aims at completing the implementation of the algorithm.
-It is still under review and hopefully it will be in soon.&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The printing needs improvement. As of now the polynomial &lt;code&gt;2*x + 2*y&lt;/code&gt; gets printed as &lt;code&gt;2*y**1*x**0 + 2*y**0*x**1&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Not all that was planned could be completed this summers, mostly because of my hectic schedule after the vacations ended and institure began. I am planning to work after the program ends too, when the workload eases. As the final deadline week of GSoC is coming up, I need to ensure at least the PRs on hold gets merged.I am planning to continue after the period ends so as &lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3&gt;Final Tasks:&lt;/h3&gt;
-
-&lt;p&gt;Get &lt;a href="https://github.com/sympy/sympy/pull/9782"&gt;#9782&lt;/a&gt; and &lt;a href="https://github.com/sympy/sympy/pull/9836"&gt;#9836&lt;/a&gt; merged soon.&lt;/p&gt;
-
-&lt;h3&gt;Upcoming:&lt;/h3&gt;
-
-&lt;p&gt;A thank you post ;)&lt;/p&gt;</description>
+&lt;p&gt;That's all I have &lt;br /&gt;
+&lt;strong&gt;See ya&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
