@@ -89,6 +89,95 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">May 27, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-89ae9fcb feed-" id="item-443b2243">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/nishnik.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Nishant Nikhil (nishnik) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://nishnik.github.io/GSoC-First-Week/">00:00, Friday, 27 May UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-First-Week/">GSoC First Week</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/nishnik.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Nishant Nikhil (nishnik) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://nishnik.github.io/GSoC-First-Week/">00:00, Friday, 27 May UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-First-Week/">GSoC First Week</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p><img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /></p>
+
+<p>Previously, I was working on the <a href="https://github.com/symengine/symengine/pull/942">PR</a> for <code class="highlighter-rouge">FiniteSet</code> implementation.
+I managed to get it merged this week. So, now we have <code class="highlighter-rouge">UniversalSet</code>, <code class="highlighter-rouge">EmptySet</code>, <code class="highlighter-rouge">Interval</code> and <code class="highlighter-rouge">FiniteSet</code> implementation in SymEngine.
+Where in <code class="highlighter-rouge">FiniteSet</code> we have a <code class="highlighter-rouge">set_basic</code> which can contain any <code class="highlighter-rouge">Basic</code> object. That is apart from <code class="highlighter-rouge">Number</code> objects we can have <code class="highlighter-rouge">Symbol</code> objects as well, and even an <code class="highlighter-rouge">Expression</code>.<br /></p>
+
+<p>Then I started working on implementing <code class="highlighter-rouge">FiniteField</code>. I have sent this <a href="https://github.com/symengine/symengine/pull/955">PR</a>. Initially I was using <code class="highlighter-rouge">std::map&lt;unsigned, int&gt;</code> as the <code class="highlighter-rouge">type</code> for <code class="highlighter-rouge">dict_</code> and <code class="highlighter-rouge">int</code> type for <code class="highlighter-rouge">modulo_</code>, but I realized that there are already <code class="highlighter-rouge">inverse</code> function written for <code class="highlighter-rouge">integer_class</code>/<code class="highlighter-rouge">mpz</code>, so I changed the <code class="highlighter-rouge">dict_</code> to <code class="highlighter-rouge">std::map&lt;unsigned, integer_class&gt;</code> and <code class="highlighter-rouge">modulo_</code> to <code class="highlighter-rouge">integer_class</code>.
+While implementing this, I thought of writing tests after doing the whole implementation. And when I wrote the tests, I realized how badly I had done the implementation, like missing corner cases and all. It is always a better practice to write tests parallely with your implementation.<br /></p>
+
+<p>So, As of now I have implemented the following functions:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">gf_add_ground(const integer_class a)</code></li>
+  <li><code class="highlighter-rouge">gf_sub_ground(const integer_class a)</code></li>
+  <li><code class="highlighter-rouge">gf_mul_ground(const integer_class a)</code></li>
+  <li><code class="highlighter-rouge">gf_quo_ground(const integer_class a)</code></li>
+  <li><code class="highlighter-rouge">gf_add(const RCP&lt;const GaloisField&gt; &amp;o)</code></li>
+  <li><code class="highlighter-rouge">gf_sub(const RCP&lt;const GaloisField&gt; &amp;o)</code></li>
+  <li><code class="highlighter-rouge">gf_mul(const RCP&lt;const GaloisField&gt; &amp;o)</code></li>
+</ul>
+
+<p>Where <code class="highlighter-rouge">gf_*_ground</code> does the operation represented by <code class="highlighter-rouge">*</code> by the integer <code class="highlighter-rouge">a</code> to the polynomaial in the given field.
+And <code class="highlighter-rouge">gf_add</code>, <code class="highlighter-rouge">gf_sub</code>, <code class="highlighter-rouge">gf_mul</code> do their respective operation with another polynomial in the finite field.
+<br />
+I will be implementing <code class="highlighter-rouge">gf_div</code> this weekend.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">May 24, 2016</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -165,7 +254,7 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-89ae9fcb feed-" id="item-bbaa0c7f">
+		    <div class="box" class="item feed-89ae9fcb feed-" id="item-e7f2be4f">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -250,9 +339,9 @@ We see that there are algorithms for factorization in finite fields:</p>
 
 <p>I have been alloted <a href="https://github.com/isuruf">Isuru Fernando</a>, <a href="https://github.com/thilinarmtb">Thilina Rathnayake</a>, <a href="https://github.com/Sumith1896">Sumith</a> and <a href="https://github.com/certik">Ond&#345;ej &#268;ert&#237;k</a> as mentors.<br />
 The SymEngine community is very fast in reachability.
-We had a discussion on <a href="https://gitter.im/symengine/symengine">gitter channel of SymEngine</a>, about the proceedings of our Proposals. As SymEngine has an implementaion of sparse polynomials, I will be working on changing them to Finite Fields. Like:<br /><br />
-<code class="highlighter-rouge">
-GaloisField::GaloisField(std::map&lt;unsigned, int&gt; &amp;dict, unsigned modulo) : modulo_(modulo)
+We had a discussion on <a href="https://gitter.im/symengine/symengine">gitter channel of SymEngine</a>, about the proceedings of our Proposals. As SymEngine has an implementaion of sparse polynomials, I will be working on changing them to Finite Fields. Like:<br /><br /></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>GaloisField::GaloisField(std::map&lt;unsigned, int&gt; &amp;dict, unsigned modulo) : modulo_(modulo)
 {
 	unsigned temp;
 	for (auto iter : dict) {
@@ -261,8 +350,10 @@ GaloisField::GaloisField(std::map&lt;unsigned, int&gt; &amp;dict, unsigned modul
 			dict_[iter.first] = temp;
 	}
 }
-</code>
-<br />
+</code></pre>
+</div>
+
+<p><br />
 where <code class="highlighter-rouge">dict</code> is the dictionary of Univariate Polynomial representation and, <code class="highlighter-rouge">dict_</code> stores its finite field representation modulo <code class="highlighter-rouge">modulo_</code>.
 I will be implementing this in the first week of GSoC period.</p>
 
@@ -3815,94 +3906,6 @@ Also the high level value class <code>Expression</code> was implemented in <code
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">August 16, 2015</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7eb48802 feed-" id="item-637a4a1b">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/sumith1896.png"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Sumith (sumith1896) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://sumith1896.github.io//GSoC-Progress-Week-10-&amp;-11">00:00, Sunday, 16 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://sumith1896.github.io//GSoC-Progress-Week-10-&amp;-11">GSoC Progress - Week 10 and 11</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/sumith1896.png"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Sumith (sumith1896) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://sumith1896.github.io//GSoC-Progress-Week-10-&amp;-11">00:00, Sunday, 16 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://sumith1896.github.io//GSoC-Progress-Week-10-&amp;-11">GSoC Progress - Week 10 and 11</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Hello all. Here are the most recent developments in the Polynomial wrappers.</p>
-
-<h3>Report</h3>
-
-<ul>
-<li><p>The Polynomial wrappers was using <code>piranha::hash_set</code> as the <code>Polynomial</code> wrappers, hence when there was no <code>Piranha</code> as a dependence, the <code>Polynomial</code> wouldn't compile. The fix to this was to use <code>std::unordered_set</code> with <code>-DWITH_PIRANHA=no</code> so that there would be atleast a slow version available.</p></li>
-<li><p>Another issue was Travis testing of <code>Polynomial</code>. Since we depend on <code>Piranha</code>, we had to setup Travis testing with <code>Piranha</code> included and <code>Polynomial</code> tests run. This was done in the merged PR <a href="https://github.com/sympy/symengine/pull/585">585</a>.</p></li>
-<li><p>Before we get the <code>Polynomial</code> merged we have to add <code>mul_poly</code>, improve printing, and test exhaustively. The <code>mul_poly</code> is ready <a href="https://github.com/shivamvats/symengine/pull/4">here</a>, will be merged once more tests are prepared.</p></li>
-</ul>
-
-<p>For <code>mul_poly</code>, previously we never checked the variables corresponding to the <code>hash_set</code>s, which implies you could only multiply a <code>n</code> variable polynomial with another <code>n</code> variable polynomial with the variable symbols same in both. When the variables of two hash_sets are different, a work around would be needed. This would result in slow down if done directly.</p>
-
-<p>As suggested by <a href="https://github.com/certik">Ond&#345;ej</a>, <code>mul_poly</code> now calls two functions <code>_normalize_mul</code> and <code>_mul_hashest</code>. Here <code>_noramlize_mul</code> sees to it that the <code>hash_set</code>s satisfy the afore mentioned criteria and then <code>_mul_hashset</code> operates  <br />
-For example, say <code>mul_poly</code> is called,
-then <code>_normalize_mul</code> converts <code>{1, 2, 3}</code> of <code>x, y, z</code> and <code>{4, 5, 6}</code> of <code>p, q, r</code> to <code>{1, 2, 3, 0, 0, 0}</code> and <code>{0, 0, 0, 4, 5, 6}</code>
-and <code>_mul_hashset</code> multiplies the two <code>hash_set</code>. The speed of benchmarks determined by <code>_mul_hashset</code>.</p>
-
-<ul>
-<li><p>The printing needs improvement. As of now the polynomial <code>2*x + 2*y</code> gets printed as <code>2*y**1*x**0 + 2*y**0*x**1</code>.</p></li>
-<li><p>Not all that was planned could be completed this summers, mostly because of my hectic schedule after the vacations ended and institure began. I am planning to work after the program ends too, when the workload eases. As the final deadline week of GSoC is coming up, I need to ensure at least the PRs on hold gets merged.I am planning to continue after the period ends so as </p></li>
-</ul>
-
-<p>That's all I have <br />
-<strong>See ya</strong></p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3930,80 +3933,80 @@ and <code>_mul_hashset</code> multiplies the two <code>hash_set</code>. The spee
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>18:12, Friday, 27 May</td>
-<td>18:27, Friday, 27 May</td>
+<td>18:32, Friday, 27 May</td>
+<td>18:47, Friday, 27 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>18:12, Friday, 27 May</td>
-<td>18:27, Friday, 27 May</td>
+<td>18:32, Friday, 27 May</td>
+<td>18:47, Friday, 27 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>18:12, Friday, 27 May</td>
-<td>18:27, Friday, 27 May</td>
+<td>18:32, Friday, 27 May</td>
+<td>18:47, Friday, 27 May</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>18:12, Friday, 27 May</td>
-<td>18:27, Friday, 27 May</td>
+<td>18:32, Friday, 27 May</td>
+<td>18:47, Friday, 27 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>18:12, Friday, 27 May</td>
-<td>18:27, Friday, 27 May</td>
+<td>18:32, Friday, 27 May</td>
+<td>18:47, Friday, 27 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>18:12, Friday, 27 May</td>
-<td>18:27, Friday, 27 May</td>
+<td>18:32, Friday, 27 May</td>
+<td>18:47, Friday, 27 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>18:12, Friday, 27 May</td>
-<td>18:27, Friday, 27 May</td>
+<td>18:32, Friday, 27 May</td>
+<td>18:47, Friday, 27 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>18:12, Friday, 27 May</td>
-<td>18:27, Friday, 27 May</td>
+<td>18:32, Friday, 27 May</td>
+<td>18:47, Friday, 27 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://s-hacker.info">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://s-hacker.info/blog/gsoc16/feeds/sympy.xml">XML</a></td>
-<td>18:12, Friday, 27 May</td>
-<td>18:27, Friday, 27 May</td>
+<td>18:32, Friday, 27 May</td>
+<td>18:47, Friday, 27 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>18:12, Friday, 27 May</td>
-<td>18:27, Friday, 27 May</td>
+<td>18:32, Friday, 27 May</td>
+<td>18:47, Friday, 27 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>18:12, Friday, 27 May</td>
-<td>18:27, Friday, 27 May</td>
+<td>18:32, Friday, 27 May</td>
+<td>18:47, Friday, 27 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>18:12, Friday, 27 May</td>
-<td>18:27, Friday, 27 May</td>
+<td>18:32, Friday, 27 May</td>
+<td>18:47, Friday, 27 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>18:12, Friday, 27 May</td>
-<td>18:27, Friday, 27 May</td>
+<td>18:32, Friday, 27 May</td>
+<td>18:47, Friday, 27 May</td>
 </tr>
 </table>
 

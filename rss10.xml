@@ -7,6 +7,38 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-First-Week</guid>
+      <title>GSoC First Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Fri, 27 May 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-First-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;Previously, I was working on the &lt;a href="https://github.com/symengine/symengine/pull/942"&gt;PR&lt;/a&gt; for &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; implementation.
+I managed to get it merged this week. So, now we have &lt;code class="highlighter-rouge"&gt;UniversalSet&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;EmptySet&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; implementation in SymEngine.
+Where in &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; we have a &lt;code class="highlighter-rouge"&gt;set_basic&lt;/code&gt; which can contain any &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt; object. That is apart from &lt;code class="highlighter-rouge"&gt;Number&lt;/code&gt; objects we can have &lt;code class="highlighter-rouge"&gt;Symbol&lt;/code&gt; objects as well, and even an &lt;code class="highlighter-rouge"&gt;Expression&lt;/code&gt;.&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Then I started working on implementing &lt;code class="highlighter-rouge"&gt;FiniteField&lt;/code&gt;. I have sent this &lt;a href="https://github.com/symengine/symengine/pull/955"&gt;PR&lt;/a&gt;. Initially I was using &lt;code class="highlighter-rouge"&gt;std::map&amp;lt;unsigned, int&amp;gt;&lt;/code&gt; as the &lt;code class="highlighter-rouge"&gt;type&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;int&lt;/code&gt; type for &lt;code class="highlighter-rouge"&gt;modulo_&lt;/code&gt;, but I realized that there are already &lt;code class="highlighter-rouge"&gt;inverse&lt;/code&gt; function written for &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt;/&lt;code class="highlighter-rouge"&gt;mpz&lt;/code&gt;, so I changed the &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;std::map&amp;lt;unsigned, integer_class&amp;gt;&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;modulo_&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt;.
+While implementing this, I thought of writing tests after doing the whole implementation. And when I wrote the tests, I realized how badly I had done the implementation, like missing corner cases and all. It is always a better practice to write tests parallely with your implementation.&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;So, As of now I have implemented the following functions:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_add_ground(const integer_class a)&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sub_ground(const integer_class a)&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_mul_ground(const integer_class a)&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_quo_ground(const integer_class a)&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_add(const RCP&amp;lt;const GaloisField&amp;gt; &amp;amp;o)&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sub(const RCP&amp;lt;const GaloisField&amp;gt; &amp;amp;o)&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_mul(const RCP&amp;lt;const GaloisField&amp;gt; &amp;amp;o)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Where &lt;code class="highlighter-rouge"&gt;gf_*_ground&lt;/code&gt; does the operation represented by &lt;code class="highlighter-rouge"&gt;*&lt;/code&gt; by the integer &lt;code class="highlighter-rouge"&gt;a&lt;/code&gt; to the polynomaial in the given field.
+And &lt;code class="highlighter-rouge"&gt;gf_add&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;gf_sub&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;gf_mul&lt;/code&gt; do their respective operation with another polynomial in the finite field.
+&lt;br /&gt;
+I will be implementing &lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt; this weekend.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=146</guid>
       <title>GSoC: First Week of Coding Phase</title>
       <author>Subham Tibra (shubhamtibra)</author>
@@ -59,9 +91,9 @@ We see that there are algorithms for factorization in finite fields:&lt;/p&gt;
 
 &lt;p&gt;I have been alloted &lt;a href="https://github.com/isuruf"&gt;Isuru Fernando&lt;/a&gt;, &lt;a href="https://github.com/thilinarmtb"&gt;Thilina Rathnayake&lt;/a&gt;, &lt;a href="https://github.com/Sumith1896"&gt;Sumith&lt;/a&gt; and &lt;a href="https://github.com/certik"&gt;Ond&amp;#345;ej &amp;#268;ert&amp;#237;k&lt;/a&gt; as mentors.&lt;br /&gt;
 The SymEngine community is very fast in reachability.
-We had a discussion on &lt;a href="https://gitter.im/symengine/symengine"&gt;gitter channel of SymEngine&lt;/a&gt;, about the proceedings of our Proposals. As SymEngine has an implementaion of sparse polynomials, I will be working on changing them to Finite Fields. Like:&lt;br /&gt;&lt;br /&gt;
-&lt;code class="highlighter-rouge"&gt;
-GaloisField::GaloisField(std::map&amp;lt;unsigned, int&amp;gt; &amp;amp;dict, unsigned modulo) : modulo_(modulo)
+We had a discussion on &lt;a href="https://gitter.im/symengine/symengine"&gt;gitter channel of SymEngine&lt;/a&gt;, about the proceedings of our Proposals. As SymEngine has an implementaion of sparse polynomials, I will be working on changing them to Finite Fields. Like:&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;GaloisField::GaloisField(std::map&amp;lt;unsigned, int&amp;gt; &amp;amp;dict, unsigned modulo) : modulo_(modulo)
 {
 	unsigned temp;
 	for (auto iter : dict) {
@@ -70,8 +102,10 @@ GaloisField::GaloisField(std::map&amp;lt;unsigned, int&amp;gt; &amp;amp;dict, un
 			dict_[iter.first] = temp;
 	}
 }
-&lt;/code&gt;
-&lt;br /&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;
 where &lt;code class="highlighter-rouge"&gt;dict&lt;/code&gt; is the dictionary of Univariate Polynomial representation and, &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; stores its finite field representation modulo &lt;code class="highlighter-rouge"&gt;modulo_&lt;/code&gt;.
 I will be implementing this in the first week of GSoC period.&lt;/p&gt;
 
@@ -2142,37 +2176,6 @@ Also the high level value class &lt;code&gt;Expression&lt;/code&gt; was implemen
 
 &lt;p&gt;There will be blog posts coming here, so stay tuned. Till then, &lt;br /&gt;
 &lt;strong&gt;Bye&lt;/strong&gt;&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://sumith1896.github.io//GSoC-Progress-Week-10-&amp;-11</guid>
-      <title>GSoC Progress - Week 10 and 11</title>
-      <author>Sumith (sumith1896)</author>
-      <pubDate>Sun, 16 Aug 2015 00:00:00 GMT</pubDate>
-      <link>http://sumith1896.github.io//GSoC-Progress-Week-10-&amp;-11</link>
-      <description>&lt;p&gt;Hello all. Here are the most recent developments in the Polynomial wrappers.&lt;/p&gt;
-
-&lt;h3&gt;Report&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The Polynomial wrappers was using &lt;code&gt;piranha::hash_set&lt;/code&gt; as the &lt;code&gt;Polynomial&lt;/code&gt; wrappers, hence when there was no &lt;code&gt;Piranha&lt;/code&gt; as a dependence, the &lt;code&gt;Polynomial&lt;/code&gt; wouldn't compile. The fix to this was to use &lt;code&gt;std::unordered_set&lt;/code&gt; with &lt;code&gt;-DWITH_PIRANHA=no&lt;/code&gt; so that there would be atleast a slow version available.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Another issue was Travis testing of &lt;code&gt;Polynomial&lt;/code&gt;. Since we depend on &lt;code&gt;Piranha&lt;/code&gt;, we had to setup Travis testing with &lt;code&gt;Piranha&lt;/code&gt; included and &lt;code&gt;Polynomial&lt;/code&gt; tests run. This was done in the merged PR &lt;a href="https://github.com/sympy/symengine/pull/585"&gt;585&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Before we get the &lt;code&gt;Polynomial&lt;/code&gt; merged we have to add &lt;code&gt;mul_poly&lt;/code&gt;, improve printing, and test exhaustively. The &lt;code&gt;mul_poly&lt;/code&gt; is ready &lt;a href="https://github.com/shivamvats/symengine/pull/4"&gt;here&lt;/a&gt;, will be merged once more tests are prepared.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;For &lt;code&gt;mul_poly&lt;/code&gt;, previously we never checked the variables corresponding to the &lt;code&gt;hash_set&lt;/code&gt;s, which implies you could only multiply a &lt;code&gt;n&lt;/code&gt; variable polynomial with another &lt;code&gt;n&lt;/code&gt; variable polynomial with the variable symbols same in both. When the variables of two hash_sets are different, a work around would be needed. This would result in slow down if done directly.&lt;/p&gt;
-
-&lt;p&gt;As suggested by &lt;a href="https://github.com/certik"&gt;Ond&amp;#345;ej&lt;/a&gt;, &lt;code&gt;mul_poly&lt;/code&gt; now calls two functions &lt;code&gt;_normalize_mul&lt;/code&gt; and &lt;code&gt;_mul_hashest&lt;/code&gt;. Here &lt;code&gt;_noramlize_mul&lt;/code&gt; sees to it that the &lt;code&gt;hash_set&lt;/code&gt;s satisfy the afore mentioned criteria and then &lt;code&gt;_mul_hashset&lt;/code&gt; operates  &lt;br /&gt;
-For example, say &lt;code&gt;mul_poly&lt;/code&gt; is called,
-then &lt;code&gt;_normalize_mul&lt;/code&gt; converts &lt;code&gt;{1, 2, 3}&lt;/code&gt; of &lt;code&gt;x, y, z&lt;/code&gt; and &lt;code&gt;{4, 5, 6}&lt;/code&gt; of &lt;code&gt;p, q, r&lt;/code&gt; to &lt;code&gt;{1, 2, 3, 0, 0, 0}&lt;/code&gt; and &lt;code&gt;{0, 0, 0, 4, 5, 6}&lt;/code&gt;
-and &lt;code&gt;_mul_hashset&lt;/code&gt; multiplies the two &lt;code&gt;hash_set&lt;/code&gt;. The speed of benchmarks determined by &lt;code&gt;_mul_hashset&lt;/code&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The printing needs improvement. As of now the polynomial &lt;code&gt;2*x + 2*y&lt;/code&gt; gets printed as &lt;code&gt;2*y**1*x**0 + 2*y**0*x**1&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Not all that was planned could be completed this summers, mostly because of my hectic schedule after the vacations ended and institure began. I am planning to work after the program ends too, when the workload eases. As the final deadline week of GSoC is coming up, I need to ensure at least the PRs on hold gets merged.I am planning to continue after the period ends so as &lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;That's all I have &lt;br /&gt;
-&lt;strong&gt;See ya&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
