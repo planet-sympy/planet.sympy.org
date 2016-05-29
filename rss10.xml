@@ -35,6 +35,95 @@
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/232/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/232/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=232&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://srajangarg.github.io//2016/05/29/Wrap-a-Lot</guid>
+      <title>Wrap a lot</title>
+      <author>Srajan Garg (srajangarg)</author>
+      <pubDate>Sun, 29 May 2016 00:00:00 GMT</pubDate>
+      <link>http://srajangarg.github.io//2016/05/29/Wrap-a-Lot/</link>
+      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
+
+&lt;p&gt;As I pointed out in last week&amp;#8217;s post, I have begun my work on wrapping aspects my project. The final aim of wrapping the polynomial class is to provide users with the option of using specialized polynomial libraries like Flint and Piranha.&lt;/p&gt;
+
+&lt;p&gt;Right at the beginning of the project, I was lacking the basic idea of how the wrapping will work. Mostly I was confused by the fact that we have to right common code for all the libraries (SymEngine, Flint &amp;amp; Piranha) with the problem being, each of the these libraries have different internal representation and methods. By the end of the week, thanks to Isuru, I have much more understanding of the structure of the code is supposed to be. Here&amp;#8217;s a short summary on how it will work.&lt;/p&gt;
+
+&lt;h3 id="polynomial-base"&gt;Polynomial Base&lt;/h3&gt;
+&lt;p&gt;There will be four end (derived) classes. &lt;code class="highlighter-rouge"&gt;UIntPoly&lt;/code&gt; &amp;amp; &lt;code class="highlighter-rouge"&gt;UExprPoly&lt;/code&gt; (the SymEngine) polynomials, &lt;code class="highlighter-rouge"&gt;UIntPolyFlint&lt;/code&gt; and also &lt;code class="highlighter-rouge"&gt;UIntPolyPiranha&lt;/code&gt;. Each of these classes derive from the base class called &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt;. Now the base class must have methods and members which can be used commonly by each of the derived classes. Thus, the base class should have two members, the &lt;code class="highlighter-rouge"&gt;var&lt;/code&gt; which depicts the variable of the polynomial and a &lt;code class="highlighter-rouge"&gt;container&lt;/code&gt; which contains the data about the polynomial (basically the coefficients corresponding to each degree).&lt;/p&gt;
+
+&lt;p&gt;This is skeleton of how the classes should look like :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Container&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UPolyBase&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+	&lt;span class="n"&gt;Symbol&lt;/span&gt; &lt;span class="n"&gt;var&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+	&lt;span class="n"&gt;Container&lt;/span&gt; &lt;span class="n"&gt;container&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UIntPolyPiranha&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;UPolyBase&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;piranha&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;polynomail&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UIntPolyFlint&lt;/span&gt;   &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;UPolyBase&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;flint&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;fmpz_polyxx&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id="symengines-container"&gt;SymEngine&amp;#8217;s Container&lt;/h3&gt;
+
+&lt;p&gt;The containers of the Flint and Piranha will be discussed in detail in the upcoming weeks. We now had to think about what the container must be for SymEngine. Also we have to merge as much functionality as possible. I saw that both the external libraries had operators overloaded for addition, subtraction, multiplication and division. So, methods like &lt;code class="highlighter-rouge"&gt;add_poly&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;sub_poly&lt;/code&gt; etc. could be made common in the base class itself if I implemented a container for holding SymEngine polynomials which also has it&amp;#8217;s operators overloaded.&lt;/p&gt;
+
+&lt;p&gt;I was not familiar with the symbolic side of the polynomials, and found out that a container had already been made for &lt;code class="highlighter-rouge"&gt;UExprPoly&lt;/code&gt; called &lt;code class="highlighter-rouge"&gt;UExprDict&lt;/code&gt;. The class was nothing but a wrapper around &lt;code class="highlighter-rouge"&gt;map&amp;lt;int, Expression&amp;gt;&lt;/code&gt;. It had overloaded methods for addition, subtraction etc. So, technically this dictionary was storing all the information about the polynomials. I just had to create another similar wrapper for &lt;code class="highlighter-rouge"&gt;map&amp;lt;uint, integer_class&amp;gt;&lt;/code&gt; for the integer counterpart of the polynomial class. This resulted in &lt;a href="https://github.com/symengine/symengine/pull/946"&gt;#946&lt;/a&gt; and Isuru mentioned that most of the code for both these dictionary wrappers is about the same! So, I decided to make a base class for polynomial dictionary wrappers and both of these can inherit from that.&lt;/p&gt;
+
+&lt;p&gt;The ordered map wrapper looks like :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Wrapper&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;ODictWrapper&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;map&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Value&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;dict_&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="k"&gt;friend&lt;/span&gt; &lt;span class="n"&gt;Wrapper&lt;/span&gt; &lt;span class="k"&gt;operator&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Wrapper&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Wrapper&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;Wrapper&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="o"&gt;-=&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+
+    &lt;span class="n"&gt;Wrapper&lt;/span&gt; &lt;span class="k"&gt;operator&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;ODictWrapper&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dict_&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+            &lt;span class="n"&gt;iter&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;second&lt;/span&gt; &lt;span class="o"&gt;*=&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="k"&gt;static_cast&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Wrapper&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+
+    &lt;span class="p"&gt;....&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UIntDict&lt;/span&gt;  &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ODictWrapper&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;uint&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;integer_class&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;UIntDict&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UExprDict&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ODictWrapper&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Expression&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;UExprDict&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id="finishing-the-class"&gt;Finishing the class&lt;/h3&gt;
+
+&lt;p&gt;After the containers for SymEngine were complete, I started implementing the polynomial base class, from which the two current polynomial classes will inherit. The class turned out to be very similar to the prototype described above. Accessor methods were added and basic polynomial functions were added &lt;a href="https://github.com/symengine/symengine/pull/951"&gt;#951&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;All we have to do now for functions like &lt;code class="highlighter-rouge"&gt;add_poly&lt;/code&gt; is use the overloaded operators on the containers. Also, template argument deduction will automatically allow us to call the functions directly on two same polynomial types.&lt;/p&gt;
+
+&lt;p&gt;An example of a common template function for basic polynomial manipulation :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="n"&gt;RCP&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;add_upoly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;dict&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_poly&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+    &lt;span class="n"&gt;dict&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_poly&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;from_dict&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_var&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;move&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dict&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
+
+&lt;p&gt;This work was done before the polynomial base class was implemented. Also, the names of the classes I refer to here are the new names. The old names were a little unintuitive, so decided to change them, along with introducing a new subfolder in the repository to hold all code related to polynomials (and their tests). Some code was also shifted to places more apt, all changes can be seen here &lt;a href="https://github.com/symengine/symengine/pull/960"&gt;#960&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;There are a small number of miscellaneous changes that need to be worked out in the overall structure, here they are &lt;a href="https://github.com/symengine/symengine/pull/962"&gt;#962&lt;/a&gt;. More on this and Flint next week! Goodbye!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://gxyd.github.io/GSoC Week 1</guid>
       <title>GSoC Week 1</title>
       <author>Gaurav Dhingra (gxyd)</author>
@@ -2061,220 +2150,6 @@ Open spaces are a way for people to come together to talk about topics, ideas or
 
 &lt;p&gt;Thanks for the reading &lt;br /&gt;
 Be back for more &lt;br /&gt;&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://asmeurer.github.io/blog/posts/lessons-learned-from-working-at-continuum/</guid>
-      <title>Lessons learned from working at Continuum</title>
-      <author>Aaron Meurer (asmeurer)</author>
-      <pubDate>Mon, 05 Oct 2015 22:29:03 GMT</pubDate>
-      <link>https://asmeurer.github.io/blog/posts/lessons-learned-from-working-at-continuum/</link>
-      <description>&lt;div&gt;&lt;p&gt;Last Friday was my last day working at Continuum Analytics. I enjoyed my
-time at the company, and wish success to it, but the time has come for me to
-move on. Starting later this year, I will start working with
-&lt;a href="https://twitter.com/scopatz"&gt;Anthony Scopatz&lt;/a&gt; at his new lab
-&lt;a href="http://www.ergs.sc.edu/index.html"&gt;ERGS&lt;/a&gt; at the University of South
-Carolina.&lt;/p&gt;
-&lt;p&gt;During my time at Continuum (over two years if you count a summer internship),
-I primarily worked on the
-&lt;a href="https://www.continuum.io/downloads"&gt;Anaconda distribution&lt;/a&gt; and its open
-source package manager, &lt;a href="http://conda.pydata.org/"&gt;conda&lt;/a&gt;.  I learned a lot of
-lessons in that time, and I'd like to share some of them here.&lt;/p&gt;
-&lt;p&gt;In no particular order:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Left to their own devices, people will make the minimal possible solution to
-  packaging. They won't try to architect something. The result will be
-  over-engineered, specific to their use-case, and lack reproducibility.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;The best way to ensure that some software has no bugs is for it to have many
-  users.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Be wary of the "software would be great if it weren't for all the users"
-  mentality (cf. the previous point).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Most people don't code defensively. If you are working on a project that
-  requires extreme stability, be cautious of contributions from those outside
-  the development team.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Hostility towards Windows and Windows users doesn't help anyone.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href="https://twitter.com/asmeurer/status/593170976981913600"&gt;https://twitter.com/asmeurer/status/593170976981913600&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;For a software updater, stability is the number one priority. If the updater
-  breaks, how can a fix be deployed?&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Even if you configure your program to update itself every time it runs you
-  will still get bug reports with arbitrarily old versions.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Separating components into separate git repositories leads to a
-  philosophical separation of concerns among the components.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Everyone who isn't an active developer on the project will ignore this
-  separation and open issues in the wrong repo.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Avoid object oriented programming when procedural programming will do just
-  fine.&lt;sup id="fnref:fn1"&gt;&lt;a class="footnote-ref" href="https://asmeurer.github.io/blog/posts/lessons-learned-from-working-at-continuum/#fn:fn1" rel="footnote"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Open source is more about the open than the source. Develop things in the
-  open, and you will create a community that respects you.&lt;sup id="fnref:fn1"&gt;&lt;a class="footnote-ref" href="https://asmeurer.github.io/blog/posts/lessons-learned-from-working-at-continuum/#fn:fn1" rel="footnote"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Academics (often) don't know good software practices, nor good licensing
-  practices.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Neither do some large corporations.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Avoid over-engineering things.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Far fewer people than I would have thought understand the difference between
-  hard links and soft links.&lt;sup id="fnref:fn2"&gt;&lt;a class="footnote-ref" href="https://asmeurer.github.io/blog/posts/lessons-learned-from-working-at-continuum/#fn:fn2" rel="footnote"&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Changelogs are useful.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Semantic versioning is over-hyped.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;If you make something and release it, the first version should be 1.0 (not
-  0.1 or 0.0.1).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Getting a difficult package to compile is like hacking a computer. All it
-  takes is time.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;It doesn't matter how open source friendly your business is, there will
-  always be people who will be skeptical and point their fingers at the
-  smallest proprietary components, fear monger, and overgeneralize unrelated
-  issues into FUD. These people should generally be ignored.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Don't feed the trolls.&lt;sup id="fnref:fn1"&gt;&lt;a class="footnote-ref" href="https://asmeurer.github.io/blog/posts/lessons-learned-from-working-at-continuum/#fn:fn1" rel="footnote"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;People constantly misspell the name of
-  &lt;a href="https://twitter.com/asmeurer/status/618595687958122496"&gt;Apple's desktop operating system&lt;/a&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;People always assume you have way more automation than you really do.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;The Python standard library is not a Zen garden. Some parts of it are
-  completely broken, and if you need to rely on them, you'll have to rewrite
-  them. &lt;code&gt;shutil.rmtree&lt;/code&gt; on Windows is one example of this.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Linux is strictly backwards compatible. Windows is strictly forwards
-  compatible. &lt;sup id="fnref:fn3"&gt;&lt;a class="footnote-ref" href="https://asmeurer.github.io/blog/posts/lessons-learned-from-working-at-continuum/#fn:fn3" rel="footnote"&gt;3&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;On Linux, things tend to be very simple. On Windows, things tend to be very
-  complicated.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;I can't decide about OS X. It lies somewhere in between.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Nobody uses 32-bit Linux. Why do we even support that?&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;People oversimplify the problem of solving for package dependencies in their
-  heads.  No one realizes that it's meaningless to say something like "the
-  dependencies of NumPy" (every build of every version of NumPy has its own
-  set of dependencies, which may or may not be the same).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Writing a set of rules and a solver to solve against those rules is
-  relatively easy. Writing heuristics to tell users why those rules are
-  unsolvable when they are is hard.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;SAT solvers solve NP-complete problems in general, but they can be very fast
-  to solve common case problems. &lt;sup id="fnref:fn1"&gt;&lt;a class="footnote-ref" href="https://asmeurer.github.io/blog/posts/lessons-learned-from-working-at-continuum/#fn:fn1" rel="footnote"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Some of the smartest people I know, who otherwise make very rational and
-  intelligent decisions,
-  &lt;a href="https://asmeurer.github.io/python3-presentation/slides.html"&gt;refuse to update to Python 3&lt;/a&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;As an introvert, the option of working from home is great for maintaining
-  sanity.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href="http://blog.codinghorror.com/a-developers-second-most-important-asset/"&gt;Aeron chairs are awesome&lt;/a&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;If living in Austin doesn't turn you into a foodie you will at least gain a
-  respect for them.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Twitter, if used correctly, is a great way to interact with your users.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Twitter is also a great place to learn new things. Follow
-  &lt;a href="https://twitter.com/JohnDCook"&gt;John Cook&lt;/a&gt; and
-  &lt;a href="https://twitter.com/worrydream"&gt;Bret Victor&lt;/a&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;One of the best ways to make heavily shared content is to make it about git
-  (at least if you're an expert).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;A good optimization algorithm avoids getting caught in local maxima by
-  trying different parts of the search space that initially appear to be
-  worse. The same approach should be taken in life.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;Footnotes&lt;/h4&gt;
-&lt;div class="footnote"&gt;
-&lt;hr /&gt;
-&lt;ol&gt;
-&lt;li id="fn:fn1"&gt;
-&lt;p&gt;These are things that I already knew, but were reiterated.&amp;#160;&lt;a class="footnote-backref" href="https://asmeurer.github.io/blog/posts/lessons-learned-from-working-at-continuum/#fnref:fn1" rev="footnote" title="Jump back to footnote 1 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li id="fn:fn2"&gt;
-&lt;p&gt;If you are one of those people, I have a small presentation that
-   explains the difference &lt;a href="https://speakerdeck.com/asmeurer/hard-links-and-soft-links"&gt;here&lt;/a&gt;&amp;#160;&lt;a class="footnote-backref" href="https://asmeurer.github.io/blog/posts/lessons-learned-from-working-at-continuum/#fnref:fn2" rev="footnote" title="Jump back to footnote 2 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li id="fn:fn3"&gt;
-&lt;p&gt;These terms can be confusing, and I admit I got this backwards the
-    first time I wrote this. According to Wikipedia,
-    &lt;a href="https://en.wikipedia.org/wiki/Forward_compatibility"&gt;forwards compatible&lt;/a&gt;
-    means a system can accept input intended for a later version of itself
-    and
-    &lt;a href="https://en.wikipedia.org/wiki/Backward_compatibility"&gt;backwards compatible&lt;/a&gt;
-    means a system can accept input intended for an earlier version of
-    itself.&lt;/p&gt;
-&lt;p&gt;What I specifically mean here is that in terms of building packages
-for Linux or Windows, for Linux, you should build a package on the
-oldest version that you wish to support. That package will work on
-newer versions of Linux, but not anything older (generally due to the
-version of libc you are linked against).&lt;/p&gt;
-&lt;p&gt;On the other hand, on Windows, you can can compile things on the
-newest version (I used Windows 8 on my main Windows build VM), and it
-will work on older versions of Windows like XP (as long as you ship
-the right runtime DLLs). This is also somewhat confusing because
-Windows tends to be both forwards compatible &lt;em&gt;and&lt;/em&gt; backwards
-compatible.&amp;#160;&lt;a class="footnote-backref" href="https://asmeurer.github.io/blog/posts/lessons-learned-from-working-at-continuum/#fnref:fn3" rev="footnote" title="Jump back to footnote 3 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;&lt;/div&gt;</description>
     </item>
   </channel>
 </rss>
