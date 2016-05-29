@@ -175,7 +175,7 @@
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-aa06d76d feed-" id="item-f6967020">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-0f49e9e6">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -230,9 +230,9 @@
 					<div class="col-md-12 col-xs-12 descript">
 						<h3 id="overview">Overview</h3>
 
-<p>As I pointed out in last week&#8217;s post, I have begun my work on wrapping aspects my project. The final aim of wrapping the polynomial class is to provide users with the option of using specialized polynomial libraries like Flint and Piranha.</p>
+<p>As I pointed out in last week&#8217;s post, I have begun my work on the wrapping aspects of my project. The final aim of wrapping the polynomial class is to provide users with the option of using specialized polynomial libraries like Flint and Piranha.</p>
 
-<p>Right at the beginning of the project, I was lacking the basic idea of how the wrapping will work. Mostly I was confused by the fact that we have to right common code for all the libraries (SymEngine, Flint &amp; Piranha) with the problem being, each of the these libraries have different internal representation and methods. By the end of the week, thanks to Isuru, I have much more understanding of the structure of the code is supposed to be. Here&#8217;s a short summary on how it will work.</p>
+<p>Right at the beginning of the project, I was lacking the basic idea of how the wrapping will work. Mostly I was confused by the fact that we have to right common code for all the libraries (SymEngine, Flint &amp; Piranha) with the problem being, each of the these libraries have different internal representation and methods. By the end of the week, thanks to Isuru, I have much more understanding of the desired structure of the code. Here&#8217;s a short summary on how it will work.</p>
 
 <h3 id="polynomial-base">Polynomial Base</h3>
 <p>There will be four end (derived) classes. <code class="highlighter-rouge">UIntPoly</code> &amp; <code class="highlighter-rouge">UExprPoly</code> (the SymEngine) polynomials, <code class="highlighter-rouge">UIntPolyFlint</code> and also <code class="highlighter-rouge">UIntPolyPiranha</code>. Each of these classes derive from the base class called <code class="highlighter-rouge">UPolyBase</code>. Now the base class must have methods and members which can be used commonly by each of the derived classes. Thus, the base class should have two members, the <code class="highlighter-rouge">var</code> which depicts the variable of the polynomial and a <code class="highlighter-rouge">container</code> which contains the data about the polynomial (basically the coefficients corresponding to each degree).</p>
@@ -246,7 +246,8 @@
 	<span class="n">Container</span> <span class="n">container</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="k">class</span> <span class="nc">UIntPolyPiranha</span> <span class="o">:</span> <span class="n">UPolyBase</span><span class="o">&lt;</span><span class="n">piranha</span><span class="o">::</span><span class="n">polynomail</span><span class="o">&gt;</span>
+<span class="c1">// the derived polynomials
+</span><span class="k">class</span> <span class="nc">UIntPolyPiranha</span> <span class="o">:</span> <span class="n">UPolyBase</span><span class="o">&lt;</span><span class="n">piranha</span><span class="o">::</span><span class="n">polynomail</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">UIntPolyFlint</span>   <span class="o">:</span> <span class="n">UPolyBase</span><span class="o">&lt;</span><span class="n">flint</span><span class="o">::</span><span class="n">fmpz_polyxx</span><span class="o">&gt;</span>
 </code></pre>
 </div>
@@ -255,9 +256,9 @@
 
 <p>The containers of the Flint and Piranha will be discussed in detail in the upcoming weeks. We now had to think about what the container must be for SymEngine. Also we have to merge as much functionality as possible. I saw that both the external libraries had operators overloaded for addition, subtraction, multiplication and division. So, methods like <code class="highlighter-rouge">add_poly</code> and <code class="highlighter-rouge">sub_poly</code> etc. could be made common in the base class itself if I implemented a container for holding SymEngine polynomials which also has it&#8217;s operators overloaded.</p>
 
-<p>I was not familiar with the symbolic side of the polynomials, and found out that a container had already been made for <code class="highlighter-rouge">UExprPoly</code> called <code class="highlighter-rouge">UExprDict</code>. The class was nothing but a wrapper around <code class="highlighter-rouge">map&lt;int, Expression&gt;</code>. It had overloaded methods for addition, subtraction etc. So, technically this dictionary was storing all the information about the polynomials. I just had to create another similar wrapper for <code class="highlighter-rouge">map&lt;uint, integer_class&gt;</code> for the integer counterpart of the polynomial class. This resulted in <a href="https://github.com/symengine/symengine/pull/946">#946</a> and Isuru mentioned that most of the code for both these dictionary wrappers is about the same! So, I decided to make a base class for polynomial dictionary wrappers and both of these can inherit from that.</p>
+<p>I was not familiar with the symbolic side of the polynomials, and found out that a container had already been made for <code class="highlighter-rouge">UExprPoly</code> called <code class="highlighter-rouge">UExprDict</code>. The class was nothing but a wrapper around <code class="highlighter-rouge">map&lt;int, Expression&gt;</code>. It had overloaded methods for addition, subtraction etc. So, technically this dictionary was storing all the information about the polynomials. I just had to create another similar wrapper for <code class="highlighter-rouge">map&lt;uint, integer_class&gt;</code> for the integer counterpart of the polynomial class. This resulted in <a href="https://github.com/symengine/symengine/pull/946">#946</a> and Isuru mentioned that most of the code for both these dictionary wrappers is about the same! So, I decided to make a base class for polynomial dictionary wrappers and both of these can inherit from that. Any different implementations (like <code class="highlighter-rouge">*=</code>) can be overridden in the derived class if needed.</p>
 
-<p>The ordered map wrapper looks like :</p>
+<p>The ordered map base looks like :</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Key</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Value</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Wrapper</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">ODictWrapper</span>
@@ -282,7 +283,8 @@
     <span class="p">....</span>
 <span class="p">}</span>
 
-<span class="k">class</span> <span class="nc">UIntDict</span>  <span class="o">:</span> <span class="n">ODictWrapper</span><span class="o">&lt;</span><span class="n">uint</span><span class="p">,</span> <span class="n">integer_class</span><span class="p">,</span> <span class="n">UIntDict</span><span class="o">&gt;</span>
+<span class="c1">// the derived wrappers
+</span><span class="k">class</span> <span class="nc">UIntDict</span>  <span class="o">:</span> <span class="n">ODictWrapper</span><span class="o">&lt;</span><span class="n">uint</span><span class="p">,</span> <span class="n">integer_class</span><span class="p">,</span> <span class="n">UIntDict</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">UExprDict</span> <span class="o">:</span> <span class="n">ODictWrapper</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">UExprDict</span><span class="o">&gt;</span>
 </code></pre>
 </div>
@@ -293,7 +295,7 @@
 
 <p>All we have to do now for functions like <code class="highlighter-rouge">add_poly</code> is use the overloaded operators on the containers. Also, template argument deduction will automatically allow us to call the functions directly on two same polynomial types.</p>
 
-<p>An example of a common template function for basic polynomial manipulation :</p>
+<p>An example of a common template function for addition :</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Poly</span><span class="o">&gt;</span>
 <span class="n">RCP</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">Poly</span><span class="o">&gt;</span> <span class="n">add_upoly</span><span class="p">(</span><span class="k">const</span> <span class="n">Poly</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">Poly</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span>
@@ -305,11 +307,22 @@
 </code></pre>
 </div>
 
+<p>and how easily it can be used :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">A</span> <span class="o">=</span> <span class="n">uint_poly</span><span class="p">(</span><span class="s">"x"</span><span class="p">,</span> <span class="p">{(</span><span class="mi">0</span> <span class="o">:</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">2</span><span class="p">)});</span>   <span class="c1">// 2*x + 1
+</span><span class="n">B</span> <span class="o">=</span> <span class="n">uint_poly</span><span class="p">(</span><span class="s">"x"</span><span class="p">,</span> <span class="p">{(</span><span class="mi">2</span> <span class="o">:</span> <span class="mi">2</span><span class="p">)});</span>            <span class="c1">// 2*x**2
+</span>
+<span class="n">C</span> <span class="o">=</span>  <span class="n">add_upoly</span><span class="p">(</span><span class="o">*</span><span class="n">A</span><span class="p">,</span> <span class="o">*</span><span class="n">B</span><span class="p">);</span>
+</code></pre>
+</div>
+
 <h3 id="miscellaneous-work">Miscellaneous Work</h3>
 
-<p>This work was done before the polynomial base class was implemented. Also, the names of the classes I refer to here are the new names. The old names were a little unintuitive, so decided to change them, along with introducing a new subfolder in the repository to hold all code related to polynomials (and their tests). Some code was also shifted to places more apt, all changes can be seen here <a href="https://github.com/symengine/symengine/pull/960">#960</a>.</p>
+<p>The names of the classes I refer to here are the new names. The old names were a little unintuitive, so decided to change them, along with introducing a new subfolder in the repository to hold all code related to polynomials (and their tests). Some code was also shifted to places more apt, all changes can be seen here <a href="https://github.com/symengine/symengine/pull/960">#960</a>.</p>
 
-<p>There are a small number of miscellaneous changes that need to be worked out in the overall structure, here they are <a href="https://github.com/symengine/symengine/pull/962">#962</a>. More on this and Flint next week! Goodbye!</p>
+<p>There are a small number of miscellaneous changes that need to be worked out in the overall structure, here they are <a href="https://github.com/symengine/symengine/pull/962">#962</a>.</p>
+
+<p>More on this and Flint next week! Goodbye!</p>
 					</div>
 				</div>
 			</div>
@@ -3901,80 +3914,80 @@ Be back for more <br /></p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>13:34, Sunday, 29 May</td>
-<td>13:49, Sunday, 29 May</td>
+<td>13:55, Sunday, 29 May</td>
+<td>14:10, Sunday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>13:34, Sunday, 29 May</td>
-<td>13:49, Sunday, 29 May</td>
+<td>13:55, Sunday, 29 May</td>
+<td>14:10, Sunday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>13:34, Sunday, 29 May</td>
-<td>13:49, Sunday, 29 May</td>
+<td>13:55, Sunday, 29 May</td>
+<td>14:10, Sunday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>13:34, Sunday, 29 May</td>
-<td>13:49, Sunday, 29 May</td>
+<td>13:55, Sunday, 29 May</td>
+<td>14:10, Sunday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>13:34, Sunday, 29 May</td>
-<td>13:49, Sunday, 29 May</td>
+<td>13:55, Sunday, 29 May</td>
+<td>14:10, Sunday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>13:34, Sunday, 29 May</td>
-<td>13:49, Sunday, 29 May</td>
+<td>13:55, Sunday, 29 May</td>
+<td>14:10, Sunday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>13:34, Sunday, 29 May</td>
-<td>13:49, Sunday, 29 May</td>
+<td>13:55, Sunday, 29 May</td>
+<td>14:10, Sunday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>13:34, Sunday, 29 May</td>
-<td>13:49, Sunday, 29 May</td>
+<td>13:55, Sunday, 29 May</td>
+<td>14:10, Sunday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://s-hacker.info">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://s-hacker.info/blog/gsoc16/feeds/sympy.xml">XML</a></td>
-<td>13:34, Sunday, 29 May</td>
-<td>13:49, Sunday, 29 May</td>
+<td>13:55, Sunday, 29 May</td>
+<td>14:10, Sunday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>13:34, Sunday, 29 May</td>
-<td>13:49, Sunday, 29 May</td>
+<td>13:55, Sunday, 29 May</td>
+<td>14:10, Sunday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>13:34, Sunday, 29 May</td>
-<td>13:49, Sunday, 29 May</td>
+<td>13:55, Sunday, 29 May</td>
+<td>14:10, Sunday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>13:34, Sunday, 29 May</td>
-<td>13:49, Sunday, 29 May</td>
+<td>13:55, Sunday, 29 May</td>
+<td>14:10, Sunday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>13:34, Sunday, 29 May</td>
-<td>13:49, Sunday, 29 May</td>
+<td>13:55, Sunday, 29 May</td>
+<td>14:10, Sunday, 29 May</td>
 </tr>
 </table>
 

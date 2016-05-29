@@ -42,9 +42,9 @@
       <link>http://srajangarg.github.io//2016/05/29/Wrap-a-Lot/</link>
       <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
 
-&lt;p&gt;As I pointed out in last week&amp;#8217;s post, I have begun my work on wrapping aspects my project. The final aim of wrapping the polynomial class is to provide users with the option of using specialized polynomial libraries like Flint and Piranha.&lt;/p&gt;
+&lt;p&gt;As I pointed out in last week&amp;#8217;s post, I have begun my work on the wrapping aspects of my project. The final aim of wrapping the polynomial class is to provide users with the option of using specialized polynomial libraries like Flint and Piranha.&lt;/p&gt;
 
-&lt;p&gt;Right at the beginning of the project, I was lacking the basic idea of how the wrapping will work. Mostly I was confused by the fact that we have to right common code for all the libraries (SymEngine, Flint &amp;amp; Piranha) with the problem being, each of the these libraries have different internal representation and methods. By the end of the week, thanks to Isuru, I have much more understanding of the structure of the code is supposed to be. Here&amp;#8217;s a short summary on how it will work.&lt;/p&gt;
+&lt;p&gt;Right at the beginning of the project, I was lacking the basic idea of how the wrapping will work. Mostly I was confused by the fact that we have to right common code for all the libraries (SymEngine, Flint &amp;amp; Piranha) with the problem being, each of the these libraries have different internal representation and methods. By the end of the week, thanks to Isuru, I have much more understanding of the desired structure of the code. Here&amp;#8217;s a short summary on how it will work.&lt;/p&gt;
 
 &lt;h3 id="polynomial-base"&gt;Polynomial Base&lt;/h3&gt;
 &lt;p&gt;There will be four end (derived) classes. &lt;code class="highlighter-rouge"&gt;UIntPoly&lt;/code&gt; &amp;amp; &lt;code class="highlighter-rouge"&gt;UExprPoly&lt;/code&gt; (the SymEngine) polynomials, &lt;code class="highlighter-rouge"&gt;UIntPolyFlint&lt;/code&gt; and also &lt;code class="highlighter-rouge"&gt;UIntPolyPiranha&lt;/code&gt;. Each of these classes derive from the base class called &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt;. Now the base class must have methods and members which can be used commonly by each of the derived classes. Thus, the base class should have two members, the &lt;code class="highlighter-rouge"&gt;var&lt;/code&gt; which depicts the variable of the polynomial and a &lt;code class="highlighter-rouge"&gt;container&lt;/code&gt; which contains the data about the polynomial (basically the coefficients corresponding to each degree).&lt;/p&gt;
@@ -58,7 +58,8 @@
 	&lt;span class="n"&gt;Container&lt;/span&gt; &lt;span class="n"&gt;container&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
 
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UIntPolyPiranha&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;UPolyBase&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;piranha&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;polynomail&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="c1"&gt;// the derived polynomials
+&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UIntPolyPiranha&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;UPolyBase&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;piranha&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;polynomail&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
 &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UIntPolyFlint&lt;/span&gt;   &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;UPolyBase&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;flint&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;fmpz_polyxx&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
@@ -67,9 +68,9 @@
 
 &lt;p&gt;The containers of the Flint and Piranha will be discussed in detail in the upcoming weeks. We now had to think about what the container must be for SymEngine. Also we have to merge as much functionality as possible. I saw that both the external libraries had operators overloaded for addition, subtraction, multiplication and division. So, methods like &lt;code class="highlighter-rouge"&gt;add_poly&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;sub_poly&lt;/code&gt; etc. could be made common in the base class itself if I implemented a container for holding SymEngine polynomials which also has it&amp;#8217;s operators overloaded.&lt;/p&gt;
 
-&lt;p&gt;I was not familiar with the symbolic side of the polynomials, and found out that a container had already been made for &lt;code class="highlighter-rouge"&gt;UExprPoly&lt;/code&gt; called &lt;code class="highlighter-rouge"&gt;UExprDict&lt;/code&gt;. The class was nothing but a wrapper around &lt;code class="highlighter-rouge"&gt;map&amp;lt;int, Expression&amp;gt;&lt;/code&gt;. It had overloaded methods for addition, subtraction etc. So, technically this dictionary was storing all the information about the polynomials. I just had to create another similar wrapper for &lt;code class="highlighter-rouge"&gt;map&amp;lt;uint, integer_class&amp;gt;&lt;/code&gt; for the integer counterpart of the polynomial class. This resulted in &lt;a href="https://github.com/symengine/symengine/pull/946"&gt;#946&lt;/a&gt; and Isuru mentioned that most of the code for both these dictionary wrappers is about the same! So, I decided to make a base class for polynomial dictionary wrappers and both of these can inherit from that.&lt;/p&gt;
+&lt;p&gt;I was not familiar with the symbolic side of the polynomials, and found out that a container had already been made for &lt;code class="highlighter-rouge"&gt;UExprPoly&lt;/code&gt; called &lt;code class="highlighter-rouge"&gt;UExprDict&lt;/code&gt;. The class was nothing but a wrapper around &lt;code class="highlighter-rouge"&gt;map&amp;lt;int, Expression&amp;gt;&lt;/code&gt;. It had overloaded methods for addition, subtraction etc. So, technically this dictionary was storing all the information about the polynomials. I just had to create another similar wrapper for &lt;code class="highlighter-rouge"&gt;map&amp;lt;uint, integer_class&amp;gt;&lt;/code&gt; for the integer counterpart of the polynomial class. This resulted in &lt;a href="https://github.com/symengine/symengine/pull/946"&gt;#946&lt;/a&gt; and Isuru mentioned that most of the code for both these dictionary wrappers is about the same! So, I decided to make a base class for polynomial dictionary wrappers and both of these can inherit from that. Any different implementations (like &lt;code class="highlighter-rouge"&gt;*=&lt;/code&gt;) can be overridden in the derived class if needed.&lt;/p&gt;
 
-&lt;p&gt;The ordered map wrapper looks like :&lt;/p&gt;
+&lt;p&gt;The ordered map base looks like :&lt;/p&gt;
 
 &lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Wrapper&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
 &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;ODictWrapper&lt;/span&gt;
@@ -94,7 +95,8 @@
     &lt;span class="p"&gt;....&lt;/span&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
 
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UIntDict&lt;/span&gt;  &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ODictWrapper&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;uint&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;integer_class&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;UIntDict&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="c1"&gt;// the derived wrappers
+&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UIntDict&lt;/span&gt;  &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ODictWrapper&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;uint&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;integer_class&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;UIntDict&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
 &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UExprDict&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ODictWrapper&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Expression&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;UExprDict&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
@@ -105,7 +107,7 @@
 
 &lt;p&gt;All we have to do now for functions like &lt;code class="highlighter-rouge"&gt;add_poly&lt;/code&gt; is use the overloaded operators on the containers. Also, template argument deduction will automatically allow us to call the functions directly on two same polynomial types.&lt;/p&gt;
 
-&lt;p&gt;An example of a common template function for basic polynomial manipulation :&lt;/p&gt;
+&lt;p&gt;An example of a common template function for addition :&lt;/p&gt;
 
 &lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
 &lt;span class="n"&gt;RCP&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;add_upoly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -117,11 +119,22 @@
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
+&lt;p&gt;and how easily it can be used :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;A&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;uint_poly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"x"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)});&lt;/span&gt;   &lt;span class="c1"&gt;// 2*x + 1
+&lt;/span&gt;&lt;span class="n"&gt;B&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;uint_poly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"x"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)});&lt;/span&gt;            &lt;span class="c1"&gt;// 2*x**2
+&lt;/span&gt;
+&lt;span class="n"&gt;C&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;  &lt;span class="n"&gt;add_upoly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;B&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
 &lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
 
-&lt;p&gt;This work was done before the polynomial base class was implemented. Also, the names of the classes I refer to here are the new names. The old names were a little unintuitive, so decided to change them, along with introducing a new subfolder in the repository to hold all code related to polynomials (and their tests). Some code was also shifted to places more apt, all changes can be seen here &lt;a href="https://github.com/symengine/symengine/pull/960"&gt;#960&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The names of the classes I refer to here are the new names. The old names were a little unintuitive, so decided to change them, along with introducing a new subfolder in the repository to hold all code related to polynomials (and their tests). Some code was also shifted to places more apt, all changes can be seen here &lt;a href="https://github.com/symengine/symengine/pull/960"&gt;#960&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;There are a small number of miscellaneous changes that need to be worked out in the overall structure, here they are &lt;a href="https://github.com/symengine/symengine/pull/962"&gt;#962&lt;/a&gt;. More on this and Flint next week! Goodbye!&lt;/p&gt;</description>
+&lt;p&gt;There are a small number of miscellaneous changes that need to be worked out in the overall structure, here they are &lt;a href="https://github.com/symengine/symengine/pull/962"&gt;#962&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;More on this and Flint next week! Goodbye!&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">https://gxyd.github.io/GSoC Week 1</guid>
