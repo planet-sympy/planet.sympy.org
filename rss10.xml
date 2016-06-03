@@ -20,6 +20,101 @@
 &lt;p&gt;Have a nice weekend!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/255/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/255/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=255&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://jbm950.github.io//2016/06/03/GSoC-week-2.html</guid>
+      <title>GSoC Week 2</title>
+      <author>James Milam (jbm950)</author>
+      <pubDate>Fri, 03 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://jbm950.github.io//2016/06/03/GSoC-week-2.html</link>
+      <description>&lt;p&gt;This week involved more research and learning than coding and as such the
+results are less visible. I made some changes to the test code for models.py
+under mechanics, I spend time looking through the structure and workings of
+&lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;LagrangesMethod&lt;/code&gt;, and created a
+&lt;a href="https://github.com/sympy/sympy/pull/11182"&gt;PR&lt;/a&gt; to hold the EOM class
+development discussion.&lt;/p&gt;
+
+&lt;p&gt;The tests for test_models.py were timing out and so it was suggested that I
+change the tests from using rhs() to testing mass matrices and force vectors. I
+put these changes together and on my machine this halved the run time of the
+tests. After this change was added to &lt;a href="https://github.com/sympy/sympy/pull/11168"&gt;PR
+#11168&lt;/a&gt; and the tests passed the
+models.py and its test code files were merged.&lt;/p&gt;
+
+&lt;p&gt;To learn more about how &lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;LagrangesMethod&lt;/code&gt; work I began by
+reading through much of the documentation for the mechanics module. Included
+were the pages on the two methods themselves, information on how linearization
+is performed in the code and three different examples in which the two methods
+are used to solve dynamics problems. As I read through the documents I
+occassionally found places that could use some minor adjustments and I presented
+these changes in &lt;a href="https://github.com/sympy/sympy/pull/11117"&gt;PR #11117&lt;/a&gt; which
+has since been merged.&lt;/p&gt;
+
+&lt;p&gt;In addition to reading the documentation for information, I went through the
+code for each method themselves. I made note of all of the attributes,
+properties and methods that each of the classes contained and compared these
+between the classes. In order to compare the differences in how information was
+stored in each of the classes I needed to return to the Kane&amp;#8217;s method and
+Lagrange&amp;#8217;s method documentation pages. At this point Jason was able to clarify
+much of my confusion regarding the different equations that the pages
+contained. Jason decided this clarification would be useful to add to the pages
+themselves and introduced &lt;a href="https://github.com/sympy/sympy/pull/11183"&gt;PR
+#11183&lt;/a&gt;. I reviewed this PR for him
+though my contribution was more along the lines of pointing out places that
+might need clarification and changes that might improve the flow of the page
+rather than of the content itself.&lt;/p&gt;
+
+&lt;p&gt;Last major line of work this week was beginning the equations of motion class
+itself. It was suggested by Jason that it might be useful to have the *Method
+classes return a class containing the equations of motion information. I have
+decided that for the moment this would be a better pursuit than creating a
+parent class from which the *Methods would inherit. The *Methods classes tend to
+be different in their approach to forming the equations of motion and thus I do
+now currently believe that a parent class could be overly useful for multiple
+*Methods. What new methods could benefit from, however, is a unified output
+format as the rest of the code could be written to accept the new output rather
+than specific Method classes. This would I feel would promote the addition of
+new Methods more than a inherited base class would. Along this line I have
+created a branch that holds the code for the new equations of motion class and
+its test code. Currently the work is to transfer the pseudo-code I have into
+real code.&lt;/p&gt;
+
+&lt;p&gt;I have finished reading A Beginners Guide to 6-D Vectors (Part 2) but have made
+no other progress towards Featherstone&amp;#8217;s method this week other than locating a
+copy of his book.&lt;/p&gt;
+
+&lt;h3 id="future-directions"&gt;Future Directions&lt;/h3&gt;
+
+&lt;p&gt;Next week I plan to continue working on filling out the equation of motion
+class along with its test code. The next step would be to integrate this into
+&lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;LagrangesMethod&lt;/code&gt; to see what tests fail and where additional
+work would be needed. Also I plan to look into Featherstone&amp;#8217;s book and the
+python implementation of spatial vector algebra to see what I might need to
+work on in order to implement his method in SymPy.&lt;/p&gt;
+
+&lt;h3 id="prs-and-issues-referenced-in-post"&gt;PR&amp;#8217;s and Issues Referenced in Post&lt;/h3&gt;
+
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;(Merged) Pydy models migration &lt;a href="https://github.com/sympy/sympy/pull/11168"&gt;PR
+  #11168&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Merged) Physics documentation &lt;a href="https://github.com/sympy/sympy/pull/11117"&gt;PR
+  #11117&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Open) Improved the explanation of the 5 equations in the Kane&amp;#8217;s Method
+  docs &lt;a href="https://github.com/sympy/sympy/pull/11183"&gt;PR #11183&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Open) [WIP] EOMBase class development &lt;a href="https://github.com/sympy/sympy/pull/11182"&gt;PR
+  #11182&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id="articlesbooks-referenced-in-post"&gt;Articles/Books Referenced in Post&lt;/h3&gt;
+
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href="http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;amp;arnumber=5663690"&gt;A Beginners Guide to 6-D Vectors (Part
+   2)&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=201</guid>
       <title>GSoC: Week 2 Begins</title>
       <author>Subham Tibra (shubhamtibra)</author>
@@ -1232,23 +1327,6 @@ My previous blog posts were at: &lt;a href="http://nishantnikhil.weebly.com/"&gt
       <description>&lt;p&gt;This is my first blog post. The blog was made to track progress of my GSoC project and get feedback from my mentors, if my proposal gets selected. I&amp;#8217;m proposing to implement the Multivariate and Univariate polynomial class in SymEngine.&lt;/p&gt;
 
 &lt;p&gt;Wish me luck!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://iamit.in/blog/SymPy Workshop at PyDelhi Meetup</guid>
-      <title>SymPy Workshop at PyDelhi Meetup</title>
-      <author>Amit Kumar (aktech)</author>
-      <pubDate>Sat, 06 Feb 2016 18:30:00 GMT</pubDate>
-      <link>http://iamit.in/blog/sympy-workshop-pydelhi-meetup</link>
-      <description>&lt;p&gt;Hi there! It's been sometime now since my last blog post, It's probably the right time to write one now. Yesterday, I gave a talk on SymPy at Python Delhi User group Meetup at &lt;a href="https://maps.google.com/maps?f=q&amp;amp;hl=en&amp;amp;q=29%2C+Rajpur+Road%2C+Delhi%2C+in"&gt;CSDS&lt;/a&gt;, New Delhi. Things never go the way you want, an hour was wasted in just setting up Anaconda on everyone's system, eventually I had to cut on the material I could demonstrate, though It was nice to see that people were very enthusiatic about SymPy, they actively solved excercises. It was fun interacting with everyone.&lt;/p&gt;
-
-&lt;p&gt;Here is a Pic of the Seminar room at CSDS:
-&lt;img align="center" src="http://iamit.in/assets/sympy-workshop.jpg" /&gt;&lt;/p&gt;
-
-&lt;p&gt;I should also admit that, I have increased my appetite for attending conferences and meetups, these days. In the last 4 months I have attended 3 Meetups (PyDelhi Meetup) and 1 Conference (PyCon India 2015). I think this is one of the best things I have done in last few years &amp;amp; I would recommend anyone with a slight interest in Python either Beginner or Expert should attend &lt;a href="http://www.pydelhi.org"&gt;PyDelhi&lt;/a&gt; &lt;a href="http://www.meetup.com/pydelhi/events/"&gt;Meetups&lt;/a&gt;. Looking forward to more such meetups and conferences.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src="http://iamit.in/assets/sympy-sticker.jpg" /&gt;&lt;/p&gt;
-
-&lt;p&gt;I gave SymPy stickers to everyone who solved atleast one excercise (Since, I didn't had enough stickers).&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

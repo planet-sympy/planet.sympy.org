@@ -157,6 +157,155 @@
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-6163205f feed-" id="item-0635f889">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/jbm950.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">James Milam (jbm950) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://jbm950.github.io//2016/06/03/GSoC-week-2.html">00:00, Friday, 03 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/06/03/GSoC-week-2.html">GSoC Week 2</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/jbm950.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">James Milam (jbm950) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://jbm950.github.io//2016/06/03/GSoC-week-2.html">00:00, Friday, 03 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/06/03/GSoC-week-2.html">GSoC Week 2</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>This week involved more research and learning than coding and as such the
+results are less visible. I made some changes to the test code for models.py
+under mechanics, I spend time looking through the structure and workings of
+<code class="highlighter-rouge">KanesMethod</code> and <code class="highlighter-rouge">LagrangesMethod</code>, and created a
+<a href="https://github.com/sympy/sympy/pull/11182">PR</a> to hold the EOM class
+development discussion.</p>
+
+<p>The tests for test_models.py were timing out and so it was suggested that I
+change the tests from using rhs() to testing mass matrices and force vectors. I
+put these changes together and on my machine this halved the run time of the
+tests. After this change was added to <a href="https://github.com/sympy/sympy/pull/11168">PR
+#11168</a> and the tests passed the
+models.py and its test code files were merged.</p>
+
+<p>To learn more about how <code class="highlighter-rouge">KanesMethod</code> and <code class="highlighter-rouge">LagrangesMethod</code> work I began by
+reading through much of the documentation for the mechanics module. Included
+were the pages on the two methods themselves, information on how linearization
+is performed in the code and three different examples in which the two methods
+are used to solve dynamics problems. As I read through the documents I
+occassionally found places that could use some minor adjustments and I presented
+these changes in <a href="https://github.com/sympy/sympy/pull/11117">PR #11117</a> which
+has since been merged.</p>
+
+<p>In addition to reading the documentation for information, I went through the
+code for each method themselves. I made note of all of the attributes,
+properties and methods that each of the classes contained and compared these
+between the classes. In order to compare the differences in how information was
+stored in each of the classes I needed to return to the Kane&#8217;s method and
+Lagrange&#8217;s method documentation pages. At this point Jason was able to clarify
+much of my confusion regarding the different equations that the pages
+contained. Jason decided this clarification would be useful to add to the pages
+themselves and introduced <a href="https://github.com/sympy/sympy/pull/11183">PR
+#11183</a>. I reviewed this PR for him
+though my contribution was more along the lines of pointing out places that
+might need clarification and changes that might improve the flow of the page
+rather than of the content itself.</p>
+
+<p>Last major line of work this week was beginning the equations of motion class
+itself. It was suggested by Jason that it might be useful to have the *Method
+classes return a class containing the equations of motion information. I have
+decided that for the moment this would be a better pursuit than creating a
+parent class from which the *Methods would inherit. The *Methods classes tend to
+be different in their approach to forming the equations of motion and thus I do
+now currently believe that a parent class could be overly useful for multiple
+*Methods. What new methods could benefit from, however, is a unified output
+format as the rest of the code could be written to accept the new output rather
+than specific Method classes. This would I feel would promote the addition of
+new Methods more than a inherited base class would. Along this line I have
+created a branch that holds the code for the new equations of motion class and
+its test code. Currently the work is to transfer the pseudo-code I have into
+real code.</p>
+
+<p>I have finished reading A Beginners Guide to 6-D Vectors (Part 2) but have made
+no other progress towards Featherstone&#8217;s method this week other than locating a
+copy of his book.</p>
+
+<h3 id="future-directions">Future Directions</h3>
+
+<p>Next week I plan to continue working on filling out the equation of motion
+class along with its test code. The next step would be to integrate this into
+<code class="highlighter-rouge">KanesMethod</code> and <code class="highlighter-rouge">LagrangesMethod</code> to see what tests fail and where additional
+work would be needed. Also I plan to look into Featherstone&#8217;s book and the
+python implementation of spatial vector algebra to see what I might need to
+work on in order to implement his method in SymPy.</p>
+
+<h3 id="prs-and-issues-referenced-in-post">PR&#8217;s and Issues Referenced in Post</h3>
+
+<blockquote>
+  <ul>
+    <li>(Merged) Pydy models migration <a href="https://github.com/sympy/sympy/pull/11168">PR
+  #11168</a></li>
+    <li>(Merged) Physics documentation <a href="https://github.com/sympy/sympy/pull/11117">PR
+  #11117</a></li>
+    <li>(Open) Improved the explanation of the 5 equations in the Kane&#8217;s Method
+  docs <a href="https://github.com/sympy/sympy/pull/11183">PR #11183</a></li>
+    <li>(Open) [WIP] EOMBase class development <a href="https://github.com/sympy/sympy/pull/11182">PR
+  #11182</a></li>
+  </ul>
+</blockquote>
+
+<h3 id="articlesbooks-referenced-in-post">Articles/Books Referenced in Post</h3>
+
+<blockquote>
+  <ul>
+    <li><a href="http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=5663690">A Beginners Guide to 6-D Vectors (Part
+   2)</a></li>
+  </ul>
+</blockquote>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">May 30, 2016</h2>
@@ -2896,80 +3045,6 @@ My previous blog posts were at: <a href="http://nishantnikhil.weebly.com/">Globa
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">February 06, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-d9900bae feed-" id="item-fc1583a5">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/aktech.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Amit Kumar (aktech) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://iamit.in/blog/sympy-workshop-pydelhi-meetup">18:30, Saturday, 06 February UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://iamit.in/blog/sympy-workshop-pydelhi-meetup">SymPy Workshop at PyDelhi Meetup</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/aktech.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Amit Kumar (aktech) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://iamit.in/blog/sympy-workshop-pydelhi-meetup">18:30, Saturday, 06 February UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://iamit.in/blog/sympy-workshop-pydelhi-meetup">SymPy Workshop at PyDelhi Meetup</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Hi there! It's been sometime now since my last blog post, It's probably the right time to write one now. Yesterday, I gave a talk on SymPy at Python Delhi User group Meetup at <a href="https://maps.google.com/maps?f=q&amp;hl=en&amp;q=29%2C+Rajpur+Road%2C+Delhi%2C+in">CSDS</a>, New Delhi. Things never go the way you want, an hour was wasted in just setting up Anaconda on everyone's system, eventually I had to cut on the material I could demonstrate, though It was nice to see that people were very enthusiatic about SymPy, they actively solved excercises. It was fun interacting with everyone.</p>
-
-<p>Here is a Pic of the Seminar room at CSDS:
-<img align="center" src="http://iamit.in/assets/sympy-workshop.jpg" /></p>
-
-<p>I should also admit that, I have increased my appetite for attending conferences and meetups, these days. In the last 4 months I have attended 3 Meetups (PyDelhi Meetup) and 1 Conference (PyCon India 2015). I think this is one of the best things I have done in last few years &amp; I would recommend anyone with a slight interest in Python either Beginner or Expert should attend <a href="http://www.pydelhi.org">PyDelhi</a> <a href="http://www.meetup.com/pydelhi/events/">Meetups</a>. Looking forward to more such meetups and conferences.</p>
-
-<p><img src="http://iamit.in/assets/sympy-sticker.jpg" /></p>
-
-<p>I gave SymPy stickers to everyone who solved atleast one excercise (Since, I didn't had enough stickers).</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2997,80 +3072,80 @@ My previous blog posts were at: <a href="http://nishantnikhil.weebly.com/">Globa
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>19:36, Friday, 03 June</td>
-<td>19:51, Friday, 03 June</td>
+<td>19:56, Friday, 03 June</td>
+<td>20:11, Friday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>19:36, Friday, 03 June</td>
-<td>19:51, Friday, 03 June</td>
+<td>19:56, Friday, 03 June</td>
+<td>20:11, Friday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>19:36, Friday, 03 June</td>
-<td>19:51, Friday, 03 June</td>
+<td>19:56, Friday, 03 June</td>
+<td>20:11, Friday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>19:36, Friday, 03 June</td>
-<td>19:51, Friday, 03 June</td>
+<td>19:56, Friday, 03 June</td>
+<td>20:11, Friday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>19:36, Friday, 03 June</td>
-<td>19:51, Friday, 03 June</td>
+<td>19:56, Friday, 03 June</td>
+<td>20:11, Friday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>19:36, Friday, 03 June</td>
-<td>19:51, Friday, 03 June</td>
+<td>19:56, Friday, 03 June</td>
+<td>20:11, Friday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>19:36, Friday, 03 June</td>
-<td>19:51, Friday, 03 June</td>
+<td>19:56, Friday, 03 June</td>
+<td>20:11, Friday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>19:36, Friday, 03 June</td>
-<td>19:51, Friday, 03 June</td>
+<td>19:56, Friday, 03 June</td>
+<td>20:11, Friday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://s-hacker.info">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://s-hacker.info/blog/gsoc16/feeds/sympy.xml">XML</a></td>
-<td>19:36, Friday, 03 June</td>
-<td>19:51, Friday, 03 June</td>
+<td>19:56, Friday, 03 June</td>
+<td>20:11, Friday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>19:36, Friday, 03 June</td>
-<td>19:51, Friday, 03 June</td>
+<td>19:56, Friday, 03 June</td>
+<td>20:11, Friday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>19:36, Friday, 03 June</td>
-<td>19:51, Friday, 03 June</td>
+<td>19:56, Friday, 03 June</td>
+<td>20:11, Friday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>19:36, Friday, 03 June</td>
-<td>19:51, Friday, 03 June</td>
+<td>19:56, Friday, 03 June</td>
+<td>20:11, Friday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>19:36, Friday, 03 June</td>
-<td>19:51, Friday, 03 June</td>
+<td>19:56, Friday, 03 June</td>
+<td>20:11, Friday, 03 June</td>
 </tr>
 </table>
 
