@@ -670,6 +670,162 @@ Out[5]: 9</code></pre>
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-0f49e9e6">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/srajangarg.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Srajan Garg (srajangarg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://srajangarg.github.io//2016/05/29/Wrap-a-Lot/">00:00, Sunday, 29 May UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/05/29/Wrap-a-Lot/">Wrap a lot</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/srajangarg.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Srajan Garg (srajangarg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://srajangarg.github.io//2016/05/29/Wrap-a-Lot/">00:00, Sunday, 29 May UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/05/29/Wrap-a-Lot/">Wrap a lot</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<h3 id="overview">Overview</h3>
+
+<p>As I pointed out in last week&#8217;s post, I have begun my work on the wrapping aspects of my project. The final aim of wrapping the polynomial class is to provide users with the option of using specialized polynomial libraries like Flint and Piranha.</p>
+
+<p>Right at the beginning of the project, I was lacking the basic idea of how the wrapping will work. Mostly I was confused by the fact that we have to right common code for all the libraries (SymEngine, Flint &amp; Piranha) with the problem being, each of the these libraries have different internal representation and methods. By the end of the week, thanks to Isuru, I have much more understanding of the desired structure of the code. Here&#8217;s a short summary on how it will work.</p>
+
+<h3 id="polynomial-base">Polynomial Base</h3>
+<p>There will be four end (derived) classes. <code class="highlighter-rouge">UIntPoly</code> &amp; <code class="highlighter-rouge">UExprPoly</code> (the SymEngine) polynomials, <code class="highlighter-rouge">UIntPolyFlint</code> and also <code class="highlighter-rouge">UIntPolyPiranha</code>. Each of these classes derive from the base class called <code class="highlighter-rouge">UPolyBase</code>. Now the base class must have methods and members which can be used commonly by each of the derived classes. Thus, the base class should have two members, the <code class="highlighter-rouge">var</code> which depicts the variable of the polynomial and a <code class="highlighter-rouge">container</code> which contains the data about the polynomial (basically the coefficients corresponding to each degree).</p>
+
+<p>This is skeleton of how the classes should look like :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Container</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">UPolyBase</span>
+<span class="p">{</span>
+	<span class="n">Symbol</span> <span class="n">var</span><span class="p">;</span>
+	<span class="n">Container</span> <span class="n">container</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// the derived polynomials
+</span><span class="k">class</span> <span class="nc">UIntPolyPiranha</span> <span class="o">:</span> <span class="n">UPolyBase</span><span class="o">&lt;</span><span class="n">piranha</span><span class="o">::</span><span class="n">polynomail</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">UIntPolyFlint</span>   <span class="o">:</span> <span class="n">UPolyBase</span><span class="o">&lt;</span><span class="n">flint</span><span class="o">::</span><span class="n">fmpz_polyxx</span><span class="o">&gt;</span>
+</code></pre>
+</div>
+
+<h3 id="symengines-container">SymEngine&#8217;s Container</h3>
+
+<p>The containers of the Flint and Piranha will be discussed in detail in the upcoming weeks. We now had to think about what the container must be for SymEngine. Also we have to merge as much functionality as possible. I saw that both the external libraries had operators overloaded for addition, subtraction, multiplication and division. So, methods like <code class="highlighter-rouge">add_poly</code> and <code class="highlighter-rouge">sub_poly</code> etc. could be made common in the base class itself if I implemented a container for holding SymEngine polynomials which also has it&#8217;s operators overloaded.</p>
+
+<p>I was not familiar with the symbolic side of the polynomials, and found out that a container had already been made for <code class="highlighter-rouge">UExprPoly</code> called <code class="highlighter-rouge">UExprDict</code>. The class was nothing but a wrapper around <code class="highlighter-rouge">map&lt;int, Expression&gt;</code>. It had overloaded methods for addition, subtraction etc. So, technically this dictionary was storing all the information about the polynomials. I just had to create another similar wrapper for <code class="highlighter-rouge">map&lt;uint, integer_class&gt;</code> for the integer counterpart of the polynomial class. This resulted in <a href="https://github.com/symengine/symengine/pull/946">#946</a> and Isuru mentioned that most of the code for both these dictionary wrappers is about the same! So, I decided to make a base class for polynomial dictionary wrappers and both of these can inherit from that. Any different implementations (like <code class="highlighter-rouge">*=</code>) can be overridden in the derived class if needed.</p>
+
+<p>The ordered map base looks like :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Key</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Value</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Wrapper</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">ODictWrapper</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">Key</span><span class="p">,</span> <span class="n">Value</span><span class="o">&gt;</span> <span class="n">dict_</span><span class="p">;</span>
+
+    <span class="k">friend</span> <span class="n">Wrapper</span> <span class="k">operator</span><span class="o">-</span><span class="p">(</span><span class="k">const</span> <span class="n">Wrapper</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">Wrapper</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Wrapper</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+        <span class="n">c</span> <span class="o">-=</span> <span class="n">b</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">Wrapper</span> <span class="k">operator</span><span class="o">-</span><span class="p">()</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="n">ODictWrapper</span> <span class="n">c</span> <span class="o">=</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="o">&amp;</span><span class="n">iter</span> <span class="o">:</span> <span class="n">c</span><span class="p">.</span><span class="n">dict_</span><span class="p">)</span>
+            <span class="n">iter</span><span class="p">.</span><span class="n">second</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Wrapper</span> <span class="o">&amp;&gt;</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="p">....</span>
+<span class="p">}</span>
+
+<span class="c1">// the derived wrappers
+</span><span class="k">class</span> <span class="nc">UIntDict</span>  <span class="o">:</span> <span class="n">ODictWrapper</span><span class="o">&lt;</span><span class="n">uint</span><span class="p">,</span> <span class="n">integer_class</span><span class="p">,</span> <span class="n">UIntDict</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">UExprDict</span> <span class="o">:</span> <span class="n">ODictWrapper</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">UExprDict</span><span class="o">&gt;</span>
+</code></pre>
+</div>
+
+<h3 id="finishing-the-class">Finishing the class</h3>
+
+<p>After the containers for SymEngine were complete, I started implementing the polynomial base class, from which the two current polynomial classes will inherit. The class turned out to be very similar to the prototype described above. Accessor methods were added and basic polynomial functions were added <a href="https://github.com/symengine/symengine/pull/951">#951</a>.</p>
+
+<p>All we have to do now for functions like <code class="highlighter-rouge">add_poly</code> is use the overloaded operators on the containers. Also, template argument deduction will automatically allow us to call the functions directly on two same polynomial types.</p>
+
+<p>An example of a common template function for addition :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Poly</span><span class="o">&gt;</span>
+<span class="n">RCP</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">Poly</span><span class="o">&gt;</span> <span class="n">add_upoly</span><span class="p">(</span><span class="k">const</span> <span class="n">Poly</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">Poly</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">auto</span> <span class="n">dict</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">get_poly</span><span class="p">();</span>
+    <span class="n">dict</span> <span class="o">+=</span> <span class="n">b</span><span class="p">.</span><span class="n">get_poly</span><span class="p">();</span>
+    <span class="k">return</span> <span class="n">Poly</span><span class="o">::</span><span class="n">from_dict</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">get_var</span><span class="p">(),</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">dict</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>and how easily it can be used :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">A</span> <span class="o">=</span> <span class="n">uint_poly</span><span class="p">(</span><span class="s">"x"</span><span class="p">,</span> <span class="p">{(</span><span class="mi">0</span> <span class="o">:</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">2</span><span class="p">)});</span>   <span class="c1">// 2*x + 1
+</span><span class="n">B</span> <span class="o">=</span> <span class="n">uint_poly</span><span class="p">(</span><span class="s">"x"</span><span class="p">,</span> <span class="p">{(</span><span class="mi">2</span> <span class="o">:</span> <span class="mi">2</span><span class="p">)});</span>            <span class="c1">// 2*x**2
+</span>
+<span class="n">C</span> <span class="o">=</span>  <span class="n">add_upoly</span><span class="p">(</span><span class="o">*</span><span class="n">A</span><span class="p">,</span> <span class="o">*</span><span class="n">B</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<h3 id="miscellaneous-work">Miscellaneous Work</h3>
+
+<p>The names of the classes I refer to here are the new names. The old names were a little unintuitive, so decided to change them, along with introducing a new subfolder in the repository to hold all code related to polynomials (and their tests). Some code was also shifted to places more apt, all changes can be seen here <a href="https://github.com/symengine/symengine/pull/960">#960</a>.</p>
+
+<p>There are a small number of miscellaneous changes that need to be worked out in the overall structure, here they are <a href="https://github.com/symengine/symengine/pull/962">#962</a>.</p>
+
+<p>More on this and Flint next week! Goodbye!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">May 28, 2016</h2>
@@ -1418,6 +1574,102 @@ Also now the "official" coding period begins, good luck to everyone.
 <li>To polish&#160;<a href="https://github.com/sympy/sympy/pull/11103">PR 11103</a>,&#160;<a href="https://github.com/sympy/sympy/pull/11137">PR 11137</a>&#160;and&#160;<a href="https://github.com/sympy/sympy/pull/11139">PR 11139</a>&#160;and get them merged.</li>
 <li>To start working on the&#160;implementation of Singularity Functions.</li>
 </ul><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/196/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/196/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&#038;blog=102728326&#038;post=196&#038;subd=sampadblog&#038;ref=&#038;feed=1" width="1" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">May 21, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-b79639e5">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/srajangarg.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Srajan Garg (srajangarg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://srajangarg.github.io//2016/05/21/Pre-GSoC/">00:00, Saturday, 21 May UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/05/21/Pre-GSoC/">Pre GSoC and Community Bonding</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/srajangarg.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Srajan Garg (srajangarg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://srajangarg.github.io//2016/05/21/Pre-GSoC/">00:00, Saturday, 21 May UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/05/21/Pre-GSoC/">Pre GSoC and Community Bonding</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<h3 id="the-kronecker-substitution">The Kronecker Substitution</h3>
+<p>I started off my work by reading through the existing <code class="highlighter-rouge">mul_poly</code> function. It uses the Kronecker Substitution technique to multiply two polynomials. An insight can be gained by looking at the slides <a href="http://web.maths.unsw.edu.au/~davidharvey/talks/kronecker-talk.pdf">here</a>. Think of it this way,</p>
+
+<blockquote>
+  <p>&#8220;If you evaluate a polynomial at a large enough power of 10, I bet you can tell all it&#8217;s coefficients just by looking at the result!&#8221;</p>
+</blockquote>
+
+<p>The mentioned slides call this the KS1 algorithm. Another algorithm it proposes is the KS2 algorithm, which evaluates the polynomial at two points (in contrast to just one) to interpolate the polynomial. A more mathematical explanation on the two techniques can be found <a href="http://arxiv.org/pdf/0712.4046v1.pdf">here</a>. I implemented the algorithm, and it wasn&#8217;t too difficult, as it was a a slight modification to the already existing multiplication technique. Later, I added a benchmark test for comparing the two techniques, KS1 &amp; KS2. The benchmark (roughly) calculates the ratio of the time required for multiplying two polynomials using the two algorithms. Both the polynomial length (from 1 to 10,000) and the bit length of the coefficients (5, 10, 15, 20 bits) were varied. The graphs of the benchmarking are as follows.</p>
+
+<p>Linear &amp; Log scale :
+<img alt="" src="http://srajangarg.github.io/assets/ll.png" />
+During this time, I was asked by Isuru to switch work towards the polynomial interface with FLINT &amp; Piranha (and shift the polynomial manipulations to the end of summer). So, the PR hasn&#8217;t been merged in yet, and no conclusions and observations have been made between the two algorithms as of yet. Will be done later during the summer. Here&#8217;s the PR <a href="https://github.com/symengine/symengine/pull/930">#930</a></p>
+
+<h3 id="dictionary-wrappers">Dictionary wrappers</h3>
+<p>I also started work on Dictionary wrappers for SymEngine. One was already made, for the <code class="highlighter-rouge">UnivariatePolynomial</code> class aka the class for univariate polynomials with symbolic coefficients. It is a map from <code class="highlighter-rouge">int -&gt; Expression</code>. We needed another wrapper for the <code class="highlighter-rouge">uint -&gt; integer_class</code> map, so that the <code class="highlighter-rouge">UnivariateIntPolynomial</code> class can be structured the same way as the former. Now that we need almost the same functionality, why not temlatize the wrapper? (suggested by Isuru) That&#8217;s what I did, and the PR <a href="https://github.com/symengine/symengine/pull/946">#946</a> is almost merged in. More on wrappers next time!</p>
+
+<h3 id="miscellaneous-issues">Miscellaneous issues</h3>
+<p>Most of my work during this period revolved around reading the existing polynomial class, and refactor it and removed any redundancies. Some of the miscellaneous work that was done :</p>
+
+<ul>
+  <li>
+    <p>Some refactoring was done in the <code class="highlighter-rouge">dict.cpp</code> file. There were some redundancy in the functions which was removed. Templatized methods for checking equality and comparing vectors (and sets) were made. Other specific <code class="highlighter-rouge">eq</code> &amp; <code class="highlighter-rouge">compare</code> methods became derived methods of these base classes. <a href="https://github.com/symengine/symengine/pull/933">#933</a></p>
+  </li>
+  <li>
+    <p>Initially, the <code class="highlighter-rouge">mul_poly</code> method was constructing a vector of coefficients for the resulting multiplied polynomial (thus, implicitly storing it in a dense representation for a while). However, it was returned as a sparse represented polynomial, using a dictionary. This was changed, so that the dictionary is directly created, and the intermediate vector isn&#8217;t requireds. Also, some changes in variable names for clarity, as well as removing the redundant function <code class="highlighter-rouge">dict_add_term</code>. <a href="https://github.com/symengine/symengine/pull/928">#928</a></p>
+  </li>
+  <li>
+    <p>A redundant function <code class="highlighter-rouge">create</code> was removed. All it was doing was calling <code class="highlighter-rouge">from_vec</code> within the same class. <a href="https://github.com/symengine/symengine/pull/941">#941</a></p>
+  </li>
+</ul>
+
+<p>See you next week, Goodbye!</p>
 					</div>
 				</div>
 			</div>
@@ -2439,6 +2691,75 @@ I'd like to thank all the people involved with contributions to <i>SymPy</i>. My
 	</div>
 </div></div>
 <div class="day">
+<h2 class="dayform">April 29, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-bb74e9e2">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/srajangarg.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Srajan Garg (srajangarg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://srajangarg.github.io//2016/04/29/Selected/">00:00, Friday, 29 April UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/04/29/Selected/">Selected</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/srajangarg.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Srajan Garg (srajangarg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://srajangarg.github.io//2016/04/29/Selected/">00:00, Friday, 29 April UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/04/29/Selected/">Selected</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>I have been selected for GSoC&#8217;16! The results came out on Apr 23, and I have never been happier! I got around to writing this blog post only now, because of my end semester examinations which ended yesterday. I have been alotted <a href="https://github.com/isuruf">Isuru</a> and <a href="https://github.com/sumith1896">Sumith</a> as my official mentors. I&#8217;m very excited to start working on the project, alongside them.</p>
+
+<p>Right now, I&#8217;ll start my discussions on the implementation details, and overall structure of the code. Also I will begin work on the Fast Fourier algorithm for univariate polynomial multiplication.</p>
+
+<p>Looking forward to a busy summer!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">April 26, 2016</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -2767,1092 +3088,6 @@ My previous blog posts were at: <a href="http://nishantnikhil.weebly.com/">Globa
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">February 06, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-d9900bae feed-" id="item-fc1583a5">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/aktech.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Amit Kumar (aktech) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://iamit.in/blog/sympy-workshop-pydelhi-meetup">18:30, Saturday, 06 February UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://iamit.in/blog/sympy-workshop-pydelhi-meetup">SymPy Workshop at PyDelhi Meetup</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/aktech.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Amit Kumar (aktech) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://iamit.in/blog/sympy-workshop-pydelhi-meetup">18:30, Saturday, 06 February UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://iamit.in/blog/sympy-workshop-pydelhi-meetup">SymPy Workshop at PyDelhi Meetup</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Hi there! It's been sometime now since my last blog post, It's probably the right time to write one now. Yesterday, I gave a talk on SymPy at Python Delhi User group Meetup at <a href="https://maps.google.com/maps?f=q&amp;hl=en&amp;q=29%2C+Rajpur+Road%2C+Delhi%2C+in">CSDS</a>, New Delhi. Things never go the way you want, an hour was wasted in just setting up Anaconda on everyone's system, eventually I had to cut on the material I could demonstrate, though It was nice to see that people were very enthusiatic about SymPy, they actively solved excercises. It was fun interacting with everyone.</p>
-
-<p>Here is a Pic of the Seminar room at CSDS:
-<img align="center" src="http://iamit.in/assets/sympy-workshop.jpg" /></p>
-
-<p>I should also admit that, I have increased my appetite for attending conferences and meetups, these days. In the last 4 months I have attended 3 Meetups (PyDelhi Meetup) and 1 Conference (PyCon India 2015). I think this is one of the best things I have done in last few years &amp; I would recommend anyone with a slight interest in Python either Beginner or Expert should attend <a href="http://www.pydelhi.org">PyDelhi</a> <a href="http://www.meetup.com/pydelhi/events/">Meetups</a>. Looking forward to more such meetups and conferences.</p>
-
-<p><img src="http://iamit.in/assets/sympy-sticker.jpg" /></p>
-
-<p>I gave SymPy stickers to everyone who solved atleast one excercise (Since, I didn't had enough stickers).</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">January 26, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-b9986a01 feed-" id="item-daf98bdd">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/asmeurer.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Aaron Meurer (asmeurer) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://asmeurer.github.io/blog/posts/what-happens-when-you-mess-with-hashing-in-python/">04:13, Tuesday, 26 January UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://asmeurer.github.io/blog/posts/what-happens-when-you-mess-with-hashing-in-python/">What happens when you mess with hashing in Python</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/asmeurer.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Aaron Meurer (asmeurer) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://asmeurer.github.io/blog/posts/what-happens-when-you-mess-with-hashing-in-python/">04:13, Tuesday, 26 January UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://asmeurer.github.io/blog/posts/what-happens-when-you-mess-with-hashing-in-python/">What happens when you mess with hashing in Python</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<div><p><em>This post is based off a Jupyter notebook I made in 2013. You can download
-the original <a href="https://gist.github.com/asmeurer/6046766">here</a>. That notebook
-was based off a
-<a href="https://github.com/sympy/sympy/wiki/What-happens-when-you-mess-with-hashing">wiki page</a>
-on the SymPy wiki, which in turn was based on
-<a href="https://groups.google.com/forum/#%21msg/sympy/pJ2jg2csKgU/0nn21xqZEmwJ">a message</a>
-to the SymPy mailing list.</em></p>
-<h2>What is hashing?</h2>
-<p>Before we start, let's have a brief introduction to hashing. A
-<a href="https://en.wikipedia.org/wiki/Hash_function"><em>hash function</em></a> is a function
-that maps a set of objects to a set of integers. There are many kinds of hash
-functions, which satisfy many different properties, but the most important
-property that must be satisfied by any hash function is that it be a function
-(in the mathematical sense), that is, if two objects are equal, then their
-hash should also be equal.</p>
-<p>Usually, the set of integers that the hash function maps to is much smaller
-than the set of objects, so that there will be multiple objects that hash to
-the same value. However, generally for a hash function to be useful, the set
-of integers should be large enough, and the hash function well distributed
-enough that if two objects hash to the same value, then they are very likely
-to be equal.</p>
-<p>To summarize, a hash function <em>must</em> satisfy the property:</p>
-<ul>
-<li><strong>If two objects are equal, then their hashes should be equal.</strong></li>
-</ul>
-<p>Additionally, a <em>good</em> hash function should satisfy the property:</p>
-<ul>
-<li><strong>If two objects have the same hash, then they are likely to be the same
-object.</strong></li>
-</ul>
-<p>Since there are generally more possible objects than hash values, two objects
-may hash to the same value. This is called a
-<a href="https://en.wikipedia.org/wiki/Hash_collision">hash collision</a>, and anything
-that deals with hashes should be able to deal with them.</p>
-<p>This won't be discussed here, but an additional property that a good hash
-function should satisfy to be useful is this:</p>
-<ul>
-<li><strong>The hash of an object should be cheap to compute.</strong></li>
-</ul>
-<h2>What is it used for?</h2>
-<p>If we have a hash function that satisfies the above properties, then we can
-use it to create from a collection of objects something called a <em>hash table</em>.
-Suppose we have a collection of objects, and given any object, we want to be
-able to compute very quickly if that object belongs to our collection. We
-could store these objects in an ordered array, but then to determine if it is
-in the array, we would have to search potentially through every element of the
-array (in other words, an \(O(n)\)) algorithm.</p>
-<p>With hashing, we can do better. We create what is known as a
-<a href="https://en.wikipedia.org/wiki/Hash_table"><em>hash table</em></a>. Instead of storing
-the objects in an ordered array, we create an array of buckets, each
-corresponding to some hash values. We then hash each object, and store it into
-the array corresponding to its hash value (if there are more hash values than
-buckets, we distribute them using a second hash function, which can be as
-simple as taking the modulus with respect to the number of buckets, <code>% n</code>).</p>
-<p>This image from
-<a href="https://en.wikipedia.org/wiki/File:Hash_table_3_1_1_0_1_0_0_SP.svg">Wikipedia</a>
-shows an example.</p>
-<p><img alt="img" src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Hash_table_3_1_1_0_1_0_0_SP.svg" /></p>
-<p>To determine if an object is in a hash table, we only have to hash the object,
-and look in the bucket corresponding to that hash. This is an \(O(1)\)
-algorithm, assuming we have a good hash function, because each bucket will
-generally hold very few objects, possibly even none.</p>
-<p><em>Note: there are some additional things that need to be done to handle hash
-collisions, but the basic idea is the same, and as long as there aren't too
-many hash collisions, which should happen if hash values are evenly
-distributed and the size of the hash table is large compared to the number of
-objects stored in it, the average time to determine if an object is in the
-hash table is still \(O(1)\).</em></p>
-<h2>Hashing in Python</h2>
-<p>Python has a built in function that performs a hash called <code>hash()</code>.  For many
-objects, the hash is not very surprising.  Note, the hashes you see below may
-not be the same ones you see if you run the examples, because Python hashing
-depends on the architecture of the machine you are running on, and, in newer
-versions of Python, hashes are randomized for security purposes.</p>
-<pre><code class="language-py">&gt;&gt;&gt; hash(10)
-10
-&gt;&gt;&gt; hash(()) # An empty tuple
-3527539
-&gt;&gt;&gt; hash('a')
-12416037344
-</code></pre>
-<p>In Python, not all objects are hashable. For example</p>
-<pre><code class="language-py">&gt;&gt;&gt; hash([]) # An empty list
-Traceback (most recent call last):
-  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
-TypeError: unhashable type: 'list'
-</code></pre>
-<p>This is because Python has an additional restriction on hashing:</p>
-<ul>
-<li><strong>In order for an object to be hashable, it must be immutable.</strong></li>
-</ul>
-<p>This is important basically because we want the hash of an object to remain
-the same across the object's lifetime. But if we have a mutable object, then
-that object itself can change over its lifetime. But then according to our
-first bullet point above, that object's hash has to change too.</p>
-<p>This restriction simplifies hash tables. If we allowed an object's hash to
-change while it is in a hash table, we would have to move it to a different
-bucket. Not only is this costly, but the hash table would have to <em>notice</em>
-that this happened; the object itself doesn't know that it is sitting in a
-hash table, at least not in the Python implementation.</p>
-<p>In Python, there are two objects that correspond to hash tables, <code>dict</code> and
-<code>set</code>. A <code>dict</code> is a special kind of hash table called an
-<a href="https://en.wikipedia.org/wiki/Associative_array"><em>associative array</em></a>. An
-associative array is a hash table where each element of the hash table points
-to another object. The other object itself is not hashed.</p>
-<p>Think of an associative array as a generalization of a regular array (like a
-<code>list</code>). In a <code>list</code>, objects are associated to nonnegative integer indices,
-like</p>
-<pre><code class="language-py">&gt;&gt;&gt; l = ['a', 'b', 7]
-&gt;&gt; l[0]
-'a'
-&gt;&gt;&gt; l[2]
-7
-</code></pre>
-<p>In an associative array (i.e., a <code>dict</code>) we can index objects by anything, so
-long as the key is hashable.</p>
-<pre><code class="language-py">&gt;&gt;&gt; d = {0: 'a', 'hello': ['world']}
-&gt;&gt;&gt; d[0]
-'a'
-&gt;&gt;&gt; d['hello']
-['world']
-</code></pre>
-<p>Note that only the keys need to be hashable. The values can be anything, even
-unhashable objects like lists.</p>
-<p>The uses for associative arrays are boundless. <code>dict</code> is one of the most
-useful data types in the Python language. Some example uses are</p>
-<ul>
-<li><p>Extension of <code>list</code> with "missing values". For example, <code>{0: 'a', 2: 7}</code>
-would correspond to the above list <code>l</code> with the value <code>'b'</code> corresponding to
-the key <code>1</code> removed.</p></li>
-<li><p>Representation of a mathematical function with a finite domain.</p></li>
-<li><p>A poor-man's database (the Wikipedia image above is an associative array
-mapping names to telephone numbers).</p></li>
-<li><p>Implementing a <a href="https://stackoverflow.com/q/60208/161801">Pythonic version</a>
-of the switch-case statement.</p></li>
-</ul>
-<p>The other type of hash table, <code>set</code>, more closely matches the definition I
-gave above for a hash table. A <code>set</code> is just a container of hashable
-objects. <code>set</code>s are unordered, and can only contain one of each object (this
-is why they are called "sets," because this matches the mathematical
-definition of a <a href="https://en.wikipedia.org/wiki/Set_(mathematics)">set</a>).</p>
-<p>In Python 2.7 or later, you can create a set with <code>{</code> and <code>}</code>, like <code>{a, b, c}</code>. Otherwise, use <code>set([a, b, c])</code>.</p>
-<pre><code class="language-py">&gt;&gt;&gt; s = {0, (), '2'}
-&gt;&gt;&gt; s
-{0, '2', ()}
-&gt;&gt;&gt; s.add(1)
-&gt;&gt;&gt; s
-{0, 1, '2', ()}
-&gt;&gt;&gt; s.add(0)
-&gt;&gt;&gt; s
-{0, 1, '2', ()}
-</code></pre>
-<p>A final note: <code>set</code> and <code>dict</code> are themselves mutable, and hence not hashable!
-There is an immutable version of <code>set</code> called <code>frozenset</code>. There are no
-immutable dictionaries.</p>
-<pre><code class="language-py">&gt;&gt;&gt; f = frozenset([0, (), '2'])
-&gt;&gt;&gt; f
-frozenset({0, '2', ()})
-&gt;&gt;&gt; hash(f)
--7776452922777075760
-&gt;&gt;&gt; # A frozenset, unlike a set, can be used as a dictionary key
-&gt;&gt;&gt; d[f] = 'a set'
-&gt;&gt;&gt; d
-{0: 'a', frozenset({0, '2', ()}): 'a set', 'hello': ['world']}
-</code></pre>
-<h2>Creating your own hashable objects</h2>
-<p>Before we move on, there is one final thing we need to know about hashing in
-Python, which is how to create hashes for custom objects. By default, if we
-create an object, it will be hashable.</p>
-<pre><code class="language-py">&gt;&gt;&gt; class Nothing(object):
-...     pass
-...
-&gt;&gt;&gt; N = Nothing()
-&gt;&gt;&gt; hash(N)
-270498113
-</code></pre>
-<p>Implementation-wise, the hash is just the object's <code>id</code>, which corresponds to
-its position in memory. This satisfies the above conditions: it is (extremely)
-cheap to compute, and since by default objects in Python compare unequal to
-one another, objects with different hashes will be unequal.</p>
-<pre><code class="language-py">&gt;&gt;&gt; M = Nothing()
-&gt;&gt;&gt; M == N
-False
-&gt;&gt;&gt; hash(M)
-270498117
-&gt;&gt;&gt; hash(M) == hash(N)
-False
-</code></pre>
-<p>To define a hash function for an object, define the <code>__hash__</code> method.</p>
-<pre><code class="language-py">&gt;&gt;&gt; class HashToOne(object):
-...     def __hash__(self):
-...         return 1
-...
-&gt;&gt;&gt; HTO = HashToOne()
-&gt;&gt;&gt; hash(HTO)
-1
-</code></pre>
-<p>To set an object as not hashable, set <code>__hash__</code> to <code>None</code>.</p>
-<pre><code class="language-py">&gt;&gt;&gt; class NotHashable(object):
-...     __hash__ = None
-...
-&gt;&gt;&gt; NH = NotHashable()
-&gt;&gt;&gt; hash(NH)
-Traceback (most recent call last):
-  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
-TypeError: unhashable type: 'NotHashable'
-</code></pre>
-<p>Finally, to override the equality operator <code>==</code>, define <code>__eq__</code>.</p>
-<pre><code class="language-py">&gt;&gt;&gt; class AlwaysEqual(object):
-...     def __eq__(self, other):
-...         if isinstance(other, AlwaysEqual):
-...             return True
-...        return False
-...
-&gt;&gt;&gt; AE1 = AlwaysEqual()
-&gt;&gt;&gt; AE2 = AlwaysEqual()
-&gt;&gt;&gt; AE1 == AE2
-True
-</code></pre>
-<p>One of the key points that I hope you will take away from this post is that if
-you override <code>__eq__</code>, you <strong>must</strong> also override <code>__hash__</code> to agree. Note
-that Python 3 will actually require this: in Python 3, you cannot override
-<code>__eq__</code> and not override <code>__hash__</code>. But that's as far as Python goes in
-enforcing these rules, as we will see below. In particular, Python will never
-actually check that your <code>__hash__</code> actually agrees with your <code>__eq__</code>.</p>
-<h2>Messing with hashing</h2>
-<p>Now to the fun stuff. What happens if we break some of the invariants that
-Python expects of hashing. Python expects two key invariants to hold</p>
-<ol>
-<li><p><strong>The hash of an object does not change across the object's lifetime (in
-other words, a hashable object should be immutable).</strong></p></li>
-<li><p><strong><code>a == b</code> implies <code>hash(a) == hash(b)</code> (note that the reverse might not
-hold in the case of a hash collision).</strong></p></li>
-</ol>
-<p>As we shall see, Python expects, but does not enforce either of these.</p>
-<h3>Example 1: Mutating a hash</h3>
-<p>Let's break rule 1 first. Let's create an object with a hash, and then change
-that object's hash over its lifetime, and see what sorts of things can happen.</p>
-<pre><code class="language-py">&gt;&gt;&gt; class Bad(object):
-...     def __init__(self, hash): # The object's hash will be hash
-...         self.hash = hash
-...     def __hash__(self):
-...         return self.hash
-...
-&gt;&gt;&gt; b = Bad(1)
-&gt;&gt;&gt; hash(b)
-1
-&gt;&gt;&gt; d = {b:42}
-&gt;&gt;&gt; d[b]
-42
-&gt;&gt;&gt; b.hash = 2
-&gt;&gt;&gt; hash(b)
-2
-&gt;&gt;&gt; d[b]
-Traceback (most recent call last):
-  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
-KeyError: &lt;__main__.Bad object at 0x1047e7438&gt;
-</code></pre>
-<p>Here, we implicitly changed the hash of <code>b</code> by mutating the attribute of <code>b</code>
-that is used to compute the hash. As a result, the object is no longer found
-in a dictionary, which uses the hash to find the object.</p>
-<p>The object is still there, we just can't access it any more.</p>
-<pre><code class="language-py">&gt;&gt;&gt; d
-{&lt;__main__.Bad object at 0x1047e7438&gt;: 42}
-</code></pre>
-<p>Note that Python doesn't prevent me from doing this. We could make it if we
-want (e.g., by making <code>__setattr__</code> raise <code>AttributeError</code>), but even then we
-could forcibly change it by modifying the object's <code>__dict__</code>. We could try
-some more fancy things using descriptors, metaclasses, and/or
-<code>__getattribute__</code>, but even then, if we knew what was happening, we could
-probably find a way to change it.</p>
-<p>This is what is meant when people say that Python is a "consenting adults"
-language. You are expected to not try to break things, but generally aren't
-prevented from doing so if you try.</p>
-<h3>Example 2: More mutation</h3>
-<p>Let's try something even more crazy. Let's make an object that hashes to a
-different value each time we look at the hash.</p>
-<pre><code class="language-py">&gt;&gt;&gt; class DifferentHash(object):
-...     def __init__(self):
-...         self.hashcounter = 0
-...     def __hash__(self):
-...         self.hashcounter += 1
-...         return self.hashcounter
-...
-&gt;&gt;&gt; DH = DifferentHash()
-&gt;&gt;&gt; hash(DH)
-1
-&gt;&gt;&gt; hash(DH)
-2
-&gt;&gt;&gt; hash(DH)
-3
-</code></pre>
-<p>Obviously, if we use <code>DH</code> as a key to a dictionary, then it will not work,
-because we will run into the same issue we had with <code>Bad</code>. But what about
-putting <code>DH</code> in a <code>set</code>.</p>
-<pre><code class="language-py">&gt;&gt;&gt; DHset = {DH, DH, DH}
-&gt;&gt;&gt; DHset
-{&lt;__main__.DifferentHash at 0x101f79f50&gt;,
- &lt;__main__.DifferentHash at 0x101f79f50&gt;,
- &lt;__main__.DifferentHash at 0x101f79f50&gt;}
-</code></pre>
-<p>Woah! We put the exact same object in a <code>set</code> three times, and it appeared all
-three times. This is not what is supposed to happen with a set.</p>
-<pre><code class="language-py">&gt;&gt;&gt; {1, 1, 1}
-{1}
-</code></pre>
-<p>What happens when we do stuff with <code>DHset</code>?</p>
-<pre><code class="language-py">&gt;&gt;&gt; DHset.remove(DH)
-Traceback (most recent call last):
-  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
-KeyError: &lt;__main__.DifferentHash object at 0x1047e75f8&gt;
-</code></pre>
-<p>That didn't work, because <code>set.remove</code> searches for an object by its hash,
-which is different by this point.</p>
-<p>Now let's make a copy of <code>DHset</code>. The <code>set.copy</code> method will create a shallow
-copy (meaning that the set container itself will be different, according to
-<code>is</code> comparison, but the objects themselves will the same, according to <code>is</code>
-comparison).</p>
-<pre><code class="language-py">&gt;&gt;&gt; DHset2 = DHset.copy()
-&gt;&gt;&gt; DHset2 == DHset
-True
-</code></pre>
-<p>Everything is fine so far. This object is only going to cause trouble if
-something recomputes its hash. But remember that the whole reason that we had
-trouble with something like <code>Bad</code> above is that Python <em>doesn't</em> recompute
-that hash of an object, unless it has to. So let's do something that will
-force it to do so: let's pop an object from one of the sets and add it back
-in.</p>
-<pre><code class="language-py">&gt;&gt;&gt; D = DHset.pop()
-&gt;&gt;&gt; DHset.add(D)
-&gt;&gt;&gt; DHset
-{&lt;__main__.DifferentHash at 0x101f79f50&gt;,
- &lt;__main__.DifferentHash at 0x101f79f50&gt;,
- &lt;__main__.DifferentHash at 0x101f79f50&gt;}
-&gt;&gt;&gt; DHset2
-{&lt;__main__.DifferentHash at 0x101f79f50&gt;,
- &lt;__main__.DifferentHash at 0x101f79f50&gt;,
- &lt;__main__.DifferentHash at 0x101f79f50&gt;}
-&gt;&gt;&gt; DHset == DHset2
-False
-</code></pre>
-<p>There we go. By removing it from the set, we made the set forget about its
-hash, so it had to be recomputed when we added it again. This version of
-<code>DHset</code> now has a <code>DH</code> with a different hash than it had before. Thinking back
-to <code>set</code> being a hash table, in this <code>DHset</code>, the three <code>DH</code> objects are in
-different "buckets" than they were in before. <code>DHset.__eq__(DHset2)</code> notices
-that the bucket structure is different right away and returns <code>False</code>.</p>
-<p>By the way, what hash value are we up to these days?</p>
-<pre><code class="language-py">&gt;&gt;&gt; hash(DH)
-9
-</code></pre>
-<h3>Example 3: When <code>a == b</code> does not imply <code>hash(a) == hash(b)</code></h3>
-<p>Now let's look at point 2. What happens if we create an object with <code>__eq__</code>
-that disagrees with <code>__hash__</code>. We actually already have made a class like
-this, the <code>AlwaysEqual</code> object above. Instances of <code>AlwaysEqual</code> will always
-compare equal to one another, but they will not have the same hash, because
-they will use <code>object</code>'s default <code>__hash__</code> of <code>id</code>. Let's take a closer look
-at the <code>AE1</code> and <code>AE2</code> objects we created above.</p>
-<pre><code class="language-py">&gt;&gt;&gt; hash(AE1)
-270498221
-&gt;&gt;&gt; hash(AE2)
-270498197
-&gt;&gt;&gt; hash(AE1) == hash(AE2)
-False
-&gt;&gt;&gt; AE1 == AE2
-True
-&gt;&gt;&gt; {AE1, AE2}
-{&lt;__main__.AlwaysEqual at 0x101f79950&gt;,
- &lt;__main__.AlwaysEqual at 0x101f79ad0&gt;}
-</code></pre>
-<p>We can already see that we have broken one of the key properties of a <code>set</code>,
-which is that it does not contain the same object twice (remember that <code>AE1</code>
-and <code>AE2</code> should be considered the "same object" because <code>AE1 == AE2</code> is
-<code>True</code>).</p>
-<p>This can lead to subtle issues. For example, suppose we had a list and we
-wanted to remove all the duplicate items from it. An easy way to do this is to
-convert the list to a set and then convert it back to a list.</p>
-<pre><code class="language-py">&gt;&gt;&gt; l = ['a', 'a', 'c', 'a', 'c', 'b']
-&gt;&gt;&gt; list(set(l))
-['a', 'c', 'b']
-</code></pre>
-<p>Now, this method is obviously not going to work for a list of <code>AlwaysEqual</code> objects.</p>
-<pre><code class="language-py">&gt;&gt;&gt; AE3 = AlwaysEqual()
-&gt;&gt;&gt; l = [AE1, AE1, AE3, AE2, AE3]
-&gt;&gt;&gt; list(set(l))
-[&lt;__main__.AlwaysEqual at 0x102c1d590&gt;,
- &lt;__main__.AlwaysEqual at 0x101f79ad0&gt;,
- &lt;__main__.AlwaysEqual at 0x101f79950&gt;]
-</code></pre>
-<p>Actually, what happened here is that the equality that we defined on
-<code>AlwaysEqual</code> was essentially ignored. We got a list of unique items by <code>id</code>,
-instead of by <code>__eq__</code>. You can imagine that if <code>__eq__</code> were something a
-little less trivial, where some, but not all, objects are considered equal,
-that this could lead to very subtle issues.</p>
-<p>But there is an issue with the above algorithm. It isn't stable, that is, it
-removes the ordering that we had on the list. We could do this better by
-making a new list, and looping through the old one, adding elements to the new
-list if they aren't already there.</p>
-<pre><code class="language-py">&gt;&gt;&gt; def uniq(l):
-...     newl = []
-...     for i in l:
-...         if i not in newl:
-...             newl.append(i)
-...     return newl
-...
-&gt;&gt;&gt; uniq(['a', 'a', 'c', 'a', 'c', 'b'])
-['a', 'c', 'b']
-&gt;&gt;&gt; uniq([AE1, AE1, AE3, AE2, AE3])
-[&lt;__main__.AlwaysEqual at 0x101f79ad0&gt;]
-</code></pre>
-<p>This time, we used <code>in</code>, which uses <code>==</code>, so we got only one unique element of
-the list of <code>AlwaysEqual</code> objects.</p>
-<p>But there is an issue with this algorithm as well. Checking if something is in
-a list is \(O(n)\), but we have an object that allows checking in \(O(1)\)
-time, namely, a <code>set</code>. So a more efficient version might be to create a set
-alongside the new list for containment checking purposes.</p>
-<pre><code class="language-py">&gt;&gt;&gt; def uniq2(l):
-...     newl = []
-...     newlset = set()
-...     for i in l:
-...         if i not in newlset:
-...             newl.append(i)
-...             newlset.add(i)
-...     return newl
-...
-&gt;&gt;&gt; uniq2(['a', 'a', 'c', 'a', 'c', 'b'])
-['a', 'c', 'b']
-&gt;&gt;&gt; uniq2([AE1, AE1, AE3, AE2, AE3])
-[&lt;__main__.AlwaysEqual at 0x101f79ad0&gt;,
- &lt;__main__.AlwaysEqual at 0x102c1d590&gt;,
- &lt;__main__.AlwaysEqual at 0x101f79950&gt;]
-</code></pre>
-<p>Bah! Since we used a set, we compared by hashing, not equality, so we are left
-with three objects again. Notice the extremely subtle difference
-here. Basically, it is this:</p>
-<pre><code class="language-py">&gt;&gt;&gt; AE1 in {AE2}
-False
-&gt;&gt;&gt; AE1 in [AE2]
-True
-</code></pre>
-<p>Set containment uses hashing; list containment uses equality. If the two don't
-agree, then the result of your algorithm will depend on which one you use!</p>
-<p>By the way, as you might expect, dictionary containment also uses hashing, and
-tuple containment uses equality:</p>
-<pre><code class="language-py">&gt;&gt;&gt; AE1 in {AE2: 42}
-False
-&gt;&gt;&gt; AE1 in (AE2,)
-True
-</code></pre>
-<h3>Example 4: Caching hashing</h3>
-<p>If you ever want to add subtle bizarreness to a system, add some sort of
-caching, and then do it wrong.</p>
-<p>As we noted in the beginning, one important property of a hash function is
-that it is quick to compute. A nice way to achieve this for heavily cached
-objects is to cache the value of the cache on the object, so that it only
-needs to be computed once. The pattern (which is modeled after SymPy's
-<code>Basic</code>) is something like this:</p>
-<pre><code class="language-py">&gt;&gt;&gt; class HashCache(object):
-...     def __init__(self, arg):
-...         self.arg = arg
-...         self.hash_cache = None
-...     def __hash__(self):
-...         if self.hash_cache is None:
-...             self.hash_cache = hash(self.arg)
-...         return self.hash_cache
-...     def __eq__(self, other):
-...         if not isinstance(other, HashCache):
-...             return False
-...         return self.arg == other.arg
-...
-</code></pre>
-<p><code>HashCache</code> is nothing more than a small wrapper around a hashable argument,
-which caches its hash.</p>
-<pre><code class="language-py">&gt;&gt;&gt; hash('a')
-12416037344
-&gt;&gt;&gt; a = HashCache('a')
-&gt;&gt;&gt; hash(a)
-12416037344
-</code></pre>
-<p>For ordinary Python builtins, simply recomputing the hash will be faster than
-the attribute lookup used by <code>HashCache</code>. <em>Note: This uses the <code>%timeit</code> magic
-from IPython. <code>%timeit</code> only works when run in IPython or Jupyter.</em></p>
-<pre><code class="language-py">&gt;&gt;&gt; %timeit hash('a')
-10000000 loops, best of 3: 69.9 ns per loop
-&gt;&gt;&gt; %timeit hash(a)
-1000000 loops, best of 3: 328 ns per loop
-</code></pre>
-<p>But for a custom object, computing the hash may be more computationally
-expensive. As hashing is supposed to agree with equality (as I hope you've
-realized by now!), if computing equality is expensive, computing a hash
-function that agrees with it might be expensive as well.</p>
-<p>As a simple example of where this might be useful, consider a highly nested
-tuple, an object whose hash that is relatively expensive to compute.</p>
-<pre><code class="language-py">&gt;&gt;&gt; a = ()
-&gt;&gt;&gt; for i in range(1000):
-...     a = (a,)
-...
-&gt;&gt;&gt; A = HashCache(a)
-</code></pre>
-<pre><code class="language-py">&gt;&gt;&gt; %timeit hash(a)
-100000 loops, best of 3: 9.61 &#181;s per loop
-&gt;&gt;&gt; %timeit hash(A)
-1000000 loops, best of 3: 325 ns per loop
-</code></pre>
-<p>So far, we haven't done anything wrong. <code>HashCache</code>, as you may have noticed,
-has <code>__eq__</code> defined correctly:</p>
-<pre><code class="language-py">&gt;&gt;&gt; HashCache(1) == HashCache(2)
-False
-&gt;&gt;&gt; HashCache(1) == HashCache(1)
-True
-</code></pre>
-<p>But what happens if we mutate a <code>HashCache</code>. This is different from examples 1
-and 2 above, because we will be mutating what happens with equality testing,
-but not the hash (because of the cache).</p>
-<p><em>In the below example, recall that small integers hash to themselves, so
-<code>hash(1) == 1</code> and <code>hash(2) == 2</code>.</em></p>
-<pre><code class="language-py">&gt;&gt;&gt; a = HashCache(1)
-&gt;&gt;&gt; d = {a: 42}
-&gt;&gt;&gt; a.arg = 2
-&gt;&gt;&gt; hash(a)
-1
-&gt;&gt;&gt; d[a]
-42
-</code></pre>
-<p>Because we cached the hash of <code>a</code>, which was computed as soon as we created
-the dictionary <code>d</code>, it remained unchanged when modified the arg to be
-<code>2</code>. Thus, we can still find the key of the dictionary. But since we have
-mutated <code>a</code>, the equality testing on it has changed. This means that, as with
-the previous example, we are going to have issues with dicts and sets keeping
-unique keys and entries (respectively).</p>
-<pre><code class="language-py">&gt;&gt;&gt; a = HashCache(1)
-&gt;&gt;&gt; b = HashCache(2)
-&gt;&gt;&gt; hash(a)
-1
-&gt;&gt;&gt; hash(b)
-2
-&gt;&gt;&gt; b.arg = 1
-&gt;&gt;&gt; a == b
-True
-&gt;&gt;&gt; hash(a) == hash(b)
-False
-&gt;&gt;&gt; {a, b}
-{&lt;__main__.HashCache at 0x102c32050&gt;, &lt;__main__.HashCache at 0x102c32450&gt;}
-&gt;&gt;&gt; uniq([a, b])
-[&lt;__main__.HashCache at 0x102c32050&gt;]
-&gt;&gt;&gt; uniq2([a, b])
-[&lt;__main__.HashCache at 0x102c32050&gt;, &lt;__main__.HashCache at 0x102c32450&gt;]
-</code></pre>
-<p>Once we mutate <code>b</code> so that it compares equal to <code>a</code>, we start to have the same sort of issues that we had in example 3 with <code>AlwaysEqual</code>. Let's look at an instant replay.</p>
-<pre><code class="language-py">&gt;&gt;&gt; a = HashCache(1)
-&gt;&gt;&gt; b = HashCache(2)
-&gt;&gt;&gt; b.arg = 1
-&gt;&gt;&gt; print(a == b)
-True
-&gt;&gt;&gt; print(hash(a) == hash(b))
-True
-&gt;&gt;&gt; print({a, b})
-set([&lt;__main__.HashCache object at 0x102c32a10&gt;])
-&gt;&gt;&gt; print(uniq([a, b]))
-[&lt;__main__.HashCache object at 0x102c32a50&gt;]
-&gt;&gt;&gt; print(uniq2([a, b]))
-[&lt;__main__.HashCache object at 0x102c32a50&gt;]
-</code></pre>
-<p>Wait a minute, this time it's different! Comparing it to above, it's pretty
-easy to see what was different this time. We left out the part where we showed
-the hash of <code>a</code> and <code>b</code>. When we did that the first time, it cached the hash
-of <code>b</code>, making it forever be <code>2</code>, but when we didn't do it the second time,
-the hash had not been cached yet, so the first time it is computed (in the
-<code>print(hash(a) == hash(b))</code> line), <code>b.arg</code> has already been changed to <code>1</code>.</p>
-<p>And herein lies the extreme subtlety: if you mutate an object with that hashes
-its cache like this, you will run into issues <strong>only if</strong> you had already
-called some function that hashed the object somewhere. Now just about anything
-might compute the hash of an object. Or it might not. For example, our <code>uniq2</code>
-function computes the hash of the objects in its input list, because it stores
-them in a set, but <code>uniq</code> does not:</p>
-<pre><code class="language-py">&gt;&gt;&gt; a = HashCache(1)
-&gt;&gt;&gt; b = HashCache(2)
-&gt;&gt;&gt; uniq2([a, b])
-&gt;&gt;&gt; b.arg = 1
-&gt;&gt;&gt; print(a == b)
-True
-&gt;&gt;&gt; print(hash(a) == hash(b))
-False
-&gt;&gt;&gt; print({a, b})
-set([&lt;__main__.HashCache object at 0x102c32c50&gt;, &lt;__main__.HashCache object at 0x102c32c10&gt;])
-&gt;&gt;&gt; print(uniq([a, b]))
-[&lt;__main__.HashCache object at 0x102c32c50&gt;]
-&gt;&gt;&gt; print(uniq2([a, b]))
-[&lt;__main__.HashCache object at 0x102c32c50&gt;, &lt;__main__.HashCache object at 0x102c32c10&gt;]
-</code></pre>
-<pre><code class="language-py">&gt;&gt;&gt; a = HashCache(1)
-&gt;&gt;&gt; b = HashCache(2)
-&gt;&gt;&gt; uniq([a, b])
-&gt;&gt;&gt; b.arg = 1
-&gt;&gt;&gt; print(a == b)
-True
-&gt;&gt;&gt; print(hash(a) == hash(b))
-True
-&gt;&gt;&gt; print({a, b})
-set([&lt;__main__.HashCache object at 0x102c32c90&gt;])
-&gt;&gt;&gt; print(uniq([a, b]))
-[&lt;__main__.HashCache object at 0x102c32bd0&gt;]
-&gt;&gt;&gt; print(uniq2([a, b]))
-[&lt;__main__.HashCache object at 0x102c32bd0&gt;]
-</code></pre>
-<p>The moral of this final example is that if you are going to cache something,
-that something had better be immutable.</p>
-<h2>Conclusion</h2>
-<p>The conclusion is this: don't mess with hashing. The two invariants above are
-important. Let's restate them here,</p>
-<ol>
-<li><p><strong>The hash of an object must not change across the object's lifetime (in
-other words, a hashable object should be immutable).</strong></p></li>
-<li><p><strong><code>a == b</code> implies <code>hash(a) == hash(b)</code> (note that the reverse might not
-hold in the case of a hash collision).</strong></p></li>
-</ol>
-<p>If you don't follow these rules, you will run into very subtle issues, because
-very basic Python operations expect these invariants.</p>
-<p>If you want to be able to mutate an object's properties, you have two
-options. First, make the object unhashable (set <code>__hash__ = None</code>). You won't
-be able to use it in sets or as keys to a dictionary, but you will be free to
-change the object in-place however you want.</p>
-<p>A second option is to make all mutable properties non-dependent on hashing or
-equality testing. This option works well if you just want to cache some
-internal state that doesn't inherently change the object. Both <code>__eq__</code> and
-<code>__hash__</code> should remain unchanged by changes to this state. You may also want
-to make sure you use proper getters and setters to prevent modification of
-internal state that equality testing and hashing does depend on.</p>
-<p>If you choose this second option, however, be aware that Python considers it
-fair game to swap out two identical immutable (i.e., hashable) objects at any
-time. If <code>a == b</code> and <code>a</code> is hashable, Python (and Python libraries) are free
-to replace <code>a</code> with <code>b</code> anywhere. For example, Python uses an optimization on
-strings called <em>interning</em>, where common strings are stored only once in
-memory. A similar optimization is used in CPython for small integers. If store
-something on <code>a</code> but not <code>b</code> and make <code>a</code>'s hash ignore that data, you may
-find that some function that should return <code>a</code> may actually return <code>b</code>. For
-this reason, I generally don't recommend this second option unless you know
-what you are doing.</p>
-<p>Finally, to keep invariant 2, here are some tips:</p>
-<ul>
-<li><p>Make sure that the parts of the object that you use to compare equality are
-not themselves mutable. If they are, then your object cannot itself be
-immutable. This means that if <code>a == b</code> depends on <code>a.attr == b.attr</code>, and
-<code>a.attr</code> is a list, then you will need to use a tuple instead (if you want
-<code>a</code> to be hashable).</p></li>
-<li><p>You don't have to invent a hash function. If you find yourself doing
-bitshifts and XORs, you're doing it wrong. Reuse Python's builtin hashable
-objects. If the hash of your object should depend on the hash of <code>a</code> and
-<code>b</code>, define <code>__hash__</code> to return <code>hash((a, b))</code>. If the order of <code>a</code> and <code>b</code>
-does not matter, use <code>hash(frozenset([a, b]))</code>.</p></li>
-<li><p>Don't cache something unless you know that the entire cached state will not
-be changed over the lifetime of the cache. Hashable objects are actually
-great for caches. If they properly satisfy invariant 1, and all the state
-that should be cached is part of the hash, then you will not need to
-worry. And the best part is that you can just use <code>dict</code> for your cache.</p></li>
-<li><p>Unless you really need the performance or memory gains, don't make your
-objects mutable. This makes programs much harder to reason about. Some
-functional programming languages take this idea so far that they don't allow
-any mutable objects.</p></li>
-<li><p>Don't worry about the situation where <code>hash(a) == hash(b)</code> but <code>a != b</code>. This is a hash collision. Unlike the issues we looked at here, hash
-collisions are expected and checked for in Python. For example, our
-<code>HashToOne</code> object from the beginning will always hash to 1, but different
-instances will compare unequal. We can see that the right thing is done in
-every case with them.</p>
-<pre><code class="language-py">&gt;&gt;&gt; a = HashToOne()
-&gt;&gt;&gt; b = HashToOne()
-&gt;&gt;&gt; a == b
-False
-&gt;&gt;&gt; hash(a) == hash(b)
-True
-&gt;&gt;&gt; {a, b}
-{&lt;__main__.HashToOne at 0x102c32a10&gt;, &lt;__main__.HashToOne at 0x102c32cd0&gt;}
-&gt;&gt;&gt; uniq([a, b])
-[&lt;__main__.HashToOne at 0x102c32cd0&gt;, &lt;__main__.HashToOne at 0x102c32a10&gt;]
-&gt;&gt;&gt; uniq2([a, b])
-[&lt;__main__.HashToOne at 0x102c32cd0&gt;, &lt;__main__.HashToOne at 0x102c32a10&gt;]
-</code></pre>
-<p>The only concern with hash collisions is that too many of them can remove
-the performance gains of <code>dict</code> and <code>set</code>.</p></li>
-<li><p>Conversely, if you are writing something that uses an object's hash, remember
-that hash collisions are possible and unavoidable.</p>
-<p>A classic example of a hash collision is <code>-1</code> and <code>-2</code>. Remember I
-mentioned above that small integers hash to themselves:</p>
-<pre><code class="language-py">&gt;&gt;&gt; hash(1)
-1
-&gt;&gt;&gt; hash(-3)
--3
-</code></pre>
-<p>The exception to this is <code>-1</code>. The CPython interpreter uses <code>-1</code> as an error
-state, so -1 is not a valid hash value. Hence, <code>hash(-1)</code> can't be <code>-1</code>. So
-the Python developers picked the next closest thing.</p>
-<pre><code class="language-py">&gt;&gt;&gt; hash(-1)
--2
-&gt;&gt;&gt; hash(-2)
--2
-</code></pre>
-<p>If you want to check if something handles hash collisions correctly, this is
-a simple example.  I should also note that the fact that integers hash to
-themselves is an implementation detail of CPython that may not be true in
-alternate Python implementations.</p></li>
-<li><p>Finally, we didn't discuss this much here, but don't assume that the hash of
-your object will be the same across Python sessions. In Python 3.3 and up,
-hash values of strings are randomized from a value that is seeded when
-Python starts up. This also affects any object whose hash is computed
-from the hash of strings. In Python 2.7, you can enable hash randomization
-with the <code>-R</code> flag to the interpreter. The following are two different
-Python sessions.</p>
-<pre><code class="language-py">&gt;&gt;&gt; print(hash('a'))
--7750608935454338104
-</code></pre>
-<pre><code class="language-py">&gt;&gt;&gt; print(hash('a'))
-8897161376854729812
-</code></pre></li>
-</ul></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">December 19, 2015</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-b9986a01 feed-" id="item-9df2b624">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/asmeurer.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Aaron Meurer (asmeurer) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://asmeurer.github.io/blog/posts/doing-math-with-python-by-amit-saha-book-review/">21:01, Saturday, 19 December UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://asmeurer.github.io/blog/posts/doing-math-with-python-by-amit-saha-book-review/">"Doing Math with Python" by Amit Saha: Book Review</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/asmeurer.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Aaron Meurer (asmeurer) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://asmeurer.github.io/blog/posts/doing-math-with-python-by-amit-saha-book-review/">21:01, Saturday, 19 December UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://asmeurer.github.io/blog/posts/doing-math-with-python-by-amit-saha-book-review/">"Doing Math with Python" by Amit Saha: Book Review</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<div><p><em>Note: No Starch Press has sent me a copy of this book for review purposes.</em></p>
-<p><strong>SHORT VERSION: <em>Doing Math with Python</em> is well written and introduces
-topics in a nice, mathematical way. I would recommend it for new users of
-SymPy.</strong></p>
-<p><a href="https://www.nostarch.com/doingmathwithpython"><em>Doing Math with Python</em></a> by
-Amit Saha is a new book published by No Starch Press. The book shows how to
-use Python to do high school-level mathematics. It makes heavy use of SymPy in
-many chapters, and this review will focus mainly on those parts, as that is
-the area I have expertise in.</p>
-<p>The book assumes a basic understanding of programming in Python 3, as well as
-the mathematics used (although advanced topics are explained). No prior
-background in the libraries used, SymPy and matplotlib, is assumed. For this
-reason, this book can serve as an introduction them. Each chapter ends with
-some programming exercises, which range from easy exercises to more advanced
-ones.</p>
-<p>The book has seven chapters. In the first chapter, "Working with numbers",
-basic mathematics using pure Python is introduced (no SymPy yet). It should be
-noted that Python 3 (not Python 2) is required for this book. One of the
-earliest examples in the book (<code>3/2 == 1.5</code>) will not work correctly without
-it. I applaud this choice, although I might have added a more prominent
-warning to wary users. (As a side note, in the appendix, it is recommended to
-install Python via <a href="https://www.continuum.io/downloads">Anaconda</a>, which I
-also applaud). This chapter also introduces the <code>fractions</code> module, which
-seems odd since <code>sympy.Rational</code> will be implicitly used for rational numbers
-later in the text (to little harm, however, since SymPy automatically converts
-<code>fractions.Fraction</code> instances to <code>sympy.Rational</code>).</p>
-<p>In all, this chapter is a good introduction to the basics of the mathematics
-of Python. There is also an introduction to variables and strings. However, as
-I noted above, one should really have some background with basic Python before
-reading this book, as concepts like flow control and function definition are
-assumed (note: there is an appendix that goes over this).</p>
-<p>Chapters 2 and 3 cover plotting with matplotlib and basic statistics,
-respectively. I will not say much about the matplotlib chapter, since I know
-only basic matplotlib myself. I will note that the chapter covers matplotlib
-from a (high school) mathematics point of view, starting with a definition of
-the Cartesian plane, which seems a fitting choice for the book.</p>
-<p>Chapter 3 shows how to do basic statistics (mean, median, standard deviation,
-etc.) using pure Python. This chapter is clearly meant for pedagogical
-purposes for basic statistics, since the basic functions <code>mean</code>, <code>median</code>,
-etc. are implemented from scratch (as opposed to using <code>numpy.mean</code> or the
-standard library <code>statistics.mean</code>). This serves as a good introduction to
-more Python concepts (like <code>collections.Counter</code>) and statistics.</p>
-<p>Note that the functions in this chapter assume that the data is the entire
-population, not a sample. This is mentioned at the beginning of the chapter,
-but not elaborated on. For example, this leads to a different definition of
-variance than what might be seen elsewhere (the <code>calculate_variance</code> used in
-this chapter is <code>statistics.pvariance</code>, not <code>statistics.variance</code>).</p>
-<p>It is good to see that a numerically stable definition of variance is used
-here (see <a href="https://www.python.org/dev/peps/pep-0450/">PEP 450</a> for more
-discussion on this). These numerical issues show why it is important to use a
-real statistics library rather than a home grown one. In other words, use this
-chapter to learn more about statistics and Python, but if you ever need to do
-statistics on real data, use a statistics library like <code>statistics</code> or
-<code>numpy</code>. Finally, I should note that this book appears to be written against
-Python 3.3, whereas <code>statistics</code> was added to the Python standard library in
-Python 3.4. Perhaps it will get a mention in future editions.</p>
-<p>Chapter 4, "Algebra and Symbolic Math with SymPy" starts the introduction to
-SymPy. The chapter starts similar to the
-<a href="http://docs.sympy.org/latest/tutorial/index.html">official SymPy tutorial</a> in
-describing what symbolics is, and guiding the reader away from common
-misconceptions and gotchas. The chapter does a good job of explaining common
-gotchas and avoiding antipatterns.</p>
-<p>This chapter may serve as an alternative to the official tutorial. Unlike the
-official tutorial, which jumps into
-<a href="http://docs.sympy.org/latest/tutorial/simplification.html#powers">higher-level mathematics</a>
-and <a href="http://docs.sympy.org/latest/tutorial/matrices.html">broader use-cases</a>,
-this chapter may be better suited to those wishing to use SymPy from the
-standpoint of high school mathematics.</p>
-<p>My only gripes with this chapter, which, in total, are minor, relate to printing.</p>
-<ol>
-<li><p>The typesetting of the pretty printing is inconsistent and, in some cases,
-incorrect. Powers are printed in the book using superscript numbers, like</p>
-<pre><code>x&#178;
-</code></pre>
-<p>However, SymPy prints powers like</p>
-<pre><code> 2
-x
-</code></pre>
-<p>even when Unicode pretty printing is enabled. This is a minor point, but it
-may confuse users. Also, the output appears to use ASCII pretty printing
-(mixed with superscript powers), for example</p>
-<pre><code>    x&#178;   x&#179;   x&#8308;   x&#8309;
-x + -- + -- + -- + --
-    2    3    4    5
-</code></pre>
-<p>Most users will either get MathJax printing (if they are using the Jupyter
-notebook), or Unicode printing, like</p>
-<pre><code>     2    3    4    5
-    x    x    x    x
-x + &#9472;&#9472; + &#9472;&#9472; + &#9472;&#9472; + &#9472;&#9472;
-    2    3    4    5
-</code></pre>
-<p>Again, this is a minor point, but at the very least the correct printing
-looks better than the fake printing used here.</p></li>
-<li><p>In line with the previous point, I would recommend telling the user to
-start with <code>init_printing()</code>. The function is used once to change the order
-of printing to rev-lex (for series printing). There is a link to the
-<a href="http://docs.sympy.org/latest/tutorial/printing.html">tutorial page on printing</a>. That
-page goes into more depth than is necessary for the book, but I would
-recommend at least mentioning to always call <code>init_printing()</code>, as 2-D
-printing can make a huge difference over the default <code>str</code> printing, and it
-obviates the need to call <code>pprint</code>.</p></li>
-</ol>
-<p>Chapter 5, "Playing with Sets and Probability" covers SymPy's set objects
-(particularly <code>FiniteSet</code>) to do some basic set theory and probability. I'm
-excited to see this in the book. The sets module in SymPy is relatively new,
-but quite powerful. We do not yet have an introduction to the sets module in
-the SymPy tutorial. This chapter serves as a good introduction to it (albeit
-only with finite sets, but the SymPy functions that operate on infinite sets
-are exactly the same as the ones that operate on finite sets). In all, I don't
-have much to say about this chapter other than that I was pleasantly surprised
-to see it included.</p>
-<p>Chapter 6 shows how to draw geometric shapes and fractals with matplotlib. I
-again won't say much on this, as I am no matplotlib expert. The ability to
-draw leaf fractals and Sierpi&#324;ski triangles with Python does look
-entertaining, and should keep readers enthralled.</p>
-<p>Chapter 7, "Solving Calculus Problems" goes into more depth with SymPy. In
-particular, assumptions, limits, derivatives, and integrals.  The chapter
-alternates between symbolic formulations using SymPy and numeric
-calculations (using <code>evalf</code>). The numeric calculations are done both for
-simple examples and more advanced things (like implementing gradient descent).</p>
-<p>One small gripe here. The book shows that</p>
-<pre><code>from sympy import Symbol
-x = Symbol('x')
-if (x + 5) &gt; 0:
-    print('Do Something')
-else:
-    print('Do Something else')
-</code></pre>
-<p>raises <code>TypeError</code> at the evaluation of <code>(x + 5) &gt; 0</code> because its truth value
-cannot be determined. The solution to this issue is given as</p>
-<pre><code>x = Symbol('x', positive=True)
-if (x + 5) &gt; 0:
-    print('Do Something')
-else:
-    print('Do Something else')
-</code></pre>
-<p>Setting <code>x</code> to be positive via <code>Symbol('x', positive=True)</code> is correct, but
-even in this case, evaluating an inequality may still raise a <code>TypeError</code> (for
-example, <code>if (x - 5) &gt; 0</code>). The better way to do this is to use <code>(x + 5).is_positive</code>. This would require a bit more discussion, especially since
-SymPy uses a three-valued logic for assumptions, but I do consider "if
-&lt;symbolic inequality&gt;" to be a SymPy antipattern.</p>
-<p>I like Saha's approach in this chapter of first showing unevaluated forms
-(<code>Limit</code>, <code>Derivative</code>, <code>Integral</code>), and then evaluating them with
-<code>doit()</code>. This puts users in the mindset of a mathematical expression being a
-formula which may or may not later be "calculated". The opposite approach,
-using the function forms, <code>limit</code>, <code>diff</code>, and <code>integrate</code>, which evaluate if
-they can and return an unevaluated object if they can't, can be confusing to
-new users in my experience. A common new SymPy user question is (some form of)
-"how do I evaluate an expression?" (the answer is <code>doit()</code>). Saha's approach
-avoids this question by showing <code>doit()</code> from the outset.</p>
-<p>I also like that this chapter explains the gotcha of <code>math.sin(Symbol('x'))</code>,
-although I personally would have included this earlier in the text.</p>
-<p>(Side note: now that I look, these are both areas in which the official
-tutorial could be improved).</p>
-<h3>Summary</h3>
-<p>This book is a good introduction to doing math with Python, and, for the
-chapters that use it, a good basic introduction to SymPy. I would recommend it
-to anyone wishing to learn SymPy, but especially to anyone whose knowledge of
-mathematics may preclude them from getting the most out of the official SymPy
-tutorial.</p>
-<p>I imagine this book would work well as a pedagogical tool, either for math
-teachers or for self-learners. The exercises in this book should push the
-motivated to learn more.</p>
-<p>I have a few minor gripes, but no major issues.</p>
-<p>You can purchase this book from the
-<a href="https://www.nostarch.com/doingmathwithpython">No Starch Press</a> website, both
-as a print book or an ebook. The website also includes a sample chapter
-(<a href="https://www.nostarch.com/download/Doing%20Math%20with%20Python_sample_Chapter1.pdf">chapter 1</a>),
-code samples from the book, and exercise solutions.</p></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3880,80 +3115,80 @@ code samples from the book, and exercise solutions.</p></div>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>18:17, Sunday, 05 June</td>
-<td>18:32, Sunday, 05 June</td>
+<td>18:37, Sunday, 05 June</td>
+<td>18:52, Sunday, 05 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>18:17, Sunday, 05 June</td>
-<td>18:32, Sunday, 05 June</td>
+<td>18:37, Sunday, 05 June</td>
+<td>18:52, Sunday, 05 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>18:17, Sunday, 05 June</td>
-<td>18:32, Sunday, 05 June</td>
+<td>18:37, Sunday, 05 June</td>
+<td>18:52, Sunday, 05 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>18:17, Sunday, 05 June</td>
-<td>18:32, Sunday, 05 June</td>
-</tr>
-<tr class="feedsrow">
-<td>http://srajangarg.github.io/feed.xml</td>
-<td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>18:17, Sunday, 05 June</td>
-<td>18:32, Sunday, 05 June</td>
+<td>18:37, Sunday, 05 June</td>
+<td>18:52, Sunday, 05 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>18:17, Sunday, 05 June</td>
-<td>18:32, Sunday, 05 June</td>
+<td>18:37, Sunday, 05 June</td>
+<td>18:52, Sunday, 05 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>18:17, Sunday, 05 June</td>
-<td>18:32, Sunday, 05 June</td>
+<td>18:37, Sunday, 05 June</td>
+<td>18:52, Sunday, 05 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>18:17, Sunday, 05 June</td>
-<td>18:32, Sunday, 05 June</td>
+<td>18:37, Sunday, 05 June</td>
+<td>18:52, Sunday, 05 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>18:17, Sunday, 05 June</td>
-<td>18:32, Sunday, 05 June</td>
+<td>18:37, Sunday, 05 June</td>
+<td>18:52, Sunday, 05 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://s-hacker.info">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://s-hacker.info/blog/gsoc16/feeds/sympy.xml">XML</a></td>
-<td>18:17, Sunday, 05 June</td>
-<td>18:32, Sunday, 05 June</td>
+<td>18:37, Sunday, 05 June</td>
+<td>18:52, Sunday, 05 June</td>
+</tr>
+<tr class="feedsrow">
+<td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
+<td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
+<td>18:37, Sunday, 05 June</td>
+<td>18:52, Sunday, 05 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>18:17, Sunday, 05 June</td>
-<td>18:32, Sunday, 05 June</td>
+<td>18:37, Sunday, 05 June</td>
+<td>18:52, Sunday, 05 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>18:17, Sunday, 05 June</td>
-<td>18:32, Sunday, 05 June</td>
+<td>18:37, Sunday, 05 June</td>
+<td>18:52, Sunday, 05 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>18:17, Sunday, 05 June</td>
-<td>18:32, Sunday, 05 June</td>
+<td>18:37, Sunday, 05 June</td>
+<td>18:52, Sunday, 05 June</td>
 </tr>
 </table>
 
