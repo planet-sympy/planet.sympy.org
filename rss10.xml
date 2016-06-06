@@ -7,6 +7,77 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://srajangarg.github.io//2016/06/06/Flint-Polynomials</guid>
+      <title>Flint Polynomials</title>
+      <author>Srajan Garg (srajangarg)</author>
+      <pubDate>Mon, 06 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://srajangarg.github.io//2016/06/06/Flint-Polynomials/</link>
+      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
+
+&lt;p&gt;This week has not been as interesting as the last. Most of my work this week involved wrapping Flint Polynomials, for use in SymEngine. I will discuss their internal implementation and how they were integrated to the library.&lt;/p&gt;
+
+&lt;h3 id="flint-polynomials"&gt;Flint Polynomials&lt;/h3&gt;
+
+&lt;p&gt;Flint&amp;#8217;s integer polynomial class is the &lt;code class="highlighter-rouge"&gt;fmpz_poly&lt;/code&gt; class. Flint, being a C library also provides a C++ wrapper for most of it&amp;#8217;s classes. In our case, it&amp;#8217;s the &lt;code class="highlighter-rouge"&gt;fmpz_polyxx&lt;/code&gt; class. As discussed last week, the arithmetic operators for the class have already been overloaded and it can be seamlessly used with the base class which is already set up.&lt;/p&gt;
+
+&lt;p&gt;Internally, flint uses a dense representation of polynomials. What this means is that the coefficient for each degree in the polynomial are stored in a vector. This is in contrast to a sparse approach which deals stores only non-zero coefficients of a polynomial in a dictionary. Flint also uses it&amp;#8217;s own integer class as the coefficient type. Flint&amp;#8217;s integers are basically similar to GMP integers, and also follow the same naming conventions. (eg. &lt;code class="highlighter-rouge"&gt;fmpz_t&lt;/code&gt; is analogous to &lt;code class="highlighter-rouge"&gt;mpz_t&lt;/code&gt;) They have internal optimizations to make them faster for use within the flint library itself. Flint does not provide the option to use a custom integer class as the type of coefficients like Piranha does.&lt;/p&gt;
+
+&lt;p&gt;All the work related to flint polynomials can be seen in &lt;a href="https://github.com/symengine/symengine/pull/971"&gt;#971&lt;/a&gt;. The majority of the PR concerns introducing a new class &lt;code class="highlighter-rouge"&gt;UIntPolyFlint&lt;/code&gt; and all the necessary functionality like &lt;code class="highlighter-rouge"&gt;__hash__&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;eval&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;compare&lt;/code&gt;. Test cases have also been added, to see if the polynomial manipulation is working as intended. There is some additional minor work done here apart from this class introduction.&lt;/p&gt;
+
+&lt;p&gt;The polynomial base class now has three methods :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="n"&gt;from_container&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="n"&gt;from_dict&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="n"&gt;from_vec&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;These methods are, as indicated from their names, used to construct the polynomial from any of the three sources. So, for example to construct a &lt;code class="highlighter-rouge"&gt;UIntPolyFlint&lt;/code&gt;, you can :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;PolyFlint&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;PolyFlint&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;from_container&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fmpz_polyxx&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;PolyFlint&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;PolyFlint&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;from_vec&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;vector&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;integer_class&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;B&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;PolyFlint&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;PolyFlint&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;from_dict&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;map&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;uint&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;integer_class&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id="integerclass-conversions"&gt;&lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt; Conversions&lt;/h3&gt;
+
+&lt;p&gt;Another issue was that methods like &lt;code class="highlighter-rouge"&gt;eval&lt;/code&gt; must return integers of &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt;. Thus, we needed functions to convert &lt;code class="highlighter-rouge"&gt;fmpzxx&lt;/code&gt; to any of the 4 possible integer classes used by SymEngine. The 4 integers used by SymEngine are :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;1. mpz_class         The default C++ class provided by GMP
+2. mpz_wrapper       SymEngine's wrapper around GMP's mpz_t
+3. piranha::integer  Piranha's integer class
+3. fmpz_wrapper      SymEngine's wrapper around Flint's fmpz_t
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We, might even require such conversion for Piranha polynomials. So, I generalized this and made &lt;code class="highlighter-rouge"&gt;to_integer_class()&lt;/code&gt; which takes in either &lt;code class="highlighter-rouge"&gt;flint::fmpzxx&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;piranha::integer&lt;/code&gt; and returns an &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt;. There was a small discussion on where these functions should be placed, with Isuru which was insightful. Basically, what I was doing earlier caused a considerable &lt;a href="https://github.com/symengine/symengine/pull/971#issuecomment-223743950"&gt;increase&lt;/a&gt; in compilation time, which was later corrected. An example of one such function is :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="cp"&gt;#if SYMENGINE_INTEGER_CLASS == GMP || GMPXX
+#ifdef HAVE_SYMENGINE_FLINT
+&lt;/span&gt;&lt;span class="kr"&gt;inline&lt;/span&gt; &lt;span class="n"&gt;integer_class&lt;/span&gt; &lt;span class="nf"&gt;to_integer_class&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;flint&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;fmpzxx&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;integer_class&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="n"&gt;fmpz_get_mpz&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_mpz_t&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;_data&lt;/span&gt;&lt;span class="p"&gt;().&lt;/span&gt;&lt;span class="n"&gt;inner&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="cp"&gt;#endif
+#endif
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;A &lt;code class="highlighter-rouge"&gt;get_coeff()&lt;/code&gt; function was also added to the polynomial base is a much needed function for any polynomial manipulation.&lt;/p&gt;
+
+&lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
+
+&lt;p&gt;There were some changes done to the polynomial structure before the flint polynomials were introduced. Constructor of the polynomials from vectors was removed, as it wasn&amp;#8217;t required. And a &lt;code class="highlighter-rouge"&gt;from_vec&lt;/code&gt; was added for the SymEngine polynomial dictionaries &lt;code class="highlighter-rouge"&gt;UIntDict&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;UExprDict&lt;/code&gt;. The changes can be seen here &lt;a href="https://github.com/symengine/symengine/pull/965/"&gt;#965&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In Travis CI builds, SymEngine was using flint-2.4.4 from a static location. There&amp;#8217;s a &lt;a href="https://github.com/wbhart/flint2/issues/217"&gt;bug&lt;/a&gt; that I encountered using this version, which dealt with incorrect header declaration in one of the flint files. Now, we clone the flint repository from  &lt;a href="https://github.com/wbhart/flint2/"&gt;wbhart/flint2&lt;/a&gt; to use in the CI builds. The change is in &lt;a href="https://github.com/symengine/symengine/pull/973"&gt;#973&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I&amp;#8217;m working on wrapping Piranha polynomials next week. After that is done, I plan to start getting higher level functionality like &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;factorize&lt;/code&gt; ready.&lt;/p&gt;
+
+&lt;p&gt;Ciao!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=336</guid>
       <title>GSoC Week 2</title>
       <author>Sampad Saha (sampadsaha5)</author>
@@ -1353,23 +1424,6 @@ I would not have been able to attend the conference without the generous financi
 
 &lt;p&gt;Good bye! everyone, see you on my next blog post, meanwhile you can have a look at a Picture of me doing back flip at Sentosa ;)
 &lt;img align="center" src="http://iamit.in/assets/amit-backflip.gif" /&gt;&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nishnik.github.io/Hello-World</guid>
-      <title>Hello World!</title>
-      <author>Nishant Nikhil (nishnik)</author>
-      <pubDate>Thu, 24 Mar 2016 00:00:00 GMT</pubDate>
-      <link>http://nishnik.github.io/Hello-World/</link>
-      <description>&lt;p&gt;Hello World!
-My previous blog posts were at: &lt;a href="http://nishantnikhil.weebly.com/"&gt;Global Class&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;You should try not to reinvent the wheel, So I thought it would be better for me to fork &lt;a href="https://github.com/barryclark/jekyll-now"&gt;jekyll-now&lt;/a&gt; repo and build this jekyll blog in minutes :smile: .&lt;/p&gt;
-
-&lt;p&gt;This is cool and the awesome most part is that &lt;strong&gt;It is Markdown flavoured&lt;/strong&gt; . Its quite cool writing in markdown now. Oh! I remember how weird I felt writing in markdown back in December. Snap!&lt;/p&gt;
-
-&lt;p&gt;Now, I will search for a way to do spell correction in markdown. It is so much nedded, I know a little bit of googling will help me.&lt;/p&gt;
-
-&lt;p&gt;Happy Holi! :fire:&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
