@@ -603,6 +603,84 @@ less on coding than this week was.&lt;/p&gt;
 &lt;/blockquote&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Second-Week</guid>
+      <title>GSoC Second Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Fri, 27 May 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Second-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This week, I implemented some algorithms (&lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;gf_gcd&lt;/code&gt; etc.) and apart from it I looked into the design consideration also.&lt;/p&gt;
+
+&lt;h1 id="algorithms-implemented"&gt;Algorithms Implemented&lt;/h1&gt;
+
+&lt;p&gt;I implemented 
+- &lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C+++"&gt;void GaloisFieldDict::gf_div(const GaloisFieldDict &amp;amp;o,
+                         const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;quo,
+                         const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;rem) const
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This will change the value of &lt;code class="highlighter-rouge"&gt;quo&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;rem&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_quo&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This will return the quotient only. It will help when we only need quotient after dividing.
+It is better than &lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt; in terms of time complexity.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_lshift&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It is efficient way to multiply a polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; by &lt;code class="highlighter-rouge"&gt;x**n&lt;/code&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_rshift&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It is efficient way to divide a polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; by &lt;code class="highlighter-rouge"&gt;x**n&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;void GaloisFieldDict::gf_rshift(const integer_class n,
+                            const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;quo,
+                            const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;rem) const
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Just like gf_div, it also changes the value of &lt;code class="highlighter-rouge"&gt;quo&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;rem&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sqr&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This will square the polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_pow&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It uses binary multiplication to power a polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_monic&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Changes a polynomial to its monic representation, i.e. &lt;code class="highlighter-rouge"&gt;3*x**2 + 4&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;GF(5)&lt;/code&gt; becomes &lt;code class="highlighter-rouge"&gt;x**2 + 3&lt;/code&gt;. Here leading coefficient becomes &lt;code class="highlighter-rouge"&gt;one&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;gf_lcm&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;gf_gcd&lt;/code&gt; by Euclidean Algorithm and &lt;code class="highlighter-rouge"&gt;gf_lcm&lt;/code&gt; is product of the two polys divided by their gcd in the finite field.&lt;/p&gt;
+
+&lt;h1 id="design-change"&gt;Design Change&lt;/h1&gt;
+
+&lt;p&gt;SymEngine&amp;#8217;s codebase for &lt;code class="highlighter-rouge"&gt;UIntPoly&lt;/code&gt; has changed, it inherits &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt;, which has two private variables, one is to store the variable and other is container. &lt;code class="highlighter-rouge"&gt;UIntPoly&lt;/code&gt; uses &lt;code class="highlighter-rouge"&gt;UIntDict&lt;/code&gt; as a container and &lt;code class="highlighter-rouge"&gt;UIntDict&lt;/code&gt; is inherited from &lt;code class="highlighter-rouge"&gt;ODictWrapper&lt;/code&gt;.
+Now as &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; is just representation of polynomial so I needed something similar, so I made &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; inherit from &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt;, and made a container named &lt;code class="highlighter-rouge"&gt;GaloisFieldDict&lt;/code&gt;.
+This prevented a lot of code duplicacy.
+Still there is a lot of conversation going on this topic, I will better post after the final design is fixed.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://nishnik.github.io/GSoC-First-Week</guid>
       <title>GSoC First Week</title>
       <author>Nishant Nikhil (nishnik)</author>
@@ -1374,56 +1452,6 @@ Code program for the summer of 2016. I will be working with the Sympy open
 source project&amp;#8217;s equation of motion generators. For the project I will mainly
 be focusing on creating a shared base class for the current equation of motion
 generators and adding an additional generator.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://iamit.in/blog/SymPy Workshop at FOSSASIA 2016, Singapore</guid>
-      <title>SymPy Workshop at FOSSASIA 2016, Singapore</title>
-      <author>Amit Kumar (aktech)</author>
-      <pubDate>Fri, 25 Mar 2016 18:30:00 GMT</pubDate>
-      <link>http://iamit.in/blog/sympy-workshop-fossasia-2016</link>
-      <description>&lt;p&gt;Hi there! Last week I went to &lt;a href="https://en.wikipedia.org/wiki/Singapore"&gt;Singapore&lt;/a&gt; for &lt;a href="http://2016.fossasia.org/"&gt;FOSSASIA&lt;/a&gt; Open Tech Summit  2016. I conducted a Worskhop on &lt;a href="http://sympy.org"&gt;SymPy&lt;/a&gt; and assisted the &lt;a href="http://pydy.org"&gt;PyDy&lt;/a&gt; Workshop in Python track hosted by &lt;a href="https://kushaldas.in/"&gt;Kushal Das&lt;/a&gt;. This blog post accounts to my experience as a speaker, as a attendee at FOSSASIA and as a traveler to Singapore.&lt;/p&gt;
-
-&lt;h2&gt;&lt;strong&gt;About FOSSASIA&lt;/strong&gt;&lt;/h2&gt;
-
-&lt;p&gt;&lt;img align="center" src="http://iamit.in/assets/fossasia.png" width="200" /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;FOSSASIA is the premier Free and Open Source technology event in Asia for developers, start-ups, and contributors. Projects at FOSSASIA range from open hardware, to design, graphics and software. FOSSASIA was established in 2009. Previous events took place in Cambodia and Vietnam.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;As the name suggests its one of the largest tech conferences in Asia and my expectations were pretty high from this conference and moreover It was my first international conference. I witnessed lots of amazing people in the conference and interacted with a few as well. This is how it started: &lt;/p&gt;
-
-&lt;p&gt;&lt;img align="center" src="http://iamit.in/assets/harish-fossasia.jpg" width="400" /&gt;&lt;/p&gt;
-
-&lt;h2&gt;The SymPy/PyDy Workshop&lt;/h2&gt;
-
-&lt;p&gt;Community is more important than Code @ Singapore Science Center Level 3, Pauling Lab
-&lt;img align="center" src="http://iamit.in/assets/sympy-zen.jpg" width="400" /&gt;&lt;/p&gt;
-
-&lt;p&gt;The SymPy and PyDy workshop was scheduled on 20th March at 1:00 - 2:00 PM (PyDy) and 2:00 - 4:00 PM (SymPy). &lt;a href="http://www.moorepants.info/"&gt;Jason&lt;/a&gt; suggested to conduct the SymPy workshop first since PyDy uses SymPy and it would be easier for people to learn SymPy first and then PyDy, but since the &lt;a href="http://2016.fossasia.org/schedule/"&gt;schedule&lt;/a&gt; was already published, It was not possible to reschedule the workshops, so we had to continue with PyDy first.
-&lt;a href="https://github.com/sahilshekhawat"&gt;Sahil&lt;/a&gt; started the PyDy workshop at 1:00 PM, though we had to spend a lot of time installing Anaconda to everyone's systems by creating a local server and distributing flash drives as most of the people didn't had Anaconda or Canopy installed. This has been the problem for almost all the workshops I have conducted in the past. It seems I need to invent an efficient way to do this faster in future as we spent 30-40 odd minutes in installation. &lt;/p&gt;
-
-&lt;p&gt;&lt;img align="center" src="http://iamit.in/assets/sympy-fossasia.jpg" width="400" /&gt;&lt;/p&gt;
-
-&lt;p&gt;Fortunately &lt;a href="https://github.com/sahilshekhawat"&gt;Sahil&lt;/a&gt; finished his presentation at around 2:15 PM. Then I took over for SymPy workshop, I started with the basic introduction to SymPy, the slides can be found &lt;a href="http://slides.com/aktech/sympy"&gt;here&lt;/a&gt;. Then I jumped to IPython notebook exercises to demonstrate more of SymPy. People were amazed by the capabilities of this amazing piece of software. The most beautiful feature they liked was printing and integration. The workshop went pretty well except for the glitches in the HDMI port of my laptop (probably, its the right time to get a new laptop). Here are some SymPy stickers for you, if you missed there.  &lt;/p&gt;
-
-&lt;p&gt;&lt;img align="center" src="http://iamit.in/assets/sympy-sticker-fossasia.jpg" width="400" /&gt;&lt;/p&gt;
-
-&lt;h2&gt;Singapore was Fun ;)&lt;/h2&gt;
-
-&lt;p&gt;Visiting Singapore has been a great experience, the culture is a mix of &lt;a href="https://en.wikipedia.org/wiki/Malaysian"&gt;Malaysian&lt;/a&gt;, Indian and native Singaporean. The City is well connected with &lt;a href="https://en.wikipedia.org/wiki/Mass_Rapid_Transit_(Singapore)"&gt;MRT/SMRT&lt;/a&gt; (Metro and Buses). It's quite easy get anywhere around the city. People here are very helpful and nice. I didn't faced any problems throughout my stay there. I spent most of my time near &lt;a href="https://en.wikipedia.org/wiki/Science_Centre_Singapore"&gt;Science Center&lt;/a&gt;, China Town and Little India. There were lot of people from India and particularly from Delhi and three from my University. It was awesome time spent with geeks all around. Tagging some of them &lt;a href="http://devmaany.co/"&gt;Mayank&lt;/a&gt;, &lt;a href="http://www.ishankhanna.in/"&gt;Ishaan&lt;/a&gt;, &lt;a href="http://omerjerk.in/"&gt;Umair&lt;/a&gt;, &lt;a href="https://github.com/jig08"&gt;Jigyasa&lt;/a&gt;, &lt;a href="http://iyask.me/"&gt;Yask&lt;/a&gt;, &lt;a href="http://garvitdelhi.blogspot.in/"&gt;Garvit&lt;/a&gt;, &lt;a href="http://home.iiitd.edu.in/%7Emanan13056/"&gt;Manan&lt;/a&gt;, sorry If I missed someone. Here is a pic of the last day of the conference. &lt;/p&gt;
-
-&lt;p&gt;&lt;img align="center" src="http://iamit.in/assets/fossasia-all.jpg" width="400" /&gt;&lt;/p&gt;
-
-&lt;h2&gt;Thank you!&lt;/h2&gt;
-
-&lt;p&gt;Thank you FOSSASIA Organizing Team, Hong Phuc Dang for inviting me to be part of this awesome FOSS community.
-I would not have been able to attend the conference without the generous financial support from SymPy, Thank you &lt;a href="http://www.ondrejcertik.com/"&gt;Ondrej Certik&lt;/a&gt;, &lt;a href="http://asmeurer.github.io/blog/"&gt;Aaron Meurer&lt;/a&gt; &amp;amp; SymPy contributors.&lt;/p&gt;
-
-&lt;h3&gt;Good Bye!&lt;/h3&gt;
-
-&lt;p&gt;Good bye! everyone, see you on my next blog post, meanwhile you can have a look at a Picture of me doing back flip at Sentosa ;)
-&lt;img align="center" src="http://iamit.in/assets/amit-backflip.gif" /&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

@@ -1247,6 +1247,138 @@ less on coding than this week was.</p>
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-89ae9fcb feed-" id="item-deed62fb">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/nishnik.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Nishant Nikhil (nishnik) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://nishnik.github.io/GSoC-Second-Week/">00:00, Friday, 27 May UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Second-Week/">GSoC Second Week</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/nishnik.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Nishant Nikhil (nishnik) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://nishnik.github.io/GSoC-Second-Week/">00:00, Friday, 27 May UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Second-Week/">GSoC Second Week</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p><img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /></p>
+
+<p>This week, I implemented some algorithms (<code class="highlighter-rouge">gf_div</code>, <code class="highlighter-rouge">gf_gcd</code> etc.) and apart from it I looked into the design consideration also.</p>
+
+<h1 id="algorithms-implemented">Algorithms Implemented</h1>
+
+<p>I implemented 
+- <code class="highlighter-rouge">gf_div</code></p>
+
+<pre><code class="language-C+++">void GaloisFieldDict::gf_div(const GaloisFieldDict &amp;o,
+                         const Ptr&lt;GaloisFieldDict&gt; &amp;quo,
+                         const Ptr&lt;GaloisFieldDict&gt; &amp;rem) const
+</code></pre>
+<p>This will change the value of <code class="highlighter-rouge">quo</code> and <code class="highlighter-rouge">rem</code>.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">gf_quo</code></li>
+</ul>
+
+<p>This will return the quotient only. It will help when we only need quotient after dividing.
+It is better than <code class="highlighter-rouge">gf_div</code> in terms of time complexity.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">gf_lshift</code></li>
+</ul>
+
+<p>It is efficient way to multiply a polynomial in <code class="highlighter-rouge">GaloisField</code> by <code class="highlighter-rouge">x**n</code></p>
+
+<ul>
+  <li><code class="highlighter-rouge">gf_rshift</code></li>
+</ul>
+
+<p>It is efficient way to divide a polynomial in <code class="highlighter-rouge">GaloisField</code> by <code class="highlighter-rouge">x**n</code></p>
+
+<pre><code class="language-C++">void GaloisFieldDict::gf_rshift(const integer_class n,
+                            const Ptr&lt;GaloisFieldDict&gt; &amp;quo,
+                            const Ptr&lt;GaloisFieldDict&gt; &amp;rem) const
+</code></pre>
+
+<p>Just like gf_div, it also changes the value of <code class="highlighter-rouge">quo</code> and <code class="highlighter-rouge">rem</code>.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">gf_sqr</code></li>
+</ul>
+
+<p>This will square the polynomial in <code class="highlighter-rouge">GaloisField</code>.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">gf_pow</code></li>
+</ul>
+
+<p>It uses binary multiplication to power a polynomial in <code class="highlighter-rouge">GaloisField</code>.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">gf_monic</code></li>
+</ul>
+
+<p>Changes a polynomial to its monic representation, i.e. <code class="highlighter-rouge">3*x**2 + 4</code> in <code class="highlighter-rouge">GF(5)</code> becomes <code class="highlighter-rouge">x**2 + 3</code>. Here leading coefficient becomes <code class="highlighter-rouge">one</code>.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">gf_gcd</code> and <code class="highlighter-rouge">gf_lcm</code></li>
+</ul>
+
+<p><code class="highlighter-rouge">gf_gcd</code> by Euclidean Algorithm and <code class="highlighter-rouge">gf_lcm</code> is product of the two polys divided by their gcd in the finite field.</p>
+
+<h1 id="design-change">Design Change</h1>
+
+<p>SymEngine&#8217;s codebase for <code class="highlighter-rouge">UIntPoly</code> has changed, it inherits <code class="highlighter-rouge">UPolyBase</code>, which has two private variables, one is to store the variable and other is container. <code class="highlighter-rouge">UIntPoly</code> uses <code class="highlighter-rouge">UIntDict</code> as a container and <code class="highlighter-rouge">UIntDict</code> is inherited from <code class="highlighter-rouge">ODictWrapper</code>.
+Now as <code class="highlighter-rouge">GaloisField</code> is just representation of polynomial so I needed something similar, so I made <code class="highlighter-rouge">GaloisField</code> inherit from <code class="highlighter-rouge">UPolyBase</code>, and made a container named <code class="highlighter-rouge">GaloisFieldDict</code>.
+This prevented a lot of code duplicacy.
+Still there is a lot of conversation going on this topic, I will better post after the final design is fixed.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-89ae9fcb feed-" id="item-443b2243">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -3035,113 +3167,6 @@ generators and adding an additional generator.</p>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">March 25, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-d9900bae feed-" id="item-dbe12604">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/aktech.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Amit Kumar (aktech) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://iamit.in/blog/sympy-workshop-fossasia-2016">18:30, Friday, 25 March UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://iamit.in/blog/sympy-workshop-fossasia-2016">SymPy Workshop at FOSSASIA 2016, Singapore</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/aktech.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Amit Kumar (aktech) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://iamit.in/blog/sympy-workshop-fossasia-2016">18:30, Friday, 25 March UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://iamit.in/blog/sympy-workshop-fossasia-2016">SymPy Workshop at FOSSASIA 2016, Singapore</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Hi there! Last week I went to <a href="https://en.wikipedia.org/wiki/Singapore">Singapore</a> for <a href="http://2016.fossasia.org/">FOSSASIA</a> Open Tech Summit  2016. I conducted a Worskhop on <a href="http://sympy.org">SymPy</a> and assisted the <a href="http://pydy.org">PyDy</a> Workshop in Python track hosted by <a href="https://kushaldas.in/">Kushal Das</a>. This blog post accounts to my experience as a speaker, as a attendee at FOSSASIA and as a traveler to Singapore.</p>
-
-<h2><strong>About FOSSASIA</strong></h2>
-
-<p><img align="center" src="http://iamit.in/assets/fossasia.png" width="200" /></p>
-
-<blockquote>
-<p>FOSSASIA is the premier Free and Open Source technology event in Asia for developers, start-ups, and contributors. Projects at FOSSASIA range from open hardware, to design, graphics and software. FOSSASIA was established in 2009. Previous events took place in Cambodia and Vietnam.</p>
-</blockquote>
-
-<p>As the name suggests its one of the largest tech conferences in Asia and my expectations were pretty high from this conference and moreover It was my first international conference. I witnessed lots of amazing people in the conference and interacted with a few as well. This is how it started: </p>
-
-<p><img align="center" src="http://iamit.in/assets/harish-fossasia.jpg" width="400" /></p>
-
-<h2>The SymPy/PyDy Workshop</h2>
-
-<p>Community is more important than Code @ Singapore Science Center Level 3, Pauling Lab
-<img align="center" src="http://iamit.in/assets/sympy-zen.jpg" width="400" /></p>
-
-<p>The SymPy and PyDy workshop was scheduled on 20th March at 1:00 - 2:00 PM (PyDy) and 2:00 - 4:00 PM (SymPy). <a href="http://www.moorepants.info/">Jason</a> suggested to conduct the SymPy workshop first since PyDy uses SymPy and it would be easier for people to learn SymPy first and then PyDy, but since the <a href="http://2016.fossasia.org/schedule/">schedule</a> was already published, It was not possible to reschedule the workshops, so we had to continue with PyDy first.
-<a href="https://github.com/sahilshekhawat">Sahil</a> started the PyDy workshop at 1:00 PM, though we had to spend a lot of time installing Anaconda to everyone's systems by creating a local server and distributing flash drives as most of the people didn't had Anaconda or Canopy installed. This has been the problem for almost all the workshops I have conducted in the past. It seems I need to invent an efficient way to do this faster in future as we spent 30-40 odd minutes in installation. </p>
-
-<p><img align="center" src="http://iamit.in/assets/sympy-fossasia.jpg" width="400" /></p>
-
-<p>Fortunately <a href="https://github.com/sahilshekhawat">Sahil</a> finished his presentation at around 2:15 PM. Then I took over for SymPy workshop, I started with the basic introduction to SymPy, the slides can be found <a href="http://slides.com/aktech/sympy">here</a>. Then I jumped to IPython notebook exercises to demonstrate more of SymPy. People were amazed by the capabilities of this amazing piece of software. The most beautiful feature they liked was printing and integration. The workshop went pretty well except for the glitches in the HDMI port of my laptop (probably, its the right time to get a new laptop). Here are some SymPy stickers for you, if you missed there.  </p>
-
-<p><img align="center" src="http://iamit.in/assets/sympy-sticker-fossasia.jpg" width="400" /></p>
-
-<h2>Singapore was Fun ;)</h2>
-
-<p>Visiting Singapore has been a great experience, the culture is a mix of <a href="https://en.wikipedia.org/wiki/Malaysian">Malaysian</a>, Indian and native Singaporean. The City is well connected with <a href="https://en.wikipedia.org/wiki/Mass_Rapid_Transit_(Singapore)">MRT/SMRT</a> (Metro and Buses). It's quite easy get anywhere around the city. People here are very helpful and nice. I didn't faced any problems throughout my stay there. I spent most of my time near <a href="https://en.wikipedia.org/wiki/Science_Centre_Singapore">Science Center</a>, China Town and Little India. There were lot of people from India and particularly from Delhi and three from my University. It was awesome time spent with geeks all around. Tagging some of them <a href="http://devmaany.co/">Mayank</a>, <a href="http://www.ishankhanna.in/">Ishaan</a>, <a href="http://omerjerk.in/">Umair</a>, <a href="https://github.com/jig08">Jigyasa</a>, <a href="http://iyask.me/">Yask</a>, <a href="http://garvitdelhi.blogspot.in/">Garvit</a>, <a href="http://home.iiitd.edu.in/%7Emanan13056/">Manan</a>, sorry If I missed someone. Here is a pic of the last day of the conference. </p>
-
-<p><img align="center" src="http://iamit.in/assets/fossasia-all.jpg" width="400" /></p>
-
-<h2>Thank you!</h2>
-
-<p>Thank you FOSSASIA Organizing Team, Hong Phuc Dang for inviting me to be part of this awesome FOSS community.
-I would not have been able to attend the conference without the generous financial support from SymPy, Thank you <a href="http://www.ondrejcertik.com/">Ondrej Certik</a>, <a href="http://asmeurer.github.io/blog/">Aaron Meurer</a> &amp; SymPy contributors.</p>
-
-<h3>Good Bye!</h3>
-
-<p>Good bye! everyone, see you on my next blog post, meanwhile you can have a look at a Picture of me doing back flip at Sentosa ;)
-<img align="center" src="http://iamit.in/assets/amit-backflip.gif" /></p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3169,80 +3194,80 @@ I would not have been able to attend the conference without the generous financi
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>11:46, Monday, 06 June</td>
-<td>12:01, Monday, 06 June</td>
+<td>12:06, Monday, 06 June</td>
+<td>12:21, Monday, 06 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>11:46, Monday, 06 June</td>
-<td>12:01, Monday, 06 June</td>
+<td>12:06, Monday, 06 June</td>
+<td>12:21, Monday, 06 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>11:46, Monday, 06 June</td>
-<td>12:01, Monday, 06 June</td>
+<td>12:06, Monday, 06 June</td>
+<td>12:21, Monday, 06 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>11:46, Monday, 06 June</td>
-<td>12:01, Monday, 06 June</td>
+<td>12:06, Monday, 06 June</td>
+<td>12:21, Monday, 06 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>11:46, Monday, 06 June</td>
-<td>12:01, Monday, 06 June</td>
+<td>12:06, Monday, 06 June</td>
+<td>12:21, Monday, 06 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>11:46, Monday, 06 June</td>
-<td>12:01, Monday, 06 June</td>
+<td>12:06, Monday, 06 June</td>
+<td>12:21, Monday, 06 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>11:46, Monday, 06 June</td>
-<td>12:01, Monday, 06 June</td>
+<td>12:06, Monday, 06 June</td>
+<td>12:21, Monday, 06 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>11:46, Monday, 06 June</td>
-<td>12:01, Monday, 06 June</td>
+<td>12:06, Monday, 06 June</td>
+<td>12:21, Monday, 06 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://s-hacker.info">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://s-hacker.info/blog/gsoc16/feeds/sympy.xml">XML</a></td>
-<td>11:46, Monday, 06 June</td>
-<td>12:01, Monday, 06 June</td>
+<td>12:06, Monday, 06 June</td>
+<td>12:21, Monday, 06 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>11:46, Monday, 06 June</td>
-<td>12:01, Monday, 06 June</td>
+<td>12:06, Monday, 06 June</td>
+<td>12:21, Monday, 06 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>11:46, Monday, 06 June</td>
-<td>12:01, Monday, 06 June</td>
+<td>12:06, Monday, 06 June</td>
+<td>12:21, Monday, 06 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>11:46, Monday, 06 June</td>
-<td>12:01, Monday, 06 June</td>
+<td>12:06, Monday, 06 June</td>
+<td>12:21, Monday, 06 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>11:46, Monday, 06 June</td>
-<td>12:01, Monday, 06 June</td>
+<td>12:06, Monday, 06 June</td>
+<td>12:21, Monday, 06 June</td>
 </tr>
 </table>
 
