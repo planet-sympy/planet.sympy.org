@@ -7,6 +7,20 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=291</guid>
+      <title>GSoC: Week 3</title>
+      <author>Subham Tibra (shubhamtibra)</author>
+      <pubDate>Tue, 07 Jun 2016 10:17:45 GMT</pubDate>
+      <link>https://shubhamtibra.wordpress.com/2016/06/07/gsoc-week-3/</link>
+      <description>&lt;p&gt;As I wrote&amp;#160;in my blog post last week, Our&amp;#160;plan was to implement numerical methods to compute values of a Holonomic function at given points and convert symbolic function/expressions. Let&amp;#8217;s look at what I implemented during this time&amp;#160;one by one.&lt;/p&gt;
+&lt;p&gt;I started by working on to implement the most basic and popular &lt;code&gt;Euler's method&lt;/code&gt;&amp;#160;for numerical integration of holonomic ode&amp;#8217;s. Given a set a points in the complex plane, the algorithm computes numerical values of Holonomic function at each point using the Euler&amp;#8217;s method.&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11180"&gt;#11180&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Next I moved on to write a method for converting Meijer G-function to a Holonomic Function. In the module &lt;code&gt;meijerint&lt;/code&gt;&amp;#160;we have method &lt;code&gt;meijerint._rewrite1&lt;/code&gt;&amp;#160;to convert expressions/functions to &lt;code&gt;meijerg&lt;/code&gt;&amp;#160;. Now this method can be used first to convert to &lt;code&gt;meijerg&lt;/code&gt;&amp;#160;and then converting this result finally to Holonomic Functions. I wrote methods&amp;#160;&lt;code&gt;from_meijerg&lt;/code&gt;&amp;#160;and &lt;code&gt;from_sympy&lt;/code&gt;&amp;#160;respectively for this purposes. &lt;a href="https://github.com/sympy/sympy/pull/11187"&gt;#11187&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;We are also familiar with the fact that &lt;code&gt;Euler's method&lt;/code&gt;&amp;#160;doesn&amp;#8217;t give much accurate results and for better accuracy one needs higher order numerical methods e.g. Runge-Kutta 4th Order method A.K.A &lt;code&gt;RK4&lt;/code&gt; method. I wrote this method and made it the default method for numerical computation. As expected, the results are much more accurate using RK4 and enough for our present purposes. &lt;a href="https://github.com/sympy/sympy/pull/11195"&gt;#11195&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;I am now looking for bugs inside everything implemented so far in the module, will be working on solving them and also will make things optimal wherever there is a possibility. More on what to implement next is yet to be discussed.&lt;/p&gt;
+&lt;p&gt;Thank You!&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/291/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/291/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=291&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://srajangarg.github.io//2016/06/06/Flint-Polynomials</guid>
       <title>Flint Polynomials</title>
       <author>Srajan Garg (srajangarg)</author>
@@ -131,6 +145,104 @@ Out[6]:
 &lt;p&gt;Cheers. Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/336/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/336/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=336&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://github.com/kshitij10496/2016/06/04/GSoC-Week-02/</guid>
+      <title>GSoC Week 02 - The One with Function Range</title>
+      <author>Kshitij Saraogi(kshitij10496)</author>
+      <pubDate>Sat, 04 Jun 2016 00:00:00 GMT</pubDate>
+      <link>https://github.com/kshitij10496/2016/06/04/GSoC-Week-02/</link>
+      <description>&lt;p&gt;This week I worked on developing methods for computing the range of an univariate function.
+For this pupose, I spent most of my time in research; reading previous discussions on mailing lists, pull requests and wikis.&lt;/p&gt;
+
+&lt;h3 id="progress"&gt;&lt;strong&gt;Progress&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;Suppose, we want to solve the following equation in the variable &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;sin(x) = &amp;#960; / 2&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;We can straight away state that this equations has &lt;em&gt;no solutions&lt;/em&gt; as the range of the function &lt;code class="highlighter-rouge"&gt;sin&lt;/code&gt; is -1 to 1 &lt;br /&gt;
+i.e &lt;code class="highlighter-rouge"&gt;sin(x) &amp;#8712; [-1, 1]&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Thus, we find that the range of the function can also be used to leverage the solutions of an equation. The implementation of a function to determine the range of a function in a given domain is particularly interesting for checking whether an equation is at all solvable.&lt;/p&gt;
+
+&lt;p&gt;In the last meeting, Amit had suggested me to read the conversation on&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/2723"&gt;PR#2723&lt;/a&gt; : Fixed imageset for Interval&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/2925"&gt;PR#2925&lt;/a&gt; : find singularities for any expression.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Along with this, I read the following mailing lists discussions:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://groups.google.com/forum/#!searchin/sympy/minimize/sympy/Na_p5pm1I7M/V6uv4ZAkp2oJ"&gt;Find minimum value of a function symbolically&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://groups.google.com/forum/#!topic/sympy/8TM8cnuzkG8"&gt;Best way to find extrema of function over interval&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://groups.google.com/forum/#!searchin/sympy/singularity/sympy/ijhl7rkHEbk/lsWTuJ2Nb8wJ"&gt;GSoC 2013 Idea - Find Domain / Range / Continuity / Singularity of a Function&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://groups.google.com/forum/#!searchin/sympy/singularity/sympy/c_fpCu9QiII/n2KaXN-z3rwJ"&gt;On a general representation for singularities and infinities&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://groups.google.com/forum/#!searchin/sympy/singularity/sympy/mJlCxuZ5uZw/peWogHzbKekJ"&gt;Functions: Singularity and Continuity&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;All this research helped me appreciate the difficulty of the problem at hand. Also, my approach to solving this issue is heavily inspired from these discussions.&lt;/p&gt;
+
+&lt;h3 id="design"&gt;&lt;strong&gt;Design&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;The methodology of determining the range of a function:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Determine the points of discontinuities in the concerned domain.&lt;/li&gt;
+  &lt;li&gt;Divide the entire domain into sub-domains about the above-determined singularities.&lt;/li&gt;
+  &lt;li&gt;Use the &lt;a href="https://en.wikipedia.org/wiki/Derivative_test#Second_derivative_test"&gt;Derivative Test&lt;/a&gt; to locate the critical points of the function within each sub-domain.&lt;/li&gt;
+  &lt;li&gt;Calcuate the corresponding values of the function at the critical points and the boundary values of the sub-domains.&lt;/li&gt;
+  &lt;li&gt;The extremas of the function in the entire domain are the maximum and minimum values in all the smaller domains combined.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;For now, I have thought of designing 2 functions to solve this issue:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Function to divide the domain into sub-domains.&lt;/li&gt;
+  &lt;li&gt;Function to calculate the extremum values.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id="implementation"&gt;&lt;strong&gt;Implementation&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;Here, I have defined the two functions along with some of their implementation details:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;continuous_in(f, x, domain)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The function returns the sub-domains as an &lt;code class="highlighter-rouge"&gt;Union&lt;/code&gt; of &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt; in case a discontinuity exists in the &lt;code class="highlighter-rouge"&gt;domain&lt;/code&gt;. If the function is continuous in the entire domain, the &lt;code class="highlighter-rouge"&gt;domain&lt;/code&gt; itself is returned.&lt;/p&gt;
+
+&lt;p&gt;For determining the discontinuities, I have used the &lt;code class="highlighter-rouge"&gt;singularities&lt;/code&gt; functionality already implemented for rational functions. 
+I will have to extend this module to return all kinds of discontinuities such as branch points in &lt;code class="highlighter-rouge"&gt;sqrt&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;log&lt;/code&gt; functions.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;func_range(f, x, domain)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Like the name suggests, this method returns the range of a function in a given domain. This function calls &lt;code class="highlighter-rouge"&gt;continuous_in&lt;/code&gt; method and implements the first derivate test on each &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt;. For determining the values of the function at the singularities, we determine its limit at that point. For this, I use the &lt;code class="highlighter-rouge"&gt;limit&lt;/code&gt; function of SymPy.&lt;/p&gt;
+
+&lt;h3 id="git-log"&gt;&lt;strong&gt;$ git log&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/11141"&gt;PR#11141&lt;/a&gt; : Method for solving equations using Decomposition and Rewriting
+&lt;a href="https://github.com/sympy/sympy/pull/11164"&gt;PR#11164&lt;/a&gt; : Intersection of certain ImageSets with Intervals&lt;/p&gt;
+
+&lt;h3 id="thoughts"&gt;&lt;strong&gt;Thoughts&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;I have an initial commit of the methods on my local.
+After tommorrow&amp;#8217;s meeting, I will iron out a more concrete design and implementation.&lt;/p&gt;
+
+&lt;p&gt;Looking forward to another exciting week !&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=255</guid>
       <title>GSoC Week 2 Progress</title>
       <author>Rajith Vidanaarachchi (rajithv)</author>
@@ -239,6 +351,125 @@ work on in order to implement his method in SymPy.&lt;/p&gt;
 &lt;/blockquote&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://shekharrajak.github.io//Coding-Period_week-2</guid>
+      <title>Coding Period Week 2</title>
+      <author>Shekhar Prasad Rajak (shekharrajak)</author>
+      <pubDate>Wed, 01 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://shekharrajak.github.io//Coding-Period_week-2/</link>
+      <description>&lt;h3 id="system-of-inequalities"&gt;System of Inequalities&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Right now solve uses &lt;code class="highlighter-rouge"&gt;reduce_inequalitie&lt;/code&gt;s to solve system of equations. But it is not designed for more than one variable.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;ex: system = &lt;code class="highlighter-rouge"&gt;[2*x - 3*y &amp;lt;= 12, x+5*y &amp;lt;=20, x&amp;gt;0] symbols = [x,y])  &lt;/code&gt;
+you will get :&lt;br /&gt;
+&lt;code class="highlighter-rouge"&gt;NotImplementedError&lt;/code&gt;:&lt;br /&gt;
+inequality has more than one symbol of interest&lt;br /&gt;
+We know answer is &lt;code class="highlighter-rouge"&gt;[0 &amp;lt; x &amp;lt;120/13 and 2(x-6)/3 &amp;lt;= y &amp;lt;= (20-x)/5]&lt;/code&gt;&lt;br /&gt;
+&lt;code class="highlighter-rouge"&gt;[x = 120/13 and y = 28/13]&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;But &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt; already have project on this &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Ideas#cylindrical-algebraic-decomposition"&gt;Cylindrical algebraic decomposition&lt;/a&gt; to Provide an interface for solving systems of polynomial inequalities.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;If we want to feature like old &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; then just need to pass system of inequalities having one variable to solve
+for one variable. After checking this use &lt;code class="highlighter-rouge"&gt;reduce_inequalitie(system, symbol)&lt;/code&gt; it will return solution. It is easy to implement.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id="general-solution-for-trigonometric-equations"&gt;General solution for Trigonometric equations&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11188"&gt;#11188&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Problems in old method :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;_solve_trig&lt;/code&gt; changes the trig equation in &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; form (it&amp;#8217;s fine). But then fraction and solving equation
+for it&amp;#8217;s parts makes more number of &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt;. If we have more number of &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; then we get more number of &lt;code class="highlighter-rouge"&gt;imageset&lt;/code&gt;,
+Since we &lt;code class="highlighter-rouge"&gt;_invert&lt;/code&gt; for each &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; factors.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;It retuns &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; when it can&amp;#8217;t solve, but its expression is in ` exp&lt;code class="highlighter-rouge"&gt; form mostly with &lt;/code&gt;I` and
+in complicated form.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;some times &lt;code class="highlighter-rouge"&gt;_solve_as_poly&lt;/code&gt; can solve Trig equations, but it is not using it.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;New implemention :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;I added &lt;code class="highlighter-rouge"&gt;reduce_imageset&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;solveset.py&lt;/code&gt; to reduce the number of union returned by &lt;code class="highlighter-rouge"&gt;_solve_trig&lt;/code&gt; method. As Harsh said it is
+no specific to &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;, so I moved the method to &lt;code class="highlighter-rouge"&gt;sets/sets.py&lt;/code&gt;. I added the doctests and test-cases in &lt;code class="highlighter-rouge"&gt;test_sets.py&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Now solving the &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; form directly using &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;. This makes the less number of &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; in many cases.
+But to solve equation having &lt;code class="highlighter-rouge"&gt;tan&lt;/code&gt; in it, will be complicated, for that I changed the &lt;code class="highlighter-rouge"&gt;solve_rational&lt;/code&gt; method,
+so that it can handle  &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; with &lt;code class="highlighter-rouge"&gt;I&lt;/code&gt;. in denominator.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Now using &lt;code class="highlighter-rouge"&gt;_solve_as_poly&lt;/code&gt; when &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; can&amp;#8217;t solve it using &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; form. If this also can&amp;#8217;t solve then retuns
+the &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; having simple trig functions, which is understandable.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;reduce_imageset :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;reduce_imageset&lt;/code&gt; take the &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; or Union of &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; and returns the minimum number of &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;First we extract the &lt;code class="highlighter-rouge"&gt;Lambda&lt;/code&gt; expression from the each &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; and take principle values. Separate the positive and negative principle values and sort them.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;+ve and -ve values are passed into &lt;code class="highlighter-rouge"&gt;interpolate&lt;/code&gt; method defined in &lt;code class="highlighter-rouge"&gt;polys/polyfuncs.py&lt;/code&gt; to get the general function in terms
+of Dummy &lt;code class="highlighter-rouge"&gt;n&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;If only one &lt;code class="highlighter-rouge"&gt;Imageset&lt;/code&gt; or value in +ve or -ve value list then return that as it is. Here we need to note that Dummy &lt;code class="highlighter-rouge"&gt;n&lt;/code&gt; defined here
+is different then original lambda expression, so need to return original &lt;code class="highlighter-rouge"&gt;imageset&lt;/code&gt;. So I am storing original &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; in dict with
+its principle vales.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;If more than one +ve/-ve values are there then interpolate expression will be &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; expression and return.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Here I separe the -ve and +ve values because interpolate returns complicated expressions if we both types of values.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Also I sorted the +ve and -ve list, to get simplified expression from interpolate.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Problems :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;solveset(sin(x)-y, x ) doesn&amp;#8217;t work right now. But we know we can get solution using invert_real.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;In this PR &lt;code class="highlighter-rouge"&gt;solveset_real(tan(x), x)&lt;/code&gt; returns &lt;code class="highlighter-rouge"&gt;imageset(Lambda(n, pi*(n - 1)), S.Integers)&lt;/code&gt;
+but I want &lt;code class="highlighter-rouge"&gt;imageset(Lambda(n, n*pi), S.Integers)&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Issues :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Meanwhile I found a issue in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;. &lt;a href="https://github.com/sympy/sympy/issues/11194"&gt;issues/11194&lt;/a&gt;.
+&lt;code class="highlighter-rouge"&gt;2*sin(x) - 2*sqrt(3)\*cos(x) - sqrt(3)\*tan(x) +3 = 0&lt;/code&gt; can be easily solved if we factorize it correctly. But I haven&amp;#8217;t found
+a good way to get its factor. I tried &lt;code class="highlighter-rouge"&gt;factor&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;expand(Trig + True)&lt;/code&gt; , &lt;code class="highlighter-rouge"&gt;expand_trig&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;rewrite(sin)&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=201</guid>
       <title>GSoC: Week 2 Begins</title>
       <author>Subham Tibra (shubhamtibra)</author>
@@ -323,6 +554,172 @@ Out[5]: 9&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The work on Doubles and Complex Doubles have already started in &lt;a href="https://github.com/symengine/symengine/pull/954" target="_blank"&gt;PR #46&lt;/a&gt;, and is almost completed. This should be ready to merge by mid next week, and by the end of next week I am hoping to complete mpc and mpfr for Complex and Doubles, and move on to the actual 3rd week work. Being ahead of the schedule is always great as it reduces pressure on my self!&lt;/p&gt;
 &lt;p&gt;See you next week!&lt;/p&gt;
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/232/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/232/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=232&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://github.com/kshitij10496/2016/05/29/GSoC-Week-01/</guid>
+      <title>GSoC Week 01 - The One with Intersections</title>
+      <author>Kshitij Saraogi(kshitij10496)</author>
+      <pubDate>Sun, 29 May 2016 00:00:00 GMT</pubDate>
+      <link>https://github.com/kshitij10496/2016/05/29/GSoC-Week-01/</link>
+      <description>&lt;p&gt;Hi there !&lt;/p&gt;
+
+&lt;p&gt;The first of Coding Period in this year&amp;#8217;s GSoC is over.
+This past week I worked on developing &lt;code class="highlighter-rouge"&gt;solve_decomposition&lt;/code&gt; - the method for solving equation by the principles of &lt;a href="http://kshitij10496.github.io/2016/05/22/Solving-equations-via-Decomposition-and-Rewriting/"&gt;Decomposition and Rewriting&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id="progress"&gt;&lt;strong&gt;Progress&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;While implementing the method, I came across two operations that needed to be developed before proceeding further:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Intersection of Null &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; wth an &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Intersection of &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; with &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Before going into the details, lets have an understanding of the objects we will be working with.&lt;/p&gt;
+
+&lt;h4 id="range"&gt;&lt;strong&gt;Range&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;A &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; object represents a range of integers. &lt;br /&gt;
+It inherits from the SymPy &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt; class.&lt;br /&gt;
+This implies that the set operations can be carried out on &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; objects as well.&lt;/p&gt;
+
+&lt;p&gt;For instance,&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;Range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; 
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;Range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c"&gt;# represents the first 5 natural numbers&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="nb"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Hence, a null &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; object represents an empty list of numbers.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;Range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c"&gt;# definition of a null Range  &lt;/span&gt;
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="nb"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;  
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id="interval"&gt;&lt;strong&gt;Interval&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;An &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt; object represents a real valued interval as a &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt;.&lt;br /&gt;
+All the values within the boundary values are &lt;code class="highlighter-rouge"&gt;contained&lt;/code&gt; in this object.&lt;br /&gt;
+Some special sets such as &lt;code class="highlighter-rouge"&gt;Reals&lt;/code&gt; are inherit from &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt; objects.&lt;br /&gt;
+Both - open and closed intervals are supported.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;Interval&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="c"&gt;# represents the interval between 0 and 1&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="mf"&gt;0.5&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;Interval&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt; 
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h4 id="imageset"&gt;&lt;strong&gt;ImageSet&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;Suppose you want to the values of x which satisfy the equation : &lt;code class="highlighter-rouge"&gt;sin(x) = 0&lt;/code&gt;.&lt;br /&gt;
+We know that the solution of this equation is given by: &lt;code class="highlighter-rouge"&gt;x = n&amp;#8901;&amp;#960; , n &amp;#8714; &amp;#8484;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;In order to represent this set expression in SymPy, we have &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt;.&lt;br /&gt;
+An &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; object represents an image of a set under a mathematical function.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;pprint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ImageSet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Lambda&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Integers&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="err"&gt;&amp;#8901;&amp;#960;&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="err"&gt;&amp;#8714;&lt;/span&gt; &lt;span class="err"&gt;&amp;#8484;&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Now that we have some knowledge about these 3 &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt; objects, let us now discuss the issues in turn:&lt;/p&gt;
+
+&lt;h3 id="intersection-of-null-range-wth-an-interval"&gt;&lt;strong&gt;Intersection of Null &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; wth an &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt;&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;With the information at hand, we can distinctly state that the result of intersection of a null &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; with an real-valued &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt; should be an &lt;code class="highlighter-rouge"&gt;EmptySet&lt;/code&gt;.&lt;br /&gt;
+Currently, a &lt;code class="highlighter-rouge"&gt;NotImplementedError&lt;/code&gt; is raised.&lt;/p&gt;
+
+&lt;h4 id="current-implementation"&gt;&lt;em&gt;Current Implementation&lt;/em&gt;&lt;/h4&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In []: Intersection(Range(0), Interval(0, 10))
+# results in a NotImplementedError
+In []: Intersection(S.Integers, Interval(0.2, 0.8))
+# results in a NotImplementedError
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;After adding a base-case (via &lt;code class="highlighter-rouge"&gt;if-else&lt;/code&gt; clause) for checking a null &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; object in the &lt;code class="highlighter-rouge"&gt;_intersect&lt;/code&gt; method, this issue was solved.&lt;/p&gt;
+
+&lt;h4 id="new-implementation"&gt;&lt;em&gt;New Implementation&lt;/em&gt;&lt;/h4&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In []: Intersection(Range(0), FiniteSet(0, 10))
+Out[]: EmptySet()
+
+In []: Intersection(S.Integers, Interval(0.2, 0.8))
+Out[]: EmptySet()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;I added few tests to highlight this fact and pushed the code. &lt;br /&gt;
+This PR was merged really quickly, thanks to Aaron.&lt;/p&gt;
+
+&lt;h3 id="intersection-of-imageset-with-interval"&gt;&lt;strong&gt;Intersection of &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; with &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt;&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;Suppose we are interested in the values of &lt;code class="highlighter-rouge"&gt;n&amp;#8901;&amp;#960;&lt;/code&gt; within an interval range, say -10 to 10.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ImageSet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Lambda&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Integers&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;g&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Interval&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We expect our system to reflect this behaviour.
+Hence, we expect something like the following interface:&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;Intersection&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;g&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;However, we currently return an unevaluated &lt;code class="highlighter-rouge"&gt;Intersection&lt;/code&gt; object.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;Intersection&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;g&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;Intersection&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;ImageSet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Lambda&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;Integers&lt;/span&gt;&lt;span class="p"&gt;()))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;In order to develop this intersection, I used the methodology described &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Solvers-Progress#meeting-03"&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;We try to contract the interval so as to simplify the problem and reduce it to the following type :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;base_set&lt;/span&gt;
+&lt;span class="n"&gt;g&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;new_interval&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Following this, we return the result of intersection of &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;g&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;As we can notice, this method is limited to the case where the expression is linear in the variable &lt;code class="highlighter-rouge"&gt;n&lt;/code&gt;.&lt;br /&gt;
+We cannot use this method to determine the intersection of the following:&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ImageSet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Lambda&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Integers&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;g&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Interval&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;Intersection&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;g&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="c"&gt;# not possible now&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;I have worked on this method intensively for the last 3-4 days.&lt;br /&gt;
+There were several edge-cases that needed to be handled cautiously( handling complex values).
+The PR is up for review and I am hopeful it will get merged in the next week.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id="git-log"&gt;&lt;strong&gt;$ git log&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/11149"&gt;PR #11149&lt;/a&gt; : Intersection of null Range and an Interval returns EmptySet&lt;br /&gt;
+&lt;a href="https://github.com/sympy/sympy/pull/11164"&gt;PR #11164&lt;/a&gt; : Intersection of certain ImageSets with Intervals&lt;/p&gt;
+
+&lt;p&gt;In the next week, I will try to design a method to determine the range of a function in the given domain.&lt;br /&gt;
+This will require some digging up and a bit of research.&lt;/p&gt;
+
+&lt;p&gt;Looking forward to it !&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://srajangarg.github.io//2016/05/29/Wrap-a-Lot</guid>
@@ -865,6 +1262,416 @@ Also now the "official" coding period begins, good luck to everyone.
 &lt;/ul&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/196/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/196/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=196&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://github.com/kshitij10496/2016/05/22/Solving-equations-via-Decomposition-and-Rewriting/</guid>
+      <title>Solving equations via Decomposition and Rewriting</title>
+      <author>Kshitij Saraogi(kshitij10496)</author>
+      <pubDate>Sun, 22 May 2016 00:00:00 GMT</pubDate>
+      <link>https://github.com/kshitij10496/2016/05/22/Solving-equations-via-Decomposition-and-Rewriting/</link>
+      <description>&lt;p&gt;A robust framework for solving equations is a salient feature of any Computer Algebra System. An important idea in this regard is &lt;strong&gt;&amp;#8220;Rewriting and Decomposition&amp;#8221;&lt;/strong&gt;. By using this techniques, we try to reduce the given equation to a set of simpler equations which can be solved with relative ease.&lt;/p&gt;
+
+&lt;p&gt;An example here would be the best way to establish the significance of the above idea.&lt;/p&gt;
+
+&lt;p&gt;If we have to solve for &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt; in the equation &lt;code class="highlighter-rouge"&gt;f(x) = 0&lt;/code&gt;, where &lt;br /&gt;
+&lt;code class="highlighter-rouge"&gt;f(x) = ln(x)**2 - 3*ln(x) + 2&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This problem can be approached with the idea of &amp;#8220;Decomposition and Rewriting&amp;#8221;. 
+Here is the procedure:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Decomposition&lt;/strong&gt;
+The step involves a decomposition of the given function into smaller, constituent functions.
+In the above case, we decompose f(x) as:
+&lt;code class="highlighter-rouge"&gt;f(x) = g(x)*2- 3*g(x) + 2&lt;/code&gt; , where &lt;code class="highlighter-rouge"&gt;g(x) = ln(x)&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Rewriting&lt;/strong&gt;
+Substituting &lt;code class="highlighter-rouge"&gt;g(x)&lt;/code&gt; with a dummy variable &lt;code class="highlighter-rouge"&gt;t&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;f(x)&lt;/code&gt;, we get a polynomial in &lt;code class="highlighter-rouge"&gt;t&lt;/code&gt;: &lt;br /&gt;
+&lt;code class="highlighter-rouge"&gt;h(t) = (t -1)*(t-2)&lt;/code&gt; , where &lt;code class="highlighter-rouge"&gt;t = ln(x)&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;We determine the values which satisfy the equation &lt;code class="highlighter-rouge"&gt;h(t) = 0&lt;/code&gt;.&lt;br /&gt;
+For our example: &lt;code class="highlighter-rouge"&gt;t = 1&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;t = 2&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Back-substituting the value of &lt;code class="highlighter-rouge"&gt;t&lt;/code&gt; into these solutions, we get 2 independent equations in &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt;: &lt;br /&gt;
+&lt;code class="highlighter-rouge"&gt;ln(x)= 1&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;ln(x) = 2&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Solving these equations individually, we get the desired solutions of the inital equation &lt;code class="highlighter-rouge"&gt;f(x) = 0&lt;/code&gt; i.e. &lt;br /&gt;
+&lt;code class="highlighter-rouge"&gt;x = exp(1)&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;x = exp(2)&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Thus, we get two possible solutions of the given complex transcendental equation through the methods of Rewriting and Decomposition. An important observation can be made with respect to the relative ease of calculating the solutions of the intermediate equations compared to that of the original equation. This motivates the development of a simpler and modular system for solving equations rather than a vast and case-specific one.&lt;/p&gt;
+
+&lt;p&gt;A well-designed implementation of the above technique can be of high value to the &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; system. This will be my task for the 1st week of GSoC. I created a Pull Request &lt;a href="https://github.com/sympy/sympy/pull/11141"&gt;PR#11141&lt;/a&gt; with a primitive design. 
+Reviews and suggestions are welcomed !
+Thats pretty much it for now. In the next blog post, I will be writing in detail about the implementation process.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://shekharrajak.github.io//Community-Bonding-Period</guid>
+      <title>Community Bonding Period</title>
+      <author>Shekhar Prasad Rajak (shekharrajak)</author>
+      <pubDate>Sun, 22 May 2016 00:00:00 GMT</pubDate>
+      <link>http://shekharrajak.github.io//Community-Bonding-Period/</link>
+      <description>&lt;p&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id="week-1--23-april-2016---30-april-2016"&gt;Week 1 ( 23 April 2016 - 30 April 2016)&lt;/h2&gt;
+
+&lt;h3 id="excited-about-my-gsoc-blog"&gt;Excited about my GSoC Blog&lt;/h3&gt;
+
+&lt;p&gt;I created my blog on around Nov-Dec 2015, mostly for GSoC ( confident :p ). But the template was still on github with random contents. &lt;a href="http://github.com/shekharrajak/MyBlog"&gt;Blog repo&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;So it was the time to replace these contents and edit the template and host on my personal site&lt;/p&gt;
+
+&lt;p&gt;On 23 April 2016 00:30 (IST) GSoC projects are announced, next day in the evening I edited the blog template and made it for GSoC. I added two posts ( contribution before GSoC and project) and hosted late night.&lt;/p&gt;
+
+&lt;p&gt;In this week I had Lab exams and Minor tests also. I had some chat/Email with the mentors about the project as well.&lt;/p&gt;
+
+&lt;h1 id="week-2-3--1-may-2016---14-may-2016"&gt;Week 2, 3 ( 1 May 2016 - 14 May 2016)&lt;/h1&gt;
+
+&lt;p&gt;It was End Examination time ( 5 - 12 May). In this period I tried to be active in gitter chat and Mailing list. I worked on my previously opened PRs and new issues.&lt;/p&gt;
+
+&lt;p&gt;Some of them are : &lt;a href="https://github.com/sympy/sympy/pull/10733"&gt;pull/10733&lt;/a&gt;, &lt;a href="https://github.com/sympy/sympy/pull/10550"&gt;pull/10550&lt;/a&gt;. I related some new issues with old PRs and tried to fix them.&lt;/p&gt;
+
+&lt;p&gt;I tried to add new feature in &lt;code class="highlighter-rouge"&gt;decompogen&lt;/code&gt; method in this PR &lt;a href="https://github.com/sympy/sympy/pull/11085"&gt;pull/11085&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;We had first hangout on 2 May 2016 , in which &lt;a href="https://github.com/kshitij10496"&gt;Kshitij&lt;/a&gt; and me choose our work for next week. I choose to work on Non Linear System of Equations and Multivariate Equation solver for &lt;code class="highlighter-rouge"&gt;Solveset&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Minutes of meeting is in Wiki page &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Solvers-Progress#meeting-01"&gt;GSoC-2016-Solvers-Progress#meeting-01&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id="week-4-5--15-may-2016---23-may-2016"&gt;Week 4, 5 ( 15 May 2016 - 23 May 2016)&lt;/h1&gt;
+
+&lt;p&gt;After the End semester examination, we had 2nd meeting on &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Solvers-Progress#meeting-02"&gt;15 May 2016&lt;/a&gt;. We ( &lt;a href="https://github.com/hargup"&gt;Harsh&lt;/a&gt;, &lt;a href="https://github.com/aktech"&gt;Amit&lt;/a&gt;, &lt;a href="https://github.com/kshitij10496"&gt;kshitij&lt;/a&gt; and &lt;a href="https://github.com/shekharrajak"&gt;me&lt;/a&gt;) discussed about what should be done before coming on meeting and documenting ideas/mplementation on blog or somewhere.&lt;/p&gt;
+
+&lt;p&gt;I started working on &lt;code class="highlighter-rouge"&gt;nlinsolve&lt;/code&gt; to solve Non Linear System of Equations.&lt;/p&gt;
+
+&lt;h2 id="auditing-sympys-non-linear-system-of-equation-solver"&gt;Auditing SymPy&amp;#8217;s non linear system of equation solver&lt;/h2&gt;
+
+&lt;p&gt;A non-linear system of equations is a system in which at least one of the variables has an exponent other than 1 and/or there is a product of variables in one of the equations.&lt;/p&gt;
+
+&lt;h3 id="how-old-solver-handle-this-"&gt;How old Solver handle this :&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;SymPy uses &lt;code class="highlighter-rouge"&gt;_solve_system&lt;/code&gt; function to solve all kind of systems( linear, non linear, Multivariate Equations).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;_solve_system&lt;/code&gt;, try to converts all the equations into Poly and checks for linear system.
+If all the Poly equations are linear then solve this using minsolve_linear_system or solve_linear_system.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;If all the equations are not linear then&lt;code class="highlighter-rouge"&gt; _solve_poly_system&lt;/code&gt; try to solve them.
+If system is not zero dimensional then returns &lt;code class="highlighter-rouge"&gt;NotImplementedError&lt;/code&gt;. &lt;code class="highlighter-rouge"&gt;_solve_poly_system&lt;/code&gt; uses Groebner basis of the system, when any one equation in the basis contains only symbol, then this reduced system is solvable.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;When solve_poly_system returns solutions for some variables, then one by one solve the equation using &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; for
+all the remain unsolved variables.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id="problems-in-old-solver-method-"&gt;Problems in old Solver method :&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;solve_poly_system&lt;/code&gt; can return solution for zero-dimensional only. So when polynomial	Equation system is positive dimensional system (infinite solution) then &lt;code class="highlighter-rouge"&gt;NotImplementedError&lt;/code&gt; is returned by &lt;code class="highlighter-rouge"&gt;_solve_poly_system&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Elimination, substitution and solve_poly_system is in one function &lt;code class="highlighter-rouge"&gt;_solve_system&lt;/code&gt;. So it is messy.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;When it solves for unsolved symbol, after substituting known values in the equation using &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; then we don&amp;#8217;t get solution in general form. eg. if equation is sin(x) + y = 0 and known solution is y = -1 then solve returns pi/2.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;When it solves for unsolved symbol, after substituting known values in the equation using &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; then we don&amp;#8217;t get solution in general form. eg. if equation is sin(x) + y = 0 and known solution is y = -1 then solve returns pi/2.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id="my-idea-and-implementation-"&gt;My idea and implementation :&lt;/h3&gt;
+
+&lt;h4 id="nlinsolve"&gt;nlinsolve&lt;/h4&gt;
+
+&lt;p&gt;I opened a PR &lt;a href="https://github.com/sympy/sympy/pull/11111"&gt;pull/11111&lt;/a&gt; with initial code.&lt;/p&gt;
+
+&lt;h5 id="idea-"&gt;Idea :&lt;/h5&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;The main idea was to use &lt;code class="highlighter-rouge"&gt;solve_poly_system&lt;/code&gt; method ( sympy/solvers/polysys.py ) which works pretty well in old solvers, to solve zero-dimensional system.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;solve_poly_system&lt;/code&gt; is used to solve equations which are polynomial.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;If all the equations are polynomail and have finite solution (zero-dimensional) then &lt;code class="highlighter-rouge"&gt;solve_poly_system&lt;/code&gt; solve them.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;When system has all the equatons polynomial but not zero-dimensional then it has infinite number of solutions, To handle these system I thought about method used in this &lt;a href="http://people.math.gatech.edu/~aleykin3/math4803spr13/BOOK/chapter1.pdf"&gt;PDF&lt;/a&gt; page: 9 , examples : 2.2&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I implemented &lt;code class="highlighter-rouge"&gt;nlinsolve_matrix&lt;/code&gt; using these steps for 2 equations and 2 variables. The code can be found in this &lt;a href="https://gist.github.com/Shekharrajak/a4ff089582f41b163f494a369cf51294"&gt; gist &lt;/a&gt;&lt;/p&gt;
+
+
+
+&lt;p&gt;This method give equation on &lt;code class="highlighter-rouge"&gt;y&lt;/code&gt; ( if 2 variables are &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;y&lt;/code&gt;. Matrix created using coefficients of &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt; power). But Matrix returns &lt;code class="highlighter-rouge"&gt;0&lt;/code&gt; for positive dimensional system ( I only checked for 2 equations 2 variables poisitive dimentional system). So we can&amp;#8217;t get an equation of &lt;code class="highlighter-rouge"&gt;y&lt;/code&gt;. After seeing this issue I didn&amp;#8217;t generalize this method for more equations and variables.&amp;lt;/p&amp;gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;I read more about positive dimensional systems from Kshitij&amp;#8217;s proposal and internet. I found another way of solving them using RUR (Rational Univariate Representation), some good examples/PDFs are :&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;http://www.maplesoft.com/support/help/Maple/view.aspx?path=Groebner/RationalUnivariateRepresentation&lt;/li&gt;
+      &lt;li&gt;http://www.m-hikari.com/imf-2010/5-8-2010/ayadIMF5-8-2010.pdf&lt;/li&gt;
+      &lt;li&gt;href=&amp;#8221;http://research.cs.tamu.edu/keyser/Papers/AMSDimacs2005.pdf&lt;/li&gt;
+      &lt;li&gt;http://homepages.math.uic.edu/~jan/mcs563/lec12.pdf&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;These links contains examples but not the clearly the methods for positive dimensional system.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;I am still finding a good way to get the RUR.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;If we have system in which some of the equations are polynomial and some are not then substitution method is best (I didn&amp;#8217;t find other symbolic way).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;First solve the polynomial equations if present for all the combinations of &lt;code class="highlighter-rouge"&gt;symbols&lt;/code&gt; according to the number of polynomial equations. Store the solutions with &lt;code class="highlighter-rouge"&gt;symbols&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;dict&lt;/code&gt;. Each solution may contains symbols that can be solved using substitution method.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Now solve the non polynomial equations using knows solutions( one by one substitution of known solution ) and solve. After solving substitute in the previous solution if that symbol was in there.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;If number of equations and number of variables are equal then we get solution for each variable independently otherwise solutions may depend on each other.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Work is still in progress for RUR and substitution method.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id="problems-i-am-facing-"&gt;Problems I am facing :&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;1.&lt;/strong&gt; How can we get RUR for the system of equation to get solution for +ve Dimensional.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;What I think :&lt;/strong&gt; After reading the articles and discussion with &lt;a href="https://github.com/jksuom"&gt;@jksoum &lt;/a&gt;, I found that Groebner basis and concepts of Gauss-Jordan method for linear systems is helpful to eliminate the variabels.&lt;br /&gt; Now I am trying Groebner Basis of the system( which is reduced form and can be solved using proper substitution method). The main thing is elimination systematically and ordering of monomials.&lt;br /&gt;After solving the groebner basis expressions we may get the answer.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;2.&lt;/strong&gt; Solveset may return Imageset/FiniteSet/Intersection/complement during substitution method.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;What I think :&lt;/strong&gt; Sometimes &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; returns real solution with intersection with &lt;code class="highlighter-rouge"&gt;R&lt;/code&gt; (-oo to oo) or in ImageSet. If solution is in ImageSet then need to check the expression ( if there is unsolved symbol in substitution steps).&lt;/p&gt;
+
+&lt;p&gt;If we get ConditionSet then &lt;code class="highlighter-rouge"&gt;NotImplementedError&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;If we are solving &lt;code class="highlighter-rouge"&gt;a + 1/d&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;d&lt;/code&gt; then &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; will return&lt;code class="highlighter-rouge"&gt; FiniteSet(-1/a)&lt;/code&gt; complement &lt;code class="highlighter-rouge"&gt;FiniteSet(0)&lt;/code&gt;. so need to consider first args and store the complement in dict.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;3.&lt;/strong&gt; There may be Complex solution but no real solution so need to consider both complex and real solutions (inside substitution step) ?&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;What I think :&lt;/strong&gt; For complex/real solution we will get next solution( after substituting that solution). Need to check complex solution if no real solution from &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; (inside substitution method)&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;I continued the work and next week I tried to fix these problems and almost succeed.My further work on &lt;code class="highlighter-rouge"&gt;nlinsolve&lt;/code&gt; is &lt;a href="http://shekharrajak.github.io/Coding-Period-Week-1/"&gt;here&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id="solveset-for-non-symbol"&gt;Solveset for non symbol&lt;/h2&gt;
+
+&lt;p&gt;I opened a PR &lt;a href="https://github.com/sympy/sympy/pull/11128"&gt;pull/11128&lt;/a&gt; to add this feature.&lt;/p&gt;
+
+&lt;h3 id="idea--1"&gt;Idea :&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;First detect the &lt;code class="highlighter-rouge"&gt;symbol&lt;/code&gt; ( for which we are solving equation ) is not a symbol and replace it with some temporary symbol in both &lt;code class="highlighter-rouge"&gt;symbol&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt; ( expression )&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;We need to use Symbol only to replace, because all the other methods/functions are made for symbols .I realized this after failing many times :) .&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;After this there may be non invertable terms like &lt;code class="highlighter-rouge"&gt;Derivative&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;Integrals&lt;/code&gt; ( &lt;code class="highlighter-rouge"&gt;function&lt;/code&gt; is not needed here). If want to solve for &lt;code class="highlighter-rouge"&gt;f(x)&lt;/code&gt; then &lt;code class="highlighter-rouge"&gt;f(x)&lt;/code&gt; is replaced from &lt;code class="highlighter-rouge"&gt;symbol&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt; as well.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I defined a method &lt;code class="highlighter-rouge"&gt;check_noninverts(f, symbol)&lt;/code&gt; for this.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Now &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; treat them as Symbol and solves. At the end we need to replace back these temporary variables. For this I defined &lt;code class="highlighter-rouge"&gt;swap_back(result, swapped_symbol, non_inverts)&lt;/code&gt;.This works for ConditionSet also. Most of the time in Trigonometric Equations doesn&amp;#8217;t contains Non invertable terms so ImageSet was not needed.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;All checks have passed after little modifications.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://shekharrajak.github.io//Coding-Period-Week-1</guid>
+      <title>Coding Period Week 1</title>
+      <author>Shekhar Prasad Rajak (shekharrajak)</author>
+      <pubDate>Sun, 22 May 2016 00:00:00 GMT</pubDate>
+      <link>http://shekharrajak.github.io//Coding-Period-Week-1/</link>
+      <description>&lt;h3 id="nlinsolve-continue"&gt;nlinsolve continue&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;You can read the problems in old solver &lt;code class="highlighter-rouge"&gt;_solve_system&lt;/code&gt; in &lt;a href="http://shekharrajak.github.io/Community-Bonding-Period/"&gt;previous blog&lt;/a&gt; , if you haven&amp;#8217;t.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11111"&gt;nlinsolve&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;How it is better than old solver _solve_system :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Positive dimensional system solver :&lt;/strong&gt; &lt;code class="highlighter-rouge"&gt;nlinsolve&lt;/code&gt; can return solution for positive dimensional system.
+&lt;strong&gt;How :&lt;/strong&gt; After reading articles on positive dimensional system and analyzing elimination method. I found that if we know Groebner Basis of the positive dimensional system (calling it as basis) then we can start solving equation(having least number of variable first in the basis) using &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; and substituting that solved solutions into other equation to get solution in terms of minimum variables.
+Here the important thing is how we are substituting the known values and in which equations.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Complex solution in general form :&lt;/strong&gt; &lt;code class="highlighter-rouge"&gt;nlinsolve&lt;/code&gt; can return solution in general form .
+&lt;strong&gt;How :&lt;/strong&gt; If all the equations are not &lt;a href="http://www.mathwarehouse.com/algebra/polynomial/polynomial-equation.php"&gt;polynomial equations&lt;/a&gt; means after solving Polynomial equations using &lt;code class="highlighter-rouge"&gt;solve_poly_system&lt;/code&gt; go to substitution method (defined in solveset) with this solution and solve for unsolved variables. In between to solve for particular variable &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; is used. When it find real solution then further steps will be using this real solution. If no real solution then it go for complex solution if it is found then extract the expression from the &lt;code class="highlighter-rouge"&gt;imageset&lt;/code&gt; and use it for further substitution. When solution is valid then add this general solution (solution in imageset) in the final result.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Complements will be added if any :&lt;/strong&gt; &lt;code class="highlighter-rouge"&gt;nlinsolve&lt;/code&gt; maintains &lt;code class="highlighter-rouge"&gt;dict&lt;/code&gt; to add complements for variables if any.
+&lt;strong&gt;How :&lt;/strong&gt; When there is infinite solution and &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; found complements during substitution method.
+For example : solution = &lt;code class="highlighter-rouge"&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="err"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;1/d,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;-d,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;c&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;-1/d,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;d&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;d&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/code&gt; then in complements &lt;code class="highlighter-rouge"&gt;dict {d : 0}&lt;/code&gt; will be maintained and the final solution &lt;code class="highlighter-rouge"&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="err"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;1/d,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;-d,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;c&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;-1/d,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;d&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;{d&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;\&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="err"&gt;0&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="err"&gt;}&lt;/span&gt;&lt;/code&gt; is returned.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Unknowingly added features :&lt;/strong&gt; &lt;code class="highlighter-rouge"&gt;nlinsolve&lt;/code&gt; can return solution for positive dimensional linear system and simple linear system. But I recommend to use it for linear systems, since &lt;code class="highlighter-rouge"&gt;linsolve&lt;/code&gt; can do far better than &lt;code class="highlighter-rouge"&gt;nlinsolve&lt;/code&gt; for linear system.
+&lt;strong&gt;How :&lt;/strong&gt; Since it is using Groebner basis (inside &lt;code class="highlighter-rouge"&gt;solve_poly_system&lt;/code&gt;) of the system for polynomial equations. If it fails for some equation then basis is used in substitution method. So it can solve positive dimensional linear system.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id="trigonometric-inequality-solution-in-general-form"&gt;Trigonometric inequality solution in General form&lt;/h3&gt;
+
+&lt;p&gt;Currently &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; returns solution for trigonometric inequalities in the range of 2*pi. Solveset is designed to return all the solution. So need improvement in inequality solver.&lt;/p&gt;
+
+&lt;p&gt;From current master branch &lt;code class="highlighter-rouge"&gt;of SymPy&lt;/code&gt;:
+Extended answer should be :&lt;code class="highlighter-rouge"&gt; 1/6 *(12*&amp;#960;*n - 7*&amp;#960;) &amp;lt; x &amp;lt; 1/6 (12*&amp;#960;*n + &amp;#960;), n &amp;#8712; Z&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Idea:&lt;/strong&gt;
+Solveset uses &lt;code class="highlighter-rouge"&gt;solve_univariate_inequality&lt;/code&gt; to solve univariate inequalities.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;It uses &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; to get the singularities and solution for the expression = 0. So if we want to get solution in general form then need to replace this old solver with &lt;code class="highlighter-rouge"&gt;Solveset&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;To solve a trig inequality, transform it into one or many trig inequalities. Solving trig inequalities finally results in solving basic trig inequalities.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Step 1. Transform the given trig inequality into standard form &lt;code class="highlighter-rouge"&gt;R(x) &amp;gt; 0 (or &amp;lt; 0)&lt;/code&gt;.
+Example. The inequality &lt;code class="highlighter-rouge"&gt;(cos 2x &amp;lt; 2 + 3sin x)&lt;/code&gt; will be transformed into standard form:
+&lt;code class="highlighter-rouge"&gt;R(x) = cos 2x &amp;#8211; 3sin x - 2 &amp;lt; 0&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Step 2. Find the common period . The common period must be the least multiple of the periods of all trig functions presented in the inequality. The complete solution set must, at least, cover one whole common period.
+Example. The trig inequality &lt;code class="highlighter-rouge"&gt;R(x) = cos 2x &amp;#8211; 3sin x - 2 &amp;lt; 0&lt;/code&gt; has &lt;code class="highlighter-rouge"&gt;2&amp;#960;&lt;/code&gt; as common period
+Example. The trig inequality &lt;code class="highlighter-rouge"&gt;R(x) = sin x &amp;#8211; cos x/2 - 0.5 &amp;gt; 0&lt;/code&gt; has &lt;code class="highlighter-rouge"&gt;4&amp;#960;&lt;/code&gt; as common period.&lt;/p&gt;
+
+&lt;p&gt;Step 3. Solve the trig equation &lt;code class="highlighter-rouge"&gt;R(x) = 0&lt;/code&gt; If R(x) contains only one trig function, solve it as a basic trig equation.
+If&lt;code class="highlighter-rouge"&gt; R(x)&lt;/code&gt; contains 2 or more trig functions, there are 2 methods, described below, to solve it.&lt;/p&gt;
+
+&lt;p&gt;a. METHOD 1. Transform &lt;code class="highlighter-rouge"&gt;R(x)&lt;/code&gt; into a product of many basic trig equations. Next, solve these basic trig equations separately to get all values of x that will be used in Step 4.
+Example 8. Solve: &lt;code class="highlighter-rouge"&gt;cos x + cos 2x &amp;gt; - cos 3x (0 &amp;lt; x &amp;lt; 2&amp;#960;)&lt;/code&gt;
+Solution. Step 1. Standard form: &lt;code class="highlighter-rouge"&gt;R(x) = cos x + cos 2x + cos 3x &amp;gt; 0&lt;/code&gt;
+Step 2. Common period: &lt;code class="highlighter-rouge"&gt;2&amp;#960;&lt;/code&gt;
+Step 3. Solve&lt;code class="highlighter-rouge"&gt; R(x) = 0&lt;/code&gt;. Transform it into a product using Sum to Product Identity:
+&lt;code class="highlighter-rouge"&gt;R(x) = cos x + cos 2x + cos 3x = cos 2x (1 + 2cos x) = 0.&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;b. METHOD 2. This method transforms a trig inequality with 2 or more trig functions into a trig inequality having only one trig function (called t) as variable. Next, solve for t from this trig equation, as a basic trig equation. Then, solve for x from these values of t.
+chosen as function variable are: &lt;code class="highlighter-rouge"&gt;sin x = t; cos x = t; cos 2x = t; tan x = t; and tan x/2 = t&lt;/code&gt;.
+Example 10. Solve: &lt;code class="highlighter-rouge"&gt;3sin&amp;#178; x = sin 2x + cos&amp;#178; x&lt;/code&gt;
+Solution. Divide both sides by &lt;code class="highlighter-rouge"&gt;cos&amp;#178; x (cos x &amp;#8800; 0; x &amp;#8800; &amp;#960;/2)&lt;/code&gt;. Let &lt;code class="highlighter-rouge"&gt;tan x = t&lt;/code&gt;.
+&lt;code class="highlighter-rouge"&gt;3 t&amp;#178; &amp;#8211; 2t - 1 = 0&lt;/code&gt;. This is a quadratic equation having 2 real roots: 1 and -1/3
+Next, solve the 2 basic trig equations: &lt;code class="highlighter-rouge"&gt;tan x = t = 1&lt;/code&gt;, and &lt;code class="highlighter-rouge"&gt;tan x = t = -1/3&lt;/code&gt;
+Use &lt;code class="highlighter-rouge"&gt;decompogen&lt;/code&gt; defined in &lt;code class="highlighter-rouge"&gt;sympy/solvers&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Step 4. Solve the trig inequality &lt;code class="highlighter-rouge"&gt;R(x) &amp;lt; 0 (or &amp;gt; 0)&lt;/code&gt;. Then express the solution set in the form of intervals. Based on the found values of &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt; from Step 3, solve, algebraically, the trig inequality&lt;code class="highlighter-rouge"&gt; R(x) &amp;lt; 0 (or &amp;gt; 0)&lt;/code&gt; by separately solving each basic trig inequality &lt;code class="highlighter-rouge"&gt;f(x), g(x) .&lt;/code&gt;., and then by setting up a sign table (sign chart). In final solution extend this with n*(common period).&lt;/p&gt;
+
+&lt;h3 id="domain-and-range"&gt;Domain and Range&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;Function&amp;#8217;domain :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;If a function does not model data or verbal conditions, its domain is the largest set of real numbers for which the value of is a real number. Exclude from a function&amp;#8217;s domain real numbers that cause division by zero and real numbers that result in an even root of a negative number.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Range:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Values, the function can give.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;. The domain of is the set of all real numbers that are common to the domain of and the domain of Thus, we must find the domains of and before finding their intersection.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;The Composition of Functions&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The composition of the function with is denoted by and is defined by the equation
+&lt;code class="highlighter-rouge"&gt;(f*g)(x) = f(g(x))&lt;/code&gt;&lt;code class="highlighter-rouge"&gt;
+The domain of the composite function is the set of all such that
+1\. &lt;/code&gt;x&lt;code class="highlighter-rouge"&gt; is in the domain of &lt;/code&gt;g&lt;code class="highlighter-rouge"&gt; and
+2\. &lt;/code&gt;g(x)&lt;code class="highlighter-rouge"&gt; is in the domain of &lt;/code&gt;f`.&lt;/p&gt;
+
+&lt;p&gt;The following values must be excluded from the input
+&amp;#8226; If &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt; is not in the domain of g, it must not be in the domain of &lt;code class="highlighter-rouge"&gt;f*g&lt;/code&gt;
+&amp;#8226; Any &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt; for which &lt;code class="highlighter-rouge"&gt;g(x)&lt;/code&gt; is not in the domain of &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt;, must not be in the domain of &lt;code class="highlighter-rouge"&gt;f*g&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Problems :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Finding common period of the complicated expressions. We can use LCM of&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;finding domain/range.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Reference&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href="http://miamibeachhigh.schoolwires.com/cms/lib07/FL01000126/Centricity/Domain/261/Ch1_Section7.pdf"&gt;Domain and range , function decomposition&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="http://web.fscj.edu/Lyn.Noble/mac1105/Wrksht/DomainRange.pdf"&gt;Squre root domain and range&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="http://web.fscj.edu/Lyn.Noble/mac1105/Wrksht/DomainRange.pdf"&gt;Domain range&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="http://api.ning.com/files/n7ZUxQJY0YvfdRhhyH9DefMJ7cW08TWE8*egZvne-ZkVLkiWu1DzglvTH-7oM7zryLg7OSdRWmrEpVOlUHVHLLWtWkPhF11w/SOLVINGTRIGONOMETRICINEQUALITIESMETHODSANDSTEPS.pdf"&gt;Inequality Trig Function&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="http://www.shsu.edu/kws006/Precalculus/4.9_Pythagorean_Identities_files/S%26Z%2010.7.pdf"&gt;Trig Function , domain extended intervals&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id="nlinsolve-xfail-try"&gt;nlinsolve XFAIL try&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;solveset_real have some issues with expression having sqrt. It is returning some answer instead of &lt;code class="highlighter-rouge"&gt;S.EmptySet&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;solveset(20*sqrt(y**2 + (sqrt(-(y - 10)*(y + 10)) + 10)**2) - 60, y, S.Reals)&lt;/code&gt;
+this is returning&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;#9127;-3&amp;#8901;&amp;#8730;391&amp;#8195;&amp;#8195;&amp;#8195;&amp;#8195;3&amp;#8901;&amp;#8730;391&amp;#9131;
+&amp;#9128;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;, &amp;#8195;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9132;
+&amp;#9129; 20 &amp;#8195;&amp;#8195; &amp;#8195;&amp;#8195;   20   &amp;#9133;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;But original answer is &lt;code class="highlighter-rouge"&gt;emptyset&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Another thing is we are converting expressions into polynomial using &lt;code class="highlighter-rouge"&gt;.as_poly(*symbols, extension=True)&lt;/code&gt; so need to remove extra solution. code is added for this and works fine.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Issues :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Meanwhile I found some issues.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/issues/11184"&gt;issues/11184&lt;/a&gt; - Expressions having nested &lt;code class="highlighter-rouge"&gt;sqrt&lt;/code&gt; returns some solution
+, but original solution is EmptySet.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/issues/11175"&gt;issues/11175&lt;/a&gt; - bug in &lt;code class="highlighter-rouge"&gt;is_zero_dimensional&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://srajangarg.github.io//2016/05/21/Pre-GSoC</guid>
       <title>Pre GSoC and Community Bonding</title>
       <author>Srajan Garg (srajangarg)</author>
@@ -1248,6 +2055,70 @@ HolonomicFunction((-1) + (1)Dx + (-1)Dx**2 + (1)Dx**3, x), f(0) = 1, f'(0) = 2, 
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/89/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/89/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=89&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://github.com/kshitij10496/2016/05/15/Auditing-SymPy's-transcendental-solver/</guid>
+      <title>Auditing SymPy's Transcendental solver</title>
+      <author>Kshitij Saraogi(kshitij10496)</author>
+      <pubDate>Sun, 15 May 2016 00:00:00 GMT</pubDate>
+      <link>https://github.com/kshitij10496/2016/05/15/Auditing-SymPy's-transcendental-solver/</link>
+      <description>&lt;p&gt;A transcendental equation is an equation which cannot be expressed in terms of a finite sequence of the algebraic operations of addition, multiplication, and root extraction in the variable being solved for. Generally, such equations do not have a closed-form solution, i.e, the solution cannot be evaluated in a finite number of operations. 
+In some cases, special functions (like Lambert W function) can be used to write the solutions to transcendental equations in closed form.&lt;/p&gt;
+
+&lt;p&gt;SymPy already have a &lt;code class="highlighter-rouge"&gt;_tsolve&lt;/code&gt; function in the &lt;code class="highlighter-rouge"&gt;solvers&lt;/code&gt; module for solving a wide range of transcendental equations. This function heavily relies on heuristics to determine the pattern equation and follows it up recursive call to the solver.&lt;/p&gt;
+
+&lt;p&gt;The major concerns with the current solver are :&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;code base is a bit too messy.&lt;/li&gt;
+  &lt;li&gt;it is difficult to add solvers for new class of transcendental equations.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Hence, it is important to develop a more modular and extensible transcendental equation solver which addresses the above issues. And it will be my task to implement the above-mentioned solver.&lt;/p&gt;
+
+&lt;p&gt;In order to understand what needs to be done, we need to know exactly what has already been done.
+For this, Amit suggested me to do an audit of &lt;code class="highlighter-rouge"&gt;_tsolve&lt;/code&gt; as this will help me in understanding the techniques and concepts used.&lt;/p&gt;
+
+&lt;h2 id="notes"&gt;Notes&lt;/h2&gt;
+&lt;hr /&gt;
+
+&lt;p&gt;A brief overview on the general working of the function is presented below:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;tsolve_saw&lt;/code&gt; flag is used to maintain a list of all the equations encountered by the solver during execution.
+This prevents the occurrence of infinite recursion in case the equation doesnot have a closed form solution.&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;_invert(eq, sym)&lt;/code&gt; method tries to reduce the given equation &lt;code class="highlighter-rouge"&gt;eq&lt;/code&gt; into simpler functions.&lt;/li&gt;
+  &lt;li&gt;Depending on the values returned by the &lt;code class="highlighter-rouge"&gt;_invert&lt;/code&gt; function, heuristics are developed to simplify the expression and solve it via recursion. 
+Several methods, such as &lt;code class="highlighter-rouge"&gt;logcombine&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;powdenest&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;expand_log&lt;/code&gt;, for factoring and expanding the expression are used.&lt;/li&gt;
+  &lt;li&gt;If the above helpers are unable to solve the given equation, we check it the expression for &lt;code class="highlighter-rouge"&gt;LambertW&lt;/code&gt; pattern( defined &lt;a href="https://github.com/sympy/sympy/blob/master/sympy/solvers/bivariate.py#L167-L193"&gt;here&lt;/a&gt;). Functions like &lt;code class="highlighter-rouge"&gt;_filtered_gens&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;expand_power_exp&lt;/code&gt; are used to reduce the expression to LambertW pattern.&lt;br /&gt;
+The &lt;code class="highlighter-rouge"&gt;bivariate&lt;/code&gt; module contains the &lt;code class="highlighter-rouge"&gt;_solve_lambert&lt;/code&gt;, the LamberW solver, which solves a Lambert-type equation.&lt;/li&gt;
+  &lt;li&gt;If the equation cannot be solved by the LambertW solver, we test the equation for a possible bivariate form. The &lt;code class="highlighter-rouge"&gt;bivariate_type&lt;/code&gt; function is used to determine the type of bivariate equation, in case of success. Following this, suitable recursive calls to the &lt;code class="highlighter-rouge"&gt;_tsolve&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; functions are made.&lt;/li&gt;
+  &lt;li&gt;If none of this works, a &lt;code class="highlighter-rouge"&gt;NotImplementedError&lt;/code&gt; exception is raised.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id="implementation-ideas"&gt;Implementation Ideas&lt;/h2&gt;
+&lt;hr /&gt;
+&lt;p&gt;Having considered the current codebase of &lt;code class="highlighter-rouge"&gt;_tsolve&lt;/code&gt; function, I find the following few points considered while implementing the new solver:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;modularise the code for various classes of equations(LambertW, &lt;code class="highlighter-rouge"&gt;bivariate&lt;/code&gt; equation type, logarithmic, exponential).&lt;/li&gt;
+  &lt;li&gt;using SymPy &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt; objects internally, instead of using the built-in Python &lt;code class="highlighter-rouge"&gt;lists&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;use of &lt;code class="highlighter-rouge"&gt;decompogen&lt;/code&gt; function to check for possible decomposition of the given expression into simpler functions.&lt;/li&gt;
+  &lt;li&gt;handle the case where the given equation has no closed-form solution and infinite recursion occurs.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;These are just a handful of strategies that I intend to use. However, the whole process of development is going to a lot more complex and might need some more considerations from my side.&lt;/p&gt;
+
+&lt;h3 id="task--implement-transolve-function"&gt;Task : Implement &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; function.&lt;/h3&gt;
+
+&lt;p&gt;My plan is to do a &lt;em&gt;test-driven development&lt;/em&gt; for this solver.&lt;br /&gt;
+For this, I will start by porting the relevant tests present in &lt;code class="highlighter-rouge"&gt;test_solvers.py&lt;/code&gt; module to the &lt;code class="highlighter-rouge"&gt;test_solveset.py&lt;/code&gt;.
+Following this, I will start the developement process of the &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; solver.&lt;/p&gt;
+
+&lt;p&gt;I aim to accomplish a major portion of this task by the end of this week.&lt;/p&gt;
+
+&lt;p&gt;Thats all for now. 
+And the coding begins !&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=94</guid>
       <title>GSoC Community Bonding Period Week 3</title>
       <author>Sampad Saha (sampadsaha5)</author>
@@ -1294,164 +2165,6 @@ Out[4]:
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;
 &lt;p&gt;I will again get back by the end of the next week. Cheers !!!&lt;/p&gt;
 &lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/94/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/94/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=94&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=23</guid>
-      <title>GSoC Community Bonding Period Week 2</title>
-      <author>Sampad Saha (sampadsaha5)</author>
-      <pubDate>Tue, 10 May 2016 20:17:03 GMT</pubDate>
-      <link>https://sampadblog.wordpress.com/2016/05/10/gsoc-community-bonding-period-week-2/</link>
-      <description>&lt;p&gt;The second week of the Community Bonding Period got over. Though this post is quite late, I will try to post updates on Fridays of every week.&lt;/p&gt;
-&lt;h3&gt;&lt;strong&gt;&lt;em&gt;So far&lt;/em&gt;&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;I had my first meeting with Jason Moore, one of my mentor, on 5th May through Google Hangouts. We had a brief discussion over my proposal. I am taking a head-start for coding along with community bonding. I have started a discussion about the first phase of my proposal. Jason has created an issue tracker for&amp;#160;&lt;a href="https://github.com/sympy/sympy/issues/11075"&gt;Improvements to DiracDelta and Heaviside&lt;/a&gt;.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/10863" target="_blank"&gt;PR 10863&lt;/a&gt;&amp;#160;is almost completed only the depreciation part is left.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Almost all the&amp;#160;&lt;a href="https://en.wikipedia.org/wiki/Dirac_delta_function#Properties" target="_blank"&gt;properties&lt;/a&gt;&amp;#160;of DiracDelta functions has been already implemented&amp;#160;in Sympy. But I need to check whether all of them are unit tested and well documented.&lt;/p&gt;
-&lt;h3&gt;&lt;em&gt;&lt;strong&gt;Next Week&lt;/strong&gt;&lt;/em&gt;&lt;/h3&gt;
-&lt;p&gt;My targets for this week are:-&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Polish &lt;a href="https://github.com/sympy/sympy/pull/10863" target="_blank"&gt;PR 10863&lt;/a&gt;&amp;#160; and get it merged.&lt;/li&gt;
-&lt;li&gt;Implement rewriting&amp;#160;&lt;code&gt;DircaDelta&lt;/code&gt;&amp;#160; as Piecewise.&lt;/li&gt;
-&lt;li&gt;Improve doc strings of the &lt;code&gt;DircaDelta&lt;/code&gt; and &lt;code&gt;Heaviside&lt;/code&gt; classes and methods.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;I will again get back by the end of this week. Cheers !!!&lt;/p&gt;
-&lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/23/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/23/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=23&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=186</guid>
-      <title>Community Bonding Period Starts for GSoC</title>
-      <author>Rajith Vidanaarachchi (rajithv)</author>
-      <pubDate>Sat, 07 May 2016 08:46:29 GMT</pubDate>
-      <link>https://rajithsays.wordpress.com/2016/05/07/community-bonding-period-starts-for-gsoc/</link>
-      <description>&lt;p&gt;So, the GSoC is officially starting with the community bonding period until the last week of May. Until then, the official requirements are to get to know the communities. For my project, this puts me in an odd situation with the project being done for SymEngine community, while under the auspices of SciRuby Foundation. For the starters, I am familiar with many people from the SymEngine community, and just now I am trying to get more involved with the SciRuby people.&lt;/p&gt;
-&lt;p&gt;Also, according to my proposal I have listed a couple of tasks to be completed before the actual coding begins. So this week was mostly spent on merging my existing and long standing &lt;a href="https://github.com/symengine/symengine.rb/pull/23" target="_blank"&gt;PR for Ruby Wrappers for Trigonometric, Hyperbolic and other functions&lt;/a&gt;. The major problem I had was writing the repetitive tests for all the functions included in the wrappers. But apart from that the requirements were quite straightforward.&lt;/p&gt;
-&lt;p&gt;For the next week, I am planning to wrap the Number Theory functions in Ruby. This already has a &lt;a href="https://github.com/symengine/symengine/pull/852" target="_blank"&gt;CWrapper&lt;/a&gt;, which makes my task a lot easier.&lt;/p&gt;
-&lt;p&gt;Apart from coding, I wanted to set the record straight for SymEngine gem in the &lt;a href="http://gems.sciruby.com/" target="_blank"&gt;sciruby website&lt;/a&gt;. It lists the SymEngine gem as broken, and I would need to correct the gem&amp;#8217;s installation scripts. Figuring out this is another task I carry on for the coming week.&lt;/p&gt;
-&lt;p&gt;See you!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/186/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/186/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=186&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://sampadblog.wordpress.com/2016/05/02/google-summer-of-code-with-sympy/</guid>
-      <title>Google Summer of Code with Sympy</title>
-      <author>Sampad Saha (sampadsaha5)</author>
-      <pubDate>Mon, 02 May 2016 11:04:16 GMT</pubDate>
-      <link>https://sampadblog.wordpress.com/2016/05/02/google-summer-of-code-with-sympy/</link>
-      <description>&lt;p&gt;About one and half week ago, the results of Google Summer of Code were out.&amp;#160;I am extremely glad to inform that my project for Sympy on Implementation of Singularity Functions got selected for GSoC 2016.&lt;/p&gt;
-&lt;h3&gt;&lt;em&gt;&lt;strong&gt;Google Summer of Code&lt;/strong&gt;&lt;/em&gt;&lt;/h3&gt;
-&lt;blockquote&gt;&lt;p&gt;&lt;strong&gt;&lt;a href="http://en.wikipedia.org/wiki/Google_Summer_of_Code"&gt;Google Summer of Code&lt;/a&gt;&lt;/strong&gt; is a global annual program focused on bringing more student developers into open source software development. It is a global program that offers students stipends to write code for open source projects.&lt;/p&gt;&lt;/blockquote&gt;
-&lt;h3&gt;&lt;em&gt;&lt;strong&gt;Sympy&lt;/strong&gt;&lt;/em&gt;&lt;/h3&gt;
-&lt;blockquote&gt;&lt;p&gt;&lt;strong&gt;&lt;a href="https://sampadblog.wordpress.com/2016/05/02/google-summer-of-code-with-sympy/" target="_blank"&gt;SymPy&lt;/a&gt;&lt;/strong&gt;&amp;#160; is a Python library for symbolic mathematics. It aims to become a full-featured&amp;#160;&lt;strong&gt;&lt;a href="http://en.wikipedia.org/wiki/Computer_algebra_system"&gt;Computer Algebra System&lt;/a&gt;&lt;/strong&gt; (CAS) while keeping the code as simple as possible in order to be comprehensible and easily extensible.&lt;/p&gt;&lt;/blockquote&gt;
-&lt;h3&gt;&lt;em&gt;&lt;strong&gt;About my &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Application-Sampad-Kumar-Saha:-Singularity-Functions" target="_blank"&gt;Project&lt;/a&gt;&lt;/strong&gt;&lt;/em&gt;&lt;/h3&gt;
-&lt;p&gt;I have proposed to work on the Implementation of a full fledged&amp;#160;&lt;strong&gt;Computer Algebra System&lt;/strong&gt; (CAS) of Singularity Functions. I will create a module&amp;#160;to represent a Singularity Function and implement different mathematical operations. This module will be further used to create an another module which would be used for solving complicated beam bending problems.&lt;/p&gt;
-&lt;p&gt;&lt;a href="https://github.com/moorepants" target="_blank"&gt; Jason Moore&lt;/a&gt;, &lt;a href="https://github.com/leosartaj" target="_blank"&gt;Sartaj Singh&lt;/a&gt; and&amp;#160;&lt;a href="https://github.com/certik" target="_blank"&gt;Ond&amp;#345;ej &amp;#268;ert&amp;#237;k&lt;/a&gt;&amp;#160;are going to mentor me throughout the whole program. All of them are really talented and very humble people. I have learned a lot from all of them. I am extremely lucky to work under such great people.&lt;/p&gt;
-&lt;p&gt;Now Community Bonding Period is going on. This is intended to get students ready to start contributing to their organization full time from 23rd May. I am supposed to :&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Become familiar with the community practices and processes.&lt;/li&gt;
-&lt;li&gt;Participate on Mailing Lists / IRC / etc.&lt;/li&gt;
-&lt;li&gt;Set up your development environment.&lt;/li&gt;
-&lt;li&gt;Small (or large) patches/bug fixes.&lt;/li&gt;
-&lt;li&gt;Participate in code reviews for others.&lt;/li&gt;
-&lt;li&gt;Work with my mentor and other org members on refining my project plan. This might include finalizing deadlines and milestones, adding more detail, figuring out potential issues, etc.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Looking forward toward a great summer.&lt;/p&gt;
-&lt;p&gt;Cheers!!!&lt;/p&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/14/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/14/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=14&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://gxyd.github.io/GSoC 2016 Phase I : Proposal, Acceptance</guid>
-      <title>GSoC 2016 Phase I : Proposal, Acceptance</title>
-      <author>Gaurav Dhingra (gxyd)</author>
-      <pubDate>Sun, 01 May 2016 18:30:00 GMT</pubDate>
-      <link>https://gxyd.github.io/gsoc2016/gsoc-with-sympy.html</link>
-      <description>&lt;p&gt;Hello, I'm Gaurav Dhingra a 3rd year undergraduate student at IIT Roorkee, my proposal on Group Theory with &lt;i&gt;SymPy&lt;/i&gt; has been accepted as a part of &lt;a href="https://summerofcode.withgoogle.com/"&gt;Google Summer of Code&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;
-First, a little bit about &lt;a href="http://www.sympy.org/"&gt;SymPy&lt;/a&gt;, a &lt;i&gt;Computer Algebra System&lt;/i&gt; (CAS) written entirely in Python. SymPy 1.0 was released about 2 months ago, &lt;i&gt;Sympy&lt;/i&gt; has been created by hundreds of contributors starting from 2006.
-
-I will be working on Group Theory over the summer, for the next 3 months, to implement Computational Group Theory (CGT) and Group Theory, which are parts of mathematics I particularly enjoy. You can view my project proposal &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Application-Gaurav-Dhingra:-Group-Theory"&gt;GSoC 2016 Application Gaurav Dhingra: Group Theory&lt;/a&gt;. Until a few days ago I was pretty busy with my exams, but in the next few weeks I will go over working on the project. I will particularly focus on Finite and Finitely Presented Groups.
-&lt;/p&gt;
-&lt;p&gt;&lt;br /&gt;
-I hope that I'll be able to implement everything that I promised in it. Moving onto the ongoing community bonding. Since I am very well acquitted with the workflow of SymPy, I can get straight to few important things, which i will do in the next few days.
-
-&lt;br /&gt;&lt;br /&gt;
-This includes things like:
-&lt;ul&gt;
-  &lt;li&gt;
-    Setting up a blog with RSS feed i.e this blog in which I am supposed to add an RSS feed functionality.
-  &lt;/li&gt;
-  &lt;li&gt;
-    Talking to my mentors regarding the time, and place of chat on internet, we differ by almost 5hrs. Time wouldn't be an issue, since seeing from past, I haven't faced such difficulty as both me and my mentor work for almost the same time intervals. From the GSoC 2015 discussions, I remember that Ondrej tries to make sure everyone knows what time student-mentor meet, since of different time zones.
-  &lt;/li&gt;
-  &lt;li&gt;
-    In the past we have had discussion on my private gitter channel &lt;a href="https://gxyd.github.io/feeds/atom.xml"&gt;Group Theory Implementation&lt;/a&gt;. &lt;i&gt;Would it be wise to continue code discussions there?&lt;/i&gt;. Since no one can be added in the channel without my permission.
-  &lt;/li&gt;
-&lt;/ul&gt;
-&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;
-One thing that has been a hell of a lot annoying has been the GSoC mailing list, it's a lot distracting. I changed list settings to abridged daily updates because I was getting like 50 mails every day and that too about some really stupid and irrelevant things. But yeah like whatever.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;
-&lt;i&gt;"LESS TALK, MORE CODE"&lt;/i&gt; is the policy that I always tend to follow (not for blog!!). I will try my best to implement it in a strict way this summer. I have seen this policy working fine for me, mostly first I start writing question in a message box to my mentor, and then i think more about it myself and in the end I come up with a solution on my own, instead of asking.
-&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;
-I'm quite sure that I will write more than enough blog posts about my project during the summers. Since I enjoy writing and that too regarding things that occupy larger part of my day.
-&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;
-I'd like to thank all the people involved with contributions to &lt;i&gt;SymPy&lt;/i&gt;. My special thanks to my mentor - &lt;a href="https://github.com/jksuom"&gt;Kalevi Suominen&lt;/a&gt; and my co-mentor - &lt;a href="https://github.com/asmeurer"&gt;Aaron Meurer&lt;/a&gt; for all the suggestions while making my proposal, and showing faith and enthusiasm in my ability and my proposal.
-&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://srajangarg.github.io//2016/04/29/Selected</guid>
-      <title>Selected</title>
-      <author>Srajan Garg (srajangarg)</author>
-      <pubDate>Fri, 29 Apr 2016 00:00:00 GMT</pubDate>
-      <link>http://srajangarg.github.io//2016/04/29/Selected/</link>
-      <description>&lt;p&gt;I have been selected for GSoC&amp;#8217;16! The results came out on Apr 23, and I have never been happier! I got around to writing this blog post only now, because of my end semester examinations which ended yesterday. I have been alotted &lt;a href="https://github.com/isuruf"&gt;Isuru&lt;/a&gt; and &lt;a href="https://github.com/sumith1896"&gt;Sumith&lt;/a&gt; as my official mentors. I&amp;#8217;m very excited to start working on the project, alongside them.&lt;/p&gt;
-
-&lt;p&gt;Right now, I&amp;#8217;ll start my discussions on the implementation details, and overall structure of the code. Also I will begin work on the Fast Fourier algorithm for univariate polynomial multiplication.&lt;/p&gt;
-
-&lt;p&gt;Looking forward to a busy summer!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=46</guid>
-      <title>GSoC &#x2013; Prologue</title>
-      <author>Rajith Vidanaarachchi (rajithv)</author>
-      <pubDate>Tue, 26 Apr 2016 06:53:46 GMT</pubDate>
-      <link>https://rajithsays.wordpress.com/2016/04/26/gsoc-prologue/</link>
-      <description>&lt;p&gt;So, I have been accepted for the Google Summer of Code &amp;#8211; 2016 for the project &amp;#8220;Ruby Wrappers for SymEngine&amp;#8221;, under the mentoring organization SciRuby.&lt;/p&gt;
-&lt;p&gt;The aim of this post is to give an introduction to the project.&lt;/p&gt;
-&lt;p&gt;The abstract of the project is as follows:&lt;/p&gt;
-&lt;div&gt;A project started by the SymPy organisation, SymEngine is a standalone fast C++ symbolic manipulation library. It solves mathematical problems the same way a human does, but way more quickly and precisely. The motivation for SymEngine is to develop the Computer Algebra System once in C++ and then use it from other languages rather than doing the same thing all over again for each language that it is required in. The project for Ruby bindings has already been setup at symengine.rb. Few things that the project involves are:&lt;/div&gt;
-&lt;ul&gt;
-&lt;li&gt;Extending the C interface of SymEngine library.&lt;/li&gt;
-&lt;li&gt;Wrapping up the C interface for Ruby using Ruby C API, including error handling.&lt;/li&gt;
-&lt;li&gt;Designing the Ruby interface.&lt;/li&gt;
-&lt;li&gt;Integrating IRuby with symengine gem for better printing and writing IRuby notebooks.&lt;/li&gt;
-&lt;li&gt;Integrating the gem with existing gems like gmp, mpfr and mpc.&lt;/li&gt;
-&lt;li&gt;Making the installation of symengine gem easier.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;If you are interested, the &lt;a href="https://docs.google.com/document/d/1HKEzqpm3yk9ax5Fs7POQaBFZFxSOjy1MXNyeB7JXBxg/edit?usp=sharing" target="_blank"&gt;full proposal&lt;/a&gt;, which includes the timeline is available online.&lt;/p&gt;
-&lt;p&gt;Also, the GitHub repository for the project is at &lt;a href="https://github.com/symengine/symengine.rb" target="_blank"&gt;SymEngine/SymEngine.rb&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The actual coding phase starts in about a month, and before that I plan to complete the&amp;#160;&lt;a href="https://github.com/symengine/symengine.rb/pull/23"&gt;&lt;span style="font-weight: 400;"&gt;Ruby Wrappers for the Trigonometric and Hyperbolic Functions&lt;/span&gt;&lt;/a&gt;&lt;span style="font-weight: 400;"&gt; and to write the necessary tests.&amp;#160;&lt;/span&gt;&lt;span style="font-weight: 400;"&gt;Next, the NTheory CWrappers can be wrapped into Ruby. This too will be done before the GSoC period starts.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;Keep checking the blog if you are interested to track the progress of this project. I will be posting&amp;#160;weekly updates in the blog.&lt;/p&gt;
-&lt;p&gt;Auf Wiedersehen!&lt;/p&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/46/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/46/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=46&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://jbm950.github.io//2016/04/26/GSoC-Acceptance.html</guid>
-      <title>GSoC Acceptance</title>
-      <author>James Milam (jbm950)</author>
-      <pubDate>Tue, 26 Apr 2016 00:00:00 GMT</pubDate>
-      <link>http://jbm950.github.io//2016/04/26/GSoC-Acceptance.html</link>
-      <description>&lt;p&gt;I am excited to announce that I have been accepted for the the Google Summer of
-Code program for the summer of 2016. I will be working with the Sympy open
-source project&amp;#8217;s equation of motion generators. For the project I will mainly
-be focusing on creating a shared base class for the current equation of motion
-generators and adding an additional generator.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
