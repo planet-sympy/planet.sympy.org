@@ -7,6 +7,62 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://shekharrajak.github.io//Coding-Period-week-3</guid>
+      <title>Coding Period Week 3</title>
+      <author>Shekhar Prasad Rajak (shekharrajak)</author>
+      <pubDate>Wed, 08 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://shekharrajak.github.io//Coding-Period-week-3/</link>
+      <description>&lt;h3 id="continue-simplified-solution-for-trigonometric-equation"&gt;Continue: Simplified solution for Trigonometric Equation:&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;New Problems :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;When I tried more testcases having sqrt and other types I found new issues on &lt;code class="highlighter-rouge"&gt;reduce_imageset&lt;/code&gt; method. Some of the Simplified
+solutions contains undesired &lt;code class="highlighter-rouge"&gt;n&lt;/code&gt; values.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Changes in solveset/_solve_radical&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Sometimes &lt;code class="highlighter-rouge"&gt;_solve_radical&lt;/code&gt; may get &lt;code class="highlighter-rouge"&gt;exp(I*x)&lt;/code&gt; terms and solving them we give Imageset, I added the&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if isinstance(result, ImageSet) or any(isinstance(r, ImageSet) for r in result.args):
+        return result
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;in the method.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Using &lt;code class="highlighter-rouge"&gt;factor_list&lt;/code&gt; in solve_trig :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;There are many cases we can do factor of expression and solve each factor may give us more simplified solution.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;I added the &lt;code class="highlighter-rouge"&gt;factor_list&lt;/code&gt; and solving each factors and union the solution.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Meanwhile :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;After working on blog for 1 week created my own blog template powered by Jekyll. and shifted the old blog into github.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Found a issue in &lt;code class="highlighter-rouge"&gt;factor_list&lt;/code&gt;. &lt;a href="https://github.com/sympy/sympy/issues/11198"&gt;issues/11198&lt;/a&gt; , When I passed
+&lt;code class="highlighter-rouge"&gt;f = sqrt(2)*sin(x) -1&lt;/code&gt; into &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; I got this problem.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;To solve &lt;code class="highlighter-rouge"&gt;factor_list&lt;/code&gt; issue I opened a PR &lt;a href="https://github.com/sympy/sympy/pull/11201"&gt;pull/11201&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Trying to improve reduce_imageset method&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=291</guid>
       <title>GSoC: Week 3</title>
       <author>Subham Tibra (shubhamtibra)</author>
@@ -452,20 +508,15 @@ its principle vales.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Problems :&lt;/strong&gt;&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;solveset(sin(x)-y, x ) doesn&amp;#8217;t work right now. But we know we can get solution using invert_real.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;In this PR &lt;code class="highlighter-rouge"&gt;solveset_real(tan(x), x)&lt;/code&gt; returns &lt;code class="highlighter-rouge"&gt;imageset(Lambda(n, pi*(n - 1)), S.Integers)&lt;/code&gt;
-but I want &lt;code class="highlighter-rouge"&gt;imageset(Lambda(n, n*pi), S.Integers)&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
+  &lt;li&gt;In this PR &lt;code class="highlighter-rouge"&gt;solveset_real(tan(x), x)&lt;/code&gt; returns &lt;code class="highlighter-rouge"&gt;imageset(Lambda(n, pi*(n - 1)), S.Integers)&lt;/code&gt;
+but I want &lt;code class="highlighter-rouge"&gt;imageset(Lambda(n, n*pi), S.Integers)&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;strong&gt;Issues :&lt;/strong&gt;&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;Meanwhile I found a issue in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;. &lt;a href="https://github.com/sympy/sympy/issues/11194"&gt;issues/11194&lt;/a&gt;.
-&lt;code class="highlighter-rouge"&gt;2*sin(x) - 2*sqrt(3)\*cos(x) - sqrt(3)\*tan(x) +3 = 0&lt;/code&gt; can be easily solved if we factorize it correctly. But I haven&amp;#8217;t found
+&lt;code class="highlighter-rouge"&gt;2*sin(x) - 2*sqrt(3)*cos(x) - sqrt(3)*tan(x) +3 = 0&lt;/code&gt; can be easily solved if we factorize it correctly. But I haven&amp;#8217;t found
 a good way to get its factor. I tried &lt;code class="highlighter-rouge"&gt;factor&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;expand(Trig + True)&lt;/code&gt; , &lt;code class="highlighter-rouge"&gt;expand_trig&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;rewrite(sin)&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;</description>
     </item>
@@ -1329,7 +1380,7 @@ Thats pretty much it for now. In the next blog post, I will be writing in detail
 
 &lt;p&gt;In this week I had Lab exams and Minor tests also. I had some chat/Email with the mentors about the project as well.&lt;/p&gt;
 
-&lt;h1 id="week-2-3--1-may-2016---14-may-2016"&gt;Week 2, 3 ( 1 May 2016 - 14 May 2016)&lt;/h1&gt;
+&lt;h2 id="week-2-3--1-may-2016---14-may-2016"&gt;Week 2, 3 ( 1 May 2016 - 14 May 2016)&lt;/h2&gt;
 
 &lt;p&gt;It was End Examination time ( 5 - 12 May). In this period I tried to be active in gitter chat and Mailing list. I worked on my previously opened PRs and new issues.&lt;/p&gt;
 
@@ -1341,7 +1392,7 @@ Thats pretty much it for now. In the next blog post, I will be writing in detail
 
 &lt;p&gt;Minutes of meeting is in Wiki page &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Solvers-Progress#meeting-01"&gt;GSoC-2016-Solvers-Progress#meeting-01&lt;/a&gt;&lt;/p&gt;
 
-&lt;h1 id="week-4-5--15-may-2016---23-may-2016"&gt;Week 4, 5 ( 15 May 2016 - 23 May 2016)&lt;/h1&gt;
+&lt;h2 id="week-4-5--15-may-2016---23-may-2016"&gt;Week 4, 5 ( 15 May 2016 - 23 May 2016)&lt;/h2&gt;
 
 &lt;p&gt;After the End semester examination, we had 2nd meeting on &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Solvers-Progress#meeting-02"&gt;15 May 2016&lt;/a&gt;. We ( &lt;a href="https://github.com/hargup"&gt;Harsh&lt;/a&gt;, &lt;a href="https://github.com/aktech"&gt;Amit&lt;/a&gt;, &lt;a href="https://github.com/kshitij10496"&gt;kshitij&lt;/a&gt; and &lt;a href="https://github.com/shekharrajak"&gt;me&lt;/a&gt;) discussed about what should be done before coming on meeting and documenting ideas/mplementation on blog or somewhere.&lt;/p&gt;
 
@@ -2117,54 +2168,6 @@ Following this, I will start the developement process of the &lt;code class="hig
 
 &lt;p&gt;Thats all for now. 
 And the coding begins !&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=94</guid>
-      <title>GSoC Community Bonding Period Week 3</title>
-      <author>Sampad Saha (sampadsaha5)</author>
-      <pubDate>Sat, 14 May 2016 16:33:04 GMT</pubDate>
-      <link>https://sampadblog.wordpress.com/2016/05/14/gsoc-community-bonding-period-week-3/</link>
-      <description>&lt;p&gt;Hi there ! This week was great. I got to learn about many new things. I have mentioned in my last post, about my goals for this week, let us see what I have done so far.&lt;/p&gt;
-&lt;h3&gt;&lt;em&gt;&lt;strong&gt;So far&lt;/strong&gt;&lt;/em&gt;&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;In&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/10863"&gt;PR 10863&lt;/a&gt;, implementation of &amp;#160;&lt;code&gt;_eval_expand_diracdelta&lt;/code&gt;&amp;#160;is almost done . A final review is needed. But at the same time, I was forgetting about the fact that the &amp;#160;&amp;#160;&lt;code&gt;simplify&lt;/code&gt;&amp;#160; method has to be deprecated in order to make things backwards compatible. Thanks&amp;#160;&lt;a href="http://www.github.com/moorepants"&gt;Jason&lt;/a&gt;&amp;#160;for the suggestion.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;I have made&amp;#160;the &lt;code&gt;simplify()&lt;/code&gt; method call the&amp;#160;&lt;code&gt;_eval_expand_diracdelta()&lt;/code&gt;&amp;#160;method and raise a deprecation warning. I have also added the tests for this method by catching the deprecation warnings properly. The API works like this:-&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;In [&lt;span class="hljs-number"&gt;3&lt;/span&gt;]: DiracDelta(x*y).simplify(x)
-/home/ahappyidiot/anaconda2/bin/ipython:&lt;span class="hljs-number"&gt;1&lt;/span&gt;: SymPyDeprecationWarning: 
-
-simplify has been deprecated since SymPy &lt;span class="hljs-number"&gt;1.0&lt;/span&gt;&lt;span class="hljs-number"&gt;.1&lt;/span&gt;. Use
-expand(diracdelta=&lt;span class="hljs-keyword"&gt;True&lt;/span&gt;, wrt=x) instead.
-
-  &lt;span class="hljs-comment"&gt;#!/home/ahappyidiot/anaconda2/bin/python&lt;/span&gt;
-Out[&lt;span class="hljs-number"&gt;3&lt;/span&gt;]: DiracDelta(x)/Abs(y)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;These commits are needed to be reviewed properly in order to merge&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/10863"&gt;PR 10863&lt;/a&gt;.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&amp;#160;&lt;code&gt;rewrite(Piecewise)&lt;/code&gt;&amp;#160;:- In &lt;a href="https://github.com/sympy/sympy/pull/11103"&gt;PR 11103&lt;/a&gt;, I have implemented a new method under DiracDelta class which would successfully&amp;#160;output a Piecewise representation of a DiracDelta Object. For this pull request also,&amp;#160;a final review is needed. The&amp;#160;API works as:-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&lt;span class="hljs-prompt"&gt;In [4]: DiracDelta(x).rewrite(Piecewise)&lt;/span&gt;
-Out[4]:
-&lt;/code&gt;&amp;#9127;  oo       &lt;span class="pl-k"&gt;for&lt;/span&gt; x &lt;span class="pl-k"&gt;=&lt;/span&gt; 0&lt;span class="pl-c1"&gt;
-&lt;/span&gt;&amp;#9128; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160;&amp;#160;
-&amp;#9129;  &lt;span class="pl-c1"&gt;0&lt;/span&gt;        otherwise&amp;#160;
-
-&lt;code class="language-py"&gt;&lt;span class="hljs-prompt"&gt;In [4]: DiracDelta(x - 5).rewrite(Piecewise)&lt;/span&gt;
-Out[4]:
-&lt;/code&gt;&amp;#9127;  oo       &lt;span class="pl-k"&gt;for&lt;/span&gt; x - 5 &lt;span class="pl-k"&gt;=&lt;/span&gt; 0&lt;span class="pl-c1"&gt;
-&lt;/span&gt;&amp;#9128; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160; &amp;#160;&amp;#160;
-&amp;#9129;  &lt;span class="pl-c1"&gt;0&lt;/span&gt;        otherwise&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;I have also reviewed&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11065" target="_blank"&gt;PR 11065&lt;/a&gt;, I personally think that the implementation is a great idea.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;&lt;em&gt;&lt;strong&gt;Next Week&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
-&lt;p&gt;My plans for next weeks are:-&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Polish both&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11103"&gt;PR 11103&lt;/a&gt;&amp;#160;and&amp;#160;&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/10863"&gt;PR 10863&lt;/a&gt;&amp;#160;and get these pull requests merged&lt;/li&gt;
-&lt;li&gt;Improve doc strings of the &lt;code&gt;DircaDelta&lt;/code&gt; and &lt;code&gt;Heaviside&lt;/code&gt; classes and methods.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;
-&lt;p&gt;I will again get back by the end of the next week. Cheers !!!&lt;/p&gt;
-&lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/94/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/94/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=94&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>
