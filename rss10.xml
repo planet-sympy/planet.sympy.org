@@ -7,6 +7,71 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://github.com/kshitij10496/2016/06/10/GSoC-Week-03/</guid>
+      <title>GSoC Week 03 - The One With Function Range (Part II)</title>
+      <author>Kshitij Saraogi(kshitij10496)</author>
+      <pubDate>Fri, 10 Jun 2016 00:00:00 GMT</pubDate>
+      <link>https://github.com/kshitij10496/2016/06/10/GSoC-Week-03/</link>
+      <description>&lt;p&gt;Hey !&lt;/p&gt;
+
+&lt;p&gt;This week I worked on implementing a method for finding the range of a function in a given domain.
+Following from last weeek&amp;#8217;s research on the same, I tried to develop these utility functions.&lt;/p&gt;
+
+&lt;h3 id="implementation"&gt;&lt;strong&gt;Implementation&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;Here, I have defined the two functions along with some of their implementation details:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;code class="highlighter-rouge"&gt;continuous_in(f, x, interval)&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The function returns the sub-domains as an &lt;code class="highlighter-rouge"&gt;Union&lt;/code&gt; of &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt; in case a discontinuity exists in the &lt;code class="highlighter-rouge"&gt;interval&lt;/code&gt;. If the function is continuous in the entire domain, the &lt;code class="highlighter-rouge"&gt;interval&lt;/code&gt; itself is returned.&lt;/p&gt;
+
+&lt;p&gt;For this we need to consider 2 primary conditions:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Domain constraints for real functions&lt;/strong&gt;
+I have also added some code for domain constraints in &lt;code class="highlighter-rouge"&gt;sqrt&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;log&lt;/code&gt; functions.
+Using the &lt;code class="highlighter-rouge"&gt;solve_univariate_inequality&lt;/code&gt; method (as the name suggests, it solves univariate inequalities),
+we calculate these constraints.&lt;br /&gt;
+Given &lt;code class="highlighter-rouge"&gt;f(x) = sqrt(g(x))&lt;/code&gt;, we determine the range of values of &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt; for which the function &lt;code class="highlighter-rouge"&gt;g(x) &amp;gt;= 0&lt;/code&gt;.&lt;br /&gt;
+Similarly, for &lt;code class="highlighter-rouge"&gt;f(x) = log(g(x))&lt;/code&gt;, the interval of &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt; in which &lt;code class="highlighter-rouge"&gt;g(x) &amp;gt; 0&lt;/code&gt; is the constrained interval.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Singularities&lt;/strong&gt;
+For determining the discontinuities, I tried to solve the reciprocal of the given function using &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;:&lt;code class="highlighter-rouge"&gt;
+solveset(1/f, x, interval)&lt;/code&gt;. The &lt;code class="highlighter-rouge"&gt;singularities&lt;/code&gt; function can also be used here but its implementation is 
+restricted to rational functions only. There are possibilities of improving this function to create a universal
+function which returns all the possible singularities of the function in a given domain.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;code class="highlighter-rouge"&gt;function_range(f, x, domain)&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Like the name suggests, this method returns the range of a univariate function in a given domain. This function is primarily designed for the purpose of &lt;code class="highlighter-rouge"&gt;solve_decomposition&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;This function calls the above implemented &lt;code class="highlighter-rouge"&gt;continuous_in&lt;/code&gt; method for finding the actual domain of &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt;. Following this, we iterate over each &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt; object returned by &lt;code class="highlighter-rouge"&gt;continuous_in&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;By using the boundaries of the interval and first derivate test, we determine the crtical points in the interval 
+and their corresponding critical values.&lt;/p&gt;
+
+&lt;p&gt;For determining the values of the function at the singularities, we determine its limit at that point. 
+For this, I use the &lt;code class="highlighter-rouge"&gt;limit&lt;/code&gt; function of SymPy.&lt;/p&gt;
+
+&lt;p&gt;After calculating the local extremas, I calculate the global minima and maxima using the &lt;code class="highlighter-rouge"&gt;inf&lt;/code&gt;(infimum) and &lt;code class="highlighter-rouge"&gt;sup&lt;/code&gt;(supremum) of the &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; of all critical values. The range, which is the &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt; of these extremasm, is returned.&lt;/p&gt;
+
+&lt;h3 id="git-log"&gt;&lt;strong&gt;$ git log&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/11141"&gt;PR#11141&lt;/a&gt;: Method for solving equations using Decomposition and Rewriting
+&lt;em&gt;Opened this week&lt;/em&gt; &lt;br /&gt;
+&lt;a href="https://github.com/sympy/sympy/pull/11224"&gt;PR#11224&lt;/a&gt;: Methods for finding the range of a function in a given domain&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Final Thoughts&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;That was all for this week.&lt;br /&gt;
+My task for the upcoming days would be to update my &lt;code class="highlighter-rouge"&gt;solve_decomposition&lt;/code&gt; method to accomodate these methods.
+I aim to get all these PR merged before the midterm evaluation.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-3</guid>
       <title>Coding Period Week 3</title>
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
@@ -291,7 +356,7 @@ Out[6]:
     </item>
     <item>
       <guid isPermaLink="false">https://github.com/kshitij10496/2016/06/04/GSoC-Week-02/</guid>
-      <title>GSoC Week 02 - The One with Function Range</title>
+      <title>GSoC Week 02 - The One With Function Range (Part I)</title>
       <author>Kshitij Saraogi(kshitij10496)</author>
       <pubDate>Sat, 04 Jun 2016 00:00:00 GMT</pubDate>
       <link>https://github.com/kshitij10496/2016/06/04/GSoC-Week-02/</link>
@@ -357,33 +422,14 @@ i.e &lt;code class="highlighter-rouge"&gt;sin(x) &amp;#8712; [-1, 1]&lt;/code&gt
   &lt;li&gt;Function to calculate the extremum values.&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id="implementation"&gt;&lt;strong&gt;Implementation&lt;/strong&gt;&lt;/h3&gt;
-
-&lt;p&gt;Here, I have defined the two functions along with some of their implementation details:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;continuous_in(f, x, domain)&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The function returns the sub-domains as an &lt;code class="highlighter-rouge"&gt;Union&lt;/code&gt; of &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt; in case a discontinuity exists in the &lt;code class="highlighter-rouge"&gt;domain&lt;/code&gt;. If the function is continuous in the entire domain, the &lt;code class="highlighter-rouge"&gt;domain&lt;/code&gt; itself is returned.&lt;/p&gt;
-
-&lt;p&gt;For determining the discontinuities, I have used the &lt;code class="highlighter-rouge"&gt;singularities&lt;/code&gt; functionality already implemented for rational functions. 
-I will have to extend this module to return all kinds of discontinuities such as branch points in &lt;code class="highlighter-rouge"&gt;sqrt&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;log&lt;/code&gt; functions.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;func_range(f, x, domain)&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Like the name suggests, this method returns the range of a function in a given domain. This function calls &lt;code class="highlighter-rouge"&gt;continuous_in&lt;/code&gt; method and implements the first derivate test on each &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt;. For determining the values of the function at the singularities, we determine its limit at that point. For this, I use the &lt;code class="highlighter-rouge"&gt;limit&lt;/code&gt; function of SymPy.&lt;/p&gt;
-
 &lt;h3 id="git-log"&gt;&lt;strong&gt;$ git log&lt;/strong&gt;&lt;/h3&gt;
 &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/11141"&gt;PR#11141&lt;/a&gt; : Method for solving equations using Decomposition and Rewriting
 &lt;a href="https://github.com/sympy/sympy/pull/11164"&gt;PR#11164&lt;/a&gt; : Intersection of certain ImageSets with Intervals&lt;/p&gt;
 
 &lt;h3 id="thoughts"&gt;&lt;strong&gt;Thoughts&lt;/strong&gt;&lt;/h3&gt;
 
-&lt;p&gt;I have an initial commit of the methods on my local.
-After tommorrow&amp;#8217;s meeting, I will iron out a more concrete design and implementation.&lt;/p&gt;
+&lt;p&gt;After tommorrow&amp;#8217;s meeting, I will iron out a more concrete design.
+My goal for next week would be to implement the above-said functions.&lt;/p&gt;
 
 &lt;p&gt;Looking forward to another exciting week !&lt;/p&gt;</description>
     </item>
@@ -2115,70 +2161,6 @@ HolonomicFunction((-1) + (1)Dx + (-1)Dx**2 + (1)Dx**3, x), f(0) = 1, f'(0) = 2, 
 &lt;p&gt;This has been super exciting so far and I hope same for future.&lt;/p&gt;
 &lt;p&gt;Thank You.&lt;/p&gt;
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/89/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/89/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=89&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://github.com/kshitij10496/2016/05/15/Auditing-SymPy's-transcendental-solver/</guid>
-      <title>Auditing SymPy's Transcendental solver</title>
-      <author>Kshitij Saraogi(kshitij10496)</author>
-      <pubDate>Sun, 15 May 2016 00:00:00 GMT</pubDate>
-      <link>https://github.com/kshitij10496/2016/05/15/Auditing-SymPy's-transcendental-solver/</link>
-      <description>&lt;p&gt;A transcendental equation is an equation which cannot be expressed in terms of a finite sequence of the algebraic operations of addition, multiplication, and root extraction in the variable being solved for. Generally, such equations do not have a closed-form solution, i.e, the solution cannot be evaluated in a finite number of operations. 
-In some cases, special functions (like Lambert W function) can be used to write the solutions to transcendental equations in closed form.&lt;/p&gt;
-
-&lt;p&gt;SymPy already have a &lt;code class="highlighter-rouge"&gt;_tsolve&lt;/code&gt; function in the &lt;code class="highlighter-rouge"&gt;solvers&lt;/code&gt; module for solving a wide range of transcendental equations. This function heavily relies on heuristics to determine the pattern equation and follows it up recursive call to the solver.&lt;/p&gt;
-
-&lt;p&gt;The major concerns with the current solver are :&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;code base is a bit too messy.&lt;/li&gt;
-  &lt;li&gt;it is difficult to add solvers for new class of transcendental equations.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Hence, it is important to develop a more modular and extensible transcendental equation solver which addresses the above issues. And it will be my task to implement the above-mentioned solver.&lt;/p&gt;
-
-&lt;p&gt;In order to understand what needs to be done, we need to know exactly what has already been done.
-For this, Amit suggested me to do an audit of &lt;code class="highlighter-rouge"&gt;_tsolve&lt;/code&gt; as this will help me in understanding the techniques and concepts used.&lt;/p&gt;
-
-&lt;h2 id="notes"&gt;Notes&lt;/h2&gt;
-&lt;hr /&gt;
-
-&lt;p&gt;A brief overview on the general working of the function is presented below:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;tsolve_saw&lt;/code&gt; flag is used to maintain a list of all the equations encountered by the solver during execution.
-This prevents the occurrence of infinite recursion in case the equation doesnot have a closed form solution.&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;_invert(eq, sym)&lt;/code&gt; method tries to reduce the given equation &lt;code class="highlighter-rouge"&gt;eq&lt;/code&gt; into simpler functions.&lt;/li&gt;
-  &lt;li&gt;Depending on the values returned by the &lt;code class="highlighter-rouge"&gt;_invert&lt;/code&gt; function, heuristics are developed to simplify the expression and solve it via recursion. 
-Several methods, such as &lt;code class="highlighter-rouge"&gt;logcombine&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;powdenest&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;expand_log&lt;/code&gt;, for factoring and expanding the expression are used.&lt;/li&gt;
-  &lt;li&gt;If the above helpers are unable to solve the given equation, we check it the expression for &lt;code class="highlighter-rouge"&gt;LambertW&lt;/code&gt; pattern( defined &lt;a href="https://github.com/sympy/sympy/blob/master/sympy/solvers/bivariate.py#L167-L193"&gt;here&lt;/a&gt;). Functions like &lt;code class="highlighter-rouge"&gt;_filtered_gens&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;expand_power_exp&lt;/code&gt; are used to reduce the expression to LambertW pattern.&lt;br /&gt;
-The &lt;code class="highlighter-rouge"&gt;bivariate&lt;/code&gt; module contains the &lt;code class="highlighter-rouge"&gt;_solve_lambert&lt;/code&gt;, the LamberW solver, which solves a Lambert-type equation.&lt;/li&gt;
-  &lt;li&gt;If the equation cannot be solved by the LambertW solver, we test the equation for a possible bivariate form. The &lt;code class="highlighter-rouge"&gt;bivariate_type&lt;/code&gt; function is used to determine the type of bivariate equation, in case of success. Following this, suitable recursive calls to the &lt;code class="highlighter-rouge"&gt;_tsolve&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; functions are made.&lt;/li&gt;
-  &lt;li&gt;If none of this works, a &lt;code class="highlighter-rouge"&gt;NotImplementedError&lt;/code&gt; exception is raised.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id="implementation-ideas"&gt;Implementation Ideas&lt;/h2&gt;
-&lt;hr /&gt;
-&lt;p&gt;Having considered the current codebase of &lt;code class="highlighter-rouge"&gt;_tsolve&lt;/code&gt; function, I find the following few points considered while implementing the new solver:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;modularise the code for various classes of equations(LambertW, &lt;code class="highlighter-rouge"&gt;bivariate&lt;/code&gt; equation type, logarithmic, exponential).&lt;/li&gt;
-  &lt;li&gt;using SymPy &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt; objects internally, instead of using the built-in Python &lt;code class="highlighter-rouge"&gt;lists&lt;/code&gt;.&lt;/li&gt;
-  &lt;li&gt;use of &lt;code class="highlighter-rouge"&gt;decompogen&lt;/code&gt; function to check for possible decomposition of the given expression into simpler functions.&lt;/li&gt;
-  &lt;li&gt;handle the case where the given equation has no closed-form solution and infinite recursion occurs.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;These are just a handful of strategies that I intend to use. However, the whole process of development is going to a lot more complex and might need some more considerations from my side.&lt;/p&gt;
-
-&lt;h3 id="task--implement-transolve-function"&gt;Task : Implement &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; function.&lt;/h3&gt;
-
-&lt;p&gt;My plan is to do a &lt;em&gt;test-driven development&lt;/em&gt; for this solver.&lt;br /&gt;
-For this, I will start by porting the relevant tests present in &lt;code class="highlighter-rouge"&gt;test_solvers.py&lt;/code&gt; module to the &lt;code class="highlighter-rouge"&gt;test_solveset.py&lt;/code&gt;.
-Following this, I will start the developement process of the &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; solver.&lt;/p&gt;
-
-&lt;p&gt;I aim to accomplish a major portion of this task by the end of this week.&lt;/p&gt;
-
-&lt;p&gt;Thats all for now. 
-And the coding begins !&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

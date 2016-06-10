@@ -89,6 +89,128 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">June 10, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-7730e356 feed-" id="item-e2c9edae">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/kshitij10496.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Kshitij Saraogi(kshitij10496) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://github.com/kshitij10496/2016/06/10/GSoC-Week-03/">00:00, Friday, 10 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://github.com/kshitij10496/2016/06/10/GSoC-Week-03/">GSoC Week 03 - The One With Function Range (Part II)</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/kshitij10496.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Kshitij Saraogi(kshitij10496) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://github.com/kshitij10496/2016/06/10/GSoC-Week-03/">00:00, Friday, 10 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://github.com/kshitij10496/2016/06/10/GSoC-Week-03/">GSoC Week 03 - The One With Function Range (Part II)</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Hey !</p>
+
+<p>This week I worked on implementing a method for finding the range of a function in a given domain.
+Following from last weeek&#8217;s research on the same, I tried to develop these utility functions.</p>
+
+<h3 id="implementation"><strong>Implementation</strong></h3>
+
+<p>Here, I have defined the two functions along with some of their implementation details:</p>
+
+<p><strong><code class="highlighter-rouge">continuous_in(f, x, interval)</code></strong></p>
+
+<p>The function returns the sub-domains as an <code class="highlighter-rouge">Union</code> of <code class="highlighter-rouge">Interval</code> in case a discontinuity exists in the <code class="highlighter-rouge">interval</code>. If the function is continuous in the entire domain, the <code class="highlighter-rouge">interval</code> itself is returned.</p>
+
+<p>For this we need to consider 2 primary conditions:</p>
+
+<ul>
+  <li>
+    <p><strong>Domain constraints for real functions</strong>
+I have also added some code for domain constraints in <code class="highlighter-rouge">sqrt</code> and <code class="highlighter-rouge">log</code> functions.
+Using the <code class="highlighter-rouge">solve_univariate_inequality</code> method (as the name suggests, it solves univariate inequalities),
+we calculate these constraints.<br />
+Given <code class="highlighter-rouge">f(x) = sqrt(g(x))</code>, we determine the range of values of <code class="highlighter-rouge">x</code> for which the function <code class="highlighter-rouge">g(x) &gt;= 0</code>.<br />
+Similarly, for <code class="highlighter-rouge">f(x) = log(g(x))</code>, the interval of <code class="highlighter-rouge">x</code> in which <code class="highlighter-rouge">g(x) &gt; 0</code> is the constrained interval.</p>
+  </li>
+  <li>
+    <p><strong>Singularities</strong>
+For determining the discontinuities, I tried to solve the reciprocal of the given function using <code class="highlighter-rouge">solveset</code>:<code class="highlighter-rouge">
+solveset(1/f, x, interval)</code>. The <code class="highlighter-rouge">singularities</code> function can also be used here but its implementation is 
+restricted to rational functions only. There are possibilities of improving this function to create a universal
+function which returns all the possible singularities of the function in a given domain.</p>
+  </li>
+</ul>
+
+<p><strong><code class="highlighter-rouge">function_range(f, x, domain)</code></strong></p>
+
+<p>Like the name suggests, this method returns the range of a univariate function in a given domain. This function is primarily designed for the purpose of <code class="highlighter-rouge">solve_decomposition</code>.</p>
+
+<p>This function calls the above implemented <code class="highlighter-rouge">continuous_in</code> method for finding the actual domain of <code class="highlighter-rouge">f</code>. Following this, we iterate over each <code class="highlighter-rouge">Interval</code> object returned by <code class="highlighter-rouge">continuous_in</code>.</p>
+
+<p>By using the boundaries of the interval and first derivate test, we determine the crtical points in the interval 
+and their corresponding critical values.</p>
+
+<p>For determining the values of the function at the singularities, we determine its limit at that point. 
+For this, I use the <code class="highlighter-rouge">limit</code> function of SymPy.</p>
+
+<p>After calculating the local extremas, I calculate the global minima and maxima using the <code class="highlighter-rouge">inf</code>(infimum) and <code class="highlighter-rouge">sup</code>(supremum) of the <code class="highlighter-rouge">FiniteSet</code> of all critical values. The range, which is the <code class="highlighter-rouge">Interval</code> of these extremasm, is returned.</p>
+
+<h3 id="git-log"><strong>$ git log</strong></h3>
+
+<p><a href="https://github.com/sympy/sympy/pull/11141">PR#11141</a>: Method for solving equations using Decomposition and Rewriting
+<em>Opened this week</em> <br />
+<a href="https://github.com/sympy/sympy/pull/11224">PR#11224</a>: Methods for finding the range of a function in a given domain</p>
+
+<p><strong>Final Thoughts</strong></p>
+
+<p>That was all for this week.<br />
+My task for the upcoming days would be to update my <code class="highlighter-rouge">solve_decomposition</code> method to accomodate these methods.
+I aim to get all these PR merged before the midterm evaluation.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">June 08, 2016</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -658,7 +780,7 @@ Out[6]:
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7730e356 feed-" id="item-25ab2a7e">
+		    <div class="box" class="item feed-7730e356 feed-" id="item-f3dbb2df">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -683,7 +805,7 @@ Out[6]:
 			    			<td style="vertical-align:bottom;">
 			    				<div class="row">
 							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://github.com/kshitij10496/2016/06/04/GSoC-Week-02/">GSoC Week 02 - The One with Function Range</a></h4>
+							    		<h4><a class="boxh2" href="https://github.com/kshitij10496/2016/06/04/GSoC-Week-02/">GSoC Week 02 - The One With Function Range (Part I)</a></h4>
 							    	</div>
 							    </div>
 			    			</td>
@@ -704,7 +826,7 @@ Out[6]:
 					    </div>
 					    <div class="row">
 					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://github.com/kshitij10496/2016/06/04/GSoC-Week-02/">GSoC Week 02 - The One with Function Range</a></h4>
+					    		<h4><a class="boxh2" href="https://github.com/kshitij10496/2016/06/04/GSoC-Week-02/">GSoC Week 02 - The One With Function Range (Part I)</a></h4>
 					    	</div>
 					    </div>
 				    </div-->
@@ -773,33 +895,14 @@ i.e <code class="highlighter-rouge">sin(x) &#8712; [-1, 1]</code>.</p>
   <li>Function to calculate the extremum values.</li>
 </ol>
 
-<h3 id="implementation"><strong>Implementation</strong></h3>
-
-<p>Here, I have defined the two functions along with some of their implementation details:</p>
-
-<ul>
-  <li><code class="highlighter-rouge">continuous_in(f, x, domain)</code></li>
-</ul>
-
-<p>The function returns the sub-domains as an <code class="highlighter-rouge">Union</code> of <code class="highlighter-rouge">Interval</code> in case a discontinuity exists in the <code class="highlighter-rouge">domain</code>. If the function is continuous in the entire domain, the <code class="highlighter-rouge">domain</code> itself is returned.</p>
-
-<p>For determining the discontinuities, I have used the <code class="highlighter-rouge">singularities</code> functionality already implemented for rational functions. 
-I will have to extend this module to return all kinds of discontinuities such as branch points in <code class="highlighter-rouge">sqrt</code> and <code class="highlighter-rouge">log</code> functions.</p>
-
-<ul>
-  <li><code class="highlighter-rouge">func_range(f, x, domain)</code></li>
-</ul>
-
-<p>Like the name suggests, this method returns the range of a function in a given domain. This function calls <code class="highlighter-rouge">continuous_in</code> method and implements the first derivate test on each <code class="highlighter-rouge">Interval</code>. For determining the values of the function at the singularities, we determine its limit at that point. For this, I use the <code class="highlighter-rouge">limit</code> function of SymPy.</p>
-
 <h3 id="git-log"><strong>$ git log</strong></h3>
 <p><a href="https://github.com/sympy/sympy/pull/11141">PR#11141</a> : Method for solving equations using Decomposition and Rewriting
 <a href="https://github.com/sympy/sympy/pull/11164">PR#11164</a> : Intersection of certain ImageSets with Intervals</p>
 
 <h3 id="thoughts"><strong>Thoughts</strong></h3>
 
-<p>I have an initial commit of the methods on my local.
-After tommorrow&#8217;s meeting, I will iron out a more concrete design and implementation.</p>
+<p>After tommorrow&#8217;s meeting, I will iron out a more concrete design.
+My goal for next week would be to implement the above-said functions.</p>
 
 <p>Looking forward to another exciting week !</p>
 					</div>
@@ -3820,124 +3923,6 @@ HolonomicFunction((-1) + (1)Dx + (-1)Dx**2 + (1)Dx**3, x), f(0) = 1, f'(0) = 2, 
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7730e356 feed-" id="item-bbe64bc4">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/kshitij10496.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Kshitij Saraogi(kshitij10496) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://github.com/kshitij10496/2016/05/15/Auditing-SymPy's-transcendental-solver/">00:00, Sunday, 15 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://github.com/kshitij10496/2016/05/15/Auditing-SymPy's-transcendental-solver/">Auditing SymPy's Transcendental solver</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/kshitij10496.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Kshitij Saraogi(kshitij10496) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://github.com/kshitij10496/2016/05/15/Auditing-SymPy's-transcendental-solver/">00:00, Sunday, 15 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://github.com/kshitij10496/2016/05/15/Auditing-SymPy's-transcendental-solver/">Auditing SymPy's Transcendental solver</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>A transcendental equation is an equation which cannot be expressed in terms of a finite sequence of the algebraic operations of addition, multiplication, and root extraction in the variable being solved for. Generally, such equations do not have a closed-form solution, i.e, the solution cannot be evaluated in a finite number of operations. 
-In some cases, special functions (like Lambert W function) can be used to write the solutions to transcendental equations in closed form.</p>
-
-<p>SymPy already have a <code class="highlighter-rouge">_tsolve</code> function in the <code class="highlighter-rouge">solvers</code> module for solving a wide range of transcendental equations. This function heavily relies on heuristics to determine the pattern equation and follows it up recursive call to the solver.</p>
-
-<p>The major concerns with the current solver are :</p>
-
-<ul>
-  <li>code base is a bit too messy.</li>
-  <li>it is difficult to add solvers for new class of transcendental equations.</li>
-</ul>
-
-<p>Hence, it is important to develop a more modular and extensible transcendental equation solver which addresses the above issues. And it will be my task to implement the above-mentioned solver.</p>
-
-<p>In order to understand what needs to be done, we need to know exactly what has already been done.
-For this, Amit suggested me to do an audit of <code class="highlighter-rouge">_tsolve</code> as this will help me in understanding the techniques and concepts used.</p>
-
-<h2 id="notes">Notes</h2>
-<hr />
-
-<p>A brief overview on the general working of the function is presented below:</p>
-
-<ol>
-  <li><code class="highlighter-rouge">tsolve_saw</code> flag is used to maintain a list of all the equations encountered by the solver during execution.
-This prevents the occurrence of infinite recursion in case the equation doesnot have a closed form solution.</li>
-  <li><code class="highlighter-rouge">_invert(eq, sym)</code> method tries to reduce the given equation <code class="highlighter-rouge">eq</code> into simpler functions.</li>
-  <li>Depending on the values returned by the <code class="highlighter-rouge">_invert</code> function, heuristics are developed to simplify the expression and solve it via recursion. 
-Several methods, such as <code class="highlighter-rouge">logcombine</code>, <code class="highlighter-rouge">powdenest</code>, <code class="highlighter-rouge">expand_log</code>, for factoring and expanding the expression are used.</li>
-  <li>If the above helpers are unable to solve the given equation, we check it the expression for <code class="highlighter-rouge">LambertW</code> pattern( defined <a href="https://github.com/sympy/sympy/blob/master/sympy/solvers/bivariate.py#L167-L193">here</a>). Functions like <code class="highlighter-rouge">_filtered_gens</code>, <code class="highlighter-rouge">expand_power_exp</code> are used to reduce the expression to LambertW pattern.<br />
-The <code class="highlighter-rouge">bivariate</code> module contains the <code class="highlighter-rouge">_solve_lambert</code>, the LamberW solver, which solves a Lambert-type equation.</li>
-  <li>If the equation cannot be solved by the LambertW solver, we test the equation for a possible bivariate form. The <code class="highlighter-rouge">bivariate_type</code> function is used to determine the type of bivariate equation, in case of success. Following this, suitable recursive calls to the <code class="highlighter-rouge">_tsolve</code> and <code class="highlighter-rouge">solve</code> functions are made.</li>
-  <li>If none of this works, a <code class="highlighter-rouge">NotImplementedError</code> exception is raised.</li>
-</ol>
-
-<h2 id="implementation-ideas">Implementation Ideas</h2>
-<hr />
-<p>Having considered the current codebase of <code class="highlighter-rouge">_tsolve</code> function, I find the following few points considered while implementing the new solver:</p>
-
-<ul>
-  <li>modularise the code for various classes of equations(LambertW, <code class="highlighter-rouge">bivariate</code> equation type, logarithmic, exponential).</li>
-  <li>using SymPy <code class="highlighter-rouge">Set</code> objects internally, instead of using the built-in Python <code class="highlighter-rouge">lists</code>.</li>
-  <li>use of <code class="highlighter-rouge">decompogen</code> function to check for possible decomposition of the given expression into simpler functions.</li>
-  <li>handle the case where the given equation has no closed-form solution and infinite recursion occurs.</li>
-</ul>
-
-<p>These are just a handful of strategies that I intend to use. However, the whole process of development is going to a lot more complex and might need some more considerations from my side.</p>
-
-<h3 id="task--implement-transolve-function">Task : Implement <code class="highlighter-rouge">transolve</code> function.</h3>
-
-<p>My plan is to do a <em>test-driven development</em> for this solver.<br />
-For this, I will start by porting the relevant tests present in <code class="highlighter-rouge">test_solvers.py</code> module to the <code class="highlighter-rouge">test_solveset.py</code>.
-Following this, I will start the developement process of the <code class="highlighter-rouge">transolve</code> solver.</p>
-
-<p>I aim to accomplish a major portion of this task by the end of this week.</p>
-
-<p>Thats all for now. 
-And the coding begins !</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -3966,86 +3951,86 @@ And the coding begins !</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>19:32, Friday, 10 June</td>
-<td>19:47, Friday, 10 June</td>
+<td>19:52, Friday, 10 June</td>
+<td>20:07, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>19:32, Friday, 10 June</td>
-<td>19:47, Friday, 10 June</td>
+<td>19:52, Friday, 10 June</td>
+<td>20:07, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>19:32, Friday, 10 June</td>
-<td>19:47, Friday, 10 June</td>
+<td>19:52, Friday, 10 June</td>
+<td>20:07, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>19:32, Friday, 10 June</td>
-<td>19:47, Friday, 10 June</td>
+<td>19:52, Friday, 10 June</td>
+<td>20:07, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>19:32, Friday, 10 June</td>
-<td>19:47, Friday, 10 June</td>
+<td>19:52, Friday, 10 June</td>
+<td>20:07, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>19:32, Friday, 10 June</td>
-<td>19:47, Friday, 10 June</td>
+<td>19:52, Friday, 10 June</td>
+<td>20:07, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://github.com/kshitij10496/">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>19:32, Friday, 10 June</td>
-<td>19:47, Friday, 10 June</td>
+<td>19:52, Friday, 10 June</td>
+<td>20:07, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>19:32, Friday, 10 June</td>
-<td>19:47, Friday, 10 June</td>
+<td>19:52, Friday, 10 June</td>
+<td>20:07, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>19:32, Friday, 10 June</td>
-<td>19:47, Friday, 10 June</td>
+<td>19:52, Friday, 10 June</td>
+<td>20:07, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>19:32, Friday, 10 June</td>
-<td>19:47, Friday, 10 June</td>
+<td>19:52, Friday, 10 June</td>
+<td>20:07, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>19:32, Friday, 10 June</td>
-<td>19:47, Friday, 10 June</td>
+<td>19:52, Friday, 10 June</td>
+<td>20:07, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>19:32, Friday, 10 June</td>
-<td>19:47, Friday, 10 June</td>
+<td>19:52, Friday, 10 June</td>
+<td>20:07, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>19:32, Friday, 10 June</td>
-<td>19:47, Friday, 10 June</td>
+<td>19:52, Friday, 10 June</td>
+<td>20:07, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>19:32, Friday, 10 June</td>
-<td>19:47, Friday, 10 June</td>
+<td>19:52, Friday, 10 June</td>
+<td>20:07, Friday, 10 June</td>
 </tr>
 </table>
 
