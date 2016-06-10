@@ -288,6 +288,138 @@ PR for the blog link update in planet: <a href="https://github.com/sympy/planet-
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-89ae9fcb feed-" id="item-deed62fb">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/nishnik.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Nishant Nikhil (nishnik) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://nishnik.github.io/GSoC-Second-Week/">00:00, Monday, 06 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Second-Week/">GSoC Second Week</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/nishnik.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Nishant Nikhil (nishnik) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://nishnik.github.io/GSoC-Second-Week/">00:00, Monday, 06 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Second-Week/">GSoC Second Week</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p><img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /></p>
+
+<p>This week, I implemented some algorithms (<code class="highlighter-rouge">gf_div</code>, <code class="highlighter-rouge">gf_gcd</code> etc.) and apart from it I looked into the design consideration also.</p>
+
+<h1 id="algorithms-implemented">Algorithms Implemented</h1>
+
+<p>I implemented 
+- <code class="highlighter-rouge">gf_div</code></p>
+
+<pre><code class="language-C+++">void GaloisFieldDict::gf_div(const GaloisFieldDict &amp;o,
+                         const Ptr&lt;GaloisFieldDict&gt; &amp;quo,
+                         const Ptr&lt;GaloisFieldDict&gt; &amp;rem) const
+</code></pre>
+<p>This will change the value of <code class="highlighter-rouge">quo</code> and <code class="highlighter-rouge">rem</code>.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">gf_quo</code></li>
+</ul>
+
+<p>This will return the quotient only. It will help when we only need quotient after dividing.
+It is better than <code class="highlighter-rouge">gf_div</code> in terms of time complexity.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">gf_lshift</code></li>
+</ul>
+
+<p>It is efficient way to multiply a polynomial in <code class="highlighter-rouge">GaloisField</code> by <code class="highlighter-rouge">x**n</code></p>
+
+<ul>
+  <li><code class="highlighter-rouge">gf_rshift</code></li>
+</ul>
+
+<p>It is efficient way to divide a polynomial in <code class="highlighter-rouge">GaloisField</code> by <code class="highlighter-rouge">x**n</code></p>
+
+<pre><code class="language-C++">void GaloisFieldDict::gf_rshift(const integer_class n,
+                            const Ptr&lt;GaloisFieldDict&gt; &amp;quo,
+                            const Ptr&lt;GaloisFieldDict&gt; &amp;rem) const
+</code></pre>
+
+<p>Just like gf_div, it also changes the value of <code class="highlighter-rouge">quo</code> and <code class="highlighter-rouge">rem</code>.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">gf_sqr</code></li>
+</ul>
+
+<p>This will square the polynomial in <code class="highlighter-rouge">GaloisField</code>.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">gf_pow</code></li>
+</ul>
+
+<p>It uses binary multiplication to power a polynomial in <code class="highlighter-rouge">GaloisField</code>.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">gf_monic</code></li>
+</ul>
+
+<p>Changes a polynomial to its monic representation, i.e. <code class="highlighter-rouge">3*x**2 + 4</code> in <code class="highlighter-rouge">GF(5)</code> becomes <code class="highlighter-rouge">x**2 + 3</code>. Here leading coefficient becomes <code class="highlighter-rouge">one</code>.</p>
+
+<ul>
+  <li><code class="highlighter-rouge">gf_gcd</code> and <code class="highlighter-rouge">gf_lcm</code></li>
+</ul>
+
+<p><code class="highlighter-rouge">gf_gcd</code> by Euclidean Algorithm and <code class="highlighter-rouge">gf_lcm</code> is product of the two polys divided by their gcd in the finite field.</p>
+
+<h1 id="design-change">Design Change</h1>
+
+<p>SymEngine&#8217;s codebase for <code class="highlighter-rouge">UIntPoly</code> has changed, it inherits <code class="highlighter-rouge">UPolyBase</code>, which has two private variables, one is to store the variable and other is container. <code class="highlighter-rouge">UIntPoly</code> uses <code class="highlighter-rouge">UIntDict</code> as a container and <code class="highlighter-rouge">UIntDict</code> is inherited from <code class="highlighter-rouge">ODictWrapper</code>.
+Now as <code class="highlighter-rouge">GaloisField</code> is just representation of polynomial so I needed something similar, so I made <code class="highlighter-rouge">GaloisField</code> inherit from <code class="highlighter-rouge">UPolyBase</code>, and made a container named <code class="highlighter-rouge">GaloisFieldDict</code>.
+This prevented a lot of code duplicacy.
+Still there is a lot of conversation going on this topic, I will better post after the final design is fixed.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-aa06d76d feed-" id="item-9ed0e668">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -1980,138 +2112,6 @@ less on coding than this week was.</p>
   Notes</a></li>
   </ul>
 </blockquote>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-89ae9fcb feed-" id="item-deed62fb">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/nishnik.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Nishant Nikhil (nishnik) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://nishnik.github.io/GSoC-Second-Week/">00:00, Friday, 27 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Second-Week/">GSoC Second Week</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/nishnik.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Nishant Nikhil (nishnik) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://nishnik.github.io/GSoC-Second-Week/">00:00, Friday, 27 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Second-Week/">GSoC Second Week</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p><img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /></p>
-
-<p>This week, I implemented some algorithms (<code class="highlighter-rouge">gf_div</code>, <code class="highlighter-rouge">gf_gcd</code> etc.) and apart from it I looked into the design consideration also.</p>
-
-<h1 id="algorithms-implemented">Algorithms Implemented</h1>
-
-<p>I implemented 
-- <code class="highlighter-rouge">gf_div</code></p>
-
-<pre><code class="language-C+++">void GaloisFieldDict::gf_div(const GaloisFieldDict &amp;o,
-                         const Ptr&lt;GaloisFieldDict&gt; &amp;quo,
-                         const Ptr&lt;GaloisFieldDict&gt; &amp;rem) const
-</code></pre>
-<p>This will change the value of <code class="highlighter-rouge">quo</code> and <code class="highlighter-rouge">rem</code>.</p>
-
-<ul>
-  <li><code class="highlighter-rouge">gf_quo</code></li>
-</ul>
-
-<p>This will return the quotient only. It will help when we only need quotient after dividing.
-It is better than <code class="highlighter-rouge">gf_div</code> in terms of time complexity.</p>
-
-<ul>
-  <li><code class="highlighter-rouge">gf_lshift</code></li>
-</ul>
-
-<p>It is efficient way to multiply a polynomial in <code class="highlighter-rouge">GaloisField</code> by <code class="highlighter-rouge">x**n</code></p>
-
-<ul>
-  <li><code class="highlighter-rouge">gf_rshift</code></li>
-</ul>
-
-<p>It is efficient way to divide a polynomial in <code class="highlighter-rouge">GaloisField</code> by <code class="highlighter-rouge">x**n</code></p>
-
-<pre><code class="language-C++">void GaloisFieldDict::gf_rshift(const integer_class n,
-                            const Ptr&lt;GaloisFieldDict&gt; &amp;quo,
-                            const Ptr&lt;GaloisFieldDict&gt; &amp;rem) const
-</code></pre>
-
-<p>Just like gf_div, it also changes the value of <code class="highlighter-rouge">quo</code> and <code class="highlighter-rouge">rem</code>.</p>
-
-<ul>
-  <li><code class="highlighter-rouge">gf_sqr</code></li>
-</ul>
-
-<p>This will square the polynomial in <code class="highlighter-rouge">GaloisField</code>.</p>
-
-<ul>
-  <li><code class="highlighter-rouge">gf_pow</code></li>
-</ul>
-
-<p>It uses binary multiplication to power a polynomial in <code class="highlighter-rouge">GaloisField</code>.</p>
-
-<ul>
-  <li><code class="highlighter-rouge">gf_monic</code></li>
-</ul>
-
-<p>Changes a polynomial to its monic representation, i.e. <code class="highlighter-rouge">3*x**2 + 4</code> in <code class="highlighter-rouge">GF(5)</code> becomes <code class="highlighter-rouge">x**2 + 3</code>. Here leading coefficient becomes <code class="highlighter-rouge">one</code>.</p>
-
-<ul>
-  <li><code class="highlighter-rouge">gf_gcd</code> and <code class="highlighter-rouge">gf_lcm</code></li>
-</ul>
-
-<p><code class="highlighter-rouge">gf_gcd</code> by Euclidean Algorithm and <code class="highlighter-rouge">gf_lcm</code> is product of the two polys divided by their gcd in the finite field.</p>
-
-<h1 id="design-change">Design Change</h1>
-
-<p>SymEngine&#8217;s codebase for <code class="highlighter-rouge">UIntPoly</code> has changed, it inherits <code class="highlighter-rouge">UPolyBase</code>, which has two private variables, one is to store the variable and other is container. <code class="highlighter-rouge">UIntPoly</code> uses <code class="highlighter-rouge">UIntDict</code> as a container and <code class="highlighter-rouge">UIntDict</code> is inherited from <code class="highlighter-rouge">ODictWrapper</code>.
-Now as <code class="highlighter-rouge">GaloisField</code> is just representation of polynomial so I needed something similar, so I made <code class="highlighter-rouge">GaloisField</code> inherit from <code class="highlighter-rouge">UPolyBase</code>, and made a container named <code class="highlighter-rouge">GaloisFieldDict</code>.
-This prevented a lot of code duplicacy.
-Still there is a lot of conversation going on this topic, I will better post after the final design is fixed.</p>
 					</div>
 				</div>
 			</div>
@@ -3966,86 +3966,86 @@ And the coding begins !</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>18:11, Friday, 10 June</td>
-<td>18:26, Friday, 10 June</td>
+<td>18:32, Friday, 10 June</td>
+<td>18:47, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>18:11, Friday, 10 June</td>
-<td>18:26, Friday, 10 June</td>
+<td>18:32, Friday, 10 June</td>
+<td>18:47, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>18:11, Friday, 10 June</td>
-<td>18:26, Friday, 10 June</td>
+<td>18:32, Friday, 10 June</td>
+<td>18:47, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>18:11, Friday, 10 June</td>
-<td>18:26, Friday, 10 June</td>
+<td>18:32, Friday, 10 June</td>
+<td>18:47, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>18:11, Friday, 10 June</td>
-<td>18:26, Friday, 10 June</td>
+<td>18:32, Friday, 10 June</td>
+<td>18:47, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>18:11, Friday, 10 June</td>
-<td>18:26, Friday, 10 June</td>
+<td>18:32, Friday, 10 June</td>
+<td>18:47, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://github.com/kshitij10496/">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>18:11, Friday, 10 June</td>
-<td>18:26, Friday, 10 June</td>
+<td>18:32, Friday, 10 June</td>
+<td>18:47, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>18:11, Friday, 10 June</td>
-<td>18:26, Friday, 10 June</td>
+<td>18:32, Friday, 10 June</td>
+<td>18:47, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>18:11, Friday, 10 June</td>
-<td>18:26, Friday, 10 June</td>
+<td>18:32, Friday, 10 June</td>
+<td>18:47, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>18:11, Friday, 10 June</td>
-<td>18:26, Friday, 10 June</td>
+<td>18:32, Friday, 10 June</td>
+<td>18:47, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>18:11, Friday, 10 June</td>
-<td>18:26, Friday, 10 June</td>
+<td>18:32, Friday, 10 June</td>
+<td>18:47, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>18:11, Friday, 10 June</td>
-<td>18:26, Friday, 10 June</td>
+<td>18:32, Friday, 10 June</td>
+<td>18:47, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>18:11, Friday, 10 June</td>
-<td>18:26, Friday, 10 June</td>
+<td>18:32, Friday, 10 June</td>
+<td>18:47, Friday, 10 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>18:11, Friday, 10 June</td>
-<td>18:26, Friday, 10 June</td>
+<td>18:32, Friday, 10 June</td>
+<td>18:47, Friday, 10 June</td>
 </tr>
 </table>
 

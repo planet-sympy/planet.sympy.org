@@ -88,6 +88,84 @@ PR for the blog link update in planet: &lt;a href="https://github.com/sympy/plan
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/291/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/291/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=291&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Second-Week</guid>
+      <title>GSoC Second Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Mon, 06 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Second-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This week, I implemented some algorithms (&lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;gf_gcd&lt;/code&gt; etc.) and apart from it I looked into the design consideration also.&lt;/p&gt;
+
+&lt;h1 id="algorithms-implemented"&gt;Algorithms Implemented&lt;/h1&gt;
+
+&lt;p&gt;I implemented 
+- &lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C+++"&gt;void GaloisFieldDict::gf_div(const GaloisFieldDict &amp;amp;o,
+                         const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;quo,
+                         const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;rem) const
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This will change the value of &lt;code class="highlighter-rouge"&gt;quo&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;rem&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_quo&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This will return the quotient only. It will help when we only need quotient after dividing.
+It is better than &lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt; in terms of time complexity.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_lshift&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It is efficient way to multiply a polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; by &lt;code class="highlighter-rouge"&gt;x**n&lt;/code&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_rshift&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It is efficient way to divide a polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; by &lt;code class="highlighter-rouge"&gt;x**n&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;void GaloisFieldDict::gf_rshift(const integer_class n,
+                            const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;quo,
+                            const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;rem) const
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Just like gf_div, it also changes the value of &lt;code class="highlighter-rouge"&gt;quo&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;rem&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sqr&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This will square the polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_pow&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;It uses binary multiplication to power a polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_monic&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Changes a polynomial to its monic representation, i.e. &lt;code class="highlighter-rouge"&gt;3*x**2 + 4&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;GF(5)&lt;/code&gt; becomes &lt;code class="highlighter-rouge"&gt;x**2 + 3&lt;/code&gt;. Here leading coefficient becomes &lt;code class="highlighter-rouge"&gt;one&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;gf_lcm&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;gf_gcd&lt;/code&gt; by Euclidean Algorithm and &lt;code class="highlighter-rouge"&gt;gf_lcm&lt;/code&gt; is product of the two polys divided by their gcd in the finite field.&lt;/p&gt;
+
+&lt;h1 id="design-change"&gt;Design Change&lt;/h1&gt;
+
+&lt;p&gt;SymEngine&amp;#8217;s codebase for &lt;code class="highlighter-rouge"&gt;UIntPoly&lt;/code&gt; has changed, it inherits &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt;, which has two private variables, one is to store the variable and other is container. &lt;code class="highlighter-rouge"&gt;UIntPoly&lt;/code&gt; uses &lt;code class="highlighter-rouge"&gt;UIntDict&lt;/code&gt; as a container and &lt;code class="highlighter-rouge"&gt;UIntDict&lt;/code&gt; is inherited from &lt;code class="highlighter-rouge"&gt;ODictWrapper&lt;/code&gt;.
+Now as &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; is just representation of polynomial so I needed something similar, so I made &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; inherit from &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt;, and made a container named &lt;code class="highlighter-rouge"&gt;GaloisFieldDict&lt;/code&gt;.
+This prevented a lot of code duplicacy.
+Still there is a lot of conversation going on this topic, I will better post after the final design is fixed.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://srajangarg.github.io//2016/06/06/Flint-Polynomials</guid>
       <title>Flint Polynomials</title>
       <author>Srajan Garg (srajangarg)</author>
@@ -1060,84 +1138,6 @@ less on coding than this week was.&lt;/p&gt;
   Notes&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/blockquote&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Second-Week</guid>
-      <title>GSoC Second Week</title>
-      <author>Nishant Nikhil (nishnik)</author>
-      <pubDate>Fri, 27 May 2016 00:00:00 GMT</pubDate>
-      <link>http://nishnik.github.io/GSoC-Second-Week/</link>
-      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
-
-&lt;p&gt;This week, I implemented some algorithms (&lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;gf_gcd&lt;/code&gt; etc.) and apart from it I looked into the design consideration also.&lt;/p&gt;
-
-&lt;h1 id="algorithms-implemented"&gt;Algorithms Implemented&lt;/h1&gt;
-
-&lt;p&gt;I implemented 
-- &lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class="language-C+++"&gt;void GaloisFieldDict::gf_div(const GaloisFieldDict &amp;amp;o,
-                         const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;quo,
-                         const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;rem) const
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This will change the value of &lt;code class="highlighter-rouge"&gt;quo&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;rem&lt;/code&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_quo&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;This will return the quotient only. It will help when we only need quotient after dividing.
-It is better than &lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt; in terms of time complexity.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_lshift&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;It is efficient way to multiply a polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; by &lt;code class="highlighter-rouge"&gt;x**n&lt;/code&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_rshift&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;It is efficient way to divide a polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; by &lt;code class="highlighter-rouge"&gt;x**n&lt;/code&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class="language-C++"&gt;void GaloisFieldDict::gf_rshift(const integer_class n,
-                            const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;quo,
-                            const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;rem) const
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Just like gf_div, it also changes the value of &lt;code class="highlighter-rouge"&gt;quo&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;rem&lt;/code&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sqr&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;This will square the polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_pow&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;It uses binary multiplication to power a polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_monic&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Changes a polynomial to its monic representation, i.e. &lt;code class="highlighter-rouge"&gt;3*x**2 + 4&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;GF(5)&lt;/code&gt; becomes &lt;code class="highlighter-rouge"&gt;x**2 + 3&lt;/code&gt;. Here leading coefficient becomes &lt;code class="highlighter-rouge"&gt;one&lt;/code&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;gf_lcm&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;code class="highlighter-rouge"&gt;gf_gcd&lt;/code&gt; by Euclidean Algorithm and &lt;code class="highlighter-rouge"&gt;gf_lcm&lt;/code&gt; is product of the two polys divided by their gcd in the finite field.&lt;/p&gt;
-
-&lt;h1 id="design-change"&gt;Design Change&lt;/h1&gt;
-
-&lt;p&gt;SymEngine&amp;#8217;s codebase for &lt;code class="highlighter-rouge"&gt;UIntPoly&lt;/code&gt; has changed, it inherits &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt;, which has two private variables, one is to store the variable and other is container. &lt;code class="highlighter-rouge"&gt;UIntPoly&lt;/code&gt; uses &lt;code class="highlighter-rouge"&gt;UIntDict&lt;/code&gt; as a container and &lt;code class="highlighter-rouge"&gt;UIntDict&lt;/code&gt; is inherited from &lt;code class="highlighter-rouge"&gt;ODictWrapper&lt;/code&gt;.
-Now as &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; is just representation of polynomial so I needed something similar, so I made &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; inherit from &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt;, and made a container named &lt;code class="highlighter-rouge"&gt;GaloisFieldDict&lt;/code&gt;.
-This prevented a lot of code duplicacy.
-Still there is a lot of conversation going on this topic, I will better post after the final design is fixed.&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://nishnik.github.io/GSoC-First-Week</guid>
