@@ -79,6 +79,8 @@ I aim to get all these PR merged before the midterm evaluation.&lt;/p&gt;</descr
       <link>http://shekharrajak.github.io/Coding-Period-week-3/</link>
       <description>&lt;h3 id="continue-simplified-solution-for-trigonometric-equation"&gt;Continue: Simplified solution for Trigonometric Equation:&lt;/h3&gt;
 
+&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11188"&gt;#11188&lt;/a&gt;&lt;/p&gt;
+
 &lt;p&gt;&lt;strong&gt;New Problems :&lt;/strong&gt;&lt;/p&gt;
 
 &lt;ul&gt;
@@ -115,6 +117,32 @@ is in this &lt;a href="https://gist.github.com/Shekharrajak/17fdcd2320f572fc9fc8
 &lt;/ul&gt;
 
 
+
+&lt;ul&gt;
+  &lt;li&gt;I implemented the above order and shifted the &lt;code class="highlighter-rouge"&gt;reduce_imageset&lt;/code&gt; method in &lt;code class="highlighter-rouge"&gt;_union&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt;.
+I created &lt;code class="highlighter-rouge"&gt;_union_simiplify&lt;/code&gt; a helper method for &lt;code class="highlighter-rouge"&gt;_union&lt;/code&gt; .&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;code class="highlighter-rouge"&gt;_union_simplify&lt;/code&gt; better than my previous implementation :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Previous implementation was returning solution in simplified &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt;, although it passed the all
+test-case except 2-3 cases. But these 2-3 test-cases taught me you are doing over simplification.
+So now I understood that we should not simplify the &lt;code class="highlighter-rouge"&gt;ImageSet(s)&lt;/code&gt; of the one factor solution, it may get simplified
+with other factor solution ImageSet(s).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Simplify them if there is difference of &lt;code class="highlighter-rouge"&gt;pi&lt;/code&gt;, that means club [(2&lt;em&gt;n + 1) and (2&lt;/em&gt;n) =&amp;gt; (n&lt;em&gt;pi)] or [(2&lt;/em&gt;n* + 1)
+and (2&lt;em&gt;n&lt;/em&gt;pi + 2) =&amp;gt; (n*pi)].&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;So now _solve_trig uses factor_list for trig eq and then solve each factor F_i. To solve each factor F_i first do
+F_i.rewrite(exp) and get this exp form factors F_ij so now the unnecessary exp will come out that dont contribute in
+final solution. That&amp;#8217;s why we get simplified &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; that will be Union with previous solution. Inside the
+Union =&amp;gt; _union =&amp;gt; _union_simplify checks for simplification with already present &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt;. This is the process
+till last factor F_i.&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Meanwhile :&lt;/strong&gt;&lt;/p&gt;
 

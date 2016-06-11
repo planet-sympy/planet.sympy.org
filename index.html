@@ -215,7 +215,7 @@ I aim to get all these PR merged before the midterm evaluation.</p>
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-748f1759">
+		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-bb45ac4d">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -270,6 +270,8 @@ I aim to get all these PR merged before the midterm evaluation.</p>
 					<div class="col-md-12 col-xs-12 descript">
 						<h3 id="continue-simplified-solution-for-trigonometric-equation">Continue: Simplified solution for Trigonometric Equation:</h3>
 
+<p>PR <a href="https://github.com/sympy/sympy/pull/11188">#11188</a></p>
+
 <p><strong>New Problems :</strong></p>
 
 <ul>
@@ -306,6 +308,32 @@ is in this <a href="https://gist.github.com/Shekharrajak/17fdcd2320f572fc9fc8674
 </ul>
 
 
+
+<ul>
+  <li>I implemented the above order and shifted the <code class="highlighter-rouge">reduce_imageset</code> method in <code class="highlighter-rouge">_union</code> for <code class="highlighter-rouge">ImageSet</code>.
+I created <code class="highlighter-rouge">_union_simiplify</code> a helper method for <code class="highlighter-rouge">_union</code> .</li>
+</ul>
+
+<p><strong><code class="highlighter-rouge">_union_simplify</code> better than my previous implementation :</strong></p>
+
+<ul>
+  <li>
+    <p>Previous implementation was returning solution in simplified <code class="highlighter-rouge">ImageSet</code>, although it passed the all
+test-case except 2-3 cases. But these 2-3 test-cases taught me you are doing over simplification.
+So now I understood that we should not simplify the <code class="highlighter-rouge">ImageSet(s)</code> of the one factor solution, it may get simplified
+with other factor solution ImageSet(s).</p>
+  </li>
+  <li>
+    <p>Simplify them if there is difference of <code class="highlighter-rouge">pi</code>, that means club [(2<em>n + 1) and (2</em>n) =&gt; (n<em>pi)] or [(2</em>n* + 1)
+and (2<em>n</em>pi + 2) =&gt; (n*pi)].</p>
+  </li>
+</ul>
+
+<p><strong>So now _solve_trig uses factor_list for trig eq and then solve each factor F_i. To solve each factor F_i first do
+F_i.rewrite(exp) and get this exp form factors F_ij so now the unnecessary exp will come out that dont contribute in
+final solution. That&#8217;s why we get simplified <code class="highlighter-rouge">ImageSet</code> that will be Union with previous solution. Inside the
+Union =&gt; _union =&gt; _union_simplify checks for simplification with already present <code class="highlighter-rouge">ImageSet</code>. This is the process
+till last factor F_i.</strong></p>
 
 <p><strong>Meanwhile :</strong></p>
 
@@ -3951,86 +3979,86 @@ HolonomicFunction((-1) + (1)Dx + (-1)Dx**2 + (1)Dx**3, x), f(0) = 1, f'(0) = 2, 
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>07:18, Saturday, 11 June</td>
-<td>07:33, Saturday, 11 June</td>
+<td>07:38, Saturday, 11 June</td>
+<td>07:53, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>07:18, Saturday, 11 June</td>
-<td>07:33, Saturday, 11 June</td>
+<td>07:38, Saturday, 11 June</td>
+<td>07:53, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>07:18, Saturday, 11 June</td>
-<td>07:33, Saturday, 11 June</td>
+<td>07:38, Saturday, 11 June</td>
+<td>07:53, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>07:18, Saturday, 11 June</td>
-<td>07:33, Saturday, 11 June</td>
+<td>07:38, Saturday, 11 June</td>
+<td>07:53, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>07:18, Saturday, 11 June</td>
-<td>07:33, Saturday, 11 June</td>
+<td>07:38, Saturday, 11 June</td>
+<td>07:53, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>07:18, Saturday, 11 June</td>
-<td>07:33, Saturday, 11 June</td>
+<td>07:38, Saturday, 11 June</td>
+<td>07:53, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://github.com/kshitij10496/">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>07:18, Saturday, 11 June</td>
-<td>07:33, Saturday, 11 June</td>
+<td>07:38, Saturday, 11 June</td>
+<td>07:53, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>07:18, Saturday, 11 June</td>
-<td>07:33, Saturday, 11 June</td>
+<td>07:38, Saturday, 11 June</td>
+<td>07:53, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>07:18, Saturday, 11 June</td>
-<td>07:33, Saturday, 11 June</td>
+<td>07:38, Saturday, 11 June</td>
+<td>07:53, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>07:18, Saturday, 11 June</td>
-<td>07:33, Saturday, 11 June</td>
+<td>07:38, Saturday, 11 June</td>
+<td>07:53, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>07:18, Saturday, 11 June</td>
-<td>07:33, Saturday, 11 June</td>
+<td>07:38, Saturday, 11 June</td>
+<td>07:53, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>07:18, Saturday, 11 June</td>
-<td>07:33, Saturday, 11 June</td>
+<td>07:38, Saturday, 11 June</td>
+<td>07:53, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>07:18, Saturday, 11 June</td>
-<td>07:33, Saturday, 11 June</td>
+<td>07:38, Saturday, 11 June</td>
+<td>07:53, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>07:18, Saturday, 11 June</td>
-<td>07:33, Saturday, 11 June</td>
+<td>07:38, Saturday, 11 June</td>
+<td>07:53, Saturday, 11 June</td>
 </tr>
 </table>
 
