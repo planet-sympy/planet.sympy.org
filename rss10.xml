@@ -7,6 +7,93 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://jbm950.github.io//2016/06/10/GSoC-week-3.html</guid>
+      <title>GSoC Week 3</title>
+      <author>James Milam (jbm950)</author>
+      <pubDate>Fri, 10 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://jbm950.github.io//2016/06/10/GSoC-week-3.html</link>
+      <description>&lt;p&gt;Today is Friday the 10th and thus marks the end of the third week of Google
+Summer of Code. This week started off with continuing work on making test code
+and a base class for &lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;LagrangesMethod&lt;/code&gt;. The work took a turn
+early in the week when I started working on an example problem that would use
+the base class instead of working on the base class and test code itself. This
+resulted in more reading and studying of code examples. This week I also had
+the opportunity to review multiple shorter PR&amp;#8217;s in addition to a longer one
+that dealt directly with code in &lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;At the very beginning of this week I migrated all property attributes from
+&lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;LagrangesMethod&lt;/code&gt; into &lt;code class="highlighter-rouge"&gt;EOM&lt;/code&gt; as a base class. This work shows
+up in &lt;a href="https://github.com/sympy/sympy/pull/11182"&gt;PR #11182&lt;/a&gt; which was
+originally meant to just be a discussion on the API for the base class. It was
+suggested to me to stop working on the actual implementation at this point and
+work on planning out a more complete API.&lt;/p&gt;
+
+&lt;p&gt;In order to come up with a more complete plan for the API for &lt;code class="highlighter-rouge"&gt;EOM&lt;/code&gt; I first had
+to get a better understanding of what was done with the equations of motion
+after the formation step. To do this I looked over
+&lt;a href="https://github.com/pydy/pydy-tutorial-human-standing"&gt;pydy-tutorial-human-standing&lt;/a&gt;,
+&lt;a href="http://nbviewer.jupyter.org/github/bmcage/odes/blob/master/docs/ipython/Planar%20Pendulum%20as%20DAE.ipynb"&gt;Planar Pendulum
+Example&lt;/a&gt;,
+&lt;a href="http://www.pydy.org/examples/double_pendulum.html"&gt;Double Pendulum Example&lt;/a&gt;
+and &lt;a href="http://nbviewer.jupyter.org/github/pydy/pydy/blob/master/examples/mass_spring_damper/mass_spring_damper.ipynb"&gt;PyDy Mass Spring Damper
+Example&lt;/a&gt;.
+After the equations of motion are formed the most common use for them was for
+time simulations using ODE integration (or DAE integration) and so the next
+thing I did was look into the documentation for the integrators
+(&lt;a href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html#scipy.integrate.odeint"&gt;scipy.integrate.odeint&lt;/a&gt;
+and &lt;a href="https://github.com/bmcage/odes"&gt;scikit.odes.dae&lt;/a&gt;). With this information I
+was able to begin work on an example problem in for the PyDy repository that
+would make use of this new class.&lt;/p&gt;
+
+&lt;p&gt;I found that Pydy&amp;#8217;s &lt;code class="highlighter-rouge"&gt;System&lt;/code&gt; class performed the work of rearrangeing the
+equations of motion into a form accepted by the integrators and so the main
+focus of the base class is to have the attributes that system expects. After
+analyzing &lt;code class="highlighter-rouge"&gt;System&lt;/code&gt;&amp;#8217;s internals I went ahead and created a basic example of a
+base class and submitted the code in &lt;a href="https://github.com/pydy/pydy/pull/353"&gt;PR
+#353&lt;/a&gt; in the PyDy repository. The PR
+shows manual entry of the equation of motion for a system with two masses,
+springs and dampers and will be used for further discussion of the API.&lt;/p&gt;
+
+&lt;p&gt;This week I reviewed two shorter PR&amp;#8217;s and one longer PR. The shorter PR&amp;#8217;s were
+&lt;a href="https://github.com/sympy/sympy/pull/10698"&gt;PR #10698&lt;/a&gt; and &lt;a href="https://github.com/sympy/sympy/pull/10693"&gt;PR
+#10693&lt;/a&gt; and covered sympy
+documentation. The first requested removing a docstring of one of the modules
+because the module had detailed documentation online. I suggested that this
+would be a negative change to sympy overall and others in sympy came to the
+same conclusion and it was promptly closed. The other documentation PR had a
+couple of spelling fixes but also had some negative or non-useful changes and
+is currently awaiting the author to remedy the latter. The Longer PR this week
+was a continuation on the Kanes Method &lt;a href="https://github.com/sympy/sympy/pull/11183"&gt;PR
+#11183&lt;/a&gt; Jason started last week and
+is an effort to improve the readibility and overall cleanliness of
+&lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id="future-directions"&gt;Future Directions&lt;/h3&gt;
+
+&lt;p&gt;The current plan for the next steps of the project is to come up with a few
+more examples of the base class in use. Once the example code has laid out an
+API I will begin implementing the base class itself.&lt;/p&gt;
+
+&lt;h3 id="prs-and-issues-referenced-in-post"&gt;PR&amp;#8217;s and Issues Referenced in Post&lt;/h3&gt;
+
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;(Open) Improved the explanation of the 5 equations in the Kane&amp;#8217;s Method
+  docs &lt;a href="https://github.com/sympy/sympy/pull/11183"&gt;PR #11183&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Open) kane.old_linearizer &lt;a href="https://github.com/sympy/sympy/issues/11199"&gt;Issue
+  #11199&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Open) EOMBase class migration of property attributes &lt;a href="https://github.com/sympy/sympy/pull/11182"&gt;PR
+  #11182&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Open) Created a basis on which to discuss EOM class &lt;a href="https://github.com/pydy/pydy/pull/353"&gt;PR
+  #353&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Closed) Remove documented redundant comments &lt;a href="https://github.com/sympy/sympy/pull/10698"&gt;PR
+  #10698&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Open) Docmentation comments corrections &lt;a href="https://github.com/sympy/sympy/pull/10693"&gt;PR
+  #10693&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://github.com/kshitij10496/2016/06/10/GSoC-Week-03/</guid>
       <title>GSoC Week 03 - The One With Function Range (Part II)</title>
       <author>Kshitij Saraogi(kshitij10496)</author>
@@ -2161,34 +2248,6 @@ Of course, this whole thing works just fine if conda is run in Python
 &lt;/ul&gt;
 &lt;p&gt;Now that this part is done, the next step would be to start coding from next Monday. From my proposed plan, the first two weeks would be for wrapping Complex Numbers and Floating Point Numbers for Ruby.&lt;/p&gt;
 &lt;p&gt;See you after the first week.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/201/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/201/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=201&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=89</guid>
-      <title>GSoC: Community Bonding Period</title>
-      <author>Subham Tibra (shubhamtibra)</author>
-      <pubDate>Sun, 15 May 2016 14:25:31 GMT</pubDate>
-      <link>https://shubhamtibra.wordpress.com/2016/05/15/gsoc-community-bonding-period/</link>
-      <description>&lt;p&gt;The 4th week of Community Bonding Period is about to kick off. I am here to write about what I&amp;#8217;ve done so far and my goals for next week.&lt;/p&gt;
-&lt;p&gt;The first &lt;a href="https://github.com/sympy/sympy/pull/10793" target="_blank"&gt;PR&lt;/a&gt;&amp;#160;for the project &amp;#8220;Implementation of Holonomic Function&amp;#8221; got merged today. This adds following functionality in SymPy.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Differential Operators with Polynomial Coefficients and operation like addition, multiplication etc.&lt;/li&gt;
-&lt;li&gt;Holonomic Functions. A representation of Holonomic Functions given its annihilator and Initial Conditions (optional).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;A little about the API to get you an idea of this.&lt;/p&gt;
-&lt;blockquote&gt;&lt;p&gt;&amp;gt;&amp;gt;&amp;gt; from sympy import *&lt;br /&gt;
-&amp;gt;&amp;gt;&amp;gt; from sympy.holonomic import HolonomicFunction, DiffOperatorAlgebra&lt;/p&gt;
-&lt;p&gt;&amp;gt;&amp;gt; x = symbols(&amp;#8216;x&amp;#8217;)&lt;br /&gt;
-&amp;gt;&amp;gt;&amp;gt; R, Dx = DiffOperatorAlgebra(ZZ.old_poly_ring(x), &amp;#8216;Dx&amp;#8217;)&lt;/p&gt;
-&lt;p&gt;&amp;gt;&amp;gt; Dx * x&lt;br /&gt;
-(1) + (x)Dx&lt;/p&gt;
-&lt;p&gt;&amp;gt;&amp;gt;&amp;gt; HolonomicFunction(Dx &amp;#8211; 1, x, 0, [1]) + HolonomicFunction(Dx**2 + 1, x, 0, [0, 1])&lt;br /&gt;
-HolonomicFunction((-1) + (1)Dx + (-1)Dx**2 + (1)Dx**3, x), f(0) = 1, f'(0) = 2, f&amp;#8221;(0) = 1&lt;/p&gt;&lt;/blockquote&gt;
-&lt;p&gt;Operations supported for Differential Operators are addition, multiplication, subtraction and power. Holonomic Functions can be added and multiplied with or without giving the Initial Conditions. Special thanks to&amp;#160;&lt;a href="https://github.com/certik" target="_blank"&gt;Ondrej&lt;/a&gt;,&amp;#160;&lt;a href="https://github.com/jksuom" target="_blank"&gt;Kalevi&lt;/a&gt;&amp;#160;and&amp;#160;&lt;a href="https://github.com/asmeurer"&gt;Aaron&lt;/a&gt;&amp;#160;for all the help, suggestions and reviews.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;What Now?&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Now the goal is to use Polynomials and Fractions i.e. instances of &lt;code&gt;DMP&lt;/code&gt;&amp;#160;and &lt;code&gt;DMF&lt;/code&gt;&amp;#160;classes instead of expressions for all the manipulation done internally. This is necessary for robustness. After that is done I work on to implement conversion of Hypergeometric Functions to Holonomic Functions.&lt;/p&gt;
-&lt;p&gt;This has been super exciting so far and I hope same for future.&lt;/p&gt;
-&lt;p&gt;Thank You.&lt;/p&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/89/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/89/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=89&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>

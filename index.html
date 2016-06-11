@@ -93,6 +93,147 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-6163205f feed-" id="item-392f4942">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/jbm950.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">James Milam (jbm950) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://jbm950.github.io//2016/06/10/GSoC-week-3.html">00:00, Friday, 10 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/06/10/GSoC-week-3.html">GSoC Week 3</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/jbm950.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">James Milam (jbm950) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://jbm950.github.io//2016/06/10/GSoC-week-3.html">00:00, Friday, 10 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/06/10/GSoC-week-3.html">GSoC Week 3</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Today is Friday the 10th and thus marks the end of the third week of Google
+Summer of Code. This week started off with continuing work on making test code
+and a base class for <code class="highlighter-rouge">KanesMethod</code> and <code class="highlighter-rouge">LagrangesMethod</code>. The work took a turn
+early in the week when I started working on an example problem that would use
+the base class instead of working on the base class and test code itself. This
+resulted in more reading and studying of code examples. This week I also had
+the opportunity to review multiple shorter PR&#8217;s in addition to a longer one
+that dealt directly with code in <code class="highlighter-rouge">KanesMethod</code>.</p>
+
+<p>At the very beginning of this week I migrated all property attributes from
+<code class="highlighter-rouge">KanesMethod</code> and <code class="highlighter-rouge">LagrangesMethod</code> into <code class="highlighter-rouge">EOM</code> as a base class. This work shows
+up in <a href="https://github.com/sympy/sympy/pull/11182">PR #11182</a> which was
+originally meant to just be a discussion on the API for the base class. It was
+suggested to me to stop working on the actual implementation at this point and
+work on planning out a more complete API.</p>
+
+<p>In order to come up with a more complete plan for the API for <code class="highlighter-rouge">EOM</code> I first had
+to get a better understanding of what was done with the equations of motion
+after the formation step. To do this I looked over
+<a href="https://github.com/pydy/pydy-tutorial-human-standing">pydy-tutorial-human-standing</a>,
+<a href="http://nbviewer.jupyter.org/github/bmcage/odes/blob/master/docs/ipython/Planar%20Pendulum%20as%20DAE.ipynb">Planar Pendulum
+Example</a>,
+<a href="http://www.pydy.org/examples/double_pendulum.html">Double Pendulum Example</a>
+and <a href="http://nbviewer.jupyter.org/github/pydy/pydy/blob/master/examples/mass_spring_damper/mass_spring_damper.ipynb">PyDy Mass Spring Damper
+Example</a>.
+After the equations of motion are formed the most common use for them was for
+time simulations using ODE integration (or DAE integration) and so the next
+thing I did was look into the documentation for the integrators
+(<a href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html#scipy.integrate.odeint">scipy.integrate.odeint</a>
+and <a href="https://github.com/bmcage/odes">scikit.odes.dae</a>). With this information I
+was able to begin work on an example problem in for the PyDy repository that
+would make use of this new class.</p>
+
+<p>I found that Pydy&#8217;s <code class="highlighter-rouge">System</code> class performed the work of rearrangeing the
+equations of motion into a form accepted by the integrators and so the main
+focus of the base class is to have the attributes that system expects. After
+analyzing <code class="highlighter-rouge">System</code>&#8217;s internals I went ahead and created a basic example of a
+base class and submitted the code in <a href="https://github.com/pydy/pydy/pull/353">PR
+#353</a> in the PyDy repository. The PR
+shows manual entry of the equation of motion for a system with two masses,
+springs and dampers and will be used for further discussion of the API.</p>
+
+<p>This week I reviewed two shorter PR&#8217;s and one longer PR. The shorter PR&#8217;s were
+<a href="https://github.com/sympy/sympy/pull/10698">PR #10698</a> and <a href="https://github.com/sympy/sympy/pull/10693">PR
+#10693</a> and covered sympy
+documentation. The first requested removing a docstring of one of the modules
+because the module had detailed documentation online. I suggested that this
+would be a negative change to sympy overall and others in sympy came to the
+same conclusion and it was promptly closed. The other documentation PR had a
+couple of spelling fixes but also had some negative or non-useful changes and
+is currently awaiting the author to remedy the latter. The Longer PR this week
+was a continuation on the Kanes Method <a href="https://github.com/sympy/sympy/pull/11183">PR
+#11183</a> Jason started last week and
+is an effort to improve the readibility and overall cleanliness of
+<code class="highlighter-rouge">KanesMethod</code>.</p>
+
+<h3 id="future-directions">Future Directions</h3>
+
+<p>The current plan for the next steps of the project is to come up with a few
+more examples of the base class in use. Once the example code has laid out an
+API I will begin implementing the base class itself.</p>
+
+<h3 id="prs-and-issues-referenced-in-post">PR&#8217;s and Issues Referenced in Post</h3>
+
+<blockquote>
+  <ul>
+    <li>(Open) Improved the explanation of the 5 equations in the Kane&#8217;s Method
+  docs <a href="https://github.com/sympy/sympy/pull/11183">PR #11183</a></li>
+    <li>(Open) kane.old_linearizer <a href="https://github.com/sympy/sympy/issues/11199">Issue
+  #11199</a></li>
+    <li>(Open) EOMBase class migration of property attributes <a href="https://github.com/sympy/sympy/pull/11182">PR
+  #11182</a></li>
+    <li>(Open) Created a basis on which to discuss EOM class <a href="https://github.com/pydy/pydy/pull/353">PR
+  #353</a></li>
+    <li>(Closed) Remove documented redundant comments <a href="https://github.com/sympy/sympy/pull/10698">PR
+  #10698</a></li>
+    <li>(Open) Docmentation comments corrections <a href="https://github.com/sympy/sympy/pull/10693">PR
+  #10693</a></li>
+  </ul>
+</blockquote>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-7730e356 feed-" id="item-e2c9edae">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -3867,91 +4008,6 @@ Of course, this whole thing works just fine if conda is run in Python
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">May 15, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-3ebbee70 feed-" id="item-9a2a3f9d">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/shubham.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Subham Tibra (shubhamtibra) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://shubhamtibra.wordpress.com/2016/05/15/gsoc-community-bonding-period/">14:25, Sunday, 15 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://shubhamtibra.wordpress.com/2016/05/15/gsoc-community-bonding-period/">GSoC: Community Bonding Period</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/shubham.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Subham Tibra (shubhamtibra) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://shubhamtibra.wordpress.com/2016/05/15/gsoc-community-bonding-period/">14:25, Sunday, 15 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://shubhamtibra.wordpress.com/2016/05/15/gsoc-community-bonding-period/">GSoC: Community Bonding Period</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>The 4th week of Community Bonding Period is about to kick off. I am here to write about what I&#8217;ve done so far and my goals for next week.</p>
-<p>The first <a href="https://github.com/sympy/sympy/pull/10793" target="_blank">PR</a>&#160;for the project &#8220;Implementation of Holonomic Function&#8221; got merged today. This adds following functionality in SymPy.</p>
-<ul>
-<li>Differential Operators with Polynomial Coefficients and operation like addition, multiplication etc.</li>
-<li>Holonomic Functions. A representation of Holonomic Functions given its annihilator and Initial Conditions (optional).</li>
-</ul>
-<p>A little about the API to get you an idea of this.</p>
-<blockquote><p>&gt;&gt;&gt; from sympy import *<br />
-&gt;&gt;&gt; from sympy.holonomic import HolonomicFunction, DiffOperatorAlgebra</p>
-<p>&gt;&gt; x = symbols(&#8216;x&#8217;)<br />
-&gt;&gt;&gt; R, Dx = DiffOperatorAlgebra(ZZ.old_poly_ring(x), &#8216;Dx&#8217;)</p>
-<p>&gt;&gt; Dx * x<br />
-(1) + (x)Dx</p>
-<p>&gt;&gt;&gt; HolonomicFunction(Dx &#8211; 1, x, 0, [1]) + HolonomicFunction(Dx**2 + 1, x, 0, [0, 1])<br />
-HolonomicFunction((-1) + (1)Dx + (-1)Dx**2 + (1)Dx**3, x), f(0) = 1, f'(0) = 2, f&#8221;(0) = 1</p></blockquote>
-<p>Operations supported for Differential Operators are addition, multiplication, subtraction and power. Holonomic Functions can be added and multiplied with or without giving the Initial Conditions. Special thanks to&#160;<a href="https://github.com/certik" target="_blank">Ondrej</a>,&#160;<a href="https://github.com/jksuom" target="_blank">Kalevi</a>&#160;and&#160;<a href="https://github.com/asmeurer">Aaron</a>&#160;for all the help, suggestions and reviews.</p>
-<p><strong>What Now?</strong></p>
-<p>Now the goal is to use Polynomials and Fractions i.e. instances of <code>DMP</code>&#160;and <code>DMF</code>&#160;classes instead of expressions for all the manipulation done internally. This is necessary for robustness. After that is done I work on to implement conversion of Hypergeometric Functions to Holonomic Functions.</p>
-<p>This has been super exciting so far and I hope same for future.</p>
-<p>Thank You.</p>
-<p>&nbsp;</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/89/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/89/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&#038;blog=106149936&#038;post=89&#038;subd=shubhamtibra&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3979,86 +4035,86 @@ HolonomicFunction((-1) + (1)Dx + (-1)Dx**2 + (1)Dx**3, x), f(0) = 1, f'(0) = 2, 
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>13:21, Saturday, 11 June</td>
-<td>13:36, Saturday, 11 June</td>
+<td>13:42, Saturday, 11 June</td>
+<td>13:57, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>13:21, Saturday, 11 June</td>
-<td>13:36, Saturday, 11 June</td>
+<td>13:42, Saturday, 11 June</td>
+<td>13:57, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>13:21, Saturday, 11 June</td>
-<td>13:36, Saturday, 11 June</td>
+<td>13:42, Saturday, 11 June</td>
+<td>13:57, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>13:21, Saturday, 11 June</td>
-<td>13:36, Saturday, 11 June</td>
+<td>13:42, Saturday, 11 June</td>
+<td>13:57, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>13:21, Saturday, 11 June</td>
-<td>13:36, Saturday, 11 June</td>
+<td>13:42, Saturday, 11 June</td>
+<td>13:57, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>13:21, Saturday, 11 June</td>
-<td>13:36, Saturday, 11 June</td>
+<td>13:42, Saturday, 11 June</td>
+<td>13:57, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://github.com/kshitij10496/">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>13:21, Saturday, 11 June</td>
-<td>13:36, Saturday, 11 June</td>
+<td>13:42, Saturday, 11 June</td>
+<td>13:57, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>13:21, Saturday, 11 June</td>
-<td>13:36, Saturday, 11 June</td>
+<td>13:42, Saturday, 11 June</td>
+<td>13:57, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>13:21, Saturday, 11 June</td>
-<td>13:36, Saturday, 11 June</td>
+<td>13:42, Saturday, 11 June</td>
+<td>13:57, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>13:21, Saturday, 11 June</td>
-<td>13:36, Saturday, 11 June</td>
+<td>13:42, Saturday, 11 June</td>
+<td>13:57, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>13:21, Saturday, 11 June</td>
-<td>13:36, Saturday, 11 June</td>
+<td>13:42, Saturday, 11 June</td>
+<td>13:57, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>13:21, Saturday, 11 June</td>
-<td>13:36, Saturday, 11 June</td>
+<td>13:42, Saturday, 11 June</td>
+<td>13:57, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>13:21, Saturday, 11 June</td>
-<td>13:36, Saturday, 11 June</td>
+<td>13:42, Saturday, 11 June</td>
+<td>13:57, Saturday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>13:21, Saturday, 11 June</td>
-<td>13:36, Saturday, 11 June</td>
+<td>13:42, Saturday, 11 June</td>
+<td>13:57, Saturday, 11 June</td>
 </tr>
 </table>
 
