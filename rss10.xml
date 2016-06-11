@@ -7,6 +7,41 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=431</guid>
+      <title>GSoC Week 3</title>
+      <author>Sampad Saha (sampadsaha5)</author>
+      <pubDate>Sat, 11 Jun 2016 16:47:44 GMT</pubDate>
+      <link>https://sampadblog.wordpress.com/2016/06/11/gsoc-week-3/</link>
+      <description>&lt;p&gt;Hi! It&amp;#8217;s been three weeks into the coding period, &amp;amp; I have managed to get some pace.I had a meeting with &lt;a href="https://github.com/moorepants"&gt;Jason&lt;/a&gt; and &lt;a href="https://github.com/leosartaj"&gt;Sartaj&lt;/a&gt; on 5&lt;sup&gt;th&lt;/sup&gt;&amp;#160;of this month.&amp;#160;We exchanged our thoughts on implementing the integration of Singularity Function objects. Then our discussion moved on towards the implementation of the Beam Bending Module. We focused on whether a Beam object will be mutable or immutable.We ended up discussing two approaches for the implementation&amp;#160;of the integration of Singularity Function objects.&lt;/p&gt;
+&lt;h4&gt;&lt;em&gt;&lt;strong&gt;So far&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11103"&gt;PR 11103&lt;/a&gt;&amp;#160;and&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11137"&gt;PR 11137&lt;/a&gt;&amp;#160;has finally got merged.&lt;/li&gt;
+&lt;li&gt;In&amp;#160;&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11178"&gt;PR 11178&lt;/a&gt;, I have added two important methods under &amp;#160;Singularity Function class.
+&lt;ul&gt;
+&lt;ul&gt;
+&lt;li&gt;rewrite(Heaviside)&lt;/li&gt;
+&lt;li&gt;rewrite(DiracDelta)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/ul&gt;
+&lt;p&gt;These would help to convert a Singularity Function object into a mixture of DiracDeltas and Heavisides.&lt;/p&gt;
+&lt;p&gt;But while doing the inverse i.e. rewriting DiracDeltas and Heavisides I got stuck. I have implemented that in a way which can&amp;#8217;t handle a bit complex expressions,but good for simple DiracDelta and Heaviside expressions. I need to work on this method.&lt;/li&gt;
+&lt;li&gt;In the same PR, I am also working on the integration of the Singularity Functions. There are two approaches which I have discussed with my mentors.
+&lt;ul&gt;
+&lt;li&gt;Directly use the rules of integrations:- I mean if the&amp;#160;exponent is greater than zero then increase the exponent by 1 and divide the whole by the resulting exponent. Else just increase the exponent by 1.&lt;br /&gt;
+The issue with this approach is if we perform Sympy integrations over SingularityFunction(x, a, 0) ,which is basically DiracDelta(x &amp;#8211; a), then it doesn&amp;#8217;t satisfy the fundamentals properties of DiracDelta integrations. For the purpose, I am trying the next approach.&lt;/li&gt;
+&lt;li&gt;Using Heaviside and DiracDelta :- Convert the Singularity function into expressions containing DiracDeltas and Heavisides and then integrate that. Integrations of DiracDeltas and Heavisides are already there in Sympy. Then rewrite that result back into the Singularity Function. Lastly, just output that resulting expression.&lt;br /&gt;
+Currently, I am working on rewriting the DiracDeltas and Heavisides back into the Singularity Function.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;&lt;em&gt;&lt;strong&gt;Next Week&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;Continue with the implementation of integrations of Singularity Functions.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;That&amp;#8217;s all for now, looking forward to week 4.&lt;/p&gt;
+&lt;p&gt;Cheers. Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/431/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/431/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=431&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://jbm950.github.io//2016/06/10/GSoC-week-3.html</guid>
       <title>GSoC Week 3</title>
       <author>James Milam (jbm950)</author>
@@ -2220,34 +2255,6 @@ Of course, this whole thing works just fine if conda is run in Python
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=201</guid>
-      <title>GSoC 2016 &#x2013; All set to go</title>
-      <author>Rajith Vidanaarachchi (rajithv)</author>
-      <pubDate>Wed, 18 May 2016 16:06:07 GMT</pubDate>
-      <link>https://rajithsays.wordpress.com/2016/05/18/gsoc-2016-all-set-to-go/</link>
-      <description>&lt;p&gt;GSoC Coding period is about to start&amp;#160;next week.&lt;/p&gt;
-&lt;p&gt;The past week I was focused on completing the &lt;a href="https://github.com/symengine/symengine.rb/pull/38" target="_blank"&gt;NTheory Ruby wrappers&lt;/a&gt;, in order to complete my promised workload for the pre-coding time.&lt;/p&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;
-&lt;p&gt;The main lessons learnt from this week&amp;#8217;s work was handling conversions&amp;#160;between Ruby and C types. This proved to be a quite easy task, with the Ruby C API.&lt;/p&gt;
-&lt;p&gt;&lt;a href="https://silverhammermba.github.io/emberb/c/#numeric" target="_blank"&gt;The Definitive Guide to Ruby&amp;#8217;s C API&lt;/a&gt;&amp;#160;covers this in detail.&lt;/p&gt;
-&lt;p&gt;Then I&amp;#160;had to figure out how to let SymEngine Integers to be implicitly convertible into Ruby numeric types. This proved tricky for me to get around as I wasn&amp;#8217;t aware that it could&amp;#160;be done in the actual Ruby code, without having to use the Ruby C API. The implicit conversion to Ruby numeric types was quite easy.&lt;/p&gt;
-&lt;p&gt;&lt;/p&gt;
-&lt;p&gt;As shown in the gist above, I just had to declare the class in the lib folder with the necessary conversion method.&lt;/p&gt;
-&lt;p&gt;With this part done, several number theory functions can now be called upon SymEngine Integers. Those functions are:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;GCD&lt;/li&gt;
-&lt;li&gt;LCM&lt;/li&gt;
-&lt;li&gt;Mod&lt;/li&gt;
-&lt;li&gt;Next Prime&lt;/li&gt;
-&lt;li&gt;Quotient&lt;/li&gt;
-&lt;li&gt;Fibonacci Number&lt;/li&gt;
-&lt;li&gt;Lucas Number&lt;/li&gt;
-&lt;li&gt;Binomials&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Now that this part is done, the next step would be to start coding from next Monday. From my proposed plan, the first two weeks would be for wrapping Complex Numbers and Floating Point Numbers for Ruby.&lt;/p&gt;
-&lt;p&gt;See you after the first week.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/201/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/201/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=201&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>
