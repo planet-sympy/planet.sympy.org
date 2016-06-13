@@ -23,6 +23,99 @@
 &lt;p&gt;See you next week!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/276/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/276/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=276&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://srajangarg.github.io//2016/06/12/Piranha-Polynomials</guid>
+      <title>Piranha Polynomials &amp; Iterators</title>
+      <author>Srajan Garg (srajangarg)</author>
+      <pubDate>Sun, 12 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://srajangarg.github.io//2016/06/12/Piranha-Polynomials/</link>
+      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
+
+&lt;p&gt;I worked on wrapping Piranha polynomials within SymEngine this week. It felt much more interesting than wrapping Flint polynomials, mainly because I was reading the Piranha&amp;#8217;s source and was in direct touch with the  author of the library. Many thanks to &lt;a href="https://github.com/bluescarni"&gt;@bluescarni&lt;/a&gt; who helped me getting familiar with it. As before, I&amp;#8217;ll briefly summarize the work I did this week along with my progress.&lt;/p&gt;
+
+&lt;h3 id="piranha-polynomials"&gt;Piranha Polynomials&lt;/h3&gt;
+
+&lt;p&gt;Piranha&amp;#8217;s polynomial class is the &lt;code class="highlighter-rouge"&gt;piranha::polynomial&lt;/code&gt; class. It&amp;#8217;s templatized as follows:&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Cf&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Key&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;polynomial&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;power_series&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="p"&gt;...&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;There are two major differences about Piranha Polynomials and SymEngine polynomials. Firstly, it uses a custom unordered map implementation called &lt;code class="highlighter-rouge"&gt;hash_set&lt;/code&gt; for storing it&amp;#8217;s degree-coefficient pairs. &lt;code class="highlighter-rouge"&gt;hash_set&lt;/code&gt; has been internally optimized for polynomial manipulations in general. On a side note, this makes SymEngine have all three types of polynomial representations too! Secondly, Piranha does not distinguish between univariate polynomials and multivariate polynomials. All polynomials are multivariate polynomials, univariate polynomials being a special case (with just one element in it&amp;#8217;s &lt;code class="highlighter-rouge"&gt;symbol_set&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;Here, &lt;code class="highlighter-rouge"&gt;Cf&lt;/code&gt; is the class for storing the coefficients, while &lt;code class="highlighter-rouge"&gt;Key&lt;/code&gt; are the monomials themselves. Unlike Flint, we can use any integer class as the coefficient class for the polynomials. So, the first question was wether to use &lt;code class="highlighter-rouge"&gt;piranha::integer&lt;/code&gt; (and use implicit conversions like I did in Flint polynomials) or &lt;code class="highlighter-rouge"&gt;SymEngine::integer_class&lt;/code&gt; as the integer class for Piranha polynomials. After a brief discussion with Isuru, we decided to go with SymEngine&amp;#8217;s integers. The &lt;code class="highlighter-rouge"&gt;Key&lt;/code&gt; class used is &lt;code class="highlighter-rouge"&gt;piranha::monomial&amp;lt;uint&amp;gt;&lt;/code&gt;, which means it will store one &lt;code class="highlighter-rouge"&gt;unsigned int&lt;/code&gt; per symbol (representing the degree, in each monomial).&lt;/p&gt;
+
+&lt;h3 id="symengines-integers-in-piranhapolynomial"&gt;SymEngine&amp;#8217;s integers in &lt;code class="highlighter-rouge"&gt;piranha::polynomial&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;For an integer class to be usable as the &lt;code class="highlighter-rouge"&gt;Cf&lt;/code&gt; it should have some basic properties like, default constructibility, copy constructibility, &lt;code class="highlighter-rouge"&gt;nothrow&lt;/code&gt; destructibility, &lt;code class="highlighter-rouge"&gt;nothrow&lt;/code&gt; move assignability and &lt;code class="highlighter-rouge"&gt;nothrow&lt;/code&gt; move constructibility. As of yet, &lt;code class="highlighter-rouge"&gt;mpz_wrapper&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;fmpz_wrapper&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;mpz_class&lt;/code&gt; did not pass the &lt;code class="highlighter-rouge"&gt;nothrow&lt;/code&gt; checks. All that had to bee done was that I had to add &lt;code class="highlighter-rouge"&gt;noexcept&lt;/code&gt; to the wrappers we had already written. This allowed &lt;code class="highlighter-rouge"&gt;mpz_wrapper&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;fmpz_wrapper&lt;/code&gt; to be used as coefficients in Piranha polynomials. Ofcourse, Piranha&amp;#8217;s own integer class passes all these checks too.&lt;/p&gt;
+
+&lt;p&gt;Currently, there is no solution for having &lt;code class="highlighter-rouge"&gt;mpz_class&lt;/code&gt; as the coefficient class for polynomials. Firstly, these gmpxx integers methods have not been marked &lt;code class="highlighter-rouge"&gt;nothrow&lt;/code&gt; yet. There is a forum &lt;a href="https://gmplib.org/list-archives/gmp-devel/2016-April/004271.html"&gt;post&lt;/a&gt; on how it can be added, and actually has been added in the development version but hasn&amp;#8217;t been released yet. Another reason  is that &lt;code class="highlighter-rouge"&gt;mpz_class&lt;/code&gt; uses &lt;a href="https://en.wikipedia.org/wiki/Expression_templates"&gt;expression templates&lt;/a&gt; for improved performance. This means that unlike normal integers, any arithmetic operation does not necessarily return the same integer class.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;is_a&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; 		&lt;span class="c1"&gt;// true
+&lt;/span&gt;
+&lt;span class="n"&gt;mpz_class&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;is_a&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;mpz_class&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;	&lt;span class="c1"&gt;// false
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The reason it cannot be used within Piranha is that Piranha checks the coefficient type after each operation so that it knows what &lt;a href="https://en.wikipedia.org/wiki/Polynomial_ring"&gt;ring&lt;/a&gt; the polynomial belongs to. Here, it will be unable to detect what the ring is, as the returned coefficient will be an expression template. Thus, it was decided that the integer class &lt;code class="highlighter-rouge"&gt;mpz_class&lt;/code&gt; can&amp;#8217;t be used alongside Piranha with SymEngine. So, the following became invalid, on which a warning is thrown and the class is changed to &lt;code class="highlighter-rouge"&gt;mpz_wrapper&lt;/code&gt; :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;cmake -DWITH_PIRANHA=yes -DINTEGER_CLASS=gmpxx
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;All the work on Piranha polynomials and the &lt;code class="highlighter-rouge"&gt;cmake&lt;/code&gt; changes can be found in &lt;a href="https://github.com/symengine/symengine/pull/980"&gt;#980&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id="iterators"&gt;Iterators&lt;/h3&gt;
+
+&lt;p&gt;Currently this is what the &lt;code class="highlighter-rouge"&gt;print&lt;/code&gt; functions for our univariate integer polynomials looked like :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;string&lt;/span&gt; &lt;span class="nf"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;UIntPoly&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+	&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dict_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;begin&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dict_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;end&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="n"&gt;it&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+	&lt;span class="p"&gt;{&lt;/span&gt;
+		&lt;span class="c1"&gt;// use it-&amp;gt;first and it-&amp;gt;second
+&lt;/span&gt;	&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="n"&gt;string&lt;/span&gt; &lt;span class="nf"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;UIntPolyFlint&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+	&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;degree&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="n"&gt;it&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+	&lt;span class="p"&gt;{&lt;/span&gt;
+		&lt;span class="c1"&gt;// use it and p.get_coeff(it)
+&lt;/span&gt;	&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;These methods are very similar and do not deserve to be separate functions. All that was needed to unify these methods was to have iterators for each of the three classes, and then we can have use the same code for many functions like &lt;code class="highlighter-rouge"&gt;print&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;as_symbolic&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;derivative&lt;/code&gt;. This also called for a new base class to be made, &lt;code class="highlighter-rouge"&gt;UIntPolyBase&lt;/code&gt; from which these three integer polynomials inherit and it itself inherits from the original base class &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I stuck with the syntax of &lt;code class="highlighter-rouge"&gt;it-&amp;gt;first&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;it-&amp;gt;second&lt;/code&gt; for the unified iterators. Which means &lt;code class="highlighter-rouge"&gt;operator*&lt;/code&gt; needed to return a &lt;code class="highlighter-rouge"&gt;std::pair&amp;lt;uint, integer_class&amp;gt;&lt;/code&gt;. So, for SymEngine polynomials all I needed to do was return iterators to the internal dictionary and that was it. Not going into too much technicality, for Flint and Piranha I used custom iterators which had &lt;code class="highlighter-rouge"&gt;operator++&lt;/code&gt; defined on them and returned a pair whenever &lt;code class="highlighter-rouge"&gt;it-&amp;gt;&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;*it&lt;/code&gt; was called on them. They basically iterated over the degree and returned only for non-zero coefficients for both the libraries. The actual implementation of the iterator scheme can be seen in &lt;a href="https://github.com/symengine/symengine/pull/985"&gt;#985&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Initially I was happy with this approach and was able to write (unifying the three) :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;string print(const UIntPolyBase&amp;amp; p)
+{
+	for(auto it = p.dict_.begin(); it != p.dict_.end(); ++it)
+	{
+		// use it-&amp;gt;first and it-&amp;gt;second
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Isuru pointed out that instead of returning the &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt; in the pair, we should return a reference to it. Now, this made sense but was a bit tricky to implement. Also the iterator could no longer return reference like &lt;code class="highlighter-rouge"&gt;const integer_class&amp;amp;&lt;/code&gt;, as Flint did not even store it&amp;#8217;s coefficients as &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt;. To tackle this, another template parameter had to be added to the custom iterator class which determined the second term of the pair (which was supposed to be the reference to the coefficient in the internal storage of the polynomial). Also, I had to dig in to the Flint documentation and ask Piranha&amp;#8217;s author, for knowing how I could get &lt;code class="highlighter-rouge"&gt;const&lt;/code&gt; references to the coefficients in internal storage. After this was finally implemented, there was a new &lt;code class="highlighter-rouge"&gt;get_coeff_ref&lt;/code&gt; method, which does not copy but returns a reference to the required coefficient. The only downside to all this was that instead of &lt;code class="highlighter-rouge"&gt;it-&amp;gt;second&lt;/code&gt; I had to use &lt;code class="highlighter-rouge"&gt;to_integer_class(it-&amp;gt;second)&lt;/code&gt; everywhere in the common functions.&lt;/p&gt;
+
+&lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
+
+&lt;p&gt;I saw that in SymEngine, there were lots of redundant header file includes in many files. I wrote a short python script which makes a header dependency tree, and automatically removes header includes which are not needed. After some manual inspection of the changes I pushed in &lt;a href="https://github.com/symengine/symengine/pull/981"&gt;#981&lt;/a&gt;. It was really amazing to see the script flag more than 500 lines of redundant includes. The PR has not been merged yet, though.&lt;/p&gt;
+
+&lt;p&gt;I will be working on higher level functionality like &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; in the coming week. Will keep you guys posted.&lt;/p&gt;
+
+&lt;p&gt;Laters!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=431</guid>
       <title>GSoC Week 3</title>
       <author>Sampad Saha (sampadsaha5)</author>
@@ -1989,86 +2082,6 @@ During this time, I was asked by Isuru to switch work towards the polynomial int
 &lt;/ul&gt;
 
 &lt;p&gt;See you next week, Goodbye!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://jbm950.github.io//2016/05/20/Community-Bonding.html</guid>
-      <title>Community Bonding Period</title>
-      <author>James Milam (jbm950)</author>
-      <pubDate>Fri, 20 May 2016 00:00:00 GMT</pubDate>
-      <link>http://jbm950.github.io//2016/05/20/Community-Bonding.html</link>
-      <description>&lt;p&gt;The community bonding period is coming to a close and so I&amp;#8217;d like to write
-about what I&amp;#8217;ve done/learned during this time. I&amp;#8217;ve had the opportunity to
-create my first blog, have my first meeting with my mentors, submit a couple of
-minor pull requests to pydy and sympy, add an example script to the pydy
-repository, begin learning about spatial vectors and begin work on some
-benchmarking code.&lt;/p&gt;
-
-&lt;p&gt;This is my first attempt at blogging and I had some trouble initially setting
-it up. For starters I did not know what an RSS feed was or for what it was
-used. Also I wanted the blog to be hosted on github pages where I currently
-keep my collection of notes and thus I decided to try to use the jekyll static
-site backend that github uses. I tried, however, to isolate the blog in its own
-subfolder with the rest of my GSoC information but this caused all kinds of
-problems with posts showing up multiple times and the RSS feed not updating
-properly. I eventually decided to stop trying to separate the posts and just
-centrally locate them as is demonstrated in the jekyll documentation. For the
-RSS feed I used a template that I found online. Now the posts appeared properly
-and the RSS feed updated correctly. The last thing I wanted to do for my blog
-before I considered it officially set up was to have some method of allowing
-people to comment on my posts. I found a blog post online on how to achieve
-this without the need for anything other than what github pages offers and so I
-set out to try this method. I used the code shown on the blog post without any
-luck. Prior to this I have had zero experience working with javascript and so
-I didn&amp;#8217;t even know where to begin to try to debug why the comments were not
-showing up and so I sent the writer of the blog post an email asking for his
-assistance. And he replied! He pointed out that I was missing the part where a
-java script library would be loaded for use on the page and once I added the
-couple of lines of code, commenting on my blog posts is now possible (At least I
-think that&amp;#8217;s what the problem was but again I have no experience working with
-javascript). With the ability to comment added, my blog is completely set up
-and is connected to the correct channels for the Google Summer of Code.&lt;/p&gt;
-
-&lt;p&gt;Early in the community bonding period I was able to have my first meeting with
-my mentors for my project. During this meeting it was discussed that I could
-change the later portion of my project from working on implementing a Newton
-Euler method of equations of motion generation to implementing the faster
-Featherstone method. Considering I had no great attachment to the Newton Euler
-method I agreed that the faster method would provide a greater benefit for the
-overall project. Since the meeting I have spent some time reading on the math
-involved in the Featherstone method, specifically spatial vectors and their
-uses in dynamics. To this end I have read &lt;a href="http://ieeexplore.ieee.org/xpls/icp.jsp?arnumber=5569032#article"&gt;A Beginners Guide to 6-D Vectors
-(Part 1)&lt;/a&gt; and
-started reading both &lt;a href="http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;amp;arnumber=5663690"&gt;A Beginners Guide to 6-D Vectors (Part
-2)&lt;/a&gt; and Roy
-Featherstone&amp;#8217;s short course on spatial vector algebra.&lt;/p&gt;
-
-&lt;p&gt;I have also spent some time beginning to familiarize myself with the code that
-I will be working with. To begin I followed Jason Moore&amp;#8217;s great suggestion of
-coding through one of the examples from my dynamics course and adding it to the
-pydy/examples folder in the pydy repository. The example I chose to use was a
-&lt;a href="http://jbm950.github.io/../../../notes/analytical_dynamics/analytical_dynamics_main.html#e_basic_equation_of_motion"&gt;simple
-pendulum&lt;/a&gt;
-so that I could focus on the code rather than the complexities of the problem
-itself. This code and diagram are currently undergoing the review process now
-in order to be added to the pydy repository.&lt;/p&gt;
-
-&lt;p&gt;Lastly I have begun work on benchmarking code which is mentioned as part of my
-project itself. In working on this part of the project I was able to learn how
-to use a SQLite database with python which I had only obtained brief exposure
-to in the past. This code currently works using python&amp;#8217;s timeit library to run
-a file utilizing Lagrange&amp;#8217;s method of equations of motion generation and
-another using Kane&amp;#8217;s method. The code runs each file several thousand times and
-iterates through this process 30 times and saves the average of the 30 runs
-along with several other useful bits of information about the computer and
-version of python being used to run the tests. In addition to the benchmarking
-code itself I have been working on a script that will allow viewing of a graph
-of the tests utilizing matplotlib and tkinter. This code is close to completion
-and the current next major addition will be to add the ability to filter the
-tests based on what platform was used/what version of python was used to run
-the tests.&lt;/p&gt;
-
-&lt;p&gt;This community bonding period has been productive and I am excited to begin the
-Google Summer of Code program on Monday.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

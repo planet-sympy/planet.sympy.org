@@ -160,6 +160,153 @@
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-4b3fffb8">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/srajangarg.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Srajan Garg (srajangarg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://srajangarg.github.io//2016/06/12/Piranha-Polynomials/">00:00, Sunday, 12 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/06/12/Piranha-Polynomials/">Piranha Polynomials &amp; Iterators</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/srajangarg.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Srajan Garg (srajangarg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://srajangarg.github.io//2016/06/12/Piranha-Polynomials/">00:00, Sunday, 12 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/06/12/Piranha-Polynomials/">Piranha Polynomials &amp; Iterators</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<h3 id="overview">Overview</h3>
+
+<p>I worked on wrapping Piranha polynomials within SymEngine this week. It felt much more interesting than wrapping Flint polynomials, mainly because I was reading the Piranha&#8217;s source and was in direct touch with the  author of the library. Many thanks to <a href="https://github.com/bluescarni">@bluescarni</a> who helped me getting familiar with it. As before, I&#8217;ll briefly summarize the work I did this week along with my progress.</p>
+
+<h3 id="piranha-polynomials">Piranha Polynomials</h3>
+
+<p>Piranha&#8217;s polynomial class is the <code class="highlighter-rouge">piranha::polynomial</code> class. It&#8217;s templatized as follows:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">Cf</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Key</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">polynomial</span> <span class="o">:</span> <span class="n">power_series</span><span class="o">&lt;</span> <span class="p">...</span> <span class="o">&gt;</span>
+</code></pre>
+</div>
+
+<p>There are two major differences about Piranha Polynomials and SymEngine polynomials. Firstly, it uses a custom unordered map implementation called <code class="highlighter-rouge">hash_set</code> for storing it&#8217;s degree-coefficient pairs. <code class="highlighter-rouge">hash_set</code> has been internally optimized for polynomial manipulations in general. On a side note, this makes SymEngine have all three types of polynomial representations too! Secondly, Piranha does not distinguish between univariate polynomials and multivariate polynomials. All polynomials are multivariate polynomials, univariate polynomials being a special case (with just one element in it&#8217;s <code class="highlighter-rouge">symbol_set</code>).</p>
+
+<p>Here, <code class="highlighter-rouge">Cf</code> is the class for storing the coefficients, while <code class="highlighter-rouge">Key</code> are the monomials themselves. Unlike Flint, we can use any integer class as the coefficient class for the polynomials. So, the first question was wether to use <code class="highlighter-rouge">piranha::integer</code> (and use implicit conversions like I did in Flint polynomials) or <code class="highlighter-rouge">SymEngine::integer_class</code> as the integer class for Piranha polynomials. After a brief discussion with Isuru, we decided to go with SymEngine&#8217;s integers. The <code class="highlighter-rouge">Key</code> class used is <code class="highlighter-rouge">piranha::monomial&lt;uint&gt;</code>, which means it will store one <code class="highlighter-rouge">unsigned int</code> per symbol (representing the degree, in each monomial).</p>
+
+<h3 id="symengines-integers-in-piranhapolynomial">SymEngine&#8217;s integers in <code class="highlighter-rouge">piranha::polynomial</code></h3>
+
+<p>For an integer class to be usable as the <code class="highlighter-rouge">Cf</code> it should have some basic properties like, default constructibility, copy constructibility, <code class="highlighter-rouge">nothrow</code> destructibility, <code class="highlighter-rouge">nothrow</code> move assignability and <code class="highlighter-rouge">nothrow</code> move constructibility. As of yet, <code class="highlighter-rouge">mpz_wrapper</code>, <code class="highlighter-rouge">fmpz_wrapper</code> and <code class="highlighter-rouge">mpz_class</code> did not pass the <code class="highlighter-rouge">nothrow</code> checks. All that had to bee done was that I had to add <code class="highlighter-rouge">noexcept</code> to the wrappers we had already written. This allowed <code class="highlighter-rouge">mpz_wrapper</code> and <code class="highlighter-rouge">fmpz_wrapper</code> to be used as coefficients in Piranha polynomials. Ofcourse, Piranha&#8217;s own integer class passes all these checks too.</p>
+
+<p>Currently, there is no solution for having <code class="highlighter-rouge">mpz_class</code> as the coefficient class for polynomials. Firstly, these gmpxx integers methods have not been marked <code class="highlighter-rouge">nothrow</code> yet. There is a forum <a href="https://gmplib.org/list-archives/gmp-devel/2016-April/004271.html">post</a> on how it can be added, and actually has been added in the development version but hasn&#8217;t been released yet. Another reason  is that <code class="highlighter-rouge">mpz_class</code> uses <a href="https://en.wikipedia.org/wiki/Expression_templates">expression templates</a> for improved performance. This means that unlike normal integers, any arithmetic operation does not necessarily return the same integer class.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
+<span class="n">is_a</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">);</span> 		<span class="c1">// true
+</span>
+<span class="n">mpz_class</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
+<span class="n">is_a</span><span class="o">&lt;</span><span class="n">mpz_class</span><span class="o">&gt;</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">);</span>	<span class="c1">// false
+</span></code></pre>
+</div>
+
+<p>The reason it cannot be used within Piranha is that Piranha checks the coefficient type after each operation so that it knows what <a href="https://en.wikipedia.org/wiki/Polynomial_ring">ring</a> the polynomial belongs to. Here, it will be unable to detect what the ring is, as the returned coefficient will be an expression template. Thus, it was decided that the integer class <code class="highlighter-rouge">mpz_class</code> can&#8217;t be used alongside Piranha with SymEngine. So, the following became invalid, on which a warning is thrown and the class is changed to <code class="highlighter-rouge">mpz_wrapper</code> :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>cmake -DWITH_PIRANHA=yes -DINTEGER_CLASS=gmpxx
+</code></pre>
+</div>
+
+<p>All the work on Piranha polynomials and the <code class="highlighter-rouge">cmake</code> changes can be found in <a href="https://github.com/symengine/symengine/pull/980">#980</a>.</p>
+
+<h3 id="iterators">Iterators</h3>
+
+<p>Currently this is what the <code class="highlighter-rouge">print</code> functions for our univariate integer polynomials looked like :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code><span class="n">string</span> <span class="nf">print</span><span class="p">(</span><span class="k">const</span> <span class="n">UIntPoly</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">it</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">dict_</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">p</span><span class="p">.</span><span class="n">dict_</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="o">++</span><span class="n">it</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="c1">// use it-&gt;first and it-&gt;second
+</span>	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">string</span> <span class="nf">print</span><span class="p">(</span><span class="k">const</span> <span class="n">UIntPolyFlint</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">it</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">degree</span><span class="p">();</span> <span class="n">it</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="n">it</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="c1">// use it and p.get_coeff(it)
+</span>	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>These methods are very similar and do not deserve to be separate functions. All that was needed to unify these methods was to have iterators for each of the three classes, and then we can have use the same code for many functions like <code class="highlighter-rouge">print</code>, <code class="highlighter-rouge">as_symbolic</code> and <code class="highlighter-rouge">derivative</code>. This also called for a new base class to be made, <code class="highlighter-rouge">UIntPolyBase</code> from which these three integer polynomials inherit and it itself inherits from the original base class <code class="highlighter-rouge">UPolyBase</code>.</p>
+
+<p>I stuck with the syntax of <code class="highlighter-rouge">it-&gt;first</code> and <code class="highlighter-rouge">it-&gt;second</code> for the unified iterators. Which means <code class="highlighter-rouge">operator*</code> needed to return a <code class="highlighter-rouge">std::pair&lt;uint, integer_class&gt;</code>. So, for SymEngine polynomials all I needed to do was return iterators to the internal dictionary and that was it. Not going into too much technicality, for Flint and Piranha I used custom iterators which had <code class="highlighter-rouge">operator++</code> defined on them and returned a pair whenever <code class="highlighter-rouge">it-&gt;</code> or <code class="highlighter-rouge">*it</code> was called on them. They basically iterated over the degree and returned only for non-zero coefficients for both the libraries. The actual implementation of the iterator scheme can be seen in <a href="https://github.com/symengine/symengine/pull/985">#985</a>.</p>
+
+<p>Initially I was happy with this approach and was able to write (unifying the three) :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>string print(const UIntPolyBase&amp; p)
+{
+	for(auto it = p.dict_.begin(); it != p.dict_.end(); ++it)
+	{
+		// use it-&gt;first and it-&gt;second
+	}
+}
+</code></pre>
+</div>
+
+<p>Isuru pointed out that instead of returning the <code class="highlighter-rouge">integer_class</code> in the pair, we should return a reference to it. Now, this made sense but was a bit tricky to implement. Also the iterator could no longer return reference like <code class="highlighter-rouge">const integer_class&amp;</code>, as Flint did not even store it&#8217;s coefficients as <code class="highlighter-rouge">integer_class</code>. To tackle this, another template parameter had to be added to the custom iterator class which determined the second term of the pair (which was supposed to be the reference to the coefficient in the internal storage of the polynomial). Also, I had to dig in to the Flint documentation and ask Piranha&#8217;s author, for knowing how I could get <code class="highlighter-rouge">const</code> references to the coefficients in internal storage. After this was finally implemented, there was a new <code class="highlighter-rouge">get_coeff_ref</code> method, which does not copy but returns a reference to the required coefficient. The only downside to all this was that instead of <code class="highlighter-rouge">it-&gt;second</code> I had to use <code class="highlighter-rouge">to_integer_class(it-&gt;second)</code> everywhere in the common functions.</p>
+
+<h3 id="miscellaneous-work">Miscellaneous Work</h3>
+
+<p>I saw that in SymEngine, there were lots of redundant header file includes in many files. I wrote a short python script which makes a header dependency tree, and automatically removes header includes which are not needed. After some manual inspection of the changes I pushed in <a href="https://github.com/symengine/symengine/pull/981">#981</a>. It was really amazing to see the script flag more than 500 lines of redundant includes. The PR has not been merged yet, though.</p>
+
+<p>I will be working on higher level functionality like <code class="highlighter-rouge">gcd</code> in the coming week. Will keep you guys posted.</p>
+
+<p>Laters!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">June 11, 2016</h2>
@@ -3692,143 +3839,6 @@ During this time, I was asked by Isuru to switch work towards the polynomial int
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">May 20, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-6163205f feed-" id="item-4b5cf0ef">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/jbm950.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">James Milam (jbm950) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://jbm950.github.io//2016/05/20/Community-Bonding.html">00:00, Friday, 20 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/05/20/Community-Bonding.html">Community Bonding Period</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/jbm950.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">James Milam (jbm950) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://jbm950.github.io//2016/05/20/Community-Bonding.html">00:00, Friday, 20 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/05/20/Community-Bonding.html">Community Bonding Period</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>The community bonding period is coming to a close and so I&#8217;d like to write
-about what I&#8217;ve done/learned during this time. I&#8217;ve had the opportunity to
-create my first blog, have my first meeting with my mentors, submit a couple of
-minor pull requests to pydy and sympy, add an example script to the pydy
-repository, begin learning about spatial vectors and begin work on some
-benchmarking code.</p>
-
-<p>This is my first attempt at blogging and I had some trouble initially setting
-it up. For starters I did not know what an RSS feed was or for what it was
-used. Also I wanted the blog to be hosted on github pages where I currently
-keep my collection of notes and thus I decided to try to use the jekyll static
-site backend that github uses. I tried, however, to isolate the blog in its own
-subfolder with the rest of my GSoC information but this caused all kinds of
-problems with posts showing up multiple times and the RSS feed not updating
-properly. I eventually decided to stop trying to separate the posts and just
-centrally locate them as is demonstrated in the jekyll documentation. For the
-RSS feed I used a template that I found online. Now the posts appeared properly
-and the RSS feed updated correctly. The last thing I wanted to do for my blog
-before I considered it officially set up was to have some method of allowing
-people to comment on my posts. I found a blog post online on how to achieve
-this without the need for anything other than what github pages offers and so I
-set out to try this method. I used the code shown on the blog post without any
-luck. Prior to this I have had zero experience working with javascript and so
-I didn&#8217;t even know where to begin to try to debug why the comments were not
-showing up and so I sent the writer of the blog post an email asking for his
-assistance. And he replied! He pointed out that I was missing the part where a
-java script library would be loaded for use on the page and once I added the
-couple of lines of code, commenting on my blog posts is now possible (At least I
-think that&#8217;s what the problem was but again I have no experience working with
-javascript). With the ability to comment added, my blog is completely set up
-and is connected to the correct channels for the Google Summer of Code.</p>
-
-<p>Early in the community bonding period I was able to have my first meeting with
-my mentors for my project. During this meeting it was discussed that I could
-change the later portion of my project from working on implementing a Newton
-Euler method of equations of motion generation to implementing the faster
-Featherstone method. Considering I had no great attachment to the Newton Euler
-method I agreed that the faster method would provide a greater benefit for the
-overall project. Since the meeting I have spent some time reading on the math
-involved in the Featherstone method, specifically spatial vectors and their
-uses in dynamics. To this end I have read <a href="http://ieeexplore.ieee.org/xpls/icp.jsp?arnumber=5569032#article">A Beginners Guide to 6-D Vectors
-(Part 1)</a> and
-started reading both <a href="http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=5663690">A Beginners Guide to 6-D Vectors (Part
-2)</a> and Roy
-Featherstone&#8217;s short course on spatial vector algebra.</p>
-
-<p>I have also spent some time beginning to familiarize myself with the code that
-I will be working with. To begin I followed Jason Moore&#8217;s great suggestion of
-coding through one of the examples from my dynamics course and adding it to the
-pydy/examples folder in the pydy repository. The example I chose to use was a
-<a href="http://jbm950.github.io/../../../notes/analytical_dynamics/analytical_dynamics_main.html#e_basic_equation_of_motion">simple
-pendulum</a>
-so that I could focus on the code rather than the complexities of the problem
-itself. This code and diagram are currently undergoing the review process now
-in order to be added to the pydy repository.</p>
-
-<p>Lastly I have begun work on benchmarking code which is mentioned as part of my
-project itself. In working on this part of the project I was able to learn how
-to use a SQLite database with python which I had only obtained brief exposure
-to in the past. This code currently works using python&#8217;s timeit library to run
-a file utilizing Lagrange&#8217;s method of equations of motion generation and
-another using Kane&#8217;s method. The code runs each file several thousand times and
-iterates through this process 30 times and saves the average of the 30 runs
-along with several other useful bits of information about the computer and
-version of python being used to run the tests. In addition to the benchmarking
-code itself I have been working on a script that will allow viewing of a graph
-of the tests utilizing matplotlib and tkinter. This code is close to completion
-and the current next major addition will be to add the ability to filter the
-tests based on what platform was used/what version of python was used to run
-the tests.</p>
-
-<p>This community bonding period has been productive and I am excited to begin the
-Google Summer of Code program on Monday.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3856,86 +3866,86 @@ Google Summer of Code program on Monday.</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>06:03, Monday, 13 June</td>
-<td>06:18, Monday, 13 June</td>
+<td>06:23, Monday, 13 June</td>
+<td>06:38, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>06:03, Monday, 13 June</td>
-<td>06:18, Monday, 13 June</td>
+<td>06:23, Monday, 13 June</td>
+<td>06:38, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>06:03, Monday, 13 June</td>
-<td>06:18, Monday, 13 June</td>
+<td>06:23, Monday, 13 June</td>
+<td>06:38, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>06:03, Monday, 13 June</td>
-<td>06:18, Monday, 13 June</td>
+<td>06:23, Monday, 13 June</td>
+<td>06:38, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>06:03, Monday, 13 June</td>
-<td>06:18, Monday, 13 June</td>
+<td>06:23, Monday, 13 June</td>
+<td>06:38, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>06:03, Monday, 13 June</td>
-<td>06:18, Monday, 13 June</td>
+<td>06:23, Monday, 13 June</td>
+<td>06:38, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://github.com/kshitij10496/">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>06:03, Monday, 13 June</td>
-<td>06:18, Monday, 13 June</td>
+<td>06:23, Monday, 13 June</td>
+<td>06:38, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>06:03, Monday, 13 June</td>
-<td>06:18, Monday, 13 June</td>
+<td>06:23, Monday, 13 June</td>
+<td>06:38, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>06:03, Monday, 13 June</td>
-<td>06:18, Monday, 13 June</td>
+<td>06:23, Monday, 13 June</td>
+<td>06:38, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>06:03, Monday, 13 June</td>
-<td>06:18, Monday, 13 June</td>
+<td>06:23, Monday, 13 June</td>
+<td>06:38, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>06:03, Monday, 13 June</td>
-<td>06:18, Monday, 13 June</td>
+<td>06:23, Monday, 13 June</td>
+<td>06:38, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>06:03, Monday, 13 June</td>
-<td>06:18, Monday, 13 June</td>
+<td>06:23, Monday, 13 June</td>
+<td>06:38, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>06:03, Monday, 13 June</td>
-<td>06:18, Monday, 13 June</td>
+<td>06:23, Monday, 13 June</td>
+<td>06:38, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>06:03, Monday, 13 June</td>
-<td>06:18, Monday, 13 June</td>
+<td>06:23, Monday, 13 June</td>
+<td>06:38, Monday, 13 June</td>
 </tr>
 </table>
 
