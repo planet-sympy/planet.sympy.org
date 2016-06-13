@@ -93,6 +93,78 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-89ae9fcb feed-" id="item-d65e0f05">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/nishnik.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Nishant Nikhil (nishnik) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://nishnik.github.io/GSoC-Third-Week/">00:00, Monday, 13 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Third-Week/">GSoC Third Week</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/nishnik.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Nishant Nikhil (nishnik) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://nishnik.github.io/GSoC-Third-Week/">00:00, Monday, 13 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Third-Week/">GSoC Third Week</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p><img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /></p>
+
+<p>This week I had been working on the design of the <code class="highlighter-rouge">GaloisField</code> class and the <code class="highlighter-rouge">GaloisFieldDict</code> class.<br /><br />
+Firstly, like <code class="highlighter-rouge">UIntDict</code>, <code class="highlighter-rouge">GaloisFieldDict</code> was also inheriting <code class="highlighter-rouge">ODictWrapper</code>, and had the <code class="highlighter-rouge">dict_</code> as <code class="highlighter-rouge">map&lt;unsigned int, integer_class&gt;</code> making it a sparse representation.<br />
+Then <code class="highlighter-rouge">GaloisField</code> was inherting <code class="highlighter-rouge">UPolyBase</code>, in which the <code class="highlighter-rouge">Container</code> was a <code class="highlighter-rouge">GaloisFieldDict</code>.<br /><br />
+The <code class="highlighter-rouge">dict_</code> being a map, I made some more optimization to the code, mainly with the <code class="highlighter-rouge">insert</code> function. I gave extra attention to the fact that we can optimize insertion by providing an iterator as hint.<br />
+Apart from it, made a inplace copy of almost all the arithmetic and modular operations/functions. <br />
+Then, as we had already implemented the division operation in Finite field, so I overloaded the <code class="highlighter-rouge">/</code> operator.<br /><br />
+Down the way, I saw one test constantly failing in Travis CI. The platform it was failing on was OSX. As I don&#8217;t have access to OSX, the debugging took a long time, But after the debugging, I fixed some good bugs. It highlights the importance of writing good tests including corner cases.<br /><br />
+It was all fine till now. Isuru (my mentor) realized that as we have to do a lot amount of division, and in that we will have to access all the elements of map less than degree of divisor (for calculating remainder). It will take more time with <code class="highlighter-rouge">map</code> than <code class="highlighter-rouge">vector</code>. So we decided to shift our <code class="highlighter-rouge">dict_</code> type to <code class="highlighter-rouge">std::vector&lt;integer_class&gt;</code>. Now the <code class="highlighter-rouge">GaloisFieldDict</code> class doesn&#8217;t inherit from <code class="highlighter-rouge">ODictWrapper</code> while the <code class="highlighter-rouge">GaloisField</code> class still have the same structure. Now <code class="highlighter-rouge">GaloisFieldDict</code>&#8217;s <code class="highlighter-rouge">dict_</code> being a <code class="highlighter-rouge">vector</code>, I had to implement a function <code class="highlighter-rouge">gf_istrip()</code>, which strips off the leading zeroes, so that the degree of our polynomial can be accessed directly by <code class="highlighter-rouge">dict_.size()-1</code> and most importantly the number of computation decreases.<br />
+As this work is in progress, I will post about it in the next week&#8217;s post.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-d8307cd0">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -3621,229 +3693,6 @@ all the remain unsolved variables.</p>
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-96a26d5c">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/shekharrajak.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://shekharrajak.github.io/Coding-Period-Week-1/">00:00, Sunday, 22 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-Week-1/">Coding Period Week 1</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/shekharrajak.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://shekharrajak.github.io/Coding-Period-Week-1/">00:00, Sunday, 22 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-Week-1/">Coding Period Week 1</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<h3 id="nlinsolve-continue">nlinsolve continue</h3>
-
-<ul>
-  <li>You can read the problems in old solver <code class="highlighter-rouge">_solve_system</code> in <a href="http://shekharrajak.github.io/Community-Bonding-Period/">previous blog</a> , if you haven&#8217;t.</li>
-</ul>
-
-<p><strong>PR <a href="https://github.com/sympy/sympy/pull/11111">nlinsolve</a></strong></p>
-
-<p><strong>How it is better than old solver _solve_system :</strong></p>
-
-<ul>
-  <li>
-    <p><strong>Positive dimensional system solver :</strong> <code class="highlighter-rouge">nlinsolve</code> can return solution for positive dimensional system.
-<strong>How :</strong> After reading articles on positive dimensional system and analyzing elimination method. I found that if we know Groebner Basis of the positive dimensional system (calling it as basis) then we can start solving equation(having least number of variable first in the basis) using <code class="highlighter-rouge">solveset</code> and substituting that solved solutions into other equation to get solution in terms of minimum variables.
-Here the important thing is how we are substituting the known values and in which equations.</p>
-  </li>
-  <li>
-    <p><strong>Complex solution in general form :</strong> <code class="highlighter-rouge">nlinsolve</code> can return solution in general form .
-<strong>How :</strong> If all the equations are not <a href="http://www.mathwarehouse.com/algebra/polynomial/polynomial-equation.php">polynomial equations</a> means after solving Polynomial equations using <code class="highlighter-rouge">solve_poly_system</code> go to substitution method (defined in solveset) with this solution and solve for unsolved variables. In between to solve for particular variable <code class="highlighter-rouge">solveset</code> is used. When it find real solution then further steps will be using this real solution. If no real solution then it go for complex solution if it is found then extract the expression from the <code class="highlighter-rouge">imageset</code> and use it for further substitution. When solution is valid then add this general solution (solution in imageset) in the final result.</p>
-  </li>
-  <li>
-    <p><strong>Complements will be added if any :</strong> <code class="highlighter-rouge">nlinsolve</code> maintains <code class="highlighter-rouge">dict</code> to add complements for variables if any.
-<strong>How :</strong> When there is infinite solution and <code class="highlighter-rouge">solveset</code> found complements during substitution method.
-For example : solution = <code class="highlighter-rouge"><span class="p">{</span><span class="err">a</span><span class="w"> </span><span class="err">:</span><span class="w"> </span><span class="err">1/d,</span><span class="w"> </span><span class="err">b</span><span class="w"> </span><span class="err">:</span><span class="w"> </span><span class="err">-d,</span><span class="w"> </span><span class="err">c</span><span class="w"> </span><span class="err">:</span><span class="w"> </span><span class="err">-1/d,</span><span class="w"> </span><span class="err">d</span><span class="w"> </span><span class="err">:</span><span class="w"> </span><span class="err">d</span><span class="p">}</span></code> then in complements <code class="highlighter-rouge">dict {d : 0}</code> will be maintained and the final solution <code class="highlighter-rouge"><span class="p">{</span><span class="err">a</span><span class="w"> </span><span class="err">:</span><span class="w"> </span><span class="err">1/d,</span><span class="w"> </span><span class="err">b</span><span class="w"> </span><span class="err">:</span><span class="w"> </span><span class="err">-d,</span><span class="w"> </span><span class="err">c</span><span class="w"> </span><span class="err">:</span><span class="w"> </span><span class="err">-1/d,</span><span class="w"> </span><span class="err">d</span><span class="w"> </span><span class="err">:</span><span class="w"> </span><span class="err">{d</span><span class="p">}</span><span class="w"> </span><span class="err">\</span><span class="w"> </span><span class="p">{</span><span class="err">0</span><span class="p">}</span><span class="err">}</span></code> is returned.</p>
-  </li>
-  <li>
-    <p><strong>Unknowingly added features :</strong> <code class="highlighter-rouge">nlinsolve</code> can return solution for positive dimensional linear system and simple linear system. But I recommend to use it for linear systems, since <code class="highlighter-rouge">linsolve</code> can do far better than <code class="highlighter-rouge">nlinsolve</code> for linear system.
-<strong>How :</strong> Since it is using Groebner basis (inside <code class="highlighter-rouge">solve_poly_system</code>) of the system for polynomial equations. If it fails for some equation then basis is used in substitution method. So it can solve positive dimensional linear system.</p>
-  </li>
-</ul>
-
-<hr />
-
-<h3 id="trigonometric-inequality-solution-in-general-form">Trigonometric inequality solution in General form</h3>
-
-<p>Currently <code class="highlighter-rouge">solveset</code> returns solution for trigonometric inequalities in the range of 2*pi. Solveset is designed to return all the solution. So need improvement in inequality solver.</p>
-
-<p>From current master branch <code class="highlighter-rouge">of SymPy</code>:
-Extended answer should be :<code class="highlighter-rouge"> 1/6 *(12*&#960;*n - 7*&#960;) &lt; x &lt; 1/6 (12*&#960;*n + &#960;), n &#8712; Z</code></p>
-
-<p><strong>Idea:</strong>
-Solveset uses <code class="highlighter-rouge">solve_univariate_inequality</code> to solve univariate inequalities.</p>
-
-<ul>
-  <li>
-    <p>It uses <code class="highlighter-rouge">solve</code> to get the singularities and solution for the expression = 0. So if we want to get solution in general form then need to replace this old solver with <code class="highlighter-rouge">Solveset</code>.</p>
-  </li>
-  <li>
-    <p>To solve a trig inequality, transform it into one or many trig inequalities. Solving trig inequalities finally results in solving basic trig inequalities.</p>
-  </li>
-  <li>
-    <p>Step 1. Transform the given trig inequality into standard form <code class="highlighter-rouge">R(x) &gt; 0 (or &lt; 0)</code>.
-Example. The inequality <code class="highlighter-rouge">(cos 2x &lt; 2 + 3sin x)</code> will be transformed into standard form:
-<code class="highlighter-rouge">R(x) = cos 2x &#8211; 3sin x - 2 &lt; 0</code></p>
-  </li>
-</ul>
-
-<p>Step 2. Find the common period . The common period must be the least multiple of the periods of all trig functions presented in the inequality. The complete solution set must, at least, cover one whole common period.
-Example. The trig inequality <code class="highlighter-rouge">R(x) = cos 2x &#8211; 3sin x - 2 &lt; 0</code> has <code class="highlighter-rouge">2&#960;</code> as common period
-Example. The trig inequality <code class="highlighter-rouge">R(x) = sin x &#8211; cos x/2 - 0.5 &gt; 0</code> has <code class="highlighter-rouge">4&#960;</code> as common period.</p>
-
-<p>Step 3. Solve the trig equation <code class="highlighter-rouge">R(x) = 0</code> If R(x) contains only one trig function, solve it as a basic trig equation.
-If<code class="highlighter-rouge"> R(x)</code> contains 2 or more trig functions, there are 2 methods, described below, to solve it.</p>
-
-<p>a. METHOD 1. Transform <code class="highlighter-rouge">R(x)</code> into a product of many basic trig equations. Next, solve these basic trig equations separately to get all values of x that will be used in Step 4.
-Example 8. Solve: <code class="highlighter-rouge">cos x + cos 2x &gt; - cos 3x (0 &lt; x &lt; 2&#960;)</code>
-Solution. Step 1. Standard form: <code class="highlighter-rouge">R(x) = cos x + cos 2x + cos 3x &gt; 0</code>
-Step 2. Common period: <code class="highlighter-rouge">2&#960;</code>
-Step 3. Solve<code class="highlighter-rouge"> R(x) = 0</code>. Transform it into a product using Sum to Product Identity:
-<code class="highlighter-rouge">R(x) = cos x + cos 2x + cos 3x = cos 2x (1 + 2cos x) = 0.</code></p>
-
-<p>b. METHOD 2. This method transforms a trig inequality with 2 or more trig functions into a trig inequality having only one trig function (called t) as variable. Next, solve for t from this trig equation, as a basic trig equation. Then, solve for x from these values of t.
-chosen as function variable are: <code class="highlighter-rouge">sin x = t; cos x = t; cos 2x = t; tan x = t; and tan x/2 = t</code>.
-Example 10. Solve: <code class="highlighter-rouge">3sin&#178; x = sin 2x + cos&#178; x</code>
-Solution. Divide both sides by <code class="highlighter-rouge">cos&#178; x (cos x &#8800; 0; x &#8800; &#960;/2)</code>. Let <code class="highlighter-rouge">tan x = t</code>.
-<code class="highlighter-rouge">3 t&#178; &#8211; 2t - 1 = 0</code>. This is a quadratic equation having 2 real roots: 1 and -1/3
-Next, solve the 2 basic trig equations: <code class="highlighter-rouge">tan x = t = 1</code>, and <code class="highlighter-rouge">tan x = t = -1/3</code>
-Use <code class="highlighter-rouge">decompogen</code> defined in <code class="highlighter-rouge">sympy/solvers</code></p>
-
-<p>Step 4. Solve the trig inequality <code class="highlighter-rouge">R(x) &lt; 0 (or &gt; 0)</code>. Then express the solution set in the form of intervals. Based on the found values of <code class="highlighter-rouge">x</code> from Step 3, solve, algebraically, the trig inequality<code class="highlighter-rouge"> R(x) &lt; 0 (or &gt; 0)</code> by separately solving each basic trig inequality <code class="highlighter-rouge">f(x), g(x) .</code>., and then by setting up a sign table (sign chart). In final solution extend this with n*(common period).</p>
-
-<h3 id="domain-and-range">Domain and Range</h3>
-
-<p><strong>Function&#8217;domain :</strong></p>
-
-<p>If a function does not model data or verbal conditions, its domain is the largest set of real numbers for which the value of is a real number. Exclude from a function&#8217;s domain real numbers that cause division by zero and real numbers that result in an even root of a negative number.</p>
-
-<p><strong>Range:</strong></p>
-
-<p>Values, the function can give.</p>
-
-<ul>
-  <li>. The domain of is the set of all real numbers that are common to the domain of and the domain of Thus, we must find the domains of and before finding their intersection.</li>
-</ul>
-
-<p><strong>The Composition of Functions</strong></p>
-
-<p>The composition of the function with is denoted by and is defined by the equation
-<code class="highlighter-rouge">(f*g)(x) = f(g(x))</code><code class="highlighter-rouge">
-The domain of the composite function is the set of all such that
-1\. </code>x<code class="highlighter-rouge"> is in the domain of </code>g<code class="highlighter-rouge"> and
-2\. </code>g(x)<code class="highlighter-rouge"> is in the domain of </code>f`.</p>
-
-<p>The following values must be excluded from the input
-&#8226; If <code class="highlighter-rouge">x</code> is not in the domain of g, it must not be in the domain of <code class="highlighter-rouge">f*g</code>
-&#8226; Any <code class="highlighter-rouge">x</code> for which <code class="highlighter-rouge">g(x)</code> is not in the domain of <code class="highlighter-rouge">f</code>, must not be in the domain of <code class="highlighter-rouge">f*g</code>.</p>
-
-<p><strong>Problems :</strong></p>
-
-<ul>
-  <li>
-    <p>Finding common period of the complicated expressions. We can use LCM of</p>
-  </li>
-  <li>
-    <p>finding domain/range.</p>
-  </li>
-</ul>
-
-<p><strong>Reference</strong></p>
-
-<ul>
-  <li><a href="http://miamibeachhigh.schoolwires.com/cms/lib07/FL01000126/Centricity/Domain/261/Ch1_Section7.pdf">Domain and range , function decomposition</a></li>
-  <li><a href="http://web.fscj.edu/Lyn.Noble/mac1105/Wrksht/DomainRange.pdf">Squre root domain and range</a></li>
-  <li><a href="http://web.fscj.edu/Lyn.Noble/mac1105/Wrksht/DomainRange.pdf">Domain range</a></li>
-  <li><a href="http://api.ning.com/files/n7ZUxQJY0YvfdRhhyH9DefMJ7cW08TWE8*egZvne-ZkVLkiWu1DzglvTH-7oM7zryLg7OSdRWmrEpVOlUHVHLLWtWkPhF11w/SOLVINGTRIGONOMETRICINEQUALITIESMETHODSANDSTEPS.pdf">Inequality Trig Function</a></li>
-  <li><a href="http://www.shsu.edu/kws006/Precalculus/4.9_Pythagorean_Identities_files/S%26Z%2010.7.pdf">Trig Function , domain extended intervals</a></li>
-</ul>
-
-<h3 id="nlinsolve-xfail-try">nlinsolve XFAIL try</h3>
-
-<ul>
-  <li>solveset_real have some issues with expression having sqrt. It is returning some answer instead of <code class="highlighter-rouge">S.EmptySet</code>.</li>
-</ul>
-
-<p><code class="highlighter-rouge">solveset(20*sqrt(y**2 + (sqrt(-(y - 10)*(y + 10)) + 10)**2) - 60, y, S.Reals)</code>
-this is returning</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>&#9127;-3&#8901;&#8730;391&#8195;&#8195;&#8195;&#8195;3&#8901;&#8730;391&#9131;
-&#9128;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;, &#8195;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9132;
-&#9129; 20 &#8195;&#8195; &#8195;&#8195;   20   &#9133;
-</code></pre>
-</div>
-
-<p>But original answer is <code class="highlighter-rouge">emptyset</code>.</p>
-
-<ul>
-  <li>Another thing is we are converting expressions into polynomial using <code class="highlighter-rouge">.as_poly(*symbols, extension=True)</code> so need to remove extra solution. code is added for this and works fine.</li>
-</ul>
-
-<p><strong>Issues :</strong></p>
-
-<p>Meanwhile I found some issues.</p>
-
-<ul>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/issues/11184">issues/11184</a> - Expressions having nested <code class="highlighter-rouge">sqrt</code> returns some solution
-, but original solution is EmptySet.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/issues/11175">issues/11175</a> - bug in <code class="highlighter-rouge">is_zero_dimensional</code>.</p>
-  </li>
-</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -3872,86 +3721,86 @@ this is returning</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>19:50, Monday, 13 June</td>
-<td>20:05, Monday, 13 June</td>
+<td>20:11, Monday, 13 June</td>
+<td>20:26, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>19:50, Monday, 13 June</td>
-<td>20:05, Monday, 13 June</td>
+<td>20:11, Monday, 13 June</td>
+<td>20:26, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>19:50, Monday, 13 June</td>
-<td>20:05, Monday, 13 June</td>
+<td>20:11, Monday, 13 June</td>
+<td>20:26, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>19:50, Monday, 13 June</td>
-<td>20:05, Monday, 13 June</td>
+<td>20:11, Monday, 13 June</td>
+<td>20:26, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>19:50, Monday, 13 June</td>
-<td>20:05, Monday, 13 June</td>
+<td>20:11, Monday, 13 June</td>
+<td>20:26, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>19:50, Monday, 13 June</td>
-<td>20:05, Monday, 13 June</td>
+<td>20:11, Monday, 13 June</td>
+<td>20:26, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://github.com/kshitij10496/">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>19:50, Monday, 13 June</td>
-<td>20:05, Monday, 13 June</td>
+<td>20:11, Monday, 13 June</td>
+<td>20:26, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>19:50, Monday, 13 June</td>
-<td>20:05, Monday, 13 June</td>
+<td>20:11, Monday, 13 June</td>
+<td>20:26, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>19:50, Monday, 13 June</td>
-<td>20:05, Monday, 13 June</td>
+<td>20:11, Monday, 13 June</td>
+<td>20:26, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>19:50, Monday, 13 June</td>
-<td>20:05, Monday, 13 June</td>
+<td>20:11, Monday, 13 June</td>
+<td>20:26, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>19:50, Monday, 13 June</td>
-<td>20:05, Monday, 13 June</td>
+<td>20:11, Monday, 13 June</td>
+<td>20:26, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>19:50, Monday, 13 June</td>
-<td>20:05, Monday, 13 June</td>
+<td>20:11, Monday, 13 June</td>
+<td>20:26, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>19:50, Monday, 13 June</td>
-<td>20:05, Monday, 13 June</td>
+<td>20:11, Monday, 13 June</td>
+<td>20:26, Monday, 13 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>19:50, Monday, 13 June</td>
-<td>20:05, Monday, 13 June</td>
+<td>20:11, Monday, 13 June</td>
+<td>20:26, Monday, 13 June</td>
 </tr>
 </table>
 

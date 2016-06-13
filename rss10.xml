@@ -7,6 +7,24 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Third-Week</guid>
+      <title>GSoC Third Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Mon, 13 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Third-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This week I had been working on the design of the &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; class and the &lt;code class="highlighter-rouge"&gt;GaloisFieldDict&lt;/code&gt; class.&lt;br /&gt;&lt;br /&gt;
+Firstly, like &lt;code class="highlighter-rouge"&gt;UIntDict&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;GaloisFieldDict&lt;/code&gt; was also inheriting &lt;code class="highlighter-rouge"&gt;ODictWrapper&lt;/code&gt;, and had the &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; as &lt;code class="highlighter-rouge"&gt;map&amp;lt;unsigned int, integer_class&amp;gt;&lt;/code&gt; making it a sparse representation.&lt;br /&gt;
+Then &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; was inherting &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt;, in which the &lt;code class="highlighter-rouge"&gt;Container&lt;/code&gt; was a &lt;code class="highlighter-rouge"&gt;GaloisFieldDict&lt;/code&gt;.&lt;br /&gt;&lt;br /&gt;
+The &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; being a map, I made some more optimization to the code, mainly with the &lt;code class="highlighter-rouge"&gt;insert&lt;/code&gt; function. I gave extra attention to the fact that we can optimize insertion by providing an iterator as hint.&lt;br /&gt;
+Apart from it, made a inplace copy of almost all the arithmetic and modular operations/functions. &lt;br /&gt;
+Then, as we had already implemented the division operation in Finite field, so I overloaded the &lt;code class="highlighter-rouge"&gt;/&lt;/code&gt; operator.&lt;br /&gt;&lt;br /&gt;
+Down the way, I saw one test constantly failing in Travis CI. The platform it was failing on was OSX. As I don&amp;#8217;t have access to OSX, the debugging took a long time, But after the debugging, I fixed some good bugs. It highlights the importance of writing good tests including corner cases.&lt;br /&gt;&lt;br /&gt;
+It was all fine till now. Isuru (my mentor) realized that as we have to do a lot amount of division, and in that we will have to access all the elements of map less than degree of divisor (for calculating remainder). It will take more time with &lt;code class="highlighter-rouge"&gt;map&lt;/code&gt; than &lt;code class="highlighter-rouge"&gt;vector&lt;/code&gt;. So we decided to shift our &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; type to &lt;code class="highlighter-rouge"&gt;std::vector&amp;lt;integer_class&amp;gt;&lt;/code&gt;. Now the &lt;code class="highlighter-rouge"&gt;GaloisFieldDict&lt;/code&gt; class doesn&amp;#8217;t inherit from &lt;code class="highlighter-rouge"&gt;ODictWrapper&lt;/code&gt; while the &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; class still have the same structure. Now &lt;code class="highlighter-rouge"&gt;GaloisFieldDict&lt;/code&gt;&amp;#8217;s &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; being a &lt;code class="highlighter-rouge"&gt;vector&lt;/code&gt;, I had to implement a function &lt;code class="highlighter-rouge"&gt;gf_istrip()&lt;/code&gt;, which strips off the leading zeroes, so that the degree of our polynomial can be accessed directly by &lt;code class="highlighter-rouge"&gt;dict_.size()-1&lt;/code&gt; and most importantly the number of computation decreases.&lt;br /&gt;
+As this work is in progress, I will post about it in the next week&amp;#8217;s post.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-4</guid>
       <title>Coding Period Week 4</title>
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
@@ -1877,175 +1895,6 @@ all the remain unsolved variables.&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
     &lt;p&gt;All checks have passed after little modifications.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-Week-1</guid>
-      <title>Coding Period Week 1</title>
-      <author>Shekhar Prasad Rajak (shekharrajak)</author>
-      <pubDate>Sun, 22 May 2016 00:00:00 GMT</pubDate>
-      <link>http://shekharrajak.github.io/Coding-Period-Week-1/</link>
-      <description>&lt;h3 id="nlinsolve-continue"&gt;nlinsolve continue&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;You can read the problems in old solver &lt;code class="highlighter-rouge"&gt;_solve_system&lt;/code&gt; in &lt;a href="http://shekharrajak.github.io/Community-Bonding-Period/"&gt;previous blog&lt;/a&gt; , if you haven&amp;#8217;t.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11111"&gt;nlinsolve&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;How it is better than old solver _solve_system :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Positive dimensional system solver :&lt;/strong&gt; &lt;code class="highlighter-rouge"&gt;nlinsolve&lt;/code&gt; can return solution for positive dimensional system.
-&lt;strong&gt;How :&lt;/strong&gt; After reading articles on positive dimensional system and analyzing elimination method. I found that if we know Groebner Basis of the positive dimensional system (calling it as basis) then we can start solving equation(having least number of variable first in the basis) using &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; and substituting that solved solutions into other equation to get solution in terms of minimum variables.
-Here the important thing is how we are substituting the known values and in which equations.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Complex solution in general form :&lt;/strong&gt; &lt;code class="highlighter-rouge"&gt;nlinsolve&lt;/code&gt; can return solution in general form .
-&lt;strong&gt;How :&lt;/strong&gt; If all the equations are not &lt;a href="http://www.mathwarehouse.com/algebra/polynomial/polynomial-equation.php"&gt;polynomial equations&lt;/a&gt; means after solving Polynomial equations using &lt;code class="highlighter-rouge"&gt;solve_poly_system&lt;/code&gt; go to substitution method (defined in solveset) with this solution and solve for unsolved variables. In between to solve for particular variable &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; is used. When it find real solution then further steps will be using this real solution. If no real solution then it go for complex solution if it is found then extract the expression from the &lt;code class="highlighter-rouge"&gt;imageset&lt;/code&gt; and use it for further substitution. When solution is valid then add this general solution (solution in imageset) in the final result.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Complements will be added if any :&lt;/strong&gt; &lt;code class="highlighter-rouge"&gt;nlinsolve&lt;/code&gt; maintains &lt;code class="highlighter-rouge"&gt;dict&lt;/code&gt; to add complements for variables if any.
-&lt;strong&gt;How :&lt;/strong&gt; When there is infinite solution and &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; found complements during substitution method.
-For example : solution = &lt;code class="highlighter-rouge"&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="err"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;1/d,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;-d,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;c&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;-1/d,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;d&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;d&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/code&gt; then in complements &lt;code class="highlighter-rouge"&gt;dict {d : 0}&lt;/code&gt; will be maintained and the final solution &lt;code class="highlighter-rouge"&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="err"&gt;a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;1/d,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;-d,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;c&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;-1/d,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;d&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;{d&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;\&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="err"&gt;0&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="err"&gt;}&lt;/span&gt;&lt;/code&gt; is returned.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Unknowingly added features :&lt;/strong&gt; &lt;code class="highlighter-rouge"&gt;nlinsolve&lt;/code&gt; can return solution for positive dimensional linear system and simple linear system. But I recommend to use it for linear systems, since &lt;code class="highlighter-rouge"&gt;linsolve&lt;/code&gt; can do far better than &lt;code class="highlighter-rouge"&gt;nlinsolve&lt;/code&gt; for linear system.
-&lt;strong&gt;How :&lt;/strong&gt; Since it is using Groebner basis (inside &lt;code class="highlighter-rouge"&gt;solve_poly_system&lt;/code&gt;) of the system for polynomial equations. If it fails for some equation then basis is used in substitution method. So it can solve positive dimensional linear system.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h3 id="trigonometric-inequality-solution-in-general-form"&gt;Trigonometric inequality solution in General form&lt;/h3&gt;
-
-&lt;p&gt;Currently &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; returns solution for trigonometric inequalities in the range of 2*pi. Solveset is designed to return all the solution. So need improvement in inequality solver.&lt;/p&gt;
-
-&lt;p&gt;From current master branch &lt;code class="highlighter-rouge"&gt;of SymPy&lt;/code&gt;:
-Extended answer should be :&lt;code class="highlighter-rouge"&gt; 1/6 *(12*&amp;#960;*n - 7*&amp;#960;) &amp;lt; x &amp;lt; 1/6 (12*&amp;#960;*n + &amp;#960;), n &amp;#8712; Z&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Idea:&lt;/strong&gt;
-Solveset uses &lt;code class="highlighter-rouge"&gt;solve_univariate_inequality&lt;/code&gt; to solve univariate inequalities.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;It uses &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; to get the singularities and solution for the expression = 0. So if we want to get solution in general form then need to replace this old solver with &lt;code class="highlighter-rouge"&gt;Solveset&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;To solve a trig inequality, transform it into one or many trig inequalities. Solving trig inequalities finally results in solving basic trig inequalities.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Step 1. Transform the given trig inequality into standard form &lt;code class="highlighter-rouge"&gt;R(x) &amp;gt; 0 (or &amp;lt; 0)&lt;/code&gt;.
-Example. The inequality &lt;code class="highlighter-rouge"&gt;(cos 2x &amp;lt; 2 + 3sin x)&lt;/code&gt; will be transformed into standard form:
-&lt;code class="highlighter-rouge"&gt;R(x) = cos 2x &amp;#8211; 3sin x - 2 &amp;lt; 0&lt;/code&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Step 2. Find the common period . The common period must be the least multiple of the periods of all trig functions presented in the inequality. The complete solution set must, at least, cover one whole common period.
-Example. The trig inequality &lt;code class="highlighter-rouge"&gt;R(x) = cos 2x &amp;#8211; 3sin x - 2 &amp;lt; 0&lt;/code&gt; has &lt;code class="highlighter-rouge"&gt;2&amp;#960;&lt;/code&gt; as common period
-Example. The trig inequality &lt;code class="highlighter-rouge"&gt;R(x) = sin x &amp;#8211; cos x/2 - 0.5 &amp;gt; 0&lt;/code&gt; has &lt;code class="highlighter-rouge"&gt;4&amp;#960;&lt;/code&gt; as common period.&lt;/p&gt;
-
-&lt;p&gt;Step 3. Solve the trig equation &lt;code class="highlighter-rouge"&gt;R(x) = 0&lt;/code&gt; If R(x) contains only one trig function, solve it as a basic trig equation.
-If&lt;code class="highlighter-rouge"&gt; R(x)&lt;/code&gt; contains 2 or more trig functions, there are 2 methods, described below, to solve it.&lt;/p&gt;
-
-&lt;p&gt;a. METHOD 1. Transform &lt;code class="highlighter-rouge"&gt;R(x)&lt;/code&gt; into a product of many basic trig equations. Next, solve these basic trig equations separately to get all values of x that will be used in Step 4.
-Example 8. Solve: &lt;code class="highlighter-rouge"&gt;cos x + cos 2x &amp;gt; - cos 3x (0 &amp;lt; x &amp;lt; 2&amp;#960;)&lt;/code&gt;
-Solution. Step 1. Standard form: &lt;code class="highlighter-rouge"&gt;R(x) = cos x + cos 2x + cos 3x &amp;gt; 0&lt;/code&gt;
-Step 2. Common period: &lt;code class="highlighter-rouge"&gt;2&amp;#960;&lt;/code&gt;
-Step 3. Solve&lt;code class="highlighter-rouge"&gt; R(x) = 0&lt;/code&gt;. Transform it into a product using Sum to Product Identity:
-&lt;code class="highlighter-rouge"&gt;R(x) = cos x + cos 2x + cos 3x = cos 2x (1 + 2cos x) = 0.&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;b. METHOD 2. This method transforms a trig inequality with 2 or more trig functions into a trig inequality having only one trig function (called t) as variable. Next, solve for t from this trig equation, as a basic trig equation. Then, solve for x from these values of t.
-chosen as function variable are: &lt;code class="highlighter-rouge"&gt;sin x = t; cos x = t; cos 2x = t; tan x = t; and tan x/2 = t&lt;/code&gt;.
-Example 10. Solve: &lt;code class="highlighter-rouge"&gt;3sin&amp;#178; x = sin 2x + cos&amp;#178; x&lt;/code&gt;
-Solution. Divide both sides by &lt;code class="highlighter-rouge"&gt;cos&amp;#178; x (cos x &amp;#8800; 0; x &amp;#8800; &amp;#960;/2)&lt;/code&gt;. Let &lt;code class="highlighter-rouge"&gt;tan x = t&lt;/code&gt;.
-&lt;code class="highlighter-rouge"&gt;3 t&amp;#178; &amp;#8211; 2t - 1 = 0&lt;/code&gt;. This is a quadratic equation having 2 real roots: 1 and -1/3
-Next, solve the 2 basic trig equations: &lt;code class="highlighter-rouge"&gt;tan x = t = 1&lt;/code&gt;, and &lt;code class="highlighter-rouge"&gt;tan x = t = -1/3&lt;/code&gt;
-Use &lt;code class="highlighter-rouge"&gt;decompogen&lt;/code&gt; defined in &lt;code class="highlighter-rouge"&gt;sympy/solvers&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;Step 4. Solve the trig inequality &lt;code class="highlighter-rouge"&gt;R(x) &amp;lt; 0 (or &amp;gt; 0)&lt;/code&gt;. Then express the solution set in the form of intervals. Based on the found values of &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt; from Step 3, solve, algebraically, the trig inequality&lt;code class="highlighter-rouge"&gt; R(x) &amp;lt; 0 (or &amp;gt; 0)&lt;/code&gt; by separately solving each basic trig inequality &lt;code class="highlighter-rouge"&gt;f(x), g(x) .&lt;/code&gt;., and then by setting up a sign table (sign chart). In final solution extend this with n*(common period).&lt;/p&gt;
-
-&lt;h3 id="domain-and-range"&gt;Domain and Range&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;Function&amp;#8217;domain :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;If a function does not model data or verbal conditions, its domain is the largest set of real numbers for which the value of is a real number. Exclude from a function&amp;#8217;s domain real numbers that cause division by zero and real numbers that result in an even root of a negative number.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Range:&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Values, the function can give.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;. The domain of is the set of all real numbers that are common to the domain of and the domain of Thus, we must find the domains of and before finding their intersection.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;The Composition of Functions&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;The composition of the function with is denoted by and is defined by the equation
-&lt;code class="highlighter-rouge"&gt;(f*g)(x) = f(g(x))&lt;/code&gt;&lt;code class="highlighter-rouge"&gt;
-The domain of the composite function is the set of all such that
-1\. &lt;/code&gt;x&lt;code class="highlighter-rouge"&gt; is in the domain of &lt;/code&gt;g&lt;code class="highlighter-rouge"&gt; and
-2\. &lt;/code&gt;g(x)&lt;code class="highlighter-rouge"&gt; is in the domain of &lt;/code&gt;f`.&lt;/p&gt;
-
-&lt;p&gt;The following values must be excluded from the input
-&amp;#8226; If &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt; is not in the domain of g, it must not be in the domain of &lt;code class="highlighter-rouge"&gt;f*g&lt;/code&gt;
-&amp;#8226; Any &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt; for which &lt;code class="highlighter-rouge"&gt;g(x)&lt;/code&gt; is not in the domain of &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt;, must not be in the domain of &lt;code class="highlighter-rouge"&gt;f*g&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Problems :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Finding common period of the complicated expressions. We can use LCM of&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;finding domain/range.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Reference&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href="http://miamibeachhigh.schoolwires.com/cms/lib07/FL01000126/Centricity/Domain/261/Ch1_Section7.pdf"&gt;Domain and range , function decomposition&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="http://web.fscj.edu/Lyn.Noble/mac1105/Wrksht/DomainRange.pdf"&gt;Squre root domain and range&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="http://web.fscj.edu/Lyn.Noble/mac1105/Wrksht/DomainRange.pdf"&gt;Domain range&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="http://api.ning.com/files/n7ZUxQJY0YvfdRhhyH9DefMJ7cW08TWE8*egZvne-ZkVLkiWu1DzglvTH-7oM7zryLg7OSdRWmrEpVOlUHVHLLWtWkPhF11w/SOLVINGTRIGONOMETRICINEQUALITIESMETHODSANDSTEPS.pdf"&gt;Inequality Trig Function&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="http://www.shsu.edu/kws006/Precalculus/4.9_Pythagorean_Identities_files/S%26Z%2010.7.pdf"&gt;Trig Function , domain extended intervals&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id="nlinsolve-xfail-try"&gt;nlinsolve XFAIL try&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;solveset_real have some issues with expression having sqrt. It is returning some answer instead of &lt;code class="highlighter-rouge"&gt;S.EmptySet&lt;/code&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;code class="highlighter-rouge"&gt;solveset(20*sqrt(y**2 + (sqrt(-(y - 10)*(y + 10)) + 10)**2) - 60, y, S.Reals)&lt;/code&gt;
-this is returning&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;#9127;-3&amp;#8901;&amp;#8730;391&amp;#8195;&amp;#8195;&amp;#8195;&amp;#8195;3&amp;#8901;&amp;#8730;391&amp;#9131;
-&amp;#9128;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;, &amp;#8195;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9132;
-&amp;#9129; 20 &amp;#8195;&amp;#8195; &amp;#8195;&amp;#8195;   20   &amp;#9133;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;But original answer is &lt;code class="highlighter-rouge"&gt;emptyset&lt;/code&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Another thing is we are converting expressions into polynomial using &lt;code class="highlighter-rouge"&gt;.as_poly(*symbols, extension=True)&lt;/code&gt; so need to remove extra solution. code is added for this and works fine.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Issues :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Meanwhile I found some issues.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/issues/11184"&gt;issues/11184&lt;/a&gt; - Expressions having nested &lt;code class="highlighter-rouge"&gt;sqrt&lt;/code&gt; returns some solution
-, but original solution is EmptySet.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/issues/11175"&gt;issues/11175&lt;/a&gt; - bug in &lt;code class="highlighter-rouge"&gt;is_zero_dimensional&lt;/code&gt;.&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ul&gt;</description>
     </item>
