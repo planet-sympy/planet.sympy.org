@@ -165,6 +165,132 @@
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-6163205f feed-" id="item-5ee6315a">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/jbm950.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">James Milam (jbm950) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://jbm950.github.io//2016/06/17/GSoC-week-4.html">00:00, Friday, 17 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/06/17/GSoC-week-4.html">GSoC Week 3</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/jbm950.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">James Milam (jbm950) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://jbm950.github.io//2016/06/17/GSoC-week-4.html">00:00, Friday, 17 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/06/17/GSoC-week-4.html">GSoC Week 3</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>I started off this week writing the example code for a pendulum defined by x
+and y coordinates instead of an angle, theta. This was to show how the
+<code class="highlighter-rouge">eombase.EOM</code> class would handle a differential algebraic system. I also
+altered the simple pendulum example I made early on in the project to show how
+it would look as an <code class="highlighter-rouge">eombase.EOM</code> example. Of the examples I have made for the
+base class this one stands out as currently being the only one making use of
+the equations of motion generators (the other two have the equations of motion
+entered by hand). While addressing comments on the PR, it was mentioned that a
+more traditional documentation approach would allow greater visibility of the
+desired results of the code as the output could be explicitly shown. I agreed
+and moved all three examples to a single .rst document in PyDy and changed the
+code to represent the documentation format over example code format. At this
+point I made a list of all of the attributes and methods I though the base
+class should represent and made sure they were represented in the example
+documentation. In addition I included multiple ways I thought error messages
+should be brought up for incorrect uses of the base class. This information is
+currently awaiting review.</p>
+
+<p>In addition to the work on the base class I had to fix the kane benchmark I
+made early on in the project. At some point in the last few months the input
+order for <code class="highlighter-rouge">kane.kanes_equations()</code> was flipped and this caused the benchmark to
+not be able to run on pervious versions of Sympy. My fix was to use a
+try/except clause to catch the error produced by the older versions of Sympy
+and alter the input order based on whether or not the error was produced. This
+code sits at <a href="https://github.com/sympy/sympy_benchmarks/pull/29">PR #29</a> and it
+too is awaiting review/approval.</p>
+
+<p>While I have been waiting for review of the base class PR, I have begun reading
+through Roy Featherstone&#8217;s book, &#8220;Rigid Body Dynamics Algorithms&#8221;. I have spent
+time going through Jason&#8217;s overhaul of <code class="highlighter-rouge">KanesMethod</code> as well and trying to
+provide as much useful feedback as I can.</p>
+
+<p>Lastly I reviewed <a href="https://github.com/sympy/sympy/pull/11183#issuecomment-225102295">PR
+#11209</a> this
+week. The PR correctly alters code that tests for the presence of a key in a
+dictionary. It also altered the indentation of the code that immediately
+followed. I eventually came to the conclusion that this was a correct
+alteration because the variable <code class="highlighter-rouge">eq_no</code> is set in the dictionary key test and
+is used in the code that follows the test. I commented that the PR looks good
+to me and another member of SymPy merged it. This makes me slightly worried
+that too much value may be attached to my opinion as I still feel like a
+beginner.</p>
+
+<h3 id="future-directions">Future Directions</h3>
+
+<p>I will continue reading through Featherstone&#8217;s book until I recieve feedback on
+the proposed base class API at which time I will address the reviewer&#8217;s
+comments and hopefully begin work on the base class itself.</p>
+
+<h3 id="prs-and-issues">PR&#8217;s and Issues</h3>
+
+<blockquote>
+  <ul>
+    <li>(Open) Improved the explanation of the 5 equations in the Kane&#8217;s Method
+  docs <a href="https://github.com/sympy/sympy/pull/11183">PR #11183</a></li>
+    <li>(Open) Created a basis on which to discuss EOM class <a href="https://github.com/pydy/pydy/pull/353">PR
+  #353</a></li>
+    <li>(Open) Minor fix in KanesMethod&#8217;s docstring <a href="https://github.com/sympy/sympy/pull/11186">PR
+  #11186</a></li>
+    <li>(Open) Fixed kane benchmark for different input order <a href="https://github.com/sympy/sympy_benchmarks/pull/29">PR
+  #29</a></li>
+    <li>(Merged) Fix issue #8193 <a href="https://github.com/sympy/sympy/pull/11209">PR
+  #11209</a></li>
+  </ul>
+</blockquote>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">June 13, 2016</h2>
@@ -3449,108 +3575,6 @@ Also now the "official" coding period begins, good luck to everyone.
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7730e356 feed-" id="item-4ed233d2">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/kshitij10496.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Kshitij Saraogi(kshitij10496) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://github.com/kshitij10496/2016/05/22/Solving-equations-via-Decomposition-and-Rewriting/">00:00, Sunday, 22 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://github.com/kshitij10496/2016/05/22/Solving-equations-via-Decomposition-and-Rewriting/">Solving equations via Decomposition and Rewriting</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/kshitij10496.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Kshitij Saraogi(kshitij10496) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://github.com/kshitij10496/2016/05/22/Solving-equations-via-Decomposition-and-Rewriting/">00:00, Sunday, 22 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://github.com/kshitij10496/2016/05/22/Solving-equations-via-Decomposition-and-Rewriting/">Solving equations via Decomposition and Rewriting</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>A robust framework for solving equations is a salient feature of any Computer Algebra System. An important idea in this regard is <strong>&#8220;Rewriting and Decomposition&#8221;</strong>. By using this techniques, we try to reduce the given equation to a set of simpler equations which can be solved with relative ease.</p>
-
-<p>An example here would be the best way to establish the significance of the above idea.</p>
-
-<p>If we have to solve for <code class="highlighter-rouge">x</code> in the equation <code class="highlighter-rouge">f(x) = 0</code>, where <br />
-<code class="highlighter-rouge">f(x) = ln(x)**2 - 3*ln(x) + 2</code></p>
-
-<p>This problem can be approached with the idea of &#8220;Decomposition and Rewriting&#8221;. 
-Here is the procedure:</p>
-
-<ol>
-  <li>
-    <p><strong>Decomposition</strong>
-The step involves a decomposition of the given function into smaller, constituent functions.
-In the above case, we decompose f(x) as:
-<code class="highlighter-rouge">f(x) = g(x)*2- 3*g(x) + 2</code> , where <code class="highlighter-rouge">g(x) = ln(x)</code></p>
-  </li>
-  <li>
-    <p><strong>Rewriting</strong>
-Substituting <code class="highlighter-rouge">g(x)</code> with a dummy variable <code class="highlighter-rouge">t</code> in <code class="highlighter-rouge">f(x)</code>, we get a polynomial in <code class="highlighter-rouge">t</code>: <br />
-<code class="highlighter-rouge">h(t) = (t -1)*(t-2)</code> , where <code class="highlighter-rouge">t = ln(x)</code></p>
-  </li>
-  <li>
-    <p>We determine the values which satisfy the equation <code class="highlighter-rouge">h(t) = 0</code>.<br />
-For our example: <code class="highlighter-rouge">t = 1</code> or <code class="highlighter-rouge">t = 2</code></p>
-  </li>
-  <li>
-    <p>Back-substituting the value of <code class="highlighter-rouge">t</code> into these solutions, we get 2 independent equations in <code class="highlighter-rouge">x</code>: <br />
-<code class="highlighter-rouge">ln(x)= 1</code> or <code class="highlighter-rouge">ln(x) = 2</code></p>
-  </li>
-  <li>
-    <p>Solving these equations individually, we get the desired solutions of the inital equation <code class="highlighter-rouge">f(x) = 0</code> i.e. <br />
-<code class="highlighter-rouge">x = exp(1)</code> or <code class="highlighter-rouge">x = exp(2)</code></p>
-  </li>
-</ol>
-
-<p>Thus, we get two possible solutions of the given complex transcendental equation through the methods of Rewriting and Decomposition. An important observation can be made with respect to the relative ease of calculating the solutions of the intermediate equations compared to that of the original equation. This motivates the development of a simpler and modular system for solving equations rather than a vast and case-specific one.</p>
-
-<p>A well-designed implementation of the above technique can be of high value to the <code class="highlighter-rouge">solveset</code> system. This will be my task for the 1st week of GSoC. I created a Pull Request <a href="https://github.com/sympy/sympy/pull/11141">PR#11141</a> with a primitive design. 
-Reviews and suggestions are welcomed !
-Thats pretty much it for now. In the next blog post, I will be writing in detail about the implementation process.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -3579,86 +3603,86 @@ Thats pretty much it for now. In the next blog post, I will be writing in detail
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>19:44, Friday, 17 June</td>
-<td>19:59, Friday, 17 June</td>
+<td>20:04, Friday, 17 June</td>
+<td>20:19, Friday, 17 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>19:44, Friday, 17 June</td>
-<td>19:59, Friday, 17 June</td>
+<td>20:04, Friday, 17 June</td>
+<td>20:19, Friday, 17 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>19:44, Friday, 17 June</td>
-<td>19:59, Friday, 17 June</td>
+<td>20:04, Friday, 17 June</td>
+<td>20:19, Friday, 17 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>19:44, Friday, 17 June</td>
-<td>19:59, Friday, 17 June</td>
+<td>20:04, Friday, 17 June</td>
+<td>20:19, Friday, 17 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>19:44, Friday, 17 June</td>
-<td>19:59, Friday, 17 June</td>
+<td>20:04, Friday, 17 June</td>
+<td>20:19, Friday, 17 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>19:44, Friday, 17 June</td>
-<td>19:59, Friday, 17 June</td>
+<td>20:04, Friday, 17 June</td>
+<td>20:19, Friday, 17 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://github.com/kshitij10496/">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>19:44, Friday, 17 June</td>
-<td>19:59, Friday, 17 June</td>
+<td>20:04, Friday, 17 June</td>
+<td>20:19, Friday, 17 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>19:44, Friday, 17 June</td>
-<td>19:59, Friday, 17 June</td>
+<td>20:04, Friday, 17 June</td>
+<td>20:19, Friday, 17 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>19:44, Friday, 17 June</td>
-<td>19:59, Friday, 17 June</td>
+<td>20:04, Friday, 17 June</td>
+<td>20:19, Friday, 17 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>19:44, Friday, 17 June</td>
-<td>19:59, Friday, 17 June</td>
+<td>20:04, Friday, 17 June</td>
+<td>20:19, Friday, 17 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>19:44, Friday, 17 June</td>
-<td>19:59, Friday, 17 June</td>
+<td>20:04, Friday, 17 June</td>
+<td>20:19, Friday, 17 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>19:44, Friday, 17 June</td>
-<td>19:59, Friday, 17 June</td>
+<td>20:04, Friday, 17 June</td>
+<td>20:19, Friday, 17 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>19:44, Friday, 17 June</td>
-<td>19:59, Friday, 17 June</td>
+<td>20:04, Friday, 17 June</td>
+<td>20:19, Friday, 17 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>19:44, Friday, 17 June</td>
-<td>19:59, Friday, 17 June</td>
+<td>20:04, Friday, 17 June</td>
+<td>20:19, Friday, 17 June</td>
 </tr>
 </table>
 

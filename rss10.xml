@@ -28,6 +28,78 @@
 &lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/546/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/546/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=546&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://jbm950.github.io//2016/06/17/GSoC-week-4.html</guid>
+      <title>GSoC Week 3</title>
+      <author>James Milam (jbm950)</author>
+      <pubDate>Fri, 17 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://jbm950.github.io//2016/06/17/GSoC-week-4.html</link>
+      <description>&lt;p&gt;I started off this week writing the example code for a pendulum defined by x
+and y coordinates instead of an angle, theta. This was to show how the
+&lt;code class="highlighter-rouge"&gt;eombase.EOM&lt;/code&gt; class would handle a differential algebraic system. I also
+altered the simple pendulum example I made early on in the project to show how
+it would look as an &lt;code class="highlighter-rouge"&gt;eombase.EOM&lt;/code&gt; example. Of the examples I have made for the
+base class this one stands out as currently being the only one making use of
+the equations of motion generators (the other two have the equations of motion
+entered by hand). While addressing comments on the PR, it was mentioned that a
+more traditional documentation approach would allow greater visibility of the
+desired results of the code as the output could be explicitly shown. I agreed
+and moved all three examples to a single .rst document in PyDy and changed the
+code to represent the documentation format over example code format. At this
+point I made a list of all of the attributes and methods I though the base
+class should represent and made sure they were represented in the example
+documentation. In addition I included multiple ways I thought error messages
+should be brought up for incorrect uses of the base class. This information is
+currently awaiting review.&lt;/p&gt;
+
+&lt;p&gt;In addition to the work on the base class I had to fix the kane benchmark I
+made early on in the project. At some point in the last few months the input
+order for &lt;code class="highlighter-rouge"&gt;kane.kanes_equations()&lt;/code&gt; was flipped and this caused the benchmark to
+not be able to run on pervious versions of Sympy. My fix was to use a
+try/except clause to catch the error produced by the older versions of Sympy
+and alter the input order based on whether or not the error was produced. This
+code sits at &lt;a href="https://github.com/sympy/sympy_benchmarks/pull/29"&gt;PR #29&lt;/a&gt; and it
+too is awaiting review/approval.&lt;/p&gt;
+
+&lt;p&gt;While I have been waiting for review of the base class PR, I have begun reading
+through Roy Featherstone&amp;#8217;s book, &amp;#8220;Rigid Body Dynamics Algorithms&amp;#8221;. I have spent
+time going through Jason&amp;#8217;s overhaul of &lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt; as well and trying to
+provide as much useful feedback as I can.&lt;/p&gt;
+
+&lt;p&gt;Lastly I reviewed &lt;a href="https://github.com/sympy/sympy/pull/11183#issuecomment-225102295"&gt;PR
+#11209&lt;/a&gt; this
+week. The PR correctly alters code that tests for the presence of a key in a
+dictionary. It also altered the indentation of the code that immediately
+followed. I eventually came to the conclusion that this was a correct
+alteration because the variable &lt;code class="highlighter-rouge"&gt;eq_no&lt;/code&gt; is set in the dictionary key test and
+is used in the code that follows the test. I commented that the PR looks good
+to me and another member of SymPy merged it. This makes me slightly worried
+that too much value may be attached to my opinion as I still feel like a
+beginner.&lt;/p&gt;
+
+&lt;h3 id="future-directions"&gt;Future Directions&lt;/h3&gt;
+
+&lt;p&gt;I will continue reading through Featherstone&amp;#8217;s book until I recieve feedback on
+the proposed base class API at which time I will address the reviewer&amp;#8217;s
+comments and hopefully begin work on the base class itself.&lt;/p&gt;
+
+&lt;h3 id="prs-and-issues"&gt;PR&amp;#8217;s and Issues&lt;/h3&gt;
+
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;(Open) Improved the explanation of the 5 equations in the Kane&amp;#8217;s Method
+  docs &lt;a href="https://github.com/sympy/sympy/pull/11183"&gt;PR #11183&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Open) Created a basis on which to discuss EOM class &lt;a href="https://github.com/pydy/pydy/pull/353"&gt;PR
+  #353&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Open) Minor fix in KanesMethod&amp;#8217;s docstring &lt;a href="https://github.com/sympy/sympy/pull/11186"&gt;PR
+  #11186&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Open) Fixed kane benchmark for different input order &lt;a href="https://github.com/sympy/sympy_benchmarks/pull/29"&gt;PR
+  #29&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Merged) Fix issue #8193 &lt;a href="https://github.com/sympy/sympy/pull/11209"&gt;PR
+  #11209&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://nishnik.github.io/GSoC-Third-Week</guid>
       <title>GSoC Third Week</title>
       <author>Nishant Nikhil (nishnik)</author>
@@ -1677,54 +1749,6 @@ Also now the "official" coding period begins, good luck to everyone.
 &lt;li&gt;To polish&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11103"&gt;PR 11103&lt;/a&gt;,&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11137"&gt;PR 11137&lt;/a&gt;&amp;#160;and&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11139"&gt;PR 11139&lt;/a&gt;&amp;#160;and get them merged.&lt;/li&gt;
 &lt;li&gt;To start working on the&amp;#160;implementation of Singularity Functions.&lt;/li&gt;
 &lt;/ul&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/196/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/196/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=196&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://github.com/kshitij10496/2016/05/22/Solving-equations-via-Decomposition-and-Rewriting/</guid>
-      <title>Solving equations via Decomposition and Rewriting</title>
-      <author>Kshitij Saraogi(kshitij10496)</author>
-      <pubDate>Sun, 22 May 2016 00:00:00 GMT</pubDate>
-      <link>https://github.com/kshitij10496/2016/05/22/Solving-equations-via-Decomposition-and-Rewriting/</link>
-      <description>&lt;p&gt;A robust framework for solving equations is a salient feature of any Computer Algebra System. An important idea in this regard is &lt;strong&gt;&amp;#8220;Rewriting and Decomposition&amp;#8221;&lt;/strong&gt;. By using this techniques, we try to reduce the given equation to a set of simpler equations which can be solved with relative ease.&lt;/p&gt;
-
-&lt;p&gt;An example here would be the best way to establish the significance of the above idea.&lt;/p&gt;
-
-&lt;p&gt;If we have to solve for &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt; in the equation &lt;code class="highlighter-rouge"&gt;f(x) = 0&lt;/code&gt;, where &lt;br /&gt;
-&lt;code class="highlighter-rouge"&gt;f(x) = ln(x)**2 - 3*ln(x) + 2&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;This problem can be approached with the idea of &amp;#8220;Decomposition and Rewriting&amp;#8221;. 
-Here is the procedure:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Decomposition&lt;/strong&gt;
-The step involves a decomposition of the given function into smaller, constituent functions.
-In the above case, we decompose f(x) as:
-&lt;code class="highlighter-rouge"&gt;f(x) = g(x)*2- 3*g(x) + 2&lt;/code&gt; , where &lt;code class="highlighter-rouge"&gt;g(x) = ln(x)&lt;/code&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Rewriting&lt;/strong&gt;
-Substituting &lt;code class="highlighter-rouge"&gt;g(x)&lt;/code&gt; with a dummy variable &lt;code class="highlighter-rouge"&gt;t&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;f(x)&lt;/code&gt;, we get a polynomial in &lt;code class="highlighter-rouge"&gt;t&lt;/code&gt;: &lt;br /&gt;
-&lt;code class="highlighter-rouge"&gt;h(t) = (t -1)*(t-2)&lt;/code&gt; , where &lt;code class="highlighter-rouge"&gt;t = ln(x)&lt;/code&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;We determine the values which satisfy the equation &lt;code class="highlighter-rouge"&gt;h(t) = 0&lt;/code&gt;.&lt;br /&gt;
-For our example: &lt;code class="highlighter-rouge"&gt;t = 1&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;t = 2&lt;/code&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Back-substituting the value of &lt;code class="highlighter-rouge"&gt;t&lt;/code&gt; into these solutions, we get 2 independent equations in &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt;: &lt;br /&gt;
-&lt;code class="highlighter-rouge"&gt;ln(x)= 1&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;ln(x) = 2&lt;/code&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Solving these equations individually, we get the desired solutions of the inital equation &lt;code class="highlighter-rouge"&gt;f(x) = 0&lt;/code&gt; i.e. &lt;br /&gt;
-&lt;code class="highlighter-rouge"&gt;x = exp(1)&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;x = exp(2)&lt;/code&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Thus, we get two possible solutions of the given complex transcendental equation through the methods of Rewriting and Decomposition. An important observation can be made with respect to the relative ease of calculating the solutions of the intermediate equations compared to that of the original equation. This motivates the development of a simpler and modular system for solving equations rather than a vast and case-specific one.&lt;/p&gt;
-
-&lt;p&gt;A well-designed implementation of the above technique can be of high value to the &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; system. This will be my task for the 1st week of GSoC. I created a Pull Request &lt;a href="https://github.com/sympy/sympy/pull/11141"&gt;PR#11141&lt;/a&gt; with a primitive design. 
-Reviews and suggestions are welcomed !
-Thats pretty much it for now. In the next blog post, I will be writing in detail about the implementation process.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
