@@ -32,6 +32,82 @@
 &lt;p&gt;Goodbye!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/347/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/347/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=347&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://srajangarg.github.io//2016/06/19/Polynomial-Functionality</guid>
+      <title>Polynomial Functionalities</title>
+      <author>Srajan Garg (srajangarg)</author>
+      <pubDate>Sun, 19 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://srajangarg.github.io//2016/06/19/Polynomial-Functionality/</link>
+      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
+
+&lt;p&gt;The last week was spent on adding more functionality to all the three types of Integer Polynomials in SymEngine. Which meant that I had to basically wrap methods already existing in Piranha and Flint, and write new methods for the SymEngine polynomials to provide the required functionality. Details about said functions and the problems faced while implementing them are described in the rest of the post.&lt;/p&gt;
+
+&lt;p&gt;Also this Saturday, some friends and I decided to visit the hill station of Lonavala for the day. It was a replenishing experience, and a break from the regular routine. Here&amp;#8217;s us!&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt="" src="http://srajangarg.github.io/assets/lonavala.jpg" /&gt;&lt;/p&gt;
+
+&lt;h3 id="functions"&gt;Functions&lt;/h3&gt;
+
+&lt;p&gt;I wanted to start off by adding a &lt;code class="highlighter-rouge"&gt;div_upoly&lt;/code&gt; functions for dividing two univariate polynomials. It is obvious that division of two polynomials with integer coefficients may very well result in polynomials with rational coefficients. But a rational polynomial class does not exist. So what does it mean to divide two univariate polynomials and get a integer polynomial quotient and remainder? The domain &lt;code class="highlighter-rouge"&gt;ZZ[x]&lt;/code&gt; is not a &lt;a href="https://en.wikipedia.org/wiki/Euclidean_domain"&gt;Euclidean Domain&lt;/a&gt;. Here is what we mean by Euclidean division,&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;Two polynomials p, q can uniquely be written as
+p = quo * q + rem 
+deg(rem) &amp;lt; deg(q) or rem = 0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Thus the euclidean division that we are so familiar with is not defined for this domain. So how do other libraries handle this division? I tried the division with Flint, Sage and SymPy.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In [14]: q = Poly(2*x)
+In [15]: p = Poly(5*x**2)
+In [16]: div(p, q, domain=ZZ)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Flint and Sage gave :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;quo = Poly(2*x, x, domain='ZZ') 
+rem = Poly(x**2, x, domain='ZZ')
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;while SymPy gave :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;quo = Poly(0, x, domain='ZZ') 
+rem = Poly(5*x**2, x, domain='ZZ')
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This was interesting, as SymPy gave a different answer than the other two. I asked about this behaviour on gitter, and had a brief explanation given by &lt;a href="https://github.com/jksuom"&gt;@jksuom&lt;/a&gt;,&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The operation &lt;code class="highlighter-rouge"&gt;quo_rem&lt;/code&gt; is mathematically well defined only in so-called Euclidean domains. They are principal ideal domains (PIDs) equipped with a &amp;#8216;Euclidean function. &lt;code class="highlighter-rouge"&gt;ZZ[x]&lt;/code&gt; is not a PID, so there is no universal agreement on how &lt;code class="highlighter-rouge"&gt;quo_rem&lt;/code&gt; should be defined. I think that there are some appealing features in the way it is defined in sage, but one cannot say that SymPy&amp;#8217;s way would be wrong, either.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;It seems that the main (only?) practical use of &lt;code class="highlighter-rouge"&gt;quo_rem&lt;/code&gt; in non-Euclidean domains is for testing if an element is divisible by another. That happens when the remainder vanishes. Both ways of defining &lt;code class="highlighter-rouge"&gt;quo_rem&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;ZZ[x]&lt;/code&gt; can be used to decide this.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This explanation made a lot of sense, but I was anyways asked to open up &lt;a href="https://github.com/sympy/sympy/issues/11240"&gt;#11240&lt;/a&gt;, to know why SymPy handled division the way it did, and if it could be changed. Taking in all the inputs, I decided that I should not go ahead with a &lt;code class="highlighter-rouge"&gt;div_upoly&lt;/code&gt; function for now, instead I made a &lt;code class="highlighter-rouge"&gt;divides_upoly&lt;/code&gt; function which basically tells wether a polynomial divides the other or not. I had to implement the straight forward algorithm in SymEngine, while Flint already had a &lt;code class="highlighter-rouge"&gt;divides&lt;/code&gt; function and Piranha throws an exception on inexact division,  which I used to port it for Piranha polynomials.&lt;/p&gt;
+
+&lt;p&gt;Other methods which were wrapped were &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;lcm&lt;/code&gt; for both the Flint and the Piranha polynomials. I have not been able to write these functions for SymEngine polynomials yet. The most trivial algorithms for finding GCD of two univariate polynomials depends on euclidean division, and that does not exist in the integer ring polynomials. Some more information from &lt;a href="https://github.com/jksuom"&gt;@jksuom&lt;/a&gt;,&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The ring &lt;code class="highlighter-rouge"&gt;ZZ[x]&lt;/code&gt; is a unique factorization domain (UFD) even if it is not euclidean. It has &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;lcm&lt;/code&gt;, but there is no euclidean algorithm for them.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Isuru suggested a hint for a simple algorithm, but I have not been able to follow it up yet. I&amp;#8217;ll catch up with it in the coming week. The next function I worked on was &lt;code class="highlighter-rouge"&gt;pow&lt;/code&gt;. Again this was already implemented in the two other libraries and I just had to wrap them. For SymEngine, I had to decide which algorithm to use, a naive repeated approach or the &lt;a href="https://en.wikipedia.org/wiki/Exponentiation_by_squaring"&gt;exponention by squaring&lt;/a&gt; algorithm. I also benchmarked the &lt;code class="highlighter-rouge"&gt;pow&lt;/code&gt; methods of Piranha too. All the work and the benchmarks are in &lt;a href="https://github.com/symengine/symengine/pull/989"&gt;#989&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
+
+&lt;p&gt;There was an error in the Flint documentation, which was related with incorrect ordering of the arguments being passed to the &lt;code class="highlighter-rouge"&gt;divides&lt;/code&gt; function. It was reported in &lt;a href="https://github.com/wbhart/flint2/issues/267"&gt;#267&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Piranha required some implementations to be explicitly provided on the coefficient class, we are going to use. Thus, I had to overwrite some implementations like &lt;code class="highlighter-rouge"&gt;gcd_impl&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;pow_impl&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;divexact_impl&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;SymEngine::intger_class&lt;/code&gt; to work with &lt;code class="highlighter-rouge"&gt;piranha::polynomial&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I will write &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;lcm&lt;/code&gt; for SymEngine polynomials, and start on &lt;code class="highlighter-rouge"&gt;Basic -&amp;gt; Poly&lt;/code&gt; conversion to add to the coercion framework decided for SymEngine, soon.&lt;/p&gt;
+
+&lt;p&gt;See you!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=546</guid>
       <title>GSoC Week 4</title>
       <author>Sampad Saha (sampadsaha5)</author>
@@ -1699,59 +1775,6 @@ I will be implementing this in the first week of GSoC period.&lt;/p&gt;
 &lt;p&gt;During the Community Bonding Period, I worked on implementing &lt;a href="https://github.com/symengine/symengine/pull/934"&gt;&lt;code class="highlighter-rouge"&gt;UniversalSet&lt;/code&gt;&lt;/a&gt; and &lt;a href="https://github.com/symengine/symengine/pull/942"&gt;&lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt;&lt;/a&gt;.&lt;br /&gt;
 &lt;code class="highlighter-rouge"&gt;UniversalSet&lt;/code&gt; is a &lt;a href="https://en.wikipedia.org/wiki/Singleton_pattern"&gt;singleton class&lt;/a&gt; like &lt;code class="highlighter-rouge"&gt;EmptySet&lt;/code&gt;, and while implementing this I learned a lot about Singleton classes.&lt;br /&gt;
 &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; is a class with a set of &lt;code class="highlighter-rouge"&gt;RCP&amp;lt;const Basic&amp;gt;&lt;/code&gt; as member variable. It can contain any object of &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt; type. While implemeting this, we came on a fix over what to do when we have a interval like [1, 1], i.e. both end points equal. This led to a little change in &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt;&amp;#8217;s code, and now it returns a &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt;. Though this PR is not merged till now. I hope to get it merged in the next few days and along with it keep working on Finite Field implementation.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://gxyd.github.io/Community Bonding period ends, starts Coding period</guid>
-      <title>Community Bonding period ends, Coding period starts</title>
-      <author>Gaurav Dhingra (gxyd)</author>
-      <pubDate>Sun, 22 May 2016 18:30:00 GMT</pubDate>
-      <link>https://gxyd.github.io/gsoc2016/coding_period_starts.html</link>
-      <description>&lt;p&gt;
-The Community bonding period comes to an end now. First of all considering the issues described in the last post:
-&lt;ul&gt;
-&lt;li&gt;
-Aaron created a new channel for our GSoC project discussion, &lt;a href="https://gitter.im/sympy/GroupTheory"&gt;sympy/GroupTheory&lt;/a&gt;.
-&lt;/li&gt;
-&lt;li&gt;
-I have also added rss-feed in my blog.
-&lt;/li&gt;
-&lt;li&gt;
-As for time of meeting, me and Kalevi often have discussion on the gitter channel, but since of quite a bit differene in timings between me and Aaron (I tend to sleep early at 11 PM IST). We three haven't been able to together have a meeting. Though Aaron suggested "Kalevi is the primary mentor, so if you have to meet without me that is fine". I also think that's not too big of an issue now, but his opinion has always helped, since he has best knowledge of sympy core.
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;
-In the past few weeks I wasn't too much productive, since I had a touch of fever, anyways I am okay now. We have now completed the implementation of the &lt;code&gt;FreeGroup&lt;/code&gt; class in &lt;a href="https://github.com/sympy/sympy/pull/10350"&gt;PR #10350&lt;/a&gt;. I started working on the PR back in January but I halted, since of my semester classes. &lt;code&gt;FreeGroup&lt;/code&gt; is quite similar to the &lt;code&gt;PolyRing&lt;/code&gt; implemented in &lt;code&gt;sympy.polys.rings.py&lt;/code&gt;. We first started with the list of tuples as the data structure for the &lt;code&gt;FreeGroupElm&lt;/code&gt;, where each tuple being &lt;code&gt;(index, exp)&lt;/code&gt;, but since of the mutable nature of lists, Kalevi suggested to go with tuple of tuples. Also as tuples are probably more efficient as there is no 'housekeeping' overhead. Also changed the element from &lt;code&gt;(index, exp)&lt;/code&gt; --&gt; &lt;code&gt;(symbol, exp)&lt;/code&gt;.
-&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;
- Implementing &lt;code&gt;FreeGroupElm&lt;/code&gt; deals elegantly in such a way that it can't be independently created in a public interface. The reason being: every &lt;code&gt;FreeGroupElm&lt;/code&gt; is in itself created only by the &lt;code&gt;dtype&lt;/code&gt; method of &lt;code&gt;FreeGroup&lt;/code&gt; class. The assignment is as follows:
-&lt;br /&gt;
-  &lt;code&gt;obj.dtype = type("FreeGroupElm", (FreeGroupElm,), {"group": obj})&lt;/code&gt;
-&lt;br /&gt;.
-
-Its sort of an advanced usage of &lt;code&gt;type&lt;/code&gt; function as a &lt;a href="http://www.stackoverflow.com/questions/100003/what-is-a-metaclass-in-python"&gt;metaclass&lt;/a&gt;.
-&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;
-Currently the printing code of &lt;code&gt;latex&lt;/code&gt; and &lt;code&gt;pprint&lt;/code&gt; for &lt;code&gt;FreeGroupElm&lt;/code&gt; is a little hacky. I need to work on that as well.
-&lt;/p&gt;
-
-&lt;br /&gt;
-&lt;p&gt;
-&lt;b&gt;&lt;u&gt;Plan for Next few weeks&lt;/u&gt;&lt;/b&gt;
-&lt;br /&gt;&lt;br /&gt;
-Though according to my &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Application-Gaurav-Dhingra:-Group-Theory#Proposed_Timeline"&gt;proposal timeline&lt;/a&gt;, we described to go with implementation of other algebraic structures i.e &lt;code&gt;Magma&lt;/code&gt;, &lt;code&gt;SemiGroup&lt;/code&gt;, &lt;code&gt;Monoid&lt;/code&gt;. But we will next move onto &lt;b&gt;"Coset Enumeration"&lt;/b&gt;. It is going to be a big task. That is harder and more important than other algebraic structures. Timline states it to be 5 week task, thats almost half the GSoC coding period. Well how do we go about that? I think of studying the mathematics in parallel with the implementation.
-&lt;/p&gt;
-
-&lt;p&gt;
-We have created a PR for implementation of Finitely Presented Group &lt;a href="https://github.com/sympy/sympy/pull/11140"&gt;#11140&lt;/a&gt;. Not much code has been added here. Paper on Coset Enumeration using &lt;a href="http://staff.itee.uq.edu.au/havas/1973cdhw.pdf"&gt;Implementation and Analysis of Todd Coxeter Algorithm&lt;/a&gt; (by John J. Cannon, George Havas), and other paper being the original paper by Todd and Coxeter, "A practical method for enumerating cosets of a finite abstract group" are the ones I am reading. As for the implementation of Todd Coxeter, we will be following the methods described in the book "Handbook of Computational Group Theory" by Derek F. Holt.
-&lt;/p&gt;
-
-&lt;p&gt;
-Also now the "official" coding period begins, good luck to everyone.
-&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
