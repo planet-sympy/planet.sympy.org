@@ -1554,6 +1554,173 @@ This will require some digging up and a bit of research.&lt;/p&gt;
       <pubDate>Sat, 28 May 2016 18:30:00 GMT</pubDate>
       <link>https://gxyd.github.io/gsoc2016/gsoc_week_1.html</link>
       <description>&lt;p&gt;
+&lt;p&gt;
+Hi everyone.
+&lt;/p&gt;
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;p&gt;
+Here is a brief summary of what we did in the second, third and fourth week of GSoC.
+&lt;/p&gt;
+&lt;p&gt;
+Status update:
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/11140"&gt;PR #11140&lt;/a&gt; on implementation of strategies of coset enumeration has been &lt;i&gt;merged&lt;/i&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/11231"&gt;PR #11231&lt;/a&gt; on implementation of Low Index Subgroups algorithm has been &lt;i&gt;completed&lt;/i&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+We implemented the &lt;i&gt;Coset Enumeration&lt;/i&gt; strategies. Suppose $G$ is defined by a finite presentation, and $H$ is a subgroup of $G$ (for $H$ we currently only list of generators which generate $H$), which is specified by words in the generators of $G$ that generate $H$. The procedure is known as coset enumeration and is one of the most fundamental methods in CGT. No algorithm (its been proved mathematically [4]) can be guaranteed to terminate for &lt;i&gt;coset enumeration&lt;/i&gt;, so it can't be defined to have a fixed complexity.
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;i&gt;Coset Table&lt;/i&gt; is equivalent to the permutation representation of the input group $G$ in its action by right multiplication on the right cosets of $H$. Beginning with the &lt;code&gt;Coset Table&lt;/code&gt;, we have initialised it with various attributes in &lt;i&gt;SymPy&lt;/i&gt;, most of them are instances of &lt;code&gt;list&lt;/code&gt;, they are appended on the way while strategies like &lt;i&gt;HLT&lt;/i&gt;, &lt;i&gt;Felsch&lt;/i&gt; run over it. Contrary to what I mentioned in my last post, &lt;code&gt;CosetTable&lt;/code&gt; is not a subclass of &lt;code&gt;list&lt;/code&gt;.
+&lt;/p&gt;
+&lt;p&gt;
+The algorithm we have implemented is known as &lt;i&gt;&lt;a href="https://gxyd.github.io/feeds/quot;https://en.wikipedia.org/wiki/Todd%E2%80%93Coxeter_algorithm"&gt;Todd-Coxeter algorithm&lt;/a&gt;&lt;/i&gt;. The algorithm can use too much memory and time, but still memory is more important resource than time in this algorithm. This algorithm has got two major implementations:
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;h4&gt;&lt;u&gt;&lt;i&gt;HLT strategy&lt;/i&gt;&lt;/u&gt;&lt;/h4&gt; (also called relator bases method): in this whenever we use the C.scan_and_fill($\alpha$, $w$) for scanning the word $w$ over coset $\alpha$, routine for scanning which if the scan is incomplete makes a new definition of coset using &lt;code&gt;define&lt;/code&gt; then we make new definitions to enable the scan to complete; that is, we fill in the gaps in the scan of the relator or subgroup generator. Kalevi suggested to make some modification from the original pseudo-code, which resulted in quite a few improvements, since the changes removes un-necessary scanning.
+&lt;/p&gt;
+
+
+&lt;p&gt;
+Python utilities learned on the way:
+&lt;ul&gt;
+&lt;li&gt;At one point we had to make a list of generator and inverse of generators of a finitely presented groups i.e &lt;code&gt;A&lt;/code&gt; for a &lt;code&gt;CosetTable&lt;/code&gt;, I did a bit of searching a arrived at using the &lt;a href="https://gxyd.github.io/feeds/quot;https://docs.python.org/2/library/itertools.html#itertools.chain.from_iterable"&gt;&lt;code&gt;chain.from_iterable&lt;/code&gt;&lt;/a&gt; from the &lt;code&gt;itertools&lt;/code&gt; which works as follows:
+&lt;code&gt;
+&lt;pre&gt;
+&gt;&gt;&gt; from itertools import chain
+&gt;&gt;&gt; list(chain.from_iterable((x**2, x**3) for x in range(4)))
+[0, 0, 1, 1, 4, 8, 9, 27]
+&lt;/pre&gt;
+&lt;/code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+Use of &lt;code&gt;product&lt;/code&gt; routine, since in &lt;code&gt;coset enumeration&lt;/code&gt;, we often iterate over  $w \in Y$ and $x \in A$.
+&lt;/li&gt;
+&lt;li&gt;
+In &lt;code&gt;Python2.x&lt;/code&gt; a &lt;code&gt;list&lt;/code&gt; instance doesn't have a &lt;code&gt;copy&lt;/code&gt; attribute, so &lt;code&gt;list()&lt;/code&gt; function or &lt;i&gt;slicing&lt;/i&gt; is used to make a shallow copy. [3]
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/p&gt;
+&lt;p&gt;
+We have now completed the &lt;a href="https://gxyd.github.io/feeds/quot;https://github.com/sympy/sympy/pull/11140"&gt;PR #11140&lt;/a&gt;
+We used the utf-8 encoding in &lt;code&gt;sympy/combinatorics/fp_groups.py&lt;/code&gt; in its comments, which was generating the error in &lt;code&gt;Python2.7&lt;/code&gt; but not in &lt;code&gt;Python3.4&lt;/code&gt;
+&lt;code&gt;
+&lt;pre&gt;
+SyntaxError: Non-ASCII character '\xce' in file /home/gaurav/Public/sympy/sympy/combinatorics/fp_groups.py
+on line 79, but no encoding declared; see http://www.python.org/peps/pep-0263.html for details
+&lt;/pre&gt;
+&lt;/code&gt;
+and then using the line &lt;code&gt;# -*- coding: utf-8 -*-&lt;/code&gt; at the top of file resolved the issue, so seems like &lt;code&gt;Python2.x&lt;/code&gt; is more sensitive to such issues.
+&lt;/p&gt;
+&lt;p&gt;There was one error in the implemted code:
+&lt;code&gt;
+&lt;pre&gt;
+&gt;&gt;&gt; from sympy.combinatorics.free_group import free_group
+&gt;&gt;&gt; from sympy.combinatorics.fp_groups import FpGroup, coset_enumeration_r, CosetTable
+&gt;&gt;&gt; F, x, y = free_group("x, y")
+&gt;&gt;&gt; f = FpGroup(F, [x**2, y**3, (x*y)**3])
+&gt;&gt;&gt; Y = [x*y]
+&gt;&gt;&gt; C = coset_enumeration_r(f, Y)
+&gt;&gt;&gt; C.table # this will return the table
+&lt;/pre&gt;
+&lt;/code&gt;
+&lt;/p&gt;
+&lt;p&gt;
+As for refinement, I will paste another one.
+&lt;/p&gt;
+&lt;p&gt;
+&lt;code&gt;
+&lt;pre&gt;
+# these are the steps that happen internally
+&gt;&gt;&gt; C = CosetTable(f, Y)
+&gt;&gt;&gt; C.scan_and_fill(0, x*y)
+&gt;&gt;&gt; C.scan_and_fill(0, x**2)
+&gt;&gt;&gt; C.scan_and_fill(0, y**3)
+&gt;&gt;&gt; C.scan_and_fill(0, (x*y)**3)
+# till now coset table is fine.
+# here the coset table returned is wrong.
+&lt;/pre&gt;
+&lt;/code&gt;
+&lt;/p&gt;
+&lt;p&gt;
+In the implementation of &lt;code&gt;scan_and_fill&lt;/code&gt; the implemened code differed from that in the book in one significant aspect. In the book, &lt;code&gt;scan_and_fill&lt;/code&gt; looped until it filled the $\alpha$ row in the table. ("Made a new definition and continue with scan."). While the implemented code returned after one definition, the error occured since I tried removing the while loop (some testing purpose). Then we also added some "examples" from [2].
+&lt;/p&gt;
+
+&lt;p&gt;At the end of the post, here's one awesome small example of &lt;code&gt;coset enumeration&lt;/code&gt; using the &lt;i&gt;HLT&lt;/i&gt; strategy. Here is how the code works!! :)
+&lt;code&gt;
+&lt;pre&gt;
+In[1]: from sympy import *
+In[2]: from sympy.combinatorics.free_group import free_group
+In[3]: from sympy.combinatorics.fp_groups import FpGroup, CosetTable, coset_enumeration_r
+In[4]: F, x, y = free_group("x, y")
+In[5]: f = FpGroup(F, [x**2, y**3, (x*y)**4])
+In[6]: C = coset_enumeration_r(f, [x])
+In[7]: C.table
+Out[7]:[[0, 0, 1, 2],
+      [3, 3, 2, 0],
+      [6, 6, 0, 1],
+      [1, 1, 4, 10],
+      [5, 5, 10, 3],
+      [4, 4, 6, 7],
+      [2, 2, 7, 5],
+      [8, 8, 5, 6],
+      [7, 7, 9, 12],
+      [10, 10, 12, 8],
+      [9, 9, 3, 4],
+      [None, 10, 12, None],
+      [12, 12, 8, 9],
+      [None, 12, 8, 9],
+      [7, None, None, 13]]
+In[8]: C.compress()
+In[9]: C.standardize()
+In[10]: C.table
+Out[10]: [[0, 0, 1, 2],
+        [3, 3, 2, 0],
+        [4, 4, 0, 1],
+        [1, 1, 5, 6],
+        [2, 2, 7, 8],
+        [8, 8, 6, 3],
+        [9, 9, 3, 5],
+        [10, 10, 8, 4],
+        [5, 5, 4, 7],
+        [6, 6, 11, 10],
+        [7, 7, 9, 11],
+        [11, 11, 10, 9]]
+
+&lt;/pre&gt;
+&lt;/code&gt;
+    
+&lt;/p&gt;
+&lt;p&gt;
+
+Anyway, I'm really enthusiastic about my project and hope that we'll have some nice and reasonably fast algorithms in CGT by the end of the summer!
+&lt;/p&gt;
+&lt;h4&gt;References&lt;/h4&gt;
+&lt;i&gt;
+
+&lt;ul&gt; 
+&lt;li&gt;1. Derek F. Holt, Bettina Eick, Bettina, Eamonn A. O'Brien, "Handbook of computational group theory", Discrete Mathematics and its Applications (Boca Raton). Chapman &amp; Hall/CRC, Boca Raton, FL, 2005. ISBN 1-5848-372-3 .&lt;/li&gt;
+
+&lt;li&gt;2. John J. Cannon, Lucien A. Dimino, George Havas and Jane M. Watson, Implementation and Analysis of the Todd-Coxeter Algorithm&lt;/li&gt;
+
+&lt;li&gt;3. https://mail.python.org/pipermail/tutor/2006-November/051189.html&lt;/li&gt;
+&lt;li&gt;4. http://www.gap-system.org/Manuals/doc/ref/chap47.html&lt;/li&gt;
+&lt;/i&gt;
+&lt;br /&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://gxyd.github.io/GSoC Week 1</guid>
+      <title>GSoC Week 1</title>
+      <author>Gaurav Dhingra (gxyd)</author>
+      <pubDate>Sat, 28 May 2016 18:30:00 GMT</pubDate>
+      <link>https://gxyd.github.io/gsoc2016/gsoc_week_1.html</link>
+      <description>&lt;p&gt;
 Hi everyone.
 &lt;/p&gt;
 &lt;br /&gt;
@@ -1722,38 +1889,6 @@ less on coding than this week was.&lt;/p&gt;
   Notes&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/blockquote&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nishnik.github.io/GSoC-First-Week</guid>
-      <title>GSoC First Week</title>
-      <author>Nishant Nikhil (nishnik)</author>
-      <pubDate>Fri, 27 May 2016 00:00:00 GMT</pubDate>
-      <link>http://nishnik.github.io/GSoC-First-Week/</link>
-      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
-
-&lt;p&gt;Previously, I was working on the &lt;a href="https://github.com/symengine/symengine/pull/942"&gt;PR&lt;/a&gt; for &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; implementation.
-I managed to get it merged this week. So, now we have &lt;code class="highlighter-rouge"&gt;UniversalSet&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;EmptySet&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; implementation in SymEngine.
-Where in &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; we have a &lt;code class="highlighter-rouge"&gt;set_basic&lt;/code&gt; which can contain any &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt; object. That is apart from &lt;code class="highlighter-rouge"&gt;Number&lt;/code&gt; objects we can have &lt;code class="highlighter-rouge"&gt;Symbol&lt;/code&gt; objects as well, and even an &lt;code class="highlighter-rouge"&gt;Expression&lt;/code&gt;.&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;Then I started working on implementing &lt;code class="highlighter-rouge"&gt;FiniteField&lt;/code&gt;. I have sent this &lt;a href="https://github.com/symengine/symengine/pull/955"&gt;PR&lt;/a&gt;. Initially I was using &lt;code class="highlighter-rouge"&gt;std::map&amp;lt;unsigned, int&amp;gt;&lt;/code&gt; as the &lt;code class="highlighter-rouge"&gt;type&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;int&lt;/code&gt; type for &lt;code class="highlighter-rouge"&gt;modulo_&lt;/code&gt;, but I realized that there are already &lt;code class="highlighter-rouge"&gt;inverse&lt;/code&gt; function written for &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt;/&lt;code class="highlighter-rouge"&gt;mpz&lt;/code&gt;, so I changed the &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;std::map&amp;lt;unsigned, integer_class&amp;gt;&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;modulo_&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt;.
-While implementing this, I thought of writing tests after doing the whole implementation. And when I wrote the tests, I realized how badly I had done the implementation, like missing corner cases and all. It is always a better practice to write tests parallely with your implementation.&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;So, As of now I have implemented the following functions:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_add_ground(const integer_class a)&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sub_ground(const integer_class a)&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_mul_ground(const integer_class a)&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_quo_ground(const integer_class a)&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_add(const RCP&amp;lt;const GaloisField&amp;gt; &amp;amp;o)&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sub(const RCP&amp;lt;const GaloisField&amp;gt; &amp;amp;o)&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_mul(const RCP&amp;lt;const GaloisField&amp;gt; &amp;amp;o)&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Where &lt;code class="highlighter-rouge"&gt;gf_*_ground&lt;/code&gt; does the operation represented by &lt;code class="highlighter-rouge"&gt;*&lt;/code&gt; by the integer &lt;code class="highlighter-rouge"&gt;a&lt;/code&gt; to the polynomaial in the given field.
-And &lt;code class="highlighter-rouge"&gt;gf_add&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;gf_sub&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;gf_mul&lt;/code&gt; do their respective operation with another polynomial in the finite field.
-&lt;br /&gt;
-I will be implementing &lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt; this weekend.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
