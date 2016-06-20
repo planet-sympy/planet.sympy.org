@@ -86,6 +86,90 @@ mat = SymEngine::DenseMatrix.new(no_rows, no_columns)&lt;/pre&gt;
 &lt;p&gt;Goodbye!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/347/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/347/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=347&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://srajangarg.github.io//2016/06/19/Polynomial-Functionality</guid>
+      <title>Polynomial Functionalities</title>
+      <author>Srajan Garg (srajangarg)</author>
+      <pubDate>Sun, 19 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://srajangarg.github.io//2016/06/19/Polynomial-Functionality/</link>
+      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
+
+&lt;p&gt;The last week was spent on adding more functionality to all the three types of Integer Polynomials in SymEngine. Which meant that I had to basically wrap methods already existing in Piranha and Flint, and write new methods for the SymEngine polynomials to provide the required functionality. Details about said functions and the problems faced while implementing them are described in the rest of the post.&lt;/p&gt;
+
+&lt;p&gt;Also this Saturday, some friends and I decided to visit the hill station of Lonavala for the day. It was a replenishing experience, and a break from the regular routine. Here&amp;#8217;s us!&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt="" src="http://srajangarg.github.io/assets/lonavala.jpg" /&gt;&lt;/p&gt;
+
+&lt;h3 id="functions"&gt;Functions&lt;/h3&gt;
+
+&lt;p&gt;I wanted to start off by adding a &lt;code class="highlighter-rouge"&gt;div_upoly&lt;/code&gt; functions for dividing two univariate polynomials. It is obvious that division of two polynomials with integer coefficients may very well result in polynomials with rational coefficients. But a rational polynomial class does not exist. So what does it mean to divide two univariate polynomials and get a integer polynomial quotient and remainder? The domain &lt;code class="highlighter-rouge"&gt;ZZ[x]&lt;/code&gt; is not a &lt;a href="https://en.wikipedia.org/wiki/Euclidean_domain"&gt;Euclidean Domain&lt;/a&gt;. Here is what we mean by Euclidean division,&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;Two polynomials p, q can uniquely be written as
+p = quo * q + rem 
+deg(rem) &amp;lt; deg(q) or rem = 0
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Thus the euclidean division that we are so familiar with is not defined for this domain. So how do other libraries handle this division? I tried the division with Flint, Sage and SymPy.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In [14]: q = Poly(2*x)
+In [15]: p = Poly(5*x**2)
+In [16]: div(p, q, domain=ZZ)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Flint and Sage gave :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;quo = Poly(2*x, x, domain='ZZ') 
+rem = Poly(x**2, x, domain='ZZ')
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;while SymPy gave :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;quo = Poly(0, x, domain='ZZ') 
+rem = Poly(5*x**2, x, domain='ZZ')
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This was interesting, as SymPy gave a different answer than the other two. I asked about this behaviour on gitter, and had a brief explanation given by &lt;a href="https://github.com/jksuom"&gt;@jksuom&lt;/a&gt;,&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The operation &lt;code class="highlighter-rouge"&gt;quo_rem&lt;/code&gt; is mathematically well defined only in so-called Euclidean domains. They are principal ideal domains (PIDs) equipped with a &amp;#8216;Euclidean function. &lt;code class="highlighter-rouge"&gt;ZZ[x]&lt;/code&gt; is not a PID, so there is no universal agreement on how &lt;code class="highlighter-rouge"&gt;quo_rem&lt;/code&gt; should be defined. I think that there are some appealing features in the way it is defined in sage, but one cannot say that SymPy&amp;#8217;s way would be wrong, either.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;It seems that the main (only?) practical use of &lt;code class="highlighter-rouge"&gt;quo_rem&lt;/code&gt; in non-Euclidean domains is for testing if an element is divisible by another. That happens when the remainder vanishes. Both ways of defining &lt;code class="highlighter-rouge"&gt;quo_rem&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;ZZ[x]&lt;/code&gt; can be used to decide this.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This explanation made a lot of sense, but I was anyways asked to open up &lt;a href="https://github.com/sympy/sympy/issues/11240"&gt;#11240&lt;/a&gt;, to know why SymPy handled division the way it did, and if it could be changed. Taking in all the inputs, I decided that I should not go ahead with a &lt;code class="highlighter-rouge"&gt;div_upoly&lt;/code&gt; function for now, instead I made a &lt;code class="highlighter-rouge"&gt;divides_upoly&lt;/code&gt; function which basically tells wether a polynomial divides the other or not. I had to implement the straight forward algorithm in SymEngine, while Flint already had a &lt;code class="highlighter-rouge"&gt;divides&lt;/code&gt; function and Piranha throws an exception on inexact division,  which I used to port it for Piranha polynomials.&lt;/p&gt;
+
+&lt;p&gt;Other methods which were wrapped were &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;lcm&lt;/code&gt; for both the Flint and the Piranha polynomials. I have not been able to write these functions for SymEngine polynomials yet. The most trivial algorithms for finding GCD of two univariate polynomials depends on euclidean division, and that does not exist in the integer ring polynomials. Some more information from &lt;a href="https://github.com/jksuom"&gt;@jksuom&lt;/a&gt;,&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The ring &lt;code class="highlighter-rouge"&gt;ZZ[x]&lt;/code&gt; is a unique factorization domain (UFD) even if it is not euclidean. It has &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;lcm&lt;/code&gt;, but there is no euclidean algorithm for them.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Isuru suggested a hint for a simple algorithm, but I have not been able to follow it up yet. I&amp;#8217;ll catch up with it in the coming week. The next function I worked on was &lt;code class="highlighter-rouge"&gt;pow&lt;/code&gt;. Again this was already implemented in the two other libraries and I just had to wrap them. For SymEngine, I had to decide which algorithm to use, a naive repeated approach or the &lt;a href="https://en.wikipedia.org/wiki/Exponentiation_by_squaring"&gt;exponention by squaring&lt;/a&gt; algorithm. I also benchmarked the &lt;code class="highlighter-rouge"&gt;pow&lt;/code&gt; methods of Piranha too. All the work and the benchmarks are in &lt;a href="https://github.com/symengine/symengine/pull/989"&gt;#989&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Other functionalities like &lt;code class="highlighter-rouge"&gt;multieval&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;derivative&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;get_lc&lt;/code&gt; were also added for all the three intger polynomials.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;There was an error in the Flint documentation, which was related with incorrect ordering of the arguments being passed to the &lt;code class="highlighter-rouge"&gt;divides&lt;/code&gt; function. It was reported in &lt;a href="https://github.com/wbhart/flint2/issues/267"&gt;#267&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Piranha required some implementations to be explicitly provided on the coefficient class, we are going to use. Thus, I had to overwrite some implementations like &lt;code class="highlighter-rouge"&gt;gcd_impl&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;pow_impl&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;divexact_impl&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;SymEngine::intger_class&lt;/code&gt; to work with &lt;code class="highlighter-rouge"&gt;piranha::polynomial&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I will write &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;lcm&lt;/code&gt; for SymEngine polynomials, and start on &lt;code class="highlighter-rouge"&gt;Basic -&amp;gt; Poly&lt;/code&gt; conversion to add to the coercion framework decided for SymEngine, soon.&lt;/p&gt;
+
+&lt;p&gt;See you!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=546</guid>
       <title>GSoC Week 4</title>
       <author>Sampad Saha (sampadsaha5)</author>
@@ -219,6 +303,101 @@ As this work is in progress, I will post about it in the next week&amp;#8217;s p
 &lt;/span&gt;&lt;/pre&gt;
 &lt;p&gt;This needs to be written in C++, then wrapped in C and later in Ruby. Though I was planning to start working on it during the weekend, it was only possible to read and plan how to write the code. So next week, along with starting on the Matrices, I will look into achieving this as well.&lt;/p&gt;
 &lt;p&gt;See you next week!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/276/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/276/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=276&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://srajangarg.github.io//2016/06/12/Piranha-Polynomials</guid>
+      <title>Piranha Polynomials &amp; Iterators</title>
+      <author>Srajan Garg (srajangarg)</author>
+      <pubDate>Sun, 12 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://srajangarg.github.io//2016/06/12/Piranha-Polynomials/</link>
+      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
+
+&lt;p&gt;I worked on wrapping Piranha polynomials within SymEngine this week. It felt much more interesting than wrapping Flint polynomials, mainly because I was reading the Piranha&amp;#8217;s source and was in direct touch with the  author of the library. Many thanks to &lt;a href="https://github.com/bluescarni"&gt;@bluescarni&lt;/a&gt; who helped me getting familiar with it. As before, I&amp;#8217;ll briefly summarize the work I did this week along with my progress.&lt;/p&gt;
+
+&lt;h3 id="piranha-polynomials"&gt;Piranha Polynomials&lt;/h3&gt;
+
+&lt;p&gt;Piranha&amp;#8217;s polynomial class is the &lt;code class="highlighter-rouge"&gt;piranha::polynomial&lt;/code&gt; class. It&amp;#8217;s templatized as follows:&lt;/p&gt;
+
+&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Cf&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Key&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;polynomial&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;power_series&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="p"&gt;...&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;There are two major differences about Piranha Polynomials and SymEngine polynomials. Firstly, it uses a custom unordered map implementation called &lt;code class="highlighter-rouge"&gt;hash_set&lt;/code&gt; for storing it&amp;#8217;s degree-coefficient pairs. &lt;code class="highlighter-rouge"&gt;hash_set&lt;/code&gt; has been internally optimized for polynomial manipulations in general. On a side note, this makes SymEngine have all three types of polynomial representations too! Secondly, Piranha does not distinguish between univariate polynomials and multivariate polynomials. All polynomials are multivariate polynomials, univariate polynomials being a special case (with just one element in it&amp;#8217;s &lt;code class="highlighter-rouge"&gt;symbol_set&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;Here, &lt;code class="highlighter-rouge"&gt;Cf&lt;/code&gt; is the class for storing the coefficients, while &lt;code class="highlighter-rouge"&gt;Key&lt;/code&gt; are the monomials themselves. Unlike Flint, we can use any integer class as the coefficient class for the polynomials. So, the first question was wether to use &lt;code class="highlighter-rouge"&gt;piranha::integer&lt;/code&gt; (and use implicit conversions like I did in Flint polynomials) or &lt;code class="highlighter-rouge"&gt;SymEngine::integer_class&lt;/code&gt; as the integer class for Piranha polynomials. After a brief discussion with Isuru, we decided to go with SymEngine&amp;#8217;s integers. The &lt;code class="highlighter-rouge"&gt;Key&lt;/code&gt; class used is &lt;code class="highlighter-rouge"&gt;piranha::monomial&amp;lt;uint&amp;gt;&lt;/code&gt;, which means it will store one &lt;code class="highlighter-rouge"&gt;unsigned int&lt;/code&gt; per symbol (representing the degree, in each monomial).&lt;/p&gt;
+
+&lt;h3 id="symengines-integers-in-piranhapolynomial"&gt;SymEngine&amp;#8217;s integers in &lt;code class="highlighter-rouge"&gt;piranha::polynomial&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;For an integer class to be usable as the &lt;code class="highlighter-rouge"&gt;Cf&lt;/code&gt; it should have some basic properties like, default constructibility, copy constructibility, &lt;code class="highlighter-rouge"&gt;nothrow&lt;/code&gt; destructibility, &lt;code class="highlighter-rouge"&gt;nothrow&lt;/code&gt; move assignability and &lt;code class="highlighter-rouge"&gt;nothrow&lt;/code&gt; move constructibility. As of yet, &lt;code class="highlighter-rouge"&gt;mpz_wrapper&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;fmpz_wrapper&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;mpz_class&lt;/code&gt; did not pass the &lt;code class="highlighter-rouge"&gt;nothrow&lt;/code&gt; checks. All that had to bee done was that I had to add &lt;code class="highlighter-rouge"&gt;noexcept&lt;/code&gt; to the wrappers we had already written. This allowed &lt;code class="highlighter-rouge"&gt;mpz_wrapper&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;fmpz_wrapper&lt;/code&gt; to be used as coefficients in Piranha polynomials. Ofcourse, Piranha&amp;#8217;s own integer class passes all these checks too.&lt;/p&gt;
+
+&lt;p&gt;Currently, there is no solution for having &lt;code class="highlighter-rouge"&gt;mpz_class&lt;/code&gt; as the coefficient class for polynomials. Firstly, these gmpxx integers methods have not been marked &lt;code class="highlighter-rouge"&gt;nothrow&lt;/code&gt; yet. There is a forum &lt;a href="https://gmplib.org/list-archives/gmp-devel/2016-April/004271.html"&gt;post&lt;/a&gt; on how it can be added, and actually has been added in the development version but hasn&amp;#8217;t been released yet. Another reason  is that &lt;code class="highlighter-rouge"&gt;mpz_class&lt;/code&gt; uses &lt;a href="https://en.wikipedia.org/wiki/Expression_templates"&gt;expression templates&lt;/a&gt; for improved performance. This means that unlike normal integers, any arithmetic operation does not necessarily return the same integer class.&lt;/p&gt;
+
+&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;is_a&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; 		&lt;span class="c1"&gt;// true
+&lt;/span&gt;
+&lt;span class="n"&gt;mpz_class&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="n"&gt;is_a&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;mpz_class&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;	&lt;span class="c1"&gt;// false
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The reason it cannot be used within Piranha is that Piranha checks the coefficient type after each operation so that it knows what &lt;a href="https://en.wikipedia.org/wiki/Polynomial_ring"&gt;ring&lt;/a&gt; the polynomial belongs to. Here, it will be unable to detect what the ring is, as the returned coefficient will be an expression template. Thus, it was decided that the integer class &lt;code class="highlighter-rouge"&gt;mpz_class&lt;/code&gt; can&amp;#8217;t be used alongside Piranha with SymEngine. So, the following became invalid, on which a warning is thrown and the class is changed to &lt;code class="highlighter-rouge"&gt;mpz_wrapper&lt;/code&gt; :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;cmake -DWITH_PIRANHA=yes -DINTEGER_CLASS=gmpxx
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;All the work on Piranha polynomials and the &lt;code class="highlighter-rouge"&gt;cmake&lt;/code&gt; changes can be found in &lt;a href="https://github.com/symengine/symengine/pull/980"&gt;#980&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id="iterators"&gt;Iterators&lt;/h3&gt;
+
+&lt;p&gt;Currently this is what the &lt;code class="highlighter-rouge"&gt;print&lt;/code&gt; functions for our univariate integer polynomials looked like :&lt;/p&gt;
+
+&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;string&lt;/span&gt; &lt;span class="nf"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;UIntPoly&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+	&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dict_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;begin&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dict_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;end&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="n"&gt;it&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+	&lt;span class="p"&gt;{&lt;/span&gt;
+		&lt;span class="c1"&gt;// use it-&amp;gt;first and it-&amp;gt;second
+&lt;/span&gt;	&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="n"&gt;string&lt;/span&gt; &lt;span class="nf"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;UIntPolyFlint&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+	&lt;span class="k"&gt;for&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;degree&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;--&lt;/span&gt;&lt;span class="n"&gt;it&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+	&lt;span class="p"&gt;{&lt;/span&gt;
+		&lt;span class="c1"&gt;// use it and p.get_coeff(it)
+&lt;/span&gt;	&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;These methods are very similar and do not deserve to be separate functions. All that was needed to unify these methods was to have iterators for each of the three classes, and then we can have use the same code for many functions like &lt;code class="highlighter-rouge"&gt;print&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;as_symbolic&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;derivative&lt;/code&gt;. This also called for a new base class to be made, &lt;code class="highlighter-rouge"&gt;UIntPolyBase&lt;/code&gt; from which these three integer polynomials inherit and it itself inherits from the original base class &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I stuck with the syntax of &lt;code class="highlighter-rouge"&gt;it-&amp;gt;first&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;it-&amp;gt;second&lt;/code&gt; for the unified iterators. Which means &lt;code class="highlighter-rouge"&gt;operator*&lt;/code&gt; needed to return a &lt;code class="highlighter-rouge"&gt;std::pair&amp;lt;uint, integer_class&amp;gt;&lt;/code&gt;. So, for SymEngine polynomials all I needed to do was return iterators to the internal dictionary and that was it. Not going into too much technicality, for Flint and Piranha I used custom iterators which had &lt;code class="highlighter-rouge"&gt;operator++&lt;/code&gt; defined on them and returned a pair whenever &lt;code class="highlighter-rouge"&gt;it-&amp;gt;&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;*it&lt;/code&gt; was called on them. They basically iterated over the degree and returned only for non-zero coefficients for both the libraries. The actual implementation of the iterator scheme can be seen in &lt;a href="https://github.com/symengine/symengine/pull/985"&gt;#985&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Initially I was happy with this approach and was able to write (unifying the three) :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;string print(const UIntPolyBase&amp;amp; p)
+{
+	for(auto it = p.dict_.begin(); it != p.dict_.end(); ++it)
+	{
+		// use it-&amp;gt;first and it-&amp;gt;second
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Isuru pointed out that instead of returning the &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt; in the pair, we should return a reference to it. Now, this made sense but was a bit tricky to implement. Also the iterator could no longer return reference like &lt;code class="highlighter-rouge"&gt;const integer_class&amp;amp;&lt;/code&gt;, as Flint did not even store it&amp;#8217;s coefficients as &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt;. To tackle this, another template parameter had to be added to the custom iterator class which determined the second term of the pair (which was supposed to be the reference to the coefficient in the internal storage of the polynomial). Also, I had to dig in to the Flint documentation and ask Piranha&amp;#8217;s author, for knowing how I could get &lt;code class="highlighter-rouge"&gt;const&lt;/code&gt; references to the coefficients in internal storage. After this was finally implemented, there was a new &lt;code class="highlighter-rouge"&gt;get_coeff_ref&lt;/code&gt; method, which does not copy but returns a reference to the required coefficient. The only downside to all this was that instead of &lt;code class="highlighter-rouge"&gt;it-&amp;gt;second&lt;/code&gt; I had to use &lt;code class="highlighter-rouge"&gt;to_integer_class(it-&amp;gt;second)&lt;/code&gt; everywhere in the common functions.&lt;/p&gt;
+
+&lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;I saw that in SymEngine, there were lots of redundant header file includes in many files. I wrote a short python script which makes a header dependency tree, and automatically removes header includes which are not needed. After some manual inspection of the changes I pushed in &lt;a href="https://github.com/symengine/symengine/pull/981"&gt;#981&lt;/a&gt;. It was really amazing to see the script flag more than 500 lines of redundant includes. The PR has not been merged yet, though.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I will be working on higher level functionality like &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; in the coming week. Will keep you guys posted.&lt;/p&gt;
+
+&lt;p&gt;Laters!&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=431</guid>
@@ -590,6 +769,82 @@ It is better than &lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt; in t
 Now as &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; is just representation of polynomial so I needed something similar, so I made &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; inherit from &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt;, and made a container named &lt;code class="highlighter-rouge"&gt;GaloisFieldDict&lt;/code&gt;.
 This prevented a lot of code duplicacy.
 Still there is a lot of conversation going on this topic, I will better post after the final design is fixed.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://srajangarg.github.io//2016/06/06/Flint-Polynomials</guid>
+      <title>Flint Polynomials</title>
+      <author>Srajan Garg (srajangarg)</author>
+      <pubDate>Mon, 06 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://srajangarg.github.io//2016/06/06/Flint-Polynomials/</link>
+      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
+
+&lt;p&gt;This week has not been as interesting as the last. Most of my work this week involved wrapping Flint Polynomials, for use in SymEngine. I will discuss their internal implementation and how they were integrated to the library.&lt;/p&gt;
+
+&lt;h3 id="flint-polynomials"&gt;Flint Polynomials&lt;/h3&gt;
+
+&lt;p&gt;Flint&amp;#8217;s integer polynomial class is the &lt;code class="highlighter-rouge"&gt;fmpz_poly&lt;/code&gt; class. Flint, being a C library also provides a C++ wrapper for most of it&amp;#8217;s classes. In our case, it&amp;#8217;s the &lt;code class="highlighter-rouge"&gt;fmpz_polyxx&lt;/code&gt; class. As discussed last week, the arithmetic operators for the class have already been overloaded and it can be seamlessly used with the base class which is already set up.&lt;/p&gt;
+
+&lt;p&gt;Internally, flint uses a dense representation of polynomials. What this means is that the coefficient for each degree in the polynomial are stored in a vector. This is in contrast to a sparse approach which deals stores only non-zero coefficients of a polynomial in a dictionary. Flint also uses it&amp;#8217;s own integer class as the coefficient type. Flint&amp;#8217;s integers are basically similar to GMP integers, and also follow the same naming conventions. (eg. &lt;code class="highlighter-rouge"&gt;fmpz_t&lt;/code&gt; is analogous to &lt;code class="highlighter-rouge"&gt;mpz_t&lt;/code&gt;) They have internal optimizations to make them faster for use within the flint library itself. Flint does not provide the option to use a custom integer class as the type of coefficients like Piranha does.&lt;/p&gt;
+
+&lt;p&gt;All the work related to flint polynomials can be seen in &lt;a href="https://github.com/symengine/symengine/pull/971"&gt;#971&lt;/a&gt;. The majority of the PR concerns introducing a new class &lt;code class="highlighter-rouge"&gt;UIntPolyFlint&lt;/code&gt; and all the necessary functionality like &lt;code class="highlighter-rouge"&gt;__hash__&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;eval&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;compare&lt;/code&gt;. Test cases have also been added, to see if the polynomial manipulation is working as intended. There is some additional minor work done here apart from this class introduction.&lt;/p&gt;
+
+&lt;p&gt;The polynomial base class now has three methods :&lt;/p&gt;
+
+&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="n"&gt;from_container&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="n"&gt;from_dict&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="n"&gt;from_vec&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;These methods are, as indicated from their names, used to construct the polynomial from any of the three sources. So, for example to construct a &lt;code class="highlighter-rouge"&gt;UIntPolyFlint&lt;/code&gt;, you can :&lt;/p&gt;
+
+&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;PolyFlint&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;PolyFlint&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;from_container&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fmpz_polyxx&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;PolyFlint&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;PolyFlint&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;from_vec&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;vector&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;integer_class&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;B&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="n"&gt;PolyFlint&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;PolyFlint&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;from_dict&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;map&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;uint&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;integer_class&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id="integerclass-conversions"&gt;&lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt; Conversions&lt;/h3&gt;
+
+&lt;p&gt;Another issue was that methods like &lt;code class="highlighter-rouge"&gt;eval&lt;/code&gt; must return integers of &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt;. Thus, we needed functions to convert &lt;code class="highlighter-rouge"&gt;fmpzxx&lt;/code&gt; to any of the 4 possible integer classes used by SymEngine. The 4 integers used by SymEngine are :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;1. mpz_class         The default C++ class provided by GMP
+2. mpz_wrapper       SymEngine's wrapper around GMP's mpz_t
+3. piranha::integer  Piranha's integer class
+3. fmpz_wrapper      SymEngine's wrapper around Flint's fmpz_t
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We, might even require such conversion for Piranha polynomials. So, I generalized this and made &lt;code class="highlighter-rouge"&gt;to_integer_class()&lt;/code&gt; which takes in either &lt;code class="highlighter-rouge"&gt;flint::fmpzxx&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;piranha::integer&lt;/code&gt; and returns an &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt;. There was a small discussion on where these functions should be placed, with Isuru which was insightful. Basically, what I was doing earlier caused a considerable &lt;a href="https://github.com/symengine/symengine/pull/971#issuecomment-223743950"&gt;increase&lt;/a&gt; in compilation time, which was later corrected. An example of one such function is :&lt;/p&gt;
+
+&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="cp"&gt;#if SYMENGINE_INTEGER_CLASS == GMP || GMPXX
+#ifdef HAVE_SYMENGINE_FLINT
+&lt;/span&gt;&lt;span class="kr"&gt;inline&lt;/span&gt; &lt;span class="n"&gt;integer_class&lt;/span&gt; &lt;span class="nf"&gt;to_integer_class&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;flint&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;fmpzxx&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;integer_class&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="n"&gt;fmpz_get_mpz&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_mpz_t&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;_data&lt;/span&gt;&lt;span class="p"&gt;().&lt;/span&gt;&lt;span class="n"&gt;inner&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="cp"&gt;#endif
+#endif
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;A &lt;code class="highlighter-rouge"&gt;get_coeff()&lt;/code&gt; function was also added to the polynomial base is a much needed function for any polynomial manipulation.&lt;/p&gt;
+
+&lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;There were some changes done to the polynomial structure before the flint polynomials were introduced. Constructor of the polynomials from vectors was removed, as it wasn&amp;#8217;t required. And a &lt;code class="highlighter-rouge"&gt;from_vec&lt;/code&gt; was added for the SymEngine polynomial dictionaries &lt;code class="highlighter-rouge"&gt;UIntDict&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;UExprDict&lt;/code&gt;. The changes can be seen here &lt;a href="https://github.com/symengine/symengine/pull/965/"&gt;#965&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;In Travis CI builds, SymEngine was using flint-2.4.4 from a static location. There&amp;#8217;s a &lt;a href="https://github.com/wbhart/flint2/issues/217"&gt;bug&lt;/a&gt; that I encountered using this version, which dealt with incorrect header declaration in one of the flint files. Now, we clone the flint repository from  &lt;a href="https://github.com/wbhart/flint2/"&gt;wbhart/flint2&lt;/a&gt; to use in the CI builds. The change is in &lt;a href="https://github.com/symengine/symengine/pull/973"&gt;#973&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I&amp;#8217;m working on wrapping Piranha polynomials next week. After that is done, I plan to start getting higher level functionality like &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;factorize&lt;/code&gt; ready.&lt;/p&gt;
+
+&lt;p&gt;Ciao!&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=336</guid>
@@ -1204,6 +1459,113 @@ This will require some digging up and a bit of research.&lt;/p&gt;
 &lt;p&gt;Looking forward to it !&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://srajangarg.github.io//2016/05/29/Wrap-a-Lot</guid>
+      <title>Wrap a lot</title>
+      <author>Srajan Garg (srajangarg)</author>
+      <pubDate>Sun, 29 May 2016 00:00:00 GMT</pubDate>
+      <link>http://srajangarg.github.io//2016/05/29/Wrap-a-Lot/</link>
+      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
+
+&lt;p&gt;As I pointed out in last week&amp;#8217;s post, I have begun my work on the wrapping aspects of my project. The final aim of wrapping the polynomial class is to provide users with the option of using specialized polynomial libraries like Flint and Piranha.&lt;/p&gt;
+
+&lt;p&gt;Right at the beginning of the project, I was lacking the basic idea of how the wrapping will work. Mostly I was confused by the fact that we have to right common code for all the libraries (SymEngine, Flint &amp;amp; Piranha) with the problem being, each of the these libraries have different internal representation and methods. By the end of the week, thanks to Isuru, I have much more understanding of the desired structure of the code. Here&amp;#8217;s a short summary on how it will work.&lt;/p&gt;
+
+&lt;h3 id="polynomial-base"&gt;Polynomial Base&lt;/h3&gt;
+&lt;p&gt;There will be four end (derived) classes. &lt;code class="highlighter-rouge"&gt;UIntPoly&lt;/code&gt; &amp;amp; &lt;code class="highlighter-rouge"&gt;UExprPoly&lt;/code&gt; (the SymEngine) polynomials, &lt;code class="highlighter-rouge"&gt;UIntPolyFlint&lt;/code&gt; and also &lt;code class="highlighter-rouge"&gt;UIntPolyPiranha&lt;/code&gt;. Each of these classes derive from the base class called &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt;. Now the base class must have methods and members which can be used commonly by each of the derived classes. Thus, the base class should have two members, the &lt;code class="highlighter-rouge"&gt;var&lt;/code&gt; which depicts the variable of the polynomial and a &lt;code class="highlighter-rouge"&gt;container&lt;/code&gt; which contains the data about the polynomial (basically the coefficients corresponding to each degree).&lt;/p&gt;
+
+&lt;p&gt;This is skeleton of how the classes should look like :&lt;/p&gt;
+
+&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Container&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UPolyBase&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+	&lt;span class="n"&gt;Symbol&lt;/span&gt; &lt;span class="n"&gt;var&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+	&lt;span class="n"&gt;Container&lt;/span&gt; &lt;span class="n"&gt;container&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="c1"&gt;// the derived polynomials
+&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UIntPolyPiranha&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;UPolyBase&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;piranha&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;polynomail&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UIntPolyFlint&lt;/span&gt;   &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;UPolyBase&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;flint&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;fmpz_polyxx&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id="symengines-container"&gt;SymEngine&amp;#8217;s Container&lt;/h3&gt;
+
+&lt;p&gt;The containers of the Flint and Piranha will be discussed in detail in the upcoming weeks. We now had to think about what the container must be for SymEngine. Also we have to merge as much functionality as possible. I saw that both the external libraries had operators overloaded for addition, subtraction, multiplication and division. So, methods like &lt;code class="highlighter-rouge"&gt;add_poly&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;sub_poly&lt;/code&gt; etc. could be made common in the base class itself if I implemented a container for holding SymEngine polynomials which also has it&amp;#8217;s operators overloaded.&lt;/p&gt;
+
+&lt;p&gt;I was not familiar with the symbolic side of the polynomials, and found out that a container had already been made for &lt;code class="highlighter-rouge"&gt;UExprPoly&lt;/code&gt; called &lt;code class="highlighter-rouge"&gt;UExprDict&lt;/code&gt;. The class was nothing but a wrapper around &lt;code class="highlighter-rouge"&gt;map&amp;lt;int, Expression&amp;gt;&lt;/code&gt;. It had overloaded methods for addition, subtraction etc. So, technically this dictionary was storing all the information about the polynomials. I just had to create another similar wrapper for &lt;code class="highlighter-rouge"&gt;map&amp;lt;uint, integer_class&amp;gt;&lt;/code&gt; for the integer counterpart of the polynomial class. This resulted in &lt;a href="https://github.com/symengine/symengine/pull/946"&gt;#946&lt;/a&gt; and Isuru mentioned that most of the code for both these dictionary wrappers is about the same! So, I decided to make a base class for polynomial dictionary wrappers and both of these can inherit from that. Any different implementations (like &lt;code class="highlighter-rouge"&gt;*=&lt;/code&gt;) can be overridden in the derived class if needed.&lt;/p&gt;
+
+&lt;p&gt;The ordered map base looks like :&lt;/p&gt;
+
+&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Wrapper&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;ODictWrapper&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;map&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Key&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Value&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;dict_&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+    &lt;span class="k"&gt;friend&lt;/span&gt; &lt;span class="n"&gt;Wrapper&lt;/span&gt; &lt;span class="k"&gt;operator&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Wrapper&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Wrapper&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;Wrapper&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="o"&gt;-=&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+
+    &lt;span class="n"&gt;Wrapper&lt;/span&gt; &lt;span class="k"&gt;operator&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt;
+    &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="n"&gt;ODictWrapper&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;iter&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dict_&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+            &lt;span class="n"&gt;iter&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;second&lt;/span&gt; &lt;span class="o"&gt;*=&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="k"&gt;static_cast&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Wrapper&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+
+    &lt;span class="p"&gt;....&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="c1"&gt;// the derived wrappers
+&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UIntDict&lt;/span&gt;  &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ODictWrapper&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;uint&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;integer_class&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;UIntDict&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UExprDict&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ODictWrapper&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Expression&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;UExprDict&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id="finishing-the-class"&gt;Finishing the class&lt;/h3&gt;
+
+&lt;p&gt;After the containers for SymEngine were complete, I started implementing the polynomial base class, from which the two current polynomial classes will inherit. The class turned out to be very similar to the prototype described above. Accessor methods were added and basic polynomial functions were added &lt;a href="https://github.com/symengine/symengine/pull/951"&gt;#951&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;All we have to do now for functions like &lt;code class="highlighter-rouge"&gt;add_poly&lt;/code&gt; is use the overloaded operators on the containers. Also, template argument deduction will automatically allow us to call the functions directly on two same polynomial types.&lt;/p&gt;
+
+&lt;p&gt;An example of a common template function for addition :&lt;/p&gt;
+
+&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;span class="n"&gt;RCP&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;add_upoly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;dict&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_poly&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+    &lt;span class="n"&gt;dict&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_poly&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;from_dict&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;get_var&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;move&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;dict&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;and how easily it can be used :&lt;/p&gt;
+
+&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;A&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;uint_poly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"x"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)});&lt;/span&gt;   &lt;span class="c1"&gt;// 2*x + 1
+&lt;/span&gt;&lt;span class="n"&gt;B&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;uint_poly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;"x"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)});&lt;/span&gt;            &lt;span class="c1"&gt;// 2*x**2
+&lt;/span&gt;
+&lt;span class="n"&gt;C&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt;  &lt;span class="n"&gt;add_upoly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;A&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;B&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;The names of the classes I refer to here are the new names. The old names were a little unintuitive, so decided to change them, along with introducing a new subfolder in the repository to hold all code related to polynomials (and their tests). Some code was also shifted to places more apt, all changes can be seen here &lt;a href="https://github.com/symengine/symengine/pull/960"&gt;#960&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;There are a small number of miscellaneous changes that need to be worked out in the overall structure, here they are &lt;a href="https://github.com/symengine/symengine/pull/962"&gt;#962&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;More on this and Flint next week! Goodbye!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://gxyd.github.io/GSoC Week 1</guid>
       <title>GSoC Week 1</title>
       <author>Gaurav Dhingra (gxyd)</author>
@@ -1545,168 +1907,6 @@ less on coding than this week was.&lt;/p&gt;
   Notes&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/blockquote&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nishnik.github.io/GSoC-First-Week</guid>
-      <title>GSoC First Week</title>
-      <author>Nishant Nikhil (nishnik)</author>
-      <pubDate>Fri, 27 May 2016 00:00:00 GMT</pubDate>
-      <link>http://nishnik.github.io/GSoC-First-Week/</link>
-      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
-
-&lt;p&gt;Previously, I was working on the &lt;a href="https://github.com/symengine/symengine/pull/942"&gt;PR&lt;/a&gt; for &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; implementation.
-I managed to get it merged this week. So, now we have &lt;code class="highlighter-rouge"&gt;UniversalSet&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;EmptySet&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; implementation in SymEngine.
-Where in &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; we have a &lt;code class="highlighter-rouge"&gt;set_basic&lt;/code&gt; which can contain any &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt; object. That is apart from &lt;code class="highlighter-rouge"&gt;Number&lt;/code&gt; objects we can have &lt;code class="highlighter-rouge"&gt;Symbol&lt;/code&gt; objects as well, and even an &lt;code class="highlighter-rouge"&gt;Expression&lt;/code&gt;.&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;Then I started working on implementing &lt;code class="highlighter-rouge"&gt;FiniteField&lt;/code&gt;. I have sent this &lt;a href="https://github.com/symengine/symengine/pull/955"&gt;PR&lt;/a&gt;. Initially I was using &lt;code class="highlighter-rouge"&gt;std::map&amp;lt;unsigned, int&amp;gt;&lt;/code&gt; as the &lt;code class="highlighter-rouge"&gt;type&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;int&lt;/code&gt; type for &lt;code class="highlighter-rouge"&gt;modulo_&lt;/code&gt;, but I realized that there are already &lt;code class="highlighter-rouge"&gt;inverse&lt;/code&gt; function written for &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt;/&lt;code class="highlighter-rouge"&gt;mpz&lt;/code&gt;, so I changed the &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;std::map&amp;lt;unsigned, integer_class&amp;gt;&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;modulo_&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt;.
-While implementing this, I thought of writing tests after doing the whole implementation. And when I wrote the tests, I realized how badly I had done the implementation, like missing corner cases and all. It is always a better practice to write tests parallely with your implementation.&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;So, As of now I have implemented the following functions:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_add_ground(const integer_class a)&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sub_ground(const integer_class a)&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_mul_ground(const integer_class a)&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_quo_ground(const integer_class a)&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_add(const RCP&amp;lt;const GaloisField&amp;gt; &amp;amp;o)&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sub(const RCP&amp;lt;const GaloisField&amp;gt; &amp;amp;o)&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_mul(const RCP&amp;lt;const GaloisField&amp;gt; &amp;amp;o)&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Where &lt;code class="highlighter-rouge"&gt;gf_*_ground&lt;/code&gt; does the operation represented by &lt;code class="highlighter-rouge"&gt;*&lt;/code&gt; by the integer &lt;code class="highlighter-rouge"&gt;a&lt;/code&gt; to the polynomaial in the given field.
-And &lt;code class="highlighter-rouge"&gt;gf_add&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;gf_sub&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;gf_mul&lt;/code&gt; do their respective operation with another polynomial in the finite field.
-&lt;br /&gt;
-I will be implementing &lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt; this weekend.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=146</guid>
-      <title>GSoC: First Week of Coding Phase</title>
-      <author>Subham Tibra (shubhamtibra)</author>
-      <pubDate>Tue, 24 May 2016 09:31:56 GMT</pubDate>
-      <link>https://shubhamtibra.wordpress.com/2016/05/24/gsoc-first-week-of-coding-phase/</link>
-      <description>&lt;p&gt;Since my last blog post I have opened two new PR&amp;#8217;s for the Project. We&amp;#8217;ll see what they do and discuss the goals of this week.&lt;/p&gt;
-&lt;p&gt;A major issue in the first PR was the slow performing algorithms, a consequence of using recursive expressions internally. Most of the algorithm implemented used matrices module to solve the linear system which doesn&amp;#8217;t support &lt;code&gt;DMP&lt;/code&gt;&amp;#160;and &lt;code&gt;DMF&lt;/code&gt;&amp;#160;objects.&lt;/p&gt;
-&lt;p&gt;So I defined a new class subclassed from &lt;code&gt;MutableDenseMatrix&lt;/code&gt;&amp;#160;and changed&amp;#160;some methods to make it work with Polynomials and Fractions and used this to use Polynomials internally. Thanks to Kalevi for this idea. It works much more robust now. I have also added methods to find composition of Holonomic Functions and converting a Hypergeometric Function to Holonomic. These things are added in this &lt;a href="https://github.com/sympy/sympy/pull/11115"&gt;PR&lt;/a&gt;.&amp;#160;I hope the PR gets merged in a couple of days.&lt;/p&gt;
-&lt;p&gt;A new &lt;a href="https://github.com/sympy/sympy/pull/11153"&gt;PR&lt;/a&gt; was opened for features relating to recurrence relations in coefficients of Power Series expansion of Holonomic Functions. The first thing I did was defined a class &lt;code&gt;RecurrenceOperator&lt;/code&gt;&amp;#160;parallel to &lt;code&gt;DifferentialOperator&lt;/code&gt;&amp;#160;to store the recurrence relation.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Goals of the Week:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;In this week, I have planned to define a function to find the Recurrence Relation of series coefficients and then go for numerical computation of Holonomic Functions. Let me know If anything else should be implemented first as I haven&amp;#8217;t discussed this with mentors yet.&lt;/p&gt;
-&lt;p&gt;The chronology might be different from what I wrote in the Proposal but we are quite ahead of that.&lt;/p&gt;
-&lt;p&gt;Cheers Everyone.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/146/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/146/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=146&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nishnik.github.io/Community-Bonding-Period</guid>
-      <title>Community Bonding Period</title>
-      <author>Nishant Nikhil (nishnik)</author>
-      <pubDate>Mon, 23 May 2016 00:00:00 GMT</pubDate>
-      <link>http://nishnik.github.io/Community-Bonding-Period/</link>
-      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
-
-&lt;p&gt;I have been selected for GSoC&amp;#8217;16 to work with &lt;a href="http://www.sympy.org/"&gt;Sympy&lt;/a&gt; on &lt;strong&gt;Implementing Finite Fields and Set module in SymEngine&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;a href="https://github.com/sympy/symengine"&gt;SymEngine&lt;/a&gt; is a standalone fast C++ symbolic manipulation library.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h1 id="about-the-proposal"&gt;About the Proposal&lt;/h1&gt;
-
-&lt;p&gt;We all know that Polynomial factorization is one of the fundamental tools of the computer algebra systems. And in symbolic mathematics, it is one of the basic requirement over which other algorithms can be implemented.&lt;br /&gt;
-Currently, SymEngine has the implementation of Univariate Polynomial class, which provides us the basic functionality to add, multiply and subtract two polynomials.&lt;br /&gt;
-Now, comes the problem of factoring the polynomials.&lt;br /&gt;
-We have explicit solution formulas only till polynomials of degree four(the Quadtratic formula for degree 2, &lt;a href="http://en.wikipedia.org/wiki/Cardano_formula#Cardano.27s_method"&gt;the Cardano formulas&lt;/a&gt; for third-degree equations, and &lt;a href="http://en.wikipedia.org/wiki/Quartic_function#The_general_case.2C_along_Ferrari.27s_lines"&gt;the Ferrari formula&lt;/a&gt; for degree 4).&lt;br /&gt;
-For sure, we need a different way out for higher degree polynomials.
-We see that there are algorithms for factorization in finite fields:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Cantor%E2%80%93Zassenhaus_algorithm"&gt;Cantor&amp;#8211;Zassenhaus algorithm&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Berlekamp's_algorithm"&gt;Berlekamp&amp;#8217;s algorithm&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;So, this summers I will be working on converting a polynomial in integer field to finite field, then factorizing them. After which we have to do &lt;a href="https://en.wikipedia.org/wiki/Hensel's_lemma"&gt;Hensel Lifting&lt;/a&gt; to bring back the factored polynomial to integer field.&lt;/p&gt;
-
-&lt;p&gt;Furthermore, I will be working on implementing Sets module. These two together will help us to create a basic infrastructure over which we can develop a solvers module in SymEngine.&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;My proposal can be found &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Application-Nishant-Nikhil:-Implementing-Finite-Fields-and-Set-module-in-SymEngine"&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h1 id="community-bonding-period"&gt;Community Bonding Period&lt;/h1&gt;
-
-&lt;p&gt;I have been alloted &lt;a href="https://github.com/isuruf"&gt;Isuru Fernando&lt;/a&gt;, &lt;a href="https://github.com/thilinarmtb"&gt;Thilina Rathnayake&lt;/a&gt;, &lt;a href="https://github.com/Sumith1896"&gt;Sumith&lt;/a&gt; and &lt;a href="https://github.com/certik"&gt;Ond&amp;#345;ej &amp;#268;ert&amp;#237;k&lt;/a&gt; as mentors.&lt;br /&gt;
-The SymEngine community is very fast in reachability.
-We had a discussion on &lt;a href="https://gitter.im/symengine/symengine"&gt;gitter channel of SymEngine&lt;/a&gt;, about the proceedings of our Proposals. As SymEngine has an implementaion of sparse polynomials, I will be working on changing them to Finite Fields. Like:&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;GaloisField::GaloisField(std::map&amp;lt;unsigned, int&amp;gt; &amp;amp;dict, unsigned modulo) : modulo_(modulo)
-{
-	unsigned temp;
-	for (auto iter : dict) {
-		temp = iter.second % modulo;
-		if (temp != 0)
-			dict_[iter.first] = temp;
-	}
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;&lt;br /&gt;
-where &lt;code class="highlighter-rouge"&gt;dict&lt;/code&gt; is the dictionary of Univariate Polynomial representation and, &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; stores its finite field representation modulo &lt;code class="highlighter-rouge"&gt;modulo_&lt;/code&gt;.
-I will be implementing this in the first week of GSoC period.&lt;/p&gt;
-
-&lt;h1 id="work-already-done"&gt;Work already Done&lt;/h1&gt;
-
-&lt;p&gt;During the Community Bonding Period, I worked on implementing &lt;a href="https://github.com/symengine/symengine/pull/934"&gt;&lt;code class="highlighter-rouge"&gt;UniversalSet&lt;/code&gt;&lt;/a&gt; and &lt;a href="https://github.com/symengine/symengine/pull/942"&gt;&lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt;&lt;/a&gt;.&lt;br /&gt;
-&lt;code class="highlighter-rouge"&gt;UniversalSet&lt;/code&gt; is a &lt;a href="https://en.wikipedia.org/wiki/Singleton_pattern"&gt;singleton class&lt;/a&gt; like &lt;code class="highlighter-rouge"&gt;EmptySet&lt;/code&gt;, and while implementing this I learned a lot about Singleton classes.&lt;br /&gt;
-&lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; is a class with a set of &lt;code class="highlighter-rouge"&gt;RCP&amp;lt;const Basic&amp;gt;&lt;/code&gt; as member variable. It can contain any object of &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt; type. While implemeting this, we came on a fix over what to do when we have a interval like [1, 1], i.e. both end points equal. This led to a little change in &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt;&amp;#8217;s code, and now it returns a &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt;. Though this PR is not merged till now. I hope to get it merged in the next few days and along with it keep working on Finite Field implementation.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://gxyd.github.io/Community Bonding period ends, starts Coding period</guid>
-      <title>Community Bonding period ends, Coding period starts</title>
-      <author>Gaurav Dhingra (gxyd)</author>
-      <pubDate>Sun, 22 May 2016 18:30:00 GMT</pubDate>
-      <link>https://gxyd.github.io/gsoc2016/coding_period_starts.html</link>
-      <description>&lt;p&gt;
-The Community bonding period comes to an end now. First of all considering the issues described in the last post:
-&lt;ul&gt;
-&lt;li&gt;
-Aaron created a new channel for our GSoC project discussion, &lt;a href="https://gitter.im/sympy/GroupTheory"&gt;sympy/GroupTheory&lt;/a&gt;.
-&lt;/li&gt;
-&lt;li&gt;
-I have also added rss-feed in my blog.
-&lt;/li&gt;
-&lt;li&gt;
-As for time of meeting, me and Kalevi often have discussion on the gitter channel, but since of quite a bit differene in timings between me and Aaron (I tend to sleep early at 11 PM IST). We three haven't been able to together have a meeting. Though Aaron suggested "Kalevi is the primary mentor, so if you have to meet without me that is fine". I also think that's not too big of an issue now, but his opinion has always helped, since he has best knowledge of sympy core.
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;
-In the past few weeks I wasn't too much productive, since I had a touch of fever, anyways I am okay now. We have now completed the implementation of the &lt;code&gt;FreeGroup&lt;/code&gt; class in &lt;a href="https://github.com/sympy/sympy/pull/10350"&gt;PR #10350&lt;/a&gt;. I started working on the PR back in January but I halted, since of my semester classes. &lt;code&gt;FreeGroup&lt;/code&gt; is quite similar to the &lt;code&gt;PolyRing&lt;/code&gt; implemented in &lt;code&gt;sympy.polys.rings.py&lt;/code&gt;. We first started with the list of tuples as the data structure for the &lt;code&gt;FreeGroupElm&lt;/code&gt;, where each tuple being &lt;code&gt;(index, exp)&lt;/code&gt;, but since of the mutable nature of lists, Kalevi suggested to go with tuple of tuples. Also as tuples are probably more efficient as there is no 'housekeeping' overhead. Also changed the element from &lt;code&gt;(index, exp)&lt;/code&gt; --&gt; &lt;code&gt;(symbol, exp)&lt;/code&gt;.
-&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;
- Implementing &lt;code&gt;FreeGroupElm&lt;/code&gt; deals elegantly in such a way that it can't be independently created in a public interface. The reason being: every &lt;code&gt;FreeGroupElm&lt;/code&gt; is in itself created only by the &lt;code&gt;dtype&lt;/code&gt; method of &lt;code&gt;FreeGroup&lt;/code&gt; class. The assignment is as follows:
-&lt;br /&gt;
-  &lt;code&gt;obj.dtype = type("FreeGroupElm", (FreeGroupElm,), {"group": obj})&lt;/code&gt;
-&lt;br /&gt;.
-
-Its sort of an advanced usage of &lt;code&gt;type&lt;/code&gt; function as a &lt;a href="http://www.stackoverflow.com/questions/100003/what-is-a-metaclass-in-python"&gt;metaclass&lt;/a&gt;.
-&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;
-Currently the printing code of &lt;code&gt;latex&lt;/code&gt; and &lt;code&gt;pprint&lt;/code&gt; for &lt;code&gt;FreeGroupElm&lt;/code&gt; is a little hacky. I need to work on that as well.
-&lt;/p&gt;
-
-&lt;br /&gt;
-&lt;p&gt;
-&lt;b&gt;&lt;u&gt;Plan for Next few weeks&lt;/u&gt;&lt;/b&gt;
-&lt;br /&gt;&lt;br /&gt;
-Though according to my &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Application-Gaurav-Dhingra:-Group-Theory#Proposed_Timeline"&gt;proposal timeline&lt;/a&gt;, we described to go with implementation of other algebraic structures i.e &lt;code&gt;Magma&lt;/code&gt;, &lt;code&gt;SemiGroup&lt;/code&gt;, &lt;code&gt;Monoid&lt;/code&gt;. But we will next move onto &lt;b&gt;"Coset Enumeration"&lt;/b&gt;. It is going to be a big task. That is harder and more important than other algebraic structures. Timline states it to be 5 week task, thats almost half the GSoC coding period. Well how do we go about that? I think of studying the mathematics in parallel with the implementation.
-&lt;/p&gt;
-
-&lt;p&gt;
-We have created a PR for implementation of Finitely Presented Group &lt;a href="https://github.com/sympy/sympy/pull/11140"&gt;#11140&lt;/a&gt;. Not much code has been added here. Paper on Coset Enumeration using &lt;a href="http://staff.itee.uq.edu.au/havas/1973cdhw.pdf"&gt;Implementation and Analysis of Todd Coxeter Algorithm&lt;/a&gt; (by John J. Cannon, George Havas), and other paper being the original paper by Todd and Coxeter, "A practical method for enumerating cosets of a finite abstract group" are the ones I am reading. As for the implementation of Todd Coxeter, we will be following the methods described in the book "Handbook of Computational Group Theory" by Derek F. Holt.
-&lt;/p&gt;
-
-&lt;p&gt;
-Also now the "official" coding period begins, good luck to everyone.
-&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

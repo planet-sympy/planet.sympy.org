@@ -334,6 +334,144 @@ mat = SymEngine::DenseMatrix.new(no_rows, no_columns)</pre>
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-e3857505">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/srajangarg.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Srajan Garg (srajangarg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://srajangarg.github.io//2016/06/19/Polynomial-Functionality/">00:00, Sunday, 19 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/06/19/Polynomial-Functionality/">Polynomial Functionalities</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/srajangarg.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Srajan Garg (srajangarg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://srajangarg.github.io//2016/06/19/Polynomial-Functionality/">00:00, Sunday, 19 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/06/19/Polynomial-Functionality/">Polynomial Functionalities</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<h3 id="overview">Overview</h3>
+
+<p>The last week was spent on adding more functionality to all the three types of Integer Polynomials in SymEngine. Which meant that I had to basically wrap methods already existing in Piranha and Flint, and write new methods for the SymEngine polynomials to provide the required functionality. Details about said functions and the problems faced while implementing them are described in the rest of the post.</p>
+
+<p>Also this Saturday, some friends and I decided to visit the hill station of Lonavala for the day. It was a replenishing experience, and a break from the regular routine. Here&#8217;s us!</p>
+
+<p><img alt="" src="http://srajangarg.github.io/assets/lonavala.jpg" /></p>
+
+<h3 id="functions">Functions</h3>
+
+<p>I wanted to start off by adding a <code class="highlighter-rouge">div_upoly</code> functions for dividing two univariate polynomials. It is obvious that division of two polynomials with integer coefficients may very well result in polynomials with rational coefficients. But a rational polynomial class does not exist. So what does it mean to divide two univariate polynomials and get a integer polynomial quotient and remainder? The domain <code class="highlighter-rouge">ZZ[x]</code> is not a <a href="https://en.wikipedia.org/wiki/Euclidean_domain">Euclidean Domain</a>. Here is what we mean by Euclidean division,</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Two polynomials p, q can uniquely be written as
+p = quo * q + rem 
+deg(rem) &lt; deg(q) or rem = 0
+</code></pre>
+</div>
+
+<p>Thus the euclidean division that we are so familiar with is not defined for this domain. So how do other libraries handle this division? I tried the division with Flint, Sage and SymPy.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>In [14]: q = Poly(2*x)
+In [15]: p = Poly(5*x**2)
+In [16]: div(p, q, domain=ZZ)
+</code></pre>
+</div>
+
+<p>Flint and Sage gave :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>quo = Poly(2*x, x, domain='ZZ') 
+rem = Poly(x**2, x, domain='ZZ')
+</code></pre>
+</div>
+
+<p>while SymPy gave :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>quo = Poly(0, x, domain='ZZ') 
+rem = Poly(5*x**2, x, domain='ZZ')
+</code></pre>
+</div>
+
+<p>This was interesting, as SymPy gave a different answer than the other two. I asked about this behaviour on gitter, and had a brief explanation given by <a href="https://github.com/jksuom">@jksuom</a>,</p>
+
+<blockquote>
+  <p>The operation <code class="highlighter-rouge">quo_rem</code> is mathematically well defined only in so-called Euclidean domains. They are principal ideal domains (PIDs) equipped with a &#8216;Euclidean function. <code class="highlighter-rouge">ZZ[x]</code> is not a PID, so there is no universal agreement on how <code class="highlighter-rouge">quo_rem</code> should be defined. I think that there are some appealing features in the way it is defined in sage, but one cannot say that SymPy&#8217;s way would be wrong, either.</p>
+</blockquote>
+
+<blockquote>
+  <p>It seems that the main (only?) practical use of <code class="highlighter-rouge">quo_rem</code> in non-Euclidean domains is for testing if an element is divisible by another. That happens when the remainder vanishes. Both ways of defining <code class="highlighter-rouge">quo_rem</code> in <code class="highlighter-rouge">ZZ[x]</code> can be used to decide this.</p>
+</blockquote>
+
+<p>This explanation made a lot of sense, but I was anyways asked to open up <a href="https://github.com/sympy/sympy/issues/11240">#11240</a>, to know why SymPy handled division the way it did, and if it could be changed. Taking in all the inputs, I decided that I should not go ahead with a <code class="highlighter-rouge">div_upoly</code> function for now, instead I made a <code class="highlighter-rouge">divides_upoly</code> function which basically tells wether a polynomial divides the other or not. I had to implement the straight forward algorithm in SymEngine, while Flint already had a <code class="highlighter-rouge">divides</code> function and Piranha throws an exception on inexact division,  which I used to port it for Piranha polynomials.</p>
+
+<p>Other methods which were wrapped were <code class="highlighter-rouge">gcd</code> and <code class="highlighter-rouge">lcm</code> for both the Flint and the Piranha polynomials. I have not been able to write these functions for SymEngine polynomials yet. The most trivial algorithms for finding GCD of two univariate polynomials depends on euclidean division, and that does not exist in the integer ring polynomials. Some more information from <a href="https://github.com/jksuom">@jksuom</a>,</p>
+
+<blockquote>
+  <p>The ring <code class="highlighter-rouge">ZZ[x]</code> is a unique factorization domain (UFD) even if it is not euclidean. It has <code class="highlighter-rouge">gcd</code> and <code class="highlighter-rouge">lcm</code>, but there is no euclidean algorithm for them.</p>
+</blockquote>
+
+<p>Isuru suggested a hint for a simple algorithm, but I have not been able to follow it up yet. I&#8217;ll catch up with it in the coming week. The next function I worked on was <code class="highlighter-rouge">pow</code>. Again this was already implemented in the two other libraries and I just had to wrap them. For SymEngine, I had to decide which algorithm to use, a naive repeated approach or the <a href="https://en.wikipedia.org/wiki/Exponentiation_by_squaring">exponention by squaring</a> algorithm. I also benchmarked the <code class="highlighter-rouge">pow</code> methods of Piranha too. All the work and the benchmarks are in <a href="https://github.com/symengine/symengine/pull/989">#989</a>.</p>
+
+<h3 id="miscellaneous-work">Miscellaneous Work</h3>
+
+<ul>
+  <li>
+    <p>Other functionalities like <code class="highlighter-rouge">multieval</code>, <code class="highlighter-rouge">derivative</code> and <code class="highlighter-rouge">get_lc</code> were also added for all the three intger polynomials.</p>
+  </li>
+  <li>
+    <p>There was an error in the Flint documentation, which was related with incorrect ordering of the arguments being passed to the <code class="highlighter-rouge">divides</code> function. It was reported in <a href="https://github.com/wbhart/flint2/issues/267">#267</a>.</p>
+  </li>
+  <li>
+    <p>Piranha required some implementations to be explicitly provided on the coefficient class, we are going to use. Thus, I had to overwrite some implementations like <code class="highlighter-rouge">gcd_impl</code>, <code class="highlighter-rouge">pow_impl</code> and <code class="highlighter-rouge">divexact_impl</code> for <code class="highlighter-rouge">SymEngine::intger_class</code> to work with <code class="highlighter-rouge">piranha::polynomial</code>.</p>
+  </li>
+</ul>
+
+<p>I will write <code class="highlighter-rouge">gcd</code> and <code class="highlighter-rouge">lcm</code> for SymEngine polynomials, and start on <code class="highlighter-rouge">Basic -&gt; Poly</code> conversion to add to the coercion framework decided for SymEngine, soon.</p>
+
+<p>See you!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">June 17, 2016</h2>
@@ -870,6 +1008,155 @@ NotImplementedError: No solver has been written for cubic_thue.
 </span></pre>
 <p>This needs to be written in C++, then wrapped in C and later in Ruby. Though I was planning to start working on it during the weekend, it was only possible to read and plan how to write the code. So next week, along with starting on the Matrices, I will look into achieving this as well.</p>
 <p>See you next week!</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/276/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/276/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&#038;blog=110498904&#038;post=276&#038;subd=rajithsays&#038;ref=&#038;feed=1" width="1" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-16c1b1aa">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/srajangarg.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Srajan Garg (srajangarg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://srajangarg.github.io//2016/06/12/Piranha-Polynomials/">00:00, Sunday, 12 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/06/12/Piranha-Polynomials/">Piranha Polynomials &amp; Iterators</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/srajangarg.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Srajan Garg (srajangarg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://srajangarg.github.io//2016/06/12/Piranha-Polynomials/">00:00, Sunday, 12 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/06/12/Piranha-Polynomials/">Piranha Polynomials &amp; Iterators</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<h3 id="overview">Overview</h3>
+
+<p>I worked on wrapping Piranha polynomials within SymEngine this week. It felt much more interesting than wrapping Flint polynomials, mainly because I was reading the Piranha&#8217;s source and was in direct touch with the  author of the library. Many thanks to <a href="https://github.com/bluescarni">@bluescarni</a> who helped me getting familiar with it. As before, I&#8217;ll briefly summarize the work I did this week along with my progress.</p>
+
+<h3 id="piranha-polynomials">Piranha Polynomials</h3>
+
+<p>Piranha&#8217;s polynomial class is the <code class="highlighter-rouge">piranha::polynomial</code> class. It&#8217;s templatized as follows:</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">Cf</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Key</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">polynomial</span> <span class="o">:</span> <span class="n">power_series</span><span class="o">&lt;</span> <span class="p">...</span> <span class="o">&gt;</span>
+</code></pre>
+</div>
+
+<p>There are two major differences about Piranha Polynomials and SymEngine polynomials. Firstly, it uses a custom unordered map implementation called <code class="highlighter-rouge">hash_set</code> for storing it&#8217;s degree-coefficient pairs. <code class="highlighter-rouge">hash_set</code> has been internally optimized for polynomial manipulations in general. On a side note, this makes SymEngine have all three types of polynomial representations too! Secondly, Piranha does not distinguish between univariate polynomials and multivariate polynomials. All polynomials are multivariate polynomials, univariate polynomials being a special case (with just one element in it&#8217;s <code class="highlighter-rouge">symbol_set</code>).</p>
+
+<p>Here, <code class="highlighter-rouge">Cf</code> is the class for storing the coefficients, while <code class="highlighter-rouge">Key</code> are the monomials themselves. Unlike Flint, we can use any integer class as the coefficient class for the polynomials. So, the first question was wether to use <code class="highlighter-rouge">piranha::integer</code> (and use implicit conversions like I did in Flint polynomials) or <code class="highlighter-rouge">SymEngine::integer_class</code> as the integer class for Piranha polynomials. After a brief discussion with Isuru, we decided to go with SymEngine&#8217;s integers. The <code class="highlighter-rouge">Key</code> class used is <code class="highlighter-rouge">piranha::monomial&lt;uint&gt;</code>, which means it will store one <code class="highlighter-rouge">unsigned int</code> per symbol (representing the degree, in each monomial).</p>
+
+<h3 id="symengines-integers-in-piranhapolynomial">SymEngine&#8217;s integers in <code class="highlighter-rouge">piranha::polynomial</code></h3>
+
+<p>For an integer class to be usable as the <code class="highlighter-rouge">Cf</code> it should have some basic properties like, default constructibility, copy constructibility, <code class="highlighter-rouge">nothrow</code> destructibility, <code class="highlighter-rouge">nothrow</code> move assignability and <code class="highlighter-rouge">nothrow</code> move constructibility. As of yet, <code class="highlighter-rouge">mpz_wrapper</code>, <code class="highlighter-rouge">fmpz_wrapper</code> and <code class="highlighter-rouge">mpz_class</code> did not pass the <code class="highlighter-rouge">nothrow</code> checks. All that had to bee done was that I had to add <code class="highlighter-rouge">noexcept</code> to the wrappers we had already written. This allowed <code class="highlighter-rouge">mpz_wrapper</code> and <code class="highlighter-rouge">fmpz_wrapper</code> to be used as coefficients in Piranha polynomials. Ofcourse, Piranha&#8217;s own integer class passes all these checks too.</p>
+
+<p>Currently, there is no solution for having <code class="highlighter-rouge">mpz_class</code> as the coefficient class for polynomials. Firstly, these gmpxx integers methods have not been marked <code class="highlighter-rouge">nothrow</code> yet. There is a forum <a href="https://gmplib.org/list-archives/gmp-devel/2016-April/004271.html">post</a> on how it can be added, and actually has been added in the development version but hasn&#8217;t been released yet. Another reason  is that <code class="highlighter-rouge">mpz_class</code> uses <a href="https://en.wikipedia.org/wiki/Expression_templates">expression templates</a> for improved performance. This means that unlike normal integers, any arithmetic operation does not necessarily return the same integer class.</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
+<span class="n">is_a</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">);</span> 		<span class="c1">// true
+</span>
+<span class="n">mpz_class</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span>
+<span class="n">is_a</span><span class="o">&lt;</span><span class="n">mpz_class</span><span class="o">&gt;</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">);</span>	<span class="c1">// false
+</span></code></pre>
+</div>
+
+<p>The reason it cannot be used within Piranha is that Piranha checks the coefficient type after each operation so that it knows what <a href="https://en.wikipedia.org/wiki/Polynomial_ring">ring</a> the polynomial belongs to. Here, it will be unable to detect what the ring is, as the returned coefficient will be an expression template. Thus, it was decided that the integer class <code class="highlighter-rouge">mpz_class</code> can&#8217;t be used alongside Piranha with SymEngine. So, the following became invalid, on which a warning is thrown and the class is changed to <code class="highlighter-rouge">mpz_wrapper</code> :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>cmake -DWITH_PIRANHA=yes -DINTEGER_CLASS=gmpxx
+</code></pre>
+</div>
+
+<p>All the work on Piranha polynomials and the <code class="highlighter-rouge">cmake</code> changes can be found in <a href="https://github.com/symengine/symengine/pull/980">#980</a>.</p>
+
+<h3 id="iterators">Iterators</h3>
+
+<p>Currently this is what the <code class="highlighter-rouge">print</code> functions for our univariate integer polynomials looked like :</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">string</span> <span class="nf">print</span><span class="p">(</span><span class="k">const</span> <span class="n">UIntPoly</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">it</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">dict_</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">it</span> <span class="o">!=</span> <span class="n">p</span><span class="p">.</span><span class="n">dict_</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="o">++</span><span class="n">it</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="c1">// use it-&gt;first and it-&gt;second
+</span>	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">string</span> <span class="nf">print</span><span class="p">(</span><span class="k">const</span> <span class="n">UIntPolyFlint</span><span class="o">&amp;</span> <span class="n">p</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">it</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">degree</span><span class="p">();</span> <span class="n">it</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="o">--</span><span class="n">it</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="c1">// use it and p.get_coeff(it)
+</span>	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>These methods are very similar and do not deserve to be separate functions. All that was needed to unify these methods was to have iterators for each of the three classes, and then we can have use the same code for many functions like <code class="highlighter-rouge">print</code>, <code class="highlighter-rouge">as_symbolic</code> and <code class="highlighter-rouge">derivative</code>. This also called for a new base class to be made, <code class="highlighter-rouge">UIntPolyBase</code> from which these three integer polynomials inherit and it itself inherits from the original base class <code class="highlighter-rouge">UPolyBase</code>.</p>
+
+<p>I stuck with the syntax of <code class="highlighter-rouge">it-&gt;first</code> and <code class="highlighter-rouge">it-&gt;second</code> for the unified iterators. Which means <code class="highlighter-rouge">operator*</code> needed to return a <code class="highlighter-rouge">std::pair&lt;uint, integer_class&gt;</code>. So, for SymEngine polynomials all I needed to do was return iterators to the internal dictionary and that was it. Not going into too much technicality, for Flint and Piranha I used custom iterators which had <code class="highlighter-rouge">operator++</code> defined on them and returned a pair whenever <code class="highlighter-rouge">it-&gt;</code> or <code class="highlighter-rouge">*it</code> was called on them. They basically iterated over the degree and returned only for non-zero coefficients for both the libraries. The actual implementation of the iterator scheme can be seen in <a href="https://github.com/symengine/symengine/pull/985">#985</a>.</p>
+
+<p>Initially I was happy with this approach and was able to write (unifying the three) :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>string print(const UIntPolyBase&amp; p)
+{
+	for(auto it = p.dict_.begin(); it != p.dict_.end(); ++it)
+	{
+		// use it-&gt;first and it-&gt;second
+	}
+}
+</code></pre>
+</div>
+
+<p>Isuru pointed out that instead of returning the <code class="highlighter-rouge">integer_class</code> in the pair, we should return a reference to it. Now, this made sense but was a bit tricky to implement. Also the iterator could no longer return reference like <code class="highlighter-rouge">const integer_class&amp;</code>, as Flint did not even store it&#8217;s coefficients as <code class="highlighter-rouge">integer_class</code>. To tackle this, another template parameter had to be added to the custom iterator class which determined the second term of the pair (which was supposed to be the reference to the coefficient in the internal storage of the polynomial). Also, I had to dig in to the Flint documentation and ask Piranha&#8217;s author, for knowing how I could get <code class="highlighter-rouge">const</code> references to the coefficients in internal storage. After this was finally implemented, there was a new <code class="highlighter-rouge">get_coeff_ref</code> method, which does not copy but returns a reference to the required coefficient. The only downside to all this was that instead of <code class="highlighter-rouge">it-&gt;second</code> I had to use <code class="highlighter-rouge">to_integer_class(it-&gt;second)</code> everywhere in the common functions.</p>
+
+<h3 id="miscellaneous-work">Miscellaneous Work</h3>
+
+<ul>
+  <li>I saw that in SymEngine, there were lots of redundant header file includes in many files. I wrote a short python script which makes a header dependency tree, and automatically removes header includes which are not needed. After some manual inspection of the changes I pushed in <a href="https://github.com/symengine/symengine/pull/981">#981</a>. It was really amazing to see the script flag more than 500 lines of redundant includes. The PR has not been merged yet, though.</li>
+</ul>
+
+<p>I will be working on higher level functionality like <code class="highlighter-rouge">gcd</code> in the coming week. Will keep you guys posted.</p>
+
+<p>Laters!</p>
 					</div>
 				</div>
 			</div>
@@ -1580,6 +1867,136 @@ It is better than <code class="highlighter-rouge">gf_div</code> in terms of time
 Now as <code class="highlighter-rouge">GaloisField</code> is just representation of polynomial so I needed something similar, so I made <code class="highlighter-rouge">GaloisField</code> inherit from <code class="highlighter-rouge">UPolyBase</code>, and made a container named <code class="highlighter-rouge">GaloisFieldDict</code>.
 This prevented a lot of code duplicacy.
 Still there is a lot of conversation going on this topic, I will better post after the final design is fixed.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-338f3905">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/srajangarg.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Srajan Garg (srajangarg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://srajangarg.github.io//2016/06/06/Flint-Polynomials/">00:00, Monday, 06 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/06/06/Flint-Polynomials/">Flint Polynomials</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/srajangarg.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Srajan Garg (srajangarg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://srajangarg.github.io//2016/06/06/Flint-Polynomials/">00:00, Monday, 06 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/06/06/Flint-Polynomials/">Flint Polynomials</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<h3 id="overview">Overview</h3>
+
+<p>This week has not been as interesting as the last. Most of my work this week involved wrapping Flint Polynomials, for use in SymEngine. I will discuss their internal implementation and how they were integrated to the library.</p>
+
+<h3 id="flint-polynomials">Flint Polynomials</h3>
+
+<p>Flint&#8217;s integer polynomial class is the <code class="highlighter-rouge">fmpz_poly</code> class. Flint, being a C library also provides a C++ wrapper for most of it&#8217;s classes. In our case, it&#8217;s the <code class="highlighter-rouge">fmpz_polyxx</code> class. As discussed last week, the arithmetic operators for the class have already been overloaded and it can be seamlessly used with the base class which is already set up.</p>
+
+<p>Internally, flint uses a dense representation of polynomials. What this means is that the coefficient for each degree in the polynomial are stored in a vector. This is in contrast to a sparse approach which deals stores only non-zero coefficients of a polynomial in a dictionary. Flint also uses it&#8217;s own integer class as the coefficient type. Flint&#8217;s integers are basically similar to GMP integers, and also follow the same naming conventions. (eg. <code class="highlighter-rouge">fmpz_t</code> is analogous to <code class="highlighter-rouge">mpz_t</code>) They have internal optimizations to make them faster for use within the flint library itself. Flint does not provide the option to use a custom integer class as the type of coefficients like Piranha does.</p>
+
+<p>All the work related to flint polynomials can be seen in <a href="https://github.com/symengine/symengine/pull/971">#971</a>. The majority of the PR concerns introducing a new class <code class="highlighter-rouge">UIntPolyFlint</code> and all the necessary functionality like <code class="highlighter-rouge">__hash__</code>, <code class="highlighter-rouge">eval</code> and <code class="highlighter-rouge">compare</code>. Test cases have also been added, to see if the polynomial manipulation is working as intended. There is some additional minor work done here apart from this class introduction.</p>
+
+<p>The polynomial base class now has three methods :</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="k">static</span> <span class="n">Poly</span> <span class="n">from_container</span><span class="p">()</span>
+<span class="k">static</span> <span class="n">Poly</span> <span class="n">from_dict</span><span class="p">()</span>
+<span class="k">static</span> <span class="n">Poly</span> <span class="n">from_vec</span><span class="p">()</span>
+</code></pre>
+</div>
+<p>These methods are, as indicated from their names, used to construct the polynomial from any of the three sources. So, for example to construct a <code class="highlighter-rouge">UIntPolyFlint</code>, you can :</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">PolyFlint</span> <span class="n">a</span> <span class="o">=</span> <span class="n">PolyFlint</span><span class="o">::</span><span class="n">from_container</span><span class="p">(</span><span class="n">fmpz_polyxx</span> <span class="n">A</span><span class="p">);</span>
+<span class="n">PolyFlint</span> <span class="n">b</span> <span class="o">=</span> <span class="n">PolyFlint</span><span class="o">::</span><span class="n">from_vec</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">integer_class</span><span class="o">&gt;</span> <span class="n">B</span><span class="p">);</span>
+<span class="n">PolyFlint</span> <span class="n">a</span> <span class="o">=</span> <span class="n">PolyFlint</span><span class="o">::</span><span class="n">from_dict</span><span class="p">(</span><span class="n">map</span><span class="o">&lt;</span><span class="n">uint</span><span class="p">,</span> <span class="n">integer_class</span><span class="o">&gt;</span> <span class="n">C</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<h3 id="integerclass-conversions"><code class="highlighter-rouge">integer_class</code> Conversions</h3>
+
+<p>Another issue was that methods like <code class="highlighter-rouge">eval</code> must return integers of <code class="highlighter-rouge">integer_class</code>. Thus, we needed functions to convert <code class="highlighter-rouge">fmpzxx</code> to any of the 4 possible integer classes used by SymEngine. The 4 integers used by SymEngine are :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>1. mpz_class         The default C++ class provided by GMP
+2. mpz_wrapper       SymEngine's wrapper around GMP's mpz_t
+3. piranha::integer  Piranha's integer class
+3. fmpz_wrapper      SymEngine's wrapper around Flint's fmpz_t
+</code></pre>
+</div>
+
+<p>We, might even require such conversion for Piranha polynomials. So, I generalized this and made <code class="highlighter-rouge">to_integer_class()</code> which takes in either <code class="highlighter-rouge">flint::fmpzxx</code> or <code class="highlighter-rouge">piranha::integer</code> and returns an <code class="highlighter-rouge">integer_class</code>. There was a small discussion on where these functions should be placed, with Isuru which was insightful. Basically, what I was doing earlier caused a considerable <a href="https://github.com/symengine/symengine/pull/971#issuecomment-223743950">increase</a> in compilation time, which was later corrected. An example of one such function is :</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="cp">#if SYMENGINE_INTEGER_CLASS == GMP || GMPXX
+#ifdef HAVE_SYMENGINE_FLINT
+</span><span class="kr">inline</span> <span class="n">integer_class</span> <span class="nf">to_integer_class</span><span class="p">(</span><span class="k">const</span> <span class="n">flint</span><span class="o">::</span><span class="n">fmpzxx</span> <span class="o">&amp;</span><span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">integer_class</span> <span class="n">x</span><span class="p">;</span>
+    <span class="n">fmpz_get_mpz</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">get_mpz_t</span><span class="p">(),</span> <span class="n">i</span><span class="p">.</span><span class="n">_data</span><span class="p">().</span><span class="n">inner</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="cp">#endif
+#endif
+</span></code></pre>
+</div>
+
+<p>A <code class="highlighter-rouge">get_coeff()</code> function was also added to the polynomial base is a much needed function for any polynomial manipulation.</p>
+
+<h3 id="miscellaneous-work">Miscellaneous Work</h3>
+
+<ul>
+  <li>
+    <p>There were some changes done to the polynomial structure before the flint polynomials were introduced. Constructor of the polynomials from vectors was removed, as it wasn&#8217;t required. And a <code class="highlighter-rouge">from_vec</code> was added for the SymEngine polynomial dictionaries <code class="highlighter-rouge">UIntDict</code> and <code class="highlighter-rouge">UExprDict</code>. The changes can be seen here <a href="https://github.com/symengine/symengine/pull/965/">#965</a>.</p>
+  </li>
+  <li>
+    <p>In Travis CI builds, SymEngine was using flint-2.4.4 from a static location. There&#8217;s a <a href="https://github.com/wbhart/flint2/issues/217">bug</a> that I encountered using this version, which dealt with incorrect header declaration in one of the flint files. Now, we clone the flint repository from  <a href="https://github.com/wbhart/flint2/">wbhart/flint2</a> to use in the CI builds. The change is in <a href="https://github.com/symengine/symengine/pull/973">#973</a>.</p>
+  </li>
+</ul>
+
+<p>I&#8217;m working on wrapping Piranha polynomials next week. After that is done, I plan to start getting higher level functionality like <code class="highlighter-rouge">gcd</code> and <code class="highlighter-rouge">factorize</code> ready.</p>
+
+<p>Ciao!</p>
 					</div>
 				</div>
 			</div>
@@ -2701,6 +3118,167 @@ This will require some digging up and a bit of research.</p>
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-74a78d8e">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/srajangarg.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Srajan Garg (srajangarg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://srajangarg.github.io//2016/05/29/Wrap-a-Lot/">00:00, Sunday, 29 May UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/05/29/Wrap-a-Lot/">Wrap a lot</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/srajangarg.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Srajan Garg (srajangarg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://srajangarg.github.io//2016/05/29/Wrap-a-Lot/">00:00, Sunday, 29 May UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/05/29/Wrap-a-Lot/">Wrap a lot</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<h3 id="overview">Overview</h3>
+
+<p>As I pointed out in last week&#8217;s post, I have begun my work on the wrapping aspects of my project. The final aim of wrapping the polynomial class is to provide users with the option of using specialized polynomial libraries like Flint and Piranha.</p>
+
+<p>Right at the beginning of the project, I was lacking the basic idea of how the wrapping will work. Mostly I was confused by the fact that we have to right common code for all the libraries (SymEngine, Flint &amp; Piranha) with the problem being, each of the these libraries have different internal representation and methods. By the end of the week, thanks to Isuru, I have much more understanding of the desired structure of the code. Here&#8217;s a short summary on how it will work.</p>
+
+<h3 id="polynomial-base">Polynomial Base</h3>
+<p>There will be four end (derived) classes. <code class="highlighter-rouge">UIntPoly</code> &amp; <code class="highlighter-rouge">UExprPoly</code> (the SymEngine) polynomials, <code class="highlighter-rouge">UIntPolyFlint</code> and also <code class="highlighter-rouge">UIntPolyPiranha</code>. Each of these classes derive from the base class called <code class="highlighter-rouge">UPolyBase</code>. Now the base class must have methods and members which can be used commonly by each of the derived classes. Thus, the base class should have two members, the <code class="highlighter-rouge">var</code> which depicts the variable of the polynomial and a <code class="highlighter-rouge">container</code> which contains the data about the polynomial (basically the coefficients corresponding to each degree).</p>
+
+<p>This is skeleton of how the classes should look like :</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Container</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">UPolyBase</span>
+<span class="p">{</span>
+	<span class="n">Symbol</span> <span class="n">var</span><span class="p">;</span>
+	<span class="n">Container</span> <span class="n">container</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// the derived polynomials
+</span><span class="k">class</span> <span class="nc">UIntPolyPiranha</span> <span class="o">:</span> <span class="n">UPolyBase</span><span class="o">&lt;</span><span class="n">piranha</span><span class="o">::</span><span class="n">polynomail</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">UIntPolyFlint</span>   <span class="o">:</span> <span class="n">UPolyBase</span><span class="o">&lt;</span><span class="n">flint</span><span class="o">::</span><span class="n">fmpz_polyxx</span><span class="o">&gt;</span>
+</code></pre>
+</div>
+
+<h3 id="symengines-container">SymEngine&#8217;s Container</h3>
+
+<p>The containers of the Flint and Piranha will be discussed in detail in the upcoming weeks. We now had to think about what the container must be for SymEngine. Also we have to merge as much functionality as possible. I saw that both the external libraries had operators overloaded for addition, subtraction, multiplication and division. So, methods like <code class="highlighter-rouge">add_poly</code> and <code class="highlighter-rouge">sub_poly</code> etc. could be made common in the base class itself if I implemented a container for holding SymEngine polynomials which also has it&#8217;s operators overloaded.</p>
+
+<p>I was not familiar with the symbolic side of the polynomials, and found out that a container had already been made for <code class="highlighter-rouge">UExprPoly</code> called <code class="highlighter-rouge">UExprDict</code>. The class was nothing but a wrapper around <code class="highlighter-rouge">map&lt;int, Expression&gt;</code>. It had overloaded methods for addition, subtraction etc. So, technically this dictionary was storing all the information about the polynomials. I just had to create another similar wrapper for <code class="highlighter-rouge">map&lt;uint, integer_class&gt;</code> for the integer counterpart of the polynomial class. This resulted in <a href="https://github.com/symengine/symengine/pull/946">#946</a> and Isuru mentioned that most of the code for both these dictionary wrappers is about the same! So, I decided to make a base class for polynomial dictionary wrappers and both of these can inherit from that. Any different implementations (like <code class="highlighter-rouge">*=</code>) can be overridden in the derived class if needed.</p>
+
+<p>The ordered map base looks like :</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Key</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Value</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Wrapper</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">ODictWrapper</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">Key</span><span class="p">,</span> <span class="n">Value</span><span class="o">&gt;</span> <span class="n">dict_</span><span class="p">;</span>
+
+    <span class="k">friend</span> <span class="n">Wrapper</span> <span class="k">operator</span><span class="o">-</span><span class="p">(</span><span class="k">const</span> <span class="n">Wrapper</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">Wrapper</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">Wrapper</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+        <span class="n">c</span> <span class="o">-=</span> <span class="n">b</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">Wrapper</span> <span class="k">operator</span><span class="o">-</span><span class="p">()</span> <span class="k">const</span>
+    <span class="p">{</span>
+        <span class="n">ODictWrapper</span> <span class="n">c</span> <span class="o">=</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="o">&amp;</span><span class="n">iter</span> <span class="o">:</span> <span class="n">c</span><span class="p">.</span><span class="n">dict_</span><span class="p">)</span>
+            <span class="n">iter</span><span class="p">.</span><span class="n">second</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Wrapper</span> <span class="o">&amp;&gt;</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="p">....</span>
+<span class="p">}</span>
+
+<span class="c1">// the derived wrappers
+</span><span class="k">class</span> <span class="nc">UIntDict</span>  <span class="o">:</span> <span class="n">ODictWrapper</span><span class="o">&lt;</span><span class="n">uint</span><span class="p">,</span> <span class="n">integer_class</span><span class="p">,</span> <span class="n">UIntDict</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">UExprDict</span> <span class="o">:</span> <span class="n">ODictWrapper</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">UExprDict</span><span class="o">&gt;</span>
+</code></pre>
+</div>
+
+<h3 id="finishing-the-class">Finishing the class</h3>
+
+<p>After the containers for SymEngine were complete, I started implementing the polynomial base class, from which the two current polynomial classes will inherit. The class turned out to be very similar to the prototype described above. Accessor methods were added and basic polynomial functions were added <a href="https://github.com/symengine/symengine/pull/951">#951</a>.</p>
+
+<p>All we have to do now for functions like <code class="highlighter-rouge">add_poly</code> is use the overloaded operators on the containers. Also, template argument deduction will automatically allow us to call the functions directly on two same polynomial types.</p>
+
+<p>An example of a common template function for addition :</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Poly</span><span class="o">&gt;</span>
+<span class="n">RCP</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">Poly</span><span class="o">&gt;</span> <span class="n">add_upoly</span><span class="p">(</span><span class="k">const</span> <span class="n">Poly</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">Poly</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">auto</span> <span class="n">dict</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">get_poly</span><span class="p">();</span>
+    <span class="n">dict</span> <span class="o">+=</span> <span class="n">b</span><span class="p">.</span><span class="n">get_poly</span><span class="p">();</span>
+    <span class="k">return</span> <span class="n">Poly</span><span class="o">::</span><span class="n">from_dict</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">get_var</span><span class="p">(),</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">dict</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>and how easily it can be used :</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">A</span> <span class="o">=</span> <span class="n">uint_poly</span><span class="p">(</span><span class="s">"x"</span><span class="p">,</span> <span class="p">{(</span><span class="mi">0</span> <span class="o">:</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">2</span><span class="p">)});</span>   <span class="c1">// 2*x + 1
+</span><span class="n">B</span> <span class="o">=</span> <span class="n">uint_poly</span><span class="p">(</span><span class="s">"x"</span><span class="p">,</span> <span class="p">{(</span><span class="mi">2</span> <span class="o">:</span> <span class="mi">2</span><span class="p">)});</span>            <span class="c1">// 2*x**2
+</span>
+<span class="n">C</span> <span class="o">=</span>  <span class="n">add_upoly</span><span class="p">(</span><span class="o">*</span><span class="n">A</span><span class="p">,</span> <span class="o">*</span><span class="n">B</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<h3 id="miscellaneous-work">Miscellaneous Work</h3>
+
+<ul>
+  <li>
+    <p>The names of the classes I refer to here are the new names. The old names were a little unintuitive, so decided to change them, along with introducing a new subfolder in the repository to hold all code related to polynomials (and their tests). Some code was also shifted to places more apt, all changes can be seen here <a href="https://github.com/symengine/symengine/pull/960">#960</a>.</p>
+  </li>
+  <li>
+    <p>There are a small number of miscellaneous changes that need to be worked out in the overall structure, here they are <a href="https://github.com/symengine/symengine/pull/962">#962</a>.</p>
+  </li>
+</ul>
+
+<p>More on this and Flint next week! Goodbye!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">May 28, 2016</h2>
@@ -3084,393 +3662,6 @@ less on coding than this week was.</p>
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-89ae9fcb feed-" id="item-443b2243">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/nishnik.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Nishant Nikhil (nishnik) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://nishnik.github.io/GSoC-First-Week/">00:00, Friday, 27 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-First-Week/">GSoC First Week</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/nishnik.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Nishant Nikhil (nishnik) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://nishnik.github.io/GSoC-First-Week/">00:00, Friday, 27 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-First-Week/">GSoC First Week</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p><img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /></p>
-
-<p>Previously, I was working on the <a href="https://github.com/symengine/symengine/pull/942">PR</a> for <code class="highlighter-rouge">FiniteSet</code> implementation.
-I managed to get it merged this week. So, now we have <code class="highlighter-rouge">UniversalSet</code>, <code class="highlighter-rouge">EmptySet</code>, <code class="highlighter-rouge">Interval</code> and <code class="highlighter-rouge">FiniteSet</code> implementation in SymEngine.
-Where in <code class="highlighter-rouge">FiniteSet</code> we have a <code class="highlighter-rouge">set_basic</code> which can contain any <code class="highlighter-rouge">Basic</code> object. That is apart from <code class="highlighter-rouge">Number</code> objects we can have <code class="highlighter-rouge">Symbol</code> objects as well, and even an <code class="highlighter-rouge">Expression</code>.<br /></p>
-
-<p>Then I started working on implementing <code class="highlighter-rouge">FiniteField</code>. I have sent this <a href="https://github.com/symengine/symengine/pull/955">PR</a>. Initially I was using <code class="highlighter-rouge">std::map&lt;unsigned, int&gt;</code> as the <code class="highlighter-rouge">type</code> for <code class="highlighter-rouge">dict_</code> and <code class="highlighter-rouge">int</code> type for <code class="highlighter-rouge">modulo_</code>, but I realized that there are already <code class="highlighter-rouge">inverse</code> function written for <code class="highlighter-rouge">integer_class</code>/<code class="highlighter-rouge">mpz</code>, so I changed the <code class="highlighter-rouge">dict_</code> to <code class="highlighter-rouge">std::map&lt;unsigned, integer_class&gt;</code> and <code class="highlighter-rouge">modulo_</code> to <code class="highlighter-rouge">integer_class</code>.
-While implementing this, I thought of writing tests after doing the whole implementation. And when I wrote the tests, I realized how badly I had done the implementation, like missing corner cases and all. It is always a better practice to write tests parallely with your implementation.<br /></p>
-
-<p>So, As of now I have implemented the following functions:</p>
-
-<ul>
-  <li><code class="highlighter-rouge">gf_add_ground(const integer_class a)</code></li>
-  <li><code class="highlighter-rouge">gf_sub_ground(const integer_class a)</code></li>
-  <li><code class="highlighter-rouge">gf_mul_ground(const integer_class a)</code></li>
-  <li><code class="highlighter-rouge">gf_quo_ground(const integer_class a)</code></li>
-  <li><code class="highlighter-rouge">gf_add(const RCP&lt;const GaloisField&gt; &amp;o)</code></li>
-  <li><code class="highlighter-rouge">gf_sub(const RCP&lt;const GaloisField&gt; &amp;o)</code></li>
-  <li><code class="highlighter-rouge">gf_mul(const RCP&lt;const GaloisField&gt; &amp;o)</code></li>
-</ul>
-
-<p>Where <code class="highlighter-rouge">gf_*_ground</code> does the operation represented by <code class="highlighter-rouge">*</code> by the integer <code class="highlighter-rouge">a</code> to the polynomaial in the given field.
-And <code class="highlighter-rouge">gf_add</code>, <code class="highlighter-rouge">gf_sub</code>, <code class="highlighter-rouge">gf_mul</code> do their respective operation with another polynomial in the finite field.
-<br />
-I will be implementing <code class="highlighter-rouge">gf_div</code> this weekend.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">May 24, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-3ebbee70 feed-" id="item-4b064356">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/shubham.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Subham Tibra (shubhamtibra) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://shubhamtibra.wordpress.com/2016/05/24/gsoc-first-week-of-coding-phase/">09:31, Tuesday, 24 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://shubhamtibra.wordpress.com/2016/05/24/gsoc-first-week-of-coding-phase/">GSoC: First Week of Coding Phase</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/shubham.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Subham Tibra (shubhamtibra) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://shubhamtibra.wordpress.com/2016/05/24/gsoc-first-week-of-coding-phase/">09:31, Tuesday, 24 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://shubhamtibra.wordpress.com/2016/05/24/gsoc-first-week-of-coding-phase/">GSoC: First Week of Coding Phase</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Since my last blog post I have opened two new PR&#8217;s for the Project. We&#8217;ll see what they do and discuss the goals of this week.</p>
-<p>A major issue in the first PR was the slow performing algorithms, a consequence of using recursive expressions internally. Most of the algorithm implemented used matrices module to solve the linear system which doesn&#8217;t support <code>DMP</code>&#160;and <code>DMF</code>&#160;objects.</p>
-<p>So I defined a new class subclassed from <code>MutableDenseMatrix</code>&#160;and changed&#160;some methods to make it work with Polynomials and Fractions and used this to use Polynomials internally. Thanks to Kalevi for this idea. It works much more robust now. I have also added methods to find composition of Holonomic Functions and converting a Hypergeometric Function to Holonomic. These things are added in this <a href="https://github.com/sympy/sympy/pull/11115">PR</a>.&#160;I hope the PR gets merged in a couple of days.</p>
-<p>A new <a href="https://github.com/sympy/sympy/pull/11153">PR</a> was opened for features relating to recurrence relations in coefficients of Power Series expansion of Holonomic Functions. The first thing I did was defined a class <code>RecurrenceOperator</code>&#160;parallel to <code>DifferentialOperator</code>&#160;to store the recurrence relation.</p>
-<p><strong>Goals of the Week:</strong></p>
-<p>In this week, I have planned to define a function to find the Recurrence Relation of series coefficients and then go for numerical computation of Holonomic Functions. Let me know If anything else should be implemented first as I haven&#8217;t discussed this with mentors yet.</p>
-<p>The chronology might be different from what I wrote in the Proposal but we are quite ahead of that.</p>
-<p>Cheers Everyone.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/146/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/146/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&#038;blog=106149936&#038;post=146&#038;subd=shubhamtibra&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">May 23, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-89ae9fcb feed-" id="item-e7f2be4f">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/nishnik.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Nishant Nikhil (nishnik) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://nishnik.github.io/Community-Bonding-Period/">00:00, Monday, 23 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://nishnik.github.io/Community-Bonding-Period/">Community Bonding Period</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/nishnik.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Nishant Nikhil (nishnik) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://nishnik.github.io/Community-Bonding-Period/">00:00, Monday, 23 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://nishnik.github.io/Community-Bonding-Period/">Community Bonding Period</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p><img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /></p>
-
-<p>I have been selected for GSoC&#8217;16 to work with <a href="http://www.sympy.org/">Sympy</a> on <strong>Implementing Finite Fields and Set module in SymEngine</strong>.</p>
-
-<blockquote>
-  <p><a href="https://github.com/sympy/symengine">SymEngine</a> is a standalone fast C++ symbolic manipulation library.</p>
-</blockquote>
-
-<h1 id="about-the-proposal">About the Proposal</h1>
-
-<p>We all know that Polynomial factorization is one of the fundamental tools of the computer algebra systems. And in symbolic mathematics, it is one of the basic requirement over which other algorithms can be implemented.<br />
-Currently, SymEngine has the implementation of Univariate Polynomial class, which provides us the basic functionality to add, multiply and subtract two polynomials.<br />
-Now, comes the problem of factoring the polynomials.<br />
-We have explicit solution formulas only till polynomials of degree four(the Quadtratic formula for degree 2, <a href="http://en.wikipedia.org/wiki/Cardano_formula#Cardano.27s_method">the Cardano formulas</a> for third-degree equations, and <a href="http://en.wikipedia.org/wiki/Quartic_function#The_general_case.2C_along_Ferrari.27s_lines">the Ferrari formula</a> for degree 4).<br />
-For sure, we need a different way out for higher degree polynomials.
-We see that there are algorithms for factorization in finite fields:</p>
-
-<ul>
-  <li><a href="https://en.wikipedia.org/wiki/Cantor%E2%80%93Zassenhaus_algorithm">Cantor&#8211;Zassenhaus algorithm</a></li>
-  <li><a href="https://en.wikipedia.org/wiki/Berlekamp's_algorithm">Berlekamp&#8217;s algorithm</a></li>
-</ul>
-
-<p>So, this summers I will be working on converting a polynomial in integer field to finite field, then factorizing them. After which we have to do <a href="https://en.wikipedia.org/wiki/Hensel's_lemma">Hensel Lifting</a> to bring back the factored polynomial to integer field.</p>
-
-<p>Furthermore, I will be working on implementing Sets module. These two together will help us to create a basic infrastructure over which we can develop a solvers module in SymEngine.<br /></p>
-
-<p>My proposal can be found <a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Application-Nishant-Nikhil:-Implementing-Finite-Fields-and-Set-module-in-SymEngine">here</a>.</p>
-
-<h1 id="community-bonding-period">Community Bonding Period</h1>
-
-<p>I have been alloted <a href="https://github.com/isuruf">Isuru Fernando</a>, <a href="https://github.com/thilinarmtb">Thilina Rathnayake</a>, <a href="https://github.com/Sumith1896">Sumith</a> and <a href="https://github.com/certik">Ond&#345;ej &#268;ert&#237;k</a> as mentors.<br />
-The SymEngine community is very fast in reachability.
-We had a discussion on <a href="https://gitter.im/symengine/symengine">gitter channel of SymEngine</a>, about the proceedings of our Proposals. As SymEngine has an implementaion of sparse polynomials, I will be working on changing them to Finite Fields. Like:<br /><br /></p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>GaloisField::GaloisField(std::map&lt;unsigned, int&gt; &amp;dict, unsigned modulo) : modulo_(modulo)
-{
-	unsigned temp;
-	for (auto iter : dict) {
-		temp = iter.second % modulo;
-		if (temp != 0)
-			dict_[iter.first] = temp;
-	}
-}
-</code></pre>
-</div>
-
-<p><br />
-where <code class="highlighter-rouge">dict</code> is the dictionary of Univariate Polynomial representation and, <code class="highlighter-rouge">dict_</code> stores its finite field representation modulo <code class="highlighter-rouge">modulo_</code>.
-I will be implementing this in the first week of GSoC period.</p>
-
-<h1 id="work-already-done">Work already Done</h1>
-
-<p>During the Community Bonding Period, I worked on implementing <a href="https://github.com/symengine/symengine/pull/934"><code class="highlighter-rouge">UniversalSet</code></a> and <a href="https://github.com/symengine/symengine/pull/942"><code class="highlighter-rouge">FiniteSet</code></a>.<br />
-<code class="highlighter-rouge">UniversalSet</code> is a <a href="https://en.wikipedia.org/wiki/Singleton_pattern">singleton class</a> like <code class="highlighter-rouge">EmptySet</code>, and while implementing this I learned a lot about Singleton classes.<br />
-<code class="highlighter-rouge">FiniteSet</code> is a class with a set of <code class="highlighter-rouge">RCP&lt;const Basic&gt;</code> as member variable. It can contain any object of <code class="highlighter-rouge">Basic</code> type. While implemeting this, we came on a fix over what to do when we have a interval like [1, 1], i.e. both end points equal. This led to a little change in <code class="highlighter-rouge">Interval</code>&#8217;s code, and now it returns a <code class="highlighter-rouge">FiniteSet</code>. Though this PR is not merged till now. I hope to get it merged in the next few days and along with it keep working on Finite Field implementation.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">May 22, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-b298e897 feed-" id="item-5fb3052e">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/gxyd.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Gaurav Dhingra (gxyd) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://gxyd.github.io/gsoc2016/coding_period_starts.html">18:30, Sunday, 22 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://gxyd.github.io/gsoc2016/coding_period_starts.html">Community Bonding period ends, Coding period starts</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/gxyd.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Gaurav Dhingra (gxyd) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://gxyd.github.io/gsoc2016/coding_period_starts.html">18:30, Sunday, 22 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://gxyd.github.io/gsoc2016/coding_period_starts.html">Community Bonding period ends, Coding period starts</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>
-The Community bonding period comes to an end now. First of all considering the issues described in the last post:
-<ul>
-<li>
-Aaron created a new channel for our GSoC project discussion, <a href="https://gitter.im/sympy/GroupTheory">sympy/GroupTheory</a>.
-</li>
-<li>
-I have also added rss-feed in my blog.
-</li>
-<li>
-As for time of meeting, me and Kalevi often have discussion on the gitter channel, but since of quite a bit differene in timings between me and Aaron (I tend to sleep early at 11 PM IST). We three haven't been able to together have a meeting. Though Aaron suggested "Kalevi is the primary mentor, so if you have to meet without me that is fine". I also think that's not too big of an issue now, but his opinion has always helped, since he has best knowledge of sympy core.
-</li>
-</ul>
-</p>
-
-<p><br />
-In the past few weeks I wasn't too much productive, since I had a touch of fever, anyways I am okay now. We have now completed the implementation of the <code>FreeGroup</code> class in <a href="https://github.com/sympy/sympy/pull/10350">PR #10350</a>. I started working on the PR back in January but I halted, since of my semester classes. <code>FreeGroup</code> is quite similar to the <code>PolyRing</code> implemented in <code>sympy.polys.rings.py</code>. We first started with the list of tuples as the data structure for the <code>FreeGroupElm</code>, where each tuple being <code>(index, exp)</code>, but since of the mutable nature of lists, Kalevi suggested to go with tuple of tuples. Also as tuples are probably more efficient as there is no 'housekeeping' overhead. Also changed the element from <code>(index, exp)</code> --> <code>(symbol, exp)</code>.
-</p>
-
-<p><br />
- Implementing <code>FreeGroupElm</code> deals elegantly in such a way that it can't be independently created in a public interface. The reason being: every <code>FreeGroupElm</code> is in itself created only by the <code>dtype</code> method of <code>FreeGroup</code> class. The assignment is as follows:
-<br />
-  <code>obj.dtype = type("FreeGroupElm", (FreeGroupElm,), {"group": obj})</code>
-<br />.
-
-Its sort of an advanced usage of <code>type</code> function as a <a href="http://www.stackoverflow.com/questions/100003/what-is-a-metaclass-in-python">metaclass</a>.
-</p>
-
-<p><br />
-Currently the printing code of <code>latex</code> and <code>pprint</code> for <code>FreeGroupElm</code> is a little hacky. I need to work on that as well.
-</p>
-
-<br />
-<p>
-<b><u>Plan for Next few weeks</u></b>
-<br /><br />
-Though according to my <a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Application-Gaurav-Dhingra:-Group-Theory#Proposed_Timeline">proposal timeline</a>, we described to go with implementation of other algebraic structures i.e <code>Magma</code>, <code>SemiGroup</code>, <code>Monoid</code>. But we will next move onto <b>"Coset Enumeration"</b>. It is going to be a big task. That is harder and more important than other algebraic structures. Timline states it to be 5 week task, thats almost half the GSoC coding period. Well how do we go about that? I think of studying the mathematics in parallel with the implementation.
-</p>
-
-<p>
-We have created a PR for implementation of Finitely Presented Group <a href="https://github.com/sympy/sympy/pull/11140">#11140</a>. Not much code has been added here. Paper on Coset Enumeration using <a href="http://staff.itee.uq.edu.au/havas/1973cdhw.pdf">Implementation and Analysis of Todd Coxeter Algorithm</a> (by John J. Cannon, George Havas), and other paper being the original paper by Todd and Coxeter, "A practical method for enumerating cosets of a finite abstract group" are the ones I am reading. As for the implementation of Todd Coxeter, we will be following the methods described in the book "Handbook of Computational Group Theory" by Derek F. Holt.
-</p>
-
-<p>
-Also now the "official" coding period begins, good luck to everyone.
-</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -3497,88 +3688,88 @@ Also now the "official" coding period begins, good luck to everyone.
 <th>Feed</th><th>RSS</th><th>Last fetched</th><th>Next fetched after</th>
 </tr>
 <tr class="feedsrow">
+<td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
+<td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
+<td>18:04, Monday, 20 June</td>
+<td>18:19, Monday, 20 June</td>
+</tr>
+<tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>17:43, Monday, 20 June</td>
-<td>17:58, Monday, 20 June</td>
+<td>18:04, Monday, 20 June</td>
+<td>18:19, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>17:43, Monday, 20 June</td>
-<td>17:58, Monday, 20 June</td>
-</tr>
-<tr class="feedsrow">
-<td>http://asmeurer.github.io/blog/rss.xml</td>
-<td><a class="xmlbutton" href="http://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>17:43, Monday, 20 June</td>
-<td>17:58, Monday, 20 June</td>
+<td>18:04, Monday, 20 June</td>
+<td>18:19, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>17:43, Monday, 20 June</td>
-<td>17:58, Monday, 20 June</td>
-</tr>
-<tr class="feedsrow">
-<td>http://srajangarg.github.io/feed.xml</td>
-<td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>17:43, Monday, 20 June</td>
-<td>17:58, Monday, 20 June</td>
+<td>18:04, Monday, 20 June</td>
+<td>18:19, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>17:43, Monday, 20 June</td>
-<td>17:58, Monday, 20 June</td>
+<td>18:04, Monday, 20 June</td>
+<td>18:19, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>17:43, Monday, 20 June</td>
-<td>17:58, Monday, 20 June</td>
+<td>18:04, Monday, 20 June</td>
+<td>18:19, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://github.com/kshitij10496/">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>17:43, Monday, 20 June</td>
-<td>17:58, Monday, 20 June</td>
+<td>18:04, Monday, 20 June</td>
+<td>18:19, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>17:43, Monday, 20 June</td>
-<td>17:58, Monday, 20 June</td>
+<td>18:04, Monday, 20 June</td>
+<td>18:19, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>17:43, Monday, 20 June</td>
-<td>17:58, Monday, 20 June</td>
+<td>18:04, Monday, 20 June</td>
+<td>18:19, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>17:43, Monday, 20 June</td>
-<td>17:58, Monday, 20 June</td>
+<td>18:04, Monday, 20 June</td>
+<td>18:19, Monday, 20 June</td>
+</tr>
+<tr class="feedsrow">
+<td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
+<td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
+<td>18:04, Monday, 20 June</td>
+<td>18:19, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>17:43, Monday, 20 June</td>
-<td>17:58, Monday, 20 June</td>
+<td>18:04, Monday, 20 June</td>
+<td>18:19, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>17:43, Monday, 20 June</td>
-<td>17:58, Monday, 20 June</td>
+<td>18:04, Monday, 20 June</td>
+<td>18:19, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>17:43, Monday, 20 June</td>
-<td>17:58, Monday, 20 June</td>
+<td>18:04, Monday, 20 June</td>
+<td>18:19, Monday, 20 June</td>
 </tr>
 </table>
 
