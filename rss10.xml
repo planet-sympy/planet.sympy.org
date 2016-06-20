@@ -7,6 +7,39 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Fourth-Week</guid>
+      <title>GSoC Fourth Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Mon, 20 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Fourth-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This week &lt;a href="https://github.com/symengine/symengine/pull/955"&gt;Initial Implementation of Finitefield&lt;/a&gt; got merged. It will allow us to represent polynomial with integral coefficients in finite field.
+Talking about the design, we are sticking to the dense representation, i.e. the &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; is a vector.&lt;/p&gt;
+
+&lt;p&gt;This week there was an error in &lt;a href="https://ci.appveyor.com/"&gt;Appveyor&lt;/a&gt; build, I had no idea how to fix this. I tried to print with every passed test case and use &lt;code class="highlighter-rouge"&gt;-VV&lt;/code&gt; option for verbose mode, but it was of no use.
+Isuru, then told me that I have to log into the Appveyor&amp;#8217;s VM and debug it. He helped with &lt;code class="highlighter-rouge"&gt;remmina&lt;/code&gt; and we found that there was problem in the &lt;code class="highlighter-rouge"&gt;gf_istrip()&lt;/code&gt; function, where I was erasing elements using iterators, but after any insertion or deletion iterators become invalid. So, it is better to use indices, or do re-assignment of iterators there.&lt;/p&gt;
+
+&lt;p&gt;After that I started working on square free algorithms. In mathematics, a square-free polynomial is a polynomial defined over a field that is not a multiple of the square of a non unit factor. In general terms, they can be thought as a polynomial with no repeated roots.
+And square free factorization is the first step towards factorization of polynomials in finite field.
+So, I have implemented:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;GaloisFieldDict gf_diff() const;
+bool gf_is_sqf() const;
+std::vector&amp;lt;std::pair&amp;lt;GaloisFieldDict, integer_class&amp;gt;&amp;gt; gf_sqf_list() const;
+GaloisFieldDict gf_sqf_part() const;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_diff&lt;/code&gt; differentiates the polynomial in the given field.&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_is_sqf&lt;/code&gt; returns whether polynomial is squarefield in the given field.&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sqf_part&lt;/code&gt; returns the square free part of the polynomaial in the given field.&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sqf_list&lt;/code&gt; returns the square free decomposition of polynomial&amp;#8217;s monic representation in the given field.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This PR has also been merged. Currently I am working on Distinct Degree factorization.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=305</guid>
       <title>GSoC Week 4 Progress</title>
       <author>Rajith Vidanaarachchi (rajithv)</author>
@@ -247,7 +280,7 @@ As this work is in progress, I will post about it in the next week&amp;#8217;s p
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
       <pubDate>Mon, 13 Jun 2016 00:00:00 GMT</pubDate>
       <link>http://shekharrajak.github.io/Coding-Period-week-4/</link>
-      <description>&lt;h4 id="solveset-when-domain--sintegers"&gt;&lt;code class="highlighter-rouge"&gt;Solveset&lt;/code&gt; when &lt;code class="highlighter-rouge"&gt;domain = S.Integers&lt;/code</description>
+      <description></description>
     </item>
     <item>
       <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=276</guid>
@@ -1721,21 +1754,6 @@ While implementing this, I thought of writing tests after doing the whole implem
 And &lt;code class="highlighter-rouge"&gt;gf_add&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;gf_sub&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;gf_mul&lt;/code&gt; do their respective operation with another polynomial in the finite field.
 &lt;br /&gt;
 I will be implementing &lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt; this weekend.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=146</guid>
-      <title>GSoC: First Week of Coding Phase</title>
-      <author>Subham Tibra (shubhamtibra)</author>
-      <pubDate>Tue, 24 May 2016 09:31:56 GMT</pubDate>
-      <link>https://shubhamtibra.wordpress.com/2016/05/24/gsoc-first-week-of-coding-phase/</link>
-      <description>&lt;p&gt;Since my last blog post I have opened two new PR&amp;#8217;s for the Project. We&amp;#8217;ll see what they do and discuss the goals of this week.&lt;/p&gt;
-&lt;p&gt;A major issue in the first PR was the slow performing algorithms, a consequence of using recursive expressions internally. Most of the algorithm implemented used matrices module to solve the linear system which doesn&amp;#8217;t support &lt;code&gt;DMP&lt;/code&gt;&amp;#160;and &lt;code&gt;DMF&lt;/code&gt;&amp;#160;objects.&lt;/p&gt;
-&lt;p&gt;So I defined a new class subclassed from &lt;code&gt;MutableDenseMatrix&lt;/code&gt;&amp;#160;and changed&amp;#160;some methods to make it work with Polynomials and Fractions and used this to use Polynomials internally. Thanks to Kalevi for this idea. It works much more robust now. I have also added methods to find composition of Holonomic Functions and converting a Hypergeometric Function to Holonomic. These things are added in this &lt;a href="https://github.com/sympy/sympy/pull/11115"&gt;PR&lt;/a&gt;.&amp;#160;I hope the PR gets merged in a couple of days.&lt;/p&gt;
-&lt;p&gt;A new &lt;a href="https://github.com/sympy/sympy/pull/11153"&gt;PR&lt;/a&gt; was opened for features relating to recurrence relations in coefficients of Power Series expansion of Holonomic Functions. The first thing I did was defined a class &lt;code&gt;RecurrenceOperator&lt;/code&gt;&amp;#160;parallel to &lt;code&gt;DifferentialOperator&lt;/code&gt;&amp;#160;to store the recurrence relation.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Goals of the Week:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;In this week, I have planned to define a function to find the Recurrence Relation of series coefficients and then go for numerical computation of Holonomic Functions. Let me know If anything else should be implemented first as I haven&amp;#8217;t discussed this with mentors yet.&lt;/p&gt;
-&lt;p&gt;The chronology might be different from what I wrote in the Proposal but we are quite ahead of that.&lt;/p&gt;
-&lt;p&gt;Cheers Everyone.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/146/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/146/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=146&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>
