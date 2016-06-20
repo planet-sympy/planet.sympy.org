@@ -153,11 +153,17 @@ rem = Poly(5*x**2, x, domain='ZZ')
 
 &lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
 
-&lt;p&gt;Other functionalities like &lt;code class="highlighter-rouge"&gt;multieval&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;derivative&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;get_lc&lt;/code&gt; were also added for all the three intger polynomials.&lt;/p&gt;
-
-&lt;p&gt;There was an error in the Flint documentation, which was related with incorrect ordering of the arguments being passed to the &lt;code class="highlighter-rouge"&gt;divides&lt;/code&gt; function. It was reported in &lt;a href="https://github.com/wbhart/flint2/issues/267"&gt;#267&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Piranha required some implementations to be explicitly provided on the coefficient class, we are going to use. Thus, I had to overwrite some implementations like &lt;code class="highlighter-rouge"&gt;gcd_impl&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;pow_impl&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;divexact_impl&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;SymEngine::intger_class&lt;/code&gt; to work with &lt;code class="highlighter-rouge"&gt;piranha::polynomial&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Other functionalities like &lt;code class="highlighter-rouge"&gt;multieval&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;derivative&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;get_lc&lt;/code&gt; were also added for all the three intger polynomials.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;There was an error in the Flint documentation, which was related with incorrect ordering of the arguments being passed to the &lt;code class="highlighter-rouge"&gt;divides&lt;/code&gt; function. It was reported in &lt;a href="https://github.com/wbhart/flint2/issues/267"&gt;#267&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Piranha required some implementations to be explicitly provided on the coefficient class, we are going to use. Thus, I had to overwrite some implementations like &lt;code class="highlighter-rouge"&gt;gcd_impl&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;pow_impl&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;divexact_impl&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;SymEngine::intger_class&lt;/code&gt; to work with &lt;code class="highlighter-rouge"&gt;piranha::polynomial&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;I will write &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;lcm&lt;/code&gt; for SymEngine polynomials, and start on &lt;code class="highlighter-rouge"&gt;Basic -&amp;gt; Poly&lt;/code&gt; conversion to add to the coercion framework decided for SymEngine, soon.&lt;/p&gt;
 
@@ -385,7 +391,9 @@ As this work is in progress, I will post about it in the next week&amp;#8217;s p
 
 &lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
 
-&lt;p&gt;I saw that in SymEngine, there were lots of redundant header file includes in many files. I wrote a short python script which makes a header dependency tree, and automatically removes header includes which are not needed. After some manual inspection of the changes I pushed in &lt;a href="https://github.com/symengine/symengine/pull/981"&gt;#981&lt;/a&gt;. It was really amazing to see the script flag more than 500 lines of redundant includes. The PR has not been merged yet, though.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;I saw that in SymEngine, there were lots of redundant header file includes in many files. I wrote a short python script which makes a header dependency tree, and automatically removes header includes which are not needed. After some manual inspection of the changes I pushed in &lt;a href="https://github.com/symengine/symengine/pull/981"&gt;#981&lt;/a&gt;. It was really amazing to see the script flag more than 500 lines of redundant includes. The PR has not been merged yet, though.&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;I will be working on higher level functionality like &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; in the coming week. Will keep you guys posted.&lt;/p&gt;
 
@@ -825,9 +833,14 @@ Still there is a lot of conversation going on this topic, I will better post aft
 
 &lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
 
-&lt;p&gt;There were some changes done to the polynomial structure before the flint polynomials were introduced. Constructor of the polynomials from vectors was removed, as it wasn&amp;#8217;t required. And a &lt;code class="highlighter-rouge"&gt;from_vec&lt;/code&gt; was added for the SymEngine polynomial dictionaries &lt;code class="highlighter-rouge"&gt;UIntDict&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;UExprDict&lt;/code&gt;. The changes can be seen here &lt;a href="https://github.com/symengine/symengine/pull/965/"&gt;#965&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;In Travis CI builds, SymEngine was using flint-2.4.4 from a static location. There&amp;#8217;s a &lt;a href="https://github.com/wbhart/flint2/issues/217"&gt;bug&lt;/a&gt; that I encountered using this version, which dealt with incorrect header declaration in one of the flint files. Now, we clone the flint repository from  &lt;a href="https://github.com/wbhart/flint2/"&gt;wbhart/flint2&lt;/a&gt; to use in the CI builds. The change is in &lt;a href="https://github.com/symengine/symengine/pull/973"&gt;#973&lt;/a&gt;.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;There were some changes done to the polynomial structure before the flint polynomials were introduced. Constructor of the polynomials from vectors was removed, as it wasn&amp;#8217;t required. And a &lt;code class="highlighter-rouge"&gt;from_vec&lt;/code&gt; was added for the SymEngine polynomial dictionaries &lt;code class="highlighter-rouge"&gt;UIntDict&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;UExprDict&lt;/code&gt;. The changes can be seen here &lt;a href="https://github.com/symengine/symengine/pull/965/"&gt;#965&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;In Travis CI builds, SymEngine was using flint-2.4.4 from a static location. There&amp;#8217;s a &lt;a href="https://github.com/wbhart/flint2/issues/217"&gt;bug&lt;/a&gt; that I encountered using this version, which dealt with incorrect header declaration in one of the flint files. Now, we clone the flint repository from  &lt;a href="https://github.com/wbhart/flint2/"&gt;wbhart/flint2&lt;/a&gt; to use in the CI builds. The change is in &lt;a href="https://github.com/symengine/symengine/pull/973"&gt;#973&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;I&amp;#8217;m working on wrapping Piranha polynomials next week. After that is done, I plan to start getting higher level functionality like &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;factorize&lt;/code&gt; ready.&lt;/p&gt;
 
@@ -1541,9 +1554,14 @@ This will require some digging up and a bit of research.&lt;/p&gt;
 
 &lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
 
-&lt;p&gt;The names of the classes I refer to here are the new names. The old names were a little unintuitive, so decided to change them, along with introducing a new subfolder in the repository to hold all code related to polynomials (and their tests). Some code was also shifted to places more apt, all changes can be seen here &lt;a href="https://github.com/symengine/symengine/pull/960"&gt;#960&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;There are a small number of miscellaneous changes that need to be worked out in the overall structure, here they are &lt;a href="https://github.com/symengine/symengine/pull/962"&gt;#962&lt;/a&gt;.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;The names of the classes I refer to here are the new names. The old names were a little unintuitive, so decided to change them, along with introducing a new subfolder in the repository to hold all code related to polynomials (and their tests). Some code was also shifted to places more apt, all changes can be seen here &lt;a href="https://github.com/symengine/symengine/pull/960"&gt;#960&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;There are a small number of miscellaneous changes that need to be worked out in the overall structure, here they are &lt;a href="https://github.com/symengine/symengine/pull/962"&gt;#962&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;More on this and Flint next week! Goodbye!&lt;/p&gt;</description>
     </item>

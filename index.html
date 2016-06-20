@@ -337,7 +337,7 @@ mat = SymEngine::DenseMatrix.new(no_rows, no_columns)</pre>
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-aa06d76d feed-" id="item-469db5de">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-e3857505">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -452,11 +452,17 @@ rem = Poly(5*x**2, x, domain='ZZ')
 
 <h3 id="miscellaneous-work">Miscellaneous Work</h3>
 
-<p>Other functionalities like <code class="highlighter-rouge">multieval</code>, <code class="highlighter-rouge">derivative</code> and <code class="highlighter-rouge">get_lc</code> were also added for all the three intger polynomials.</p>
-
-<p>There was an error in the Flint documentation, which was related with incorrect ordering of the arguments being passed to the <code class="highlighter-rouge">divides</code> function. It was reported in <a href="https://github.com/wbhart/flint2/issues/267">#267</a>.</p>
-
-<p>Piranha required some implementations to be explicitly provided on the coefficient class, we are going to use. Thus, I had to overwrite some implementations like <code class="highlighter-rouge">gcd_impl</code>, <code class="highlighter-rouge">pow_impl</code> and <code class="highlighter-rouge">divexact_impl</code> for <code class="highlighter-rouge">SymEngine::intger_class</code> to work with <code class="highlighter-rouge">piranha::polynomial</code>.</p>
+<ul>
+  <li>
+    <p>Other functionalities like <code class="highlighter-rouge">multieval</code>, <code class="highlighter-rouge">derivative</code> and <code class="highlighter-rouge">get_lc</code> were also added for all the three intger polynomials.</p>
+  </li>
+  <li>
+    <p>There was an error in the Flint documentation, which was related with incorrect ordering of the arguments being passed to the <code class="highlighter-rouge">divides</code> function. It was reported in <a href="https://github.com/wbhart/flint2/issues/267">#267</a>.</p>
+  </li>
+  <li>
+    <p>Piranha required some implementations to be explicitly provided on the coefficient class, we are going to use. Thus, I had to overwrite some implementations like <code class="highlighter-rouge">gcd_impl</code>, <code class="highlighter-rouge">pow_impl</code> and <code class="highlighter-rouge">divexact_impl</code> for <code class="highlighter-rouge">SymEngine::intger_class</code> to work with <code class="highlighter-rouge">piranha::polynomial</code>.</p>
+  </li>
+</ul>
 
 <p>I will write <code class="highlighter-rouge">gcd</code> and <code class="highlighter-rouge">lcm</code> for SymEngine polynomials, and start on <code class="highlighter-rouge">Basic -&gt; Poly</code> conversion to add to the coercion framework decided for SymEngine, soon.</p>
 
@@ -1010,7 +1016,7 @@ NotImplementedError: No solver has been written for cubic_thue.
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-aa06d76d feed-" id="item-47e8deba">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-16c1b1aa">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -1144,7 +1150,9 @@ NotImplementedError: No solver has been written for cubic_thue.
 
 <h3 id="miscellaneous-work">Miscellaneous Work</h3>
 
-<p>I saw that in SymEngine, there were lots of redundant header file includes in many files. I wrote a short python script which makes a header dependency tree, and automatically removes header includes which are not needed. After some manual inspection of the changes I pushed in <a href="https://github.com/symengine/symengine/pull/981">#981</a>. It was really amazing to see the script flag more than 500 lines of redundant includes. The PR has not been merged yet, though.</p>
+<ul>
+  <li>I saw that in SymEngine, there were lots of redundant header file includes in many files. I wrote a short python script which makes a header dependency tree, and automatically removes header includes which are not needed. After some manual inspection of the changes I pushed in <a href="https://github.com/symengine/symengine/pull/981">#981</a>. It was really amazing to see the script flag more than 500 lines of redundant includes. The PR has not been merged yet, though.</li>
+</ul>
 
 <p>I will be working on higher level functionality like <code class="highlighter-rouge">gcd</code> in the coming week. Will keep you guys posted.</p>
 
@@ -1867,7 +1875,7 @@ Still there is a lot of conversation going on this topic, I will better post aft
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-aa06d76d feed-" id="item-42bbb813">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-338f3905">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -1977,9 +1985,14 @@ Still there is a lot of conversation going on this topic, I will better post aft
 
 <h3 id="miscellaneous-work">Miscellaneous Work</h3>
 
-<p>There were some changes done to the polynomial structure before the flint polynomials were introduced. Constructor of the polynomials from vectors was removed, as it wasn&#8217;t required. And a <code class="highlighter-rouge">from_vec</code> was added for the SymEngine polynomial dictionaries <code class="highlighter-rouge">UIntDict</code> and <code class="highlighter-rouge">UExprDict</code>. The changes can be seen here <a href="https://github.com/symengine/symengine/pull/965/">#965</a>.</p>
-
-<p>In Travis CI builds, SymEngine was using flint-2.4.4 from a static location. There&#8217;s a <a href="https://github.com/wbhart/flint2/issues/217">bug</a> that I encountered using this version, which dealt with incorrect header declaration in one of the flint files. Now, we clone the flint repository from  <a href="https://github.com/wbhart/flint2/">wbhart/flint2</a> to use in the CI builds. The change is in <a href="https://github.com/symengine/symengine/pull/973">#973</a>.</p>
+<ul>
+  <li>
+    <p>There were some changes done to the polynomial structure before the flint polynomials were introduced. Constructor of the polynomials from vectors was removed, as it wasn&#8217;t required. And a <code class="highlighter-rouge">from_vec</code> was added for the SymEngine polynomial dictionaries <code class="highlighter-rouge">UIntDict</code> and <code class="highlighter-rouge">UExprDict</code>. The changes can be seen here <a href="https://github.com/symengine/symengine/pull/965/">#965</a>.</p>
+  </li>
+  <li>
+    <p>In Travis CI builds, SymEngine was using flint-2.4.4 from a static location. There&#8217;s a <a href="https://github.com/wbhart/flint2/issues/217">bug</a> that I encountered using this version, which dealt with incorrect header declaration in one of the flint files. Now, we clone the flint repository from  <a href="https://github.com/wbhart/flint2/">wbhart/flint2</a> to use in the CI builds. The change is in <a href="https://github.com/symengine/symengine/pull/973">#973</a>.</p>
+  </li>
+</ul>
 
 <p>I&#8217;m working on wrapping Piranha polynomials next week. After that is done, I plan to start getting higher level functionality like <code class="highlighter-rouge">gcd</code> and <code class="highlighter-rouge">factorize</code> ready.</p>
 
@@ -3108,7 +3121,7 @@ This will require some digging up and a bit of research.</p>
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-aa06d76d feed-" id="item-cab00690">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-74a78d8e">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -3251,9 +3264,14 @@ This will require some digging up and a bit of research.</p>
 
 <h3 id="miscellaneous-work">Miscellaneous Work</h3>
 
-<p>The names of the classes I refer to here are the new names. The old names were a little unintuitive, so decided to change them, along with introducing a new subfolder in the repository to hold all code related to polynomials (and their tests). Some code was also shifted to places more apt, all changes can be seen here <a href="https://github.com/symengine/symengine/pull/960">#960</a>.</p>
-
-<p>There are a small number of miscellaneous changes that need to be worked out in the overall structure, here they are <a href="https://github.com/symengine/symengine/pull/962">#962</a>.</p>
+<ul>
+  <li>
+    <p>The names of the classes I refer to here are the new names. The old names were a little unintuitive, so decided to change them, along with introducing a new subfolder in the repository to hold all code related to polynomials (and their tests). Some code was also shifted to places more apt, all changes can be seen here <a href="https://github.com/symengine/symengine/pull/960">#960</a>.</p>
+  </li>
+  <li>
+    <p>There are a small number of miscellaneous changes that need to be worked out in the overall structure, here they are <a href="https://github.com/symengine/symengine/pull/962">#962</a>.</p>
+  </li>
+</ul>
 
 <p>More on this and Flint next week! Goodbye!</p>
 					</div>
@@ -3672,86 +3690,86 @@ less on coding than this week was.</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>16:43, Monday, 20 June</td>
-<td>16:58, Monday, 20 June</td>
+<td>17:03, Monday, 20 June</td>
+<td>17:18, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>16:43, Monday, 20 June</td>
-<td>16:58, Monday, 20 June</td>
+<td>17:03, Monday, 20 June</td>
+<td>17:18, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>16:43, Monday, 20 June</td>
-<td>16:58, Monday, 20 June</td>
+<td>17:03, Monday, 20 June</td>
+<td>17:18, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>16:43, Monday, 20 June</td>
-<td>16:58, Monday, 20 June</td>
+<td>17:03, Monday, 20 June</td>
+<td>17:18, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>16:43, Monday, 20 June</td>
-<td>16:58, Monday, 20 June</td>
+<td>17:03, Monday, 20 June</td>
+<td>17:18, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>16:43, Monday, 20 June</td>
-<td>16:58, Monday, 20 June</td>
+<td>17:03, Monday, 20 June</td>
+<td>17:18, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://github.com/kshitij10496/">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>16:43, Monday, 20 June</td>
-<td>16:58, Monday, 20 June</td>
+<td>17:03, Monday, 20 June</td>
+<td>17:18, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>16:43, Monday, 20 June</td>
-<td>16:58, Monday, 20 June</td>
+<td>17:03, Monday, 20 June</td>
+<td>17:18, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>16:43, Monday, 20 June</td>
-<td>16:58, Monday, 20 June</td>
+<td>17:03, Monday, 20 June</td>
+<td>17:18, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>16:43, Monday, 20 June</td>
-<td>16:58, Monday, 20 June</td>
+<td>17:03, Monday, 20 June</td>
+<td>17:18, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>16:43, Monday, 20 June</td>
-<td>16:58, Monday, 20 June</td>
+<td>17:03, Monday, 20 June</td>
+<td>17:18, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>16:43, Monday, 20 June</td>
-<td>16:58, Monday, 20 June</td>
+<td>17:03, Monday, 20 June</td>
+<td>17:18, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>16:43, Monday, 20 June</td>
-<td>16:58, Monday, 20 June</td>
+<td>17:03, Monday, 20 June</td>
+<td>17:18, Monday, 20 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>16:43, Monday, 20 June</td>
-<td>16:58, Monday, 20 June</td>
+<td>17:03, Monday, 20 June</td>
+<td>17:18, Monday, 20 June</td>
 </tr>
 </table>
 
