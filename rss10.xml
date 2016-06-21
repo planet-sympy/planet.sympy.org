@@ -46,19 +46,19 @@ GaloisFieldDict gf_sqf_part() const;
       <pubDate>Sun, 19 Jun 2016 18:30:00 GMT</pubDate>
       <link>https://gxyd.github.io/gsoc2016/gsoc_week_2_3.html</link>
       <description>&lt;p&gt;
-&lt;p&gt;
-Hi everyone.
-&lt;/p&gt;
-&lt;br /&gt;
-&lt;br /&gt;
-&lt;p&gt;
-Here is a brief summary of what we did in the second and third week of GSoC.
-&lt;/p&gt;
-&lt;p&gt;
+            Hi everyone.
+          &lt;/p&gt;
+          &lt;br /&gt;
+          &lt;br /&gt;
+          &lt;p&gt;
+            Here is a brief summary of what we did in the second and third week of GSoC.
+          &lt;/p&gt;
+                    &lt;p&gt;First of all I got late in blogging about our progress for the weeks 2, 3. Since the internet connection was disrupted(&lt;a href="https://gxyd.github.io/feeds/quot;https://en.wikipedia.org/wiki/Jat_reservation_agitation"&gt;reason&lt;/a&gt;) for almost 3 weeks in my city, so in between I had to move out to some other place. But still project progress is good :)
+                    &lt;/p&gt;
+          &lt;p&gt;
 Status update:
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/11140"&gt;PR #11140&lt;/a&gt; on implementation of strategies of coset enumeration has been &lt;i&gt;merged&lt;/i&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/11231"&gt;PR #11231&lt;/a&gt; on implementation of Low Index Subgroups algorithm has been &lt;i&gt;completed&lt;/i&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://gxyd.github.io/feeds/quot;https://github.com/sympy/sympy/pull/11140"&gt;PR #11140&lt;/a&gt; on implementation of strategies of coset enumeration has been &lt;i&gt;merged&lt;/i&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/p&gt;
 
@@ -74,9 +74,93 @@ The algorithm we have implemented is known as &lt;i&gt;&lt;a href="https://gxyd.
 &lt;/p&gt;
 
 &lt;p&gt;
-&lt;h4&gt;&lt;u&gt;&lt;i&gt;HLT strategy&lt;/i&gt;&lt;/u&gt;&lt;/h4&gt; (also called relator bases method): in this whenever we use the C.scan_and_fill($\alpha$, $w$) for scanning the word $w$ over coset $\alpha$, routine for scanning which if the scan is incomplete makes a new definition of coset using &lt;code&gt;define&lt;/code&gt; then we make new definitions to enable the scan to complete; that is, we fill in the gaps in the scan of the relator or subgroup generator. Kalevi suggested to make some modification from the original pseudo-code, which resulted in quite a few improvements, since the changes removes un-necessary scanning.
+&lt;h4&gt;&lt;u&gt;&lt;i&gt;HLT strategy&lt;/i&gt;&lt;/u&gt;&lt;/h4&gt;
+&lt;p&gt;
+In this strategy whenever we use the C.scan_and_fill($\alpha$, $w$) for scanning the word $w$ over coset $\alpha$, routine for scanning which if the scan is incomplete makes a new definition of coset using &lt;code&gt;define&lt;/code&gt; then we make new definitions to enable the scan to complete; that is, we fill in the gaps in the scan of the relator or subgroup generator. Kalevi suggested to make some modification from the original pseudo-code, which resulted in quite a few improvements, since the changes removes un-necessary scanning.
+&lt;/p&gt;
+&lt;/p&gt;
+&lt;p&gt;
+For calculating the index of $x^{-1}$, for a generator $x$, we initialised the Coset Table with a dictionary &lt;code&gt;A_dict_inv&lt;/code&gt;, which has &lt;code&gt;(gen,index)&lt;/code&gt; as &lt;code&gt;(key,value)&lt;/code&gt; pair.
+&lt;code&gt;
+&lt;pre&gt;
+&gt;&gt;&gt; for x, index in self.A_dict.items():
+...     if index % 2 == 0:
+...         self.A_dict_inv[x] = self.A_dict[x] + 1
+...     else:
+...         self.A_dict_inv[x] = self.A_dict[x] - 1
+&lt;/pre&gt;
+&lt;/code&gt;
+&lt;/p&gt;
+&lt;br /&gt;
+&lt;p&gt;
+We changed the slicing of the Free Group elements, which now work this way.
+&lt;code&gt;
+&lt;pre&gt;
+&gt;&gt;&gt; w = x**2*y**6
+&gt;&gt;&gt; w[1]
+x
+&gt;&gt;&gt; w[3]
+y
+&lt;/pre&gt;
+&lt;/code&gt;
+&lt;/p&gt;
+&lt;p&gt;
+Since earlier it was only possible using the &lt;code&gt;.subword(i, i+1)&lt;/code&gt; to obtain the $i_{th}$ "word".
+&lt;/p&gt;
+&lt;br /&gt;
+
+&lt;p&gt;
+                        We have now completed the &lt;a href="https://gxyd.github.io/feeds/quot;https://github.com/sympy/sympy/pull/11140"&gt;PR #11140&lt;/a&gt;
+            We used the utf-8 encoding in &lt;code&gt;sympy/combinatorics/fp_groups.py&lt;/code&gt; in its comments, which was generating the error in &lt;code&gt;Python2.7&lt;/code&gt; but not in &lt;code&gt;Python3.4&lt;/code&gt;
+                        &lt;code&gt;
+                        &lt;pre&gt;
+SyntaxError: Non-ASCII character '\xce' in file /home/gaurav/Public/sympy/sympy/combinatorics/fp_groups.py
+on line 79, but no encoding declared; see http://www.python.org/peps/pep-0263.html for details
+                        &lt;/pre&gt;
+                        &lt;/code&gt;
+                        and then using the line &lt;code&gt;# -*- coding: utf-8 -*-&lt;/code&gt; at the top of file resolved the issue, so seems like &lt;code&gt;Python2.x&lt;/code&gt; is more sensitive to such issues.
+                    &lt;/p&gt;
+                    &lt;p&gt;There was one error in the implemted code:
+                        &lt;code&gt;
+                        &lt;pre&gt;
+&gt;&gt;&gt; from sympy.combinatorics.free_group import free_group
+&gt;&gt;&gt; from sympy.combinatorics.fp_groups import FpGroup, coset_enumeration_r, CosetTable
+&gt;&gt;&gt; F, x, y = free_group("x, y")
+&gt;&gt;&gt; f = FpGroup(F, [x**2, y**3, (x*y)**3])
+&gt;&gt;&gt; Y = [x*y]
+&gt;&gt;&gt; C = coset_enumeration_r(f, Y)
+&gt;&gt;&gt; C.table # this will return the table
+&lt;/pre&gt;
+&lt;/code&gt;
+&lt;/p&gt;
+&lt;p&gt;
+                        As for refinement, I will paste another one.
+                    &lt;/p&gt;
+                    &lt;p&gt;
+&lt;code&gt;
+&lt;pre&gt;
+# these are the steps that happen internally
+&gt;&gt;&gt; C = CosetTable(f, Y)
+&gt;&gt;&gt; C.scan_and_fill(0, x*y)
+&gt;&gt;&gt; C.scan_and_fill(0, x**2)
+&gt;&gt;&gt; C.scan_and_fill(0, y**3)
+&gt;&gt;&gt; C.scan_and_fill(0, (x*y)**3)
+# till now coset table is fine.
+# here the coset table returned is wrong.
+                        &lt;/pre&gt;
+                        &lt;/code&gt;
+                    &lt;/p&gt;
+                    &lt;p&gt;
+                        In the implementation of &lt;code&gt;scan_and_fill&lt;/code&gt; the implemened code differed from that in the book in one significant aspect. In the book, &lt;code&gt;scan_and_fill&lt;/code&gt; looped until it filled the $\alpha$ row in the table. ("Made a new definition and continue with scan."). While the implemented code returned after one definition, the error occured since I tried removing the while loop (some testing purpose). Then we also added some "examples" from [2].
+                    &lt;/p&gt;
+
+&lt;i&gt;&lt;u&gt;&lt;h4&gt;Felsch strategy&lt;/h4&gt;&lt;/u&gt;&lt;/i&gt;
+&lt;p&gt;
+In this we first find the first undefined coset $\alpha$, in this instead of seeing ahead by making use of &lt;code&gt;lookahead&lt;/code&gt;, we make &lt;b&gt;deductions&lt;/b&gt;, which are put in a &lt;code&gt;deduction_stack&lt;/code&gt; (a &lt;code&gt;list&lt;/code&gt; instance which behaves a &lt;i&gt;stack&lt;/i&gt;), which contains the pair $(\alpha, x)$, whenever a new &lt;b&gt;definition&lt;/b&gt; or a &lt;b&gt;deduction&lt;/b&gt; is made, this reduces the number of un-necessary cosets made (loweing the memory use at the cost of time).
 &lt;/p&gt;
 
+&lt;p&gt;Though we have made use of &lt;code&gt;CosetTableDefaultMaxLimit = 409600&lt;/code&gt; (similar to that in &lt;i&gt;GAP&lt;/i&gt;), till now I haven't found a single example which would exhaust this much memory in our implementation, every one just seems to take too much of time.
+&lt;/p&gt;
 
 &lt;p&gt;
 Python utilities learned on the way:
@@ -98,54 +182,11 @@ In &lt;code&gt;Python2.x&lt;/code&gt; a &lt;code&gt;list&lt;/code&gt; instance d
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/p&gt;
-&lt;p&gt;
-We have now completed the &lt;a href="https://gxyd.github.io/feeds/quot;https://github.com/sympy/sympy/pull/11140"&gt;PR #11140&lt;/a&gt;
-We used the utf-8 encoding in &lt;code&gt;sympy/combinatorics/fp_groups.py&lt;/code&gt; in its comments, which was generating the error in &lt;code&gt;Python2.7&lt;/code&gt; but not in &lt;code&gt;Python3.4&lt;/code&gt;
-&lt;code&gt;
-&lt;pre&gt;
-SyntaxError: Non-ASCII character '\xce' in file /home/gaurav/Public/sympy/sympy/combinatorics/fp_groups.py
-on line 79, but no encoding declared; see http://www.python.org/peps/pep-0263.html for details
-&lt;/pre&gt;
-&lt;/code&gt;
-and then using the line &lt;code&gt;# -*- coding: utf-8 -*-&lt;/code&gt; at the top of file resolved the issue, so seems like &lt;code&gt;Python2.x&lt;/code&gt; is more sensitive to such issues.
-&lt;/p&gt;
-&lt;p&gt;There was one error in the implemted code:
-&lt;code&gt;
-&lt;pre&gt;
-&gt;&gt;&gt; from sympy.combinatorics.free_group import free_group
-&gt;&gt;&gt; from sympy.combinatorics.fp_groups import FpGroup, coset_enumeration_r, CosetTable
-&gt;&gt;&gt; F, x, y = free_group("x, y")
-&gt;&gt;&gt; f = FpGroup(F, [x**2, y**3, (x*y)**3])
-&gt;&gt;&gt; Y = [x*y]
-&gt;&gt;&gt; C = coset_enumeration_r(f, Y)
-&gt;&gt;&gt; C.table # this will return the table
-&lt;/pre&gt;
-&lt;/code&gt;
-&lt;/p&gt;
-&lt;p&gt;
-As for refinement, I will paste another one.
-&lt;/p&gt;
-&lt;p&gt;
-&lt;code&gt;
-&lt;pre&gt;
-# these are the steps that happen internally
-&gt;&gt;&gt; C = CosetTable(f, Y)
-&gt;&gt;&gt; C.scan_and_fill(0, x*y)
-&gt;&gt;&gt; C.scan_and_fill(0, x**2)
-&gt;&gt;&gt; C.scan_and_fill(0, y**3)
-&gt;&gt;&gt; C.scan_and_fill(0, (x*y)**3)
-# till now coset table is fine.
-# here the coset table returned is wrong.
-&lt;/pre&gt;
-&lt;/code&gt;
-&lt;/p&gt;
-&lt;p&gt;
-In the implementation of &lt;code&gt;scan_and_fill&lt;/code&gt; the implemened code differed from that in the book in one significant aspect. In the book, &lt;code&gt;scan_and_fill&lt;/code&gt; looped until it filled the $\alpha$ row in the table. ("Made a new definition and continue with scan."). While the implemented code returned after one definition, the error occured since I tried removing the while loop (some testing purpose). Then we also added some "examples" from [2].
-&lt;/p&gt;
 
-&lt;p&gt;At the end of the post, here's one awesome small example of &lt;code&gt;coset enumeration&lt;/code&gt; using the &lt;i&gt;HLT&lt;/i&gt; strategy. Here is how the code works!! :)
-&lt;code&gt;
-&lt;pre&gt;
+
+                    &lt;p&gt;At the end of the post, here's one awesome small example of &lt;code&gt;coset enumeration&lt;/code&gt; using the &lt;i&gt;HLT&lt;/i&gt; strategy. Here is how the code works!! :)
+                    &lt;code&gt;
+                        &lt;pre&gt;
 In[1]: from sympy import *
 In[2]: from sympy.combinatorics.free_group import free_group
 In[3]: from sympy.combinatorics.fp_groups import FpGroup, CosetTable, coset_enumeration_r
@@ -184,27 +225,27 @@ Out[10]: [[0, 0, 1, 2],
         [7, 7, 9, 11],
         [11, 11, 10, 9]]
 
-&lt;/pre&gt;
-&lt;/code&gt;
-    
-&lt;/p&gt;
-&lt;p&gt;
+                        &lt;/pre&gt;
+                    &lt;/code&gt;
+                        
+                    &lt;/p&gt;
+                    &lt;p&gt;
+                    My mentor, Kalevi, has been very much supportive, when I informed him about my possible abscence (due to internet unavailability), he even sent me a mail about the &lt;i&gt;things we could do next&lt;/i&gt;, even if I am offline.
+                    So here they are: Cosets in Permutation Groups, Finitely presented abelian groups.
+                    &lt;/p&gt;
+                    &lt;h4&gt;References&lt;/h4&gt;
+                    &lt;i&gt;
 
-Anyway, I'm really enthusiastic about my project and hope that we'll have some nice and reasonably fast algorithms in CGT by the end of the summer!
-&lt;/p&gt;
-&lt;h4&gt;References&lt;/h4&gt;
-&lt;i&gt;
+                    &lt;ul&gt; 
+                      &lt;li&gt;1. Derek F. Holt, Bettina Eick, Bettina, Eamonn A. O'Brien, "Handbook of computational group theory", Discrete Mathematics and its Applications (Boca Raton). Chapman &amp; Hall/CRC, Boca Raton, FL, 2005. ISBN 1-5848-372-3 .&lt;/li&gt;
 
-&lt;ul&gt; 
-&lt;li&gt;1. Derek F. Holt, Bettina Eick, Bettina, Eamonn A. O'Brien, "Handbook of computational group theory", Discrete Mathematics and its Applications (Boca Raton). Chapman &amp; Hall/CRC, Boca Raton, FL, 2005. ISBN 1-5848-372-3 .&lt;/li&gt;
+                        &lt;li&gt;2. John J. Cannon, Lucien A. Dimino, George Havas and Jane M. Watson, Implementation and Analysis of the Todd-Coxeter Algorithm&lt;/li&gt;
 
-&lt;li&gt;2. John J. Cannon, Lucien A. Dimino, George Havas and Jane M. Watson, Implementation and Analysis of the Todd-Coxeter Algorithm&lt;/li&gt;
-
-&lt;li&gt;3. https://mail.python.org/pipermail/tutor/2006-November/051189.html&lt;/li&gt;
-&lt;li&gt;4. http://www.gap-system.org/Manuals/doc/ref/chap47.html&lt;/li&gt;
-&lt;/i&gt;
-&lt;br /&gt;
-&lt;/ul&gt;</description>
+                        &lt;li&gt;3. https://mail.python.org/pipermail/tutor/2006-November/051189.html&lt;/li&gt;
+                        &lt;li&gt;4. http://www.gap-system.org/Manuals/doc/ref/chap47.html&lt;/li&gt;
+                    &lt;/i&gt;
+                    &lt;br /&gt;
+                    &lt;/ul&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=305</guid>
@@ -453,12 +494,7 @@ As this work is in progress, I will post about it in the next week&amp;#8217;s p
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
       <pubDate>Mon, 13 Jun 2016 00:00:00 GMT</pubDate>
       <link>http://shekharrajak.github.io/Coding-Period-week-4/</link>
-      <description>&lt;h4 id="solveset-when-domain--sintegers"&gt;&lt;code class="highlighter-rouge"&gt;Solveset&lt;/code&gt; when &lt;code class="highlighter-rouge"&gt;domain = S.Integers&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11234"&gt;#11234&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Right now we may not get our solution in Integer domain but we can use concept of diophantine equations in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;.
-When I messaged about this in giiter channel Aaron told about the &lt;code class="highlighter-rouge"&gt;diophantine&lt;/cod</description>
+      <description></description>
     </item>
     <item>
       <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=276</guid>
