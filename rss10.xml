@@ -7,10 +7,43 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Fourth-Week</guid>
+      <title>GSoC Fourth Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Mon, 20 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Fourth-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This week &lt;a href="https://github.com/symengine/symengine/pull/955"&gt;Initial Implementation of Finitefield&lt;/a&gt; got merged. It will allow us to represent polynomial with integral coefficients in finite field.
+Talking about the design, we are sticking to the dense representation, i.e. the &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; is a vector.&lt;/p&gt;
+
+&lt;p&gt;This week there was an error in &lt;a href="https://ci.appveyor.com/"&gt;Appveyor&lt;/a&gt; build, I had no idea how to fix this. I tried to print with every passed test case and use &lt;code class="highlighter-rouge"&gt;-VV&lt;/code&gt; option for verbose mode, but it was of no use.
+Isuru, then told me that I have to log into the Appveyor&amp;#8217;s VM and debug it. He helped with &lt;code class="highlighter-rouge"&gt;remmina&lt;/code&gt; and we found that there was problem in the &lt;code class="highlighter-rouge"&gt;gf_istrip()&lt;/code&gt; function, where I was erasing elements using iterators, but after any insertion or deletion iterators become invalid. So, it is better to use indices, or do re-assignment of iterators there.&lt;/p&gt;
+
+&lt;p&gt;After that I started working on square free algorithms. In mathematics, a square-free polynomial is a polynomial defined over a field that is not a multiple of the square of a non unit factor. In general terms, they can be thought as a polynomial with no repeated roots.
+And square free factorization is the first step towards factorization of polynomials in finite field.
+So, I have implemented:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;GaloisFieldDict gf_diff() const;
+bool gf_is_sqf() const;
+std::vector&amp;lt;std::pair&amp;lt;GaloisFieldDict, integer_class&amp;gt;&amp;gt; gf_sqf_list() const;
+GaloisFieldDict gf_sqf_part() const;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_diff&lt;/code&gt; differentiates the polynomial in the given field.&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_is_sqf&lt;/code&gt; returns whether polynomial is squarefield in the given field.&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sqf_part&lt;/code&gt; returns the square free part of the polynomaial in the given field.&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sqf_list&lt;/code&gt; returns the square free decomposition of polynomial&amp;#8217;s monic representation in the given field.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This PR has also been merged. Currently I am working on Distinct Degree factorization.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://gxyd.github.io/GSoC Week 2, 3</guid>
       <title>GSoC Week 2, 3</title>
       <author>Gaurav Dhingra (gxyd)</author>
-      <pubDate>Mon, 20 Jun 2016 18:30:00 GMT</pubDate>
+      <pubDate>Sun, 19 Jun 2016 18:30:00 GMT</pubDate>
       <link>https://gxyd.github.io/gsoc2016/gsoc_week_2_3.html</link>
       <description>&lt;p&gt;
 &lt;p&gt;
@@ -172,39 +205,6 @@ Anyway, I'm really enthusiastic about my project and hope that we'll have some n
 &lt;/i&gt;
 &lt;br /&gt;
 &lt;/ul&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Fourth-Week</guid>
-      <title>GSoC Fourth Week</title>
-      <author>Nishant Nikhil (nishnik)</author>
-      <pubDate>Mon, 20 Jun 2016 00:00:00 GMT</pubDate>
-      <link>http://nishnik.github.io/GSoC-Fourth-Week/</link>
-      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
-
-&lt;p&gt;This week &lt;a href="https://github.com/symengine/symengine/pull/955"&gt;Initial Implementation of Finitefield&lt;/a&gt; got merged. It will allow us to represent polynomial with integral coefficients in finite field.
-Talking about the design, we are sticking to the dense representation, i.e. the &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; is a vector.&lt;/p&gt;
-
-&lt;p&gt;This week there was an error in &lt;a href="https://ci.appveyor.com/"&gt;Appveyor&lt;/a&gt; build, I had no idea how to fix this. I tried to print with every passed test case and use &lt;code class="highlighter-rouge"&gt;-VV&lt;/code&gt; option for verbose mode, but it was of no use.
-Isuru, then told me that I have to log into the Appveyor&amp;#8217;s VM and debug it. He helped with &lt;code class="highlighter-rouge"&gt;remmina&lt;/code&gt; and we found that there was problem in the &lt;code class="highlighter-rouge"&gt;gf_istrip()&lt;/code&gt; function, where I was erasing elements using iterators, but after any insertion or deletion iterators become invalid. So, it is better to use indices, or do re-assignment of iterators there.&lt;/p&gt;
-
-&lt;p&gt;After that I started working on square free algorithms. In mathematics, a square-free polynomial is a polynomial defined over a field that is not a multiple of the square of a non unit factor. In general terms, they can be thought as a polynomial with no repeated roots.
-And square free factorization is the first step towards factorization of polynomials in finite field.
-So, I have implemented:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class="language-C++"&gt;GaloisFieldDict gf_diff() const;
-bool gf_is_sqf() const;
-std::vector&amp;lt;std::pair&amp;lt;GaloisFieldDict, integer_class&amp;gt;&amp;gt; gf_sqf_list() const;
-GaloisFieldDict gf_sqf_part() const;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_diff&lt;/code&gt; differentiates the polynomial in the given field.&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_is_sqf&lt;/code&gt; returns whether polynomial is squarefield in the given field.&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sqf_part&lt;/code&gt; returns the square free part of the polynomaial in the given field.&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sqf_list&lt;/code&gt; returns the square free decomposition of polynomial&amp;#8217;s monic representation in the given field.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;This PR has also been merged. Currently I am working on Distinct Degree factorization.&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=305</guid>
