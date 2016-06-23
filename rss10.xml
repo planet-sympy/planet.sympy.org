@@ -7,6 +7,70 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-5</guid>
+      <title>Coding Period Week 5</title>
+      <author>Shekhar Prasad Rajak (shekharrajak)</author>
+      <pubDate>Tue, 21 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://shekharrajak.github.io/Coding-Period-week-5/</link>
+      <description>&lt;p&gt;&lt;strong&gt;Continue- nonlinsolve :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11111"&gt;#11111&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;I found the case where complex solution may be missed. When &lt;code class="highlighter-rouge"&gt;solve_poly_system&lt;/code&gt; is solving polynomial equation and that result is used
+in solving non polynomial-equation. May be &lt;code class="highlighter-rouge"&gt;solve_poly_system&lt;/code&gt; returned only real solution( so complex solution is not be used for further steps) so further step is with this real solution.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;It seems &lt;code class="highlighter-rouge"&gt;solve_poly_system&lt;/code&gt; is doing it&amp;#8217;s job since it is not designed for all solution. But we have &lt;code class="highlighter-rouge"&gt;substitution&lt;/code&gt; method using
+&lt;code class="highlighter-rouge"&gt;solveset_real&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;solveset_complex&lt;/code&gt; and retuning all solutionn. In new commits I improved the code and now &lt;code class="highlighter-rouge"&gt;substitution&lt;/code&gt; method can solve all kind of system independently.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;I come across these kind of situation many times :&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In [68]: x, y, z, r, t = symbols('x, y, z, r, t', real = True)
+
+In [69]: soln = solveset(sqrt(r)*Abs(tan(t))/sqrt(tan(t)**2 + 1) + x*tan(t),x,S.Reals)
+
+In [70]: soln
+Out[70]:
+          &amp;#9127;      &amp;#8730;r&amp;#8901;&amp;#9474;tan(t)&amp;#9474;      &amp;#9131;
+(-&amp;#8734;, &amp;#8734;) &amp;#8745; &amp;#9130;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9130;
+          &amp;#9128;   _____________       &amp;#9132;
+          &amp;#9130;  &amp;#9585;    2               &amp;#9130;
+          &amp;#9129;&amp;#9586;&amp;#9585;  tan (t) + 1 &amp;#8901;tan(t)&amp;#9133;
+
+In [71]: soln = solveset(sqrt(r)*Abs(tan(t))/sqrt(tan(t)**2 + 1) + x*tan(t),x)
+
+In [72]: soln
+Out[72]:
+&amp;#9127;     -&amp;#8730;r&amp;#8901;&amp;#9474;tan(t)&amp;#9474;      &amp;#9131;
+&amp;#9130;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9130;
+&amp;#9128;   _____________       &amp;#9132;
+&amp;#9130;  &amp;#9585;    2               &amp;#9130;
+&amp;#9129;&amp;#9586;&amp;#9585;  tan (t) + 1 &amp;#8901;tan(t)&amp;#9133;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;In other words :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In [1]: Intersection(FiniteSet(-x), S.Reals)
+Out[1]: (-&amp;#8734;, &amp;#8734;) &amp;#8745; {x}
+
+In [2]: Intersection(FiniteSet(x), S.Reals)
+Out[2]: &amp;#8477; &amp;#8745; {x}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;So I am not able to extract the &lt;code class="highlighter-rouge"&gt;-x&lt;/code&gt; here. Because of this &lt;code class="highlighter-rouge"&gt;nonlinsolve&lt;/code&gt; returning some extra soln.
+One case is in test file : &lt;code class="highlighter-rouge"&gt;test_issue_5132&lt;/code&gt;.&lt;/p&gt;
+
+&lt;hr /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://nishnik.github.io/GSoC-Fourth-Week</guid>
       <title>GSoC Fourth Week</title>
       <author>Nishant Nikhil (nishnik)</author>
@@ -1846,108 +1910,6 @@ Anyway, I'm really enthusiastic about my project and hope that we'll have some n
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://jbm950.github.io//2016/05/27/GSoC-week-1.html</guid>
-      <title>GSoC Week 1</title>
-      <author>James Milam (jbm950)</author>
-      <pubDate>Fri, 27 May 2016 00:00:00 GMT</pubDate>
-      <link>http://jbm950.github.io//2016/05/27/GSoC-week-1.html</link>
-      <description>&lt;p&gt;The first week of the Google Summer of Code is now coming to an end and I feel
-like I&amp;#8217;ve hit the ground running and made a great head start. Most of the week
-revolved around work with creating a way to benchmark &lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt; and
-&lt;code class="highlighter-rouge"&gt;LagrangesMethod&lt;/code&gt; classes so that activities aimed at enchancing the speed
-performance of these classes can be tracked. I also worked on moving some code
-from the pydy repository to the sympy repository and made my first attempt at
-reviewing a pull request. Lastly I continued researching Featherstones Method
-of equation of motion generation and started digging into the structure of
-&lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;LagrangesMethod&lt;/code&gt; as I work towards making a base equations
-of motion class.&lt;/p&gt;
-
-&lt;p&gt;The week started off by finishing the tkinter GUI and benchmarking code that I
-had started making from scratch during the community bonding period. I added
-the ability to filter the graphed results by test, python version and platform.
-This code was submitted to the SymPy repository in &lt;a href="https://github.com/sympy/sympy/pull/11154"&gt;PR
-#11154&lt;/a&gt;. This PR has since been
-closed as Jason Moore pointed out that SymPy already has a benchmarking
-repository that is able to do basically what I was achieving with my code and a
-better solution would be to simply move my tests there. First I had to learn
-the airspeed velocity (ASV) package which is what the benchmarking repository
-uses to run it&amp;#8217;s tests. After reading through the documentation of ASV&amp;#8217;s
-homepage I altered my &lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;LagrangesMethod&lt;/code&gt; tests to fit ASV&amp;#8217;s
-formatting. This code was submitted to the sympy_benchmarks repository in &lt;a href="https://github.com/sympy/sympy_benchmarks/pull/27"&gt;PR
-#27&lt;/a&gt;. This code has since
-been merged though during the submission process Jason brought up that it would
-be a good idea to broaden the scope of testing for the equations of motion
-generators and mentioned a few example scripts to look through. My summary of
-reviewing those scripts can be found on the PR but basically some of the
-examples did not use additional methods but simply provided different inputs
-for testing equations of motion formation which is still useful.&lt;/p&gt;
-
-&lt;p&gt;Among the scripts to review was pydy.models.py which Jason pointed out would be
-useful if added to the SymPy repository as it would give additional code to
-benchmark and test. Some tasks that would need to be completed to achieve this
-migration were to remove all dependence of the code on pydy and come up with
-some test code which I worked on the back half of this week. Also I changed the
-location of the theta coordinate of models.py&amp;#8217;s second function at Jason&amp;#8217;s
-request. The submission of this code to the SymPy repository is in &lt;a href="https://github.com/sympy/sympy/pull/11168"&gt;PR
-#11168&lt;/a&gt; which at the time of this
-writing is awaiting the completion of the travis ci tests.&lt;/p&gt;
-
-&lt;p&gt;The last thing I did related to my project this week was continue to learn the
-math behind Roy Featherstone&amp;#8217;s equations of motion algorithm. I finished
-reading through his short course on spatial vector algebra slides and their
-accompaning notes. Also I contined reading through &lt;a href="http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;amp;arnumber=5663690"&gt;A Beginners Guide to 6-D
-Vectors (Part
-2)&lt;/a&gt;. Lastly I
-began taking notes on &lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;LagrangesMethod&lt;/code&gt;&amp;#8217;s apis as I begin
-working towards creating an equations of motion generation base class.&lt;/p&gt;
-
-&lt;p&gt;I also made my first attempt at doing a PR review this week on &lt;a href="https://github.com/sympy/sympy/pull/10650"&gt;PR
-#10650&lt;/a&gt;. This PR had very little
-code to look over and I made some suggestions on basic syntax choices. After he
-fixed the suggestions, however, I pinged members who deal with that code as I
-am not confident in my ability to assess whether the code is ok for merging or
-if the fix is necessary.&lt;/p&gt;
-
-&lt;h3 id="future-directions"&gt;Future Directions&lt;/h3&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Next week my plan is to jump more into figuring out the internals of the
-&lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;LagrangesMethod&lt;/code&gt; classes which will most likely involve
-dynamics topics I am less familiar with. In addition I will keep making
-progress on learning Featherstone&amp;#8217;s method of equations of motion generation.
-Thus it seems that next week will be focused more on theoretical learning and
-less on coding than this week was.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id="prs-and-issues-referenced-in-post"&gt;PR&amp;#8217;s and Issues Referenced in Post&lt;/h3&gt;
-
-&lt;blockquote&gt;
-  &lt;ul&gt;
-    &lt;li&gt;(Closed) Mechanics Benchmarking &lt;a href="https://github.com/sympy/sympy/pull/11154"&gt;PR
-  #11154&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;(Merged) Added a test for KanesMethod and LagrangesMethod &lt;a href="https://github.com/sympy/sympy_benchmarks/pull/27"&gt;PR
-  #27&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;(Open) Fix matrix rank with complicated elements &lt;a href="https://github.com/sympy/sympy/pull/10650"&gt;PR
-  #10650&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;(Open) Pydy models migration &lt;a href="https://github.com/sympy/sympy/pull/11168"&gt;PR
-  #11168&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id="articlesbooks-referenced-in-post"&gt;Articles/Books Referenced in Post&lt;/h3&gt;
-
-&lt;blockquote&gt;
-  &lt;ul&gt;
-    &lt;li&gt;&lt;a href="http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;amp;arnumber=5663690"&gt;A Beginners Guide to 6-D Vectors (Part
-   2)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href="http://royfeatherstone.org/spatial/slidesX4.pdf"&gt;A Short Course On Spatial Vector Algebra
-  Slides&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href="http://royfeatherstone.org/spatial/notes.pdf"&gt;A Short Course On Spatial Vector Algebra Slide
-  Notes&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;</description>
     </item>
   </channel>
 </rss>
