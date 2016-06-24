@@ -170,6 +170,126 @@
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-6163205f feed-" id="item-1891f983">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/jbm950.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">James Milam (jbm950) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://jbm950.github.io//2016/06/24/GSoC-week-5.html">00:00, Friday, 24 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/06/24/GSoC-week-5.html">GSoC Week 5</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/jbm950.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">James Milam (jbm950) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://jbm950.github.io//2016/06/24/GSoC-week-5.html">00:00, Friday, 24 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/06/24/GSoC-week-5.html">GSoC Week 5</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Well I started this week off by getting sick and as such productivity took a
+little bit of a hit. The majority of this week was spent reading Featherstone&#8217;s
+text book. The example documentation showcasing the base class API still hasn&#8217;t
+been reviewed and so that part of the project will just have to be set aside
+until later. Overall the project will not suffer, however, because of my
+progress in learning Featherstone&#8217;s method.</p>
+
+<p>I&#8217;ve done a couple of other things this week as well. In a discussion with
+Jason it was determined that the <code class="highlighter-rouge">LagrangesMethod</code> class must have access to
+the dynamic system&#8217;s bodies through the Lagrangian input. Upon research the
+Lagrangain turned out to not be an object instance but rather a function that
+simply returned the Lagrangian for input bodies. This meant that
+<code class="highlighter-rouge">LagrangesMethod</code> did not in fact have access to the dynamic system&#8217;s bodies.
+Due to this I decided that an easy way to get <code class="highlighter-rouge">LagrangesMethod</code> to have body
+information would be to add an optional keyword argument for it. This was
+<code class="highlighter-rouge">LagrangesMethod</code> can have a more similar API to <code class="highlighter-rouge">KanesMethod</code>. This change can
+be found in <a href="https://github.com/sympy/sympy/pull/11263">PR #11263</a>.</p>
+
+<p>This week I reviewed <a href="https://github.com/sympy/sympy/pull/10856">PR #10856</a>
+which claimed to fix <a href="https://github.com/sympy/sympy/issues/10855">Issue
+#10855</a>. Upon review it seemed
+that the &#8220;fix&#8221; was to just not run tests that were failing. When researched it
+looks like a whole module has not been updated for Python 3.X and is failing
+its relative imports. When run in Python 2.X it&#8217;s still not working either but
+rather is throwing up many <code class="highlighter-rouge">KeyError</code> flags. I think this has not been caught
+sooner due to the module being a component directly dealing with another
+project (pyglet) thus the tests are not run by TravisCI.</p>
+
+<p>Lastly there were some test errors in the example documentation for the base
+class on PyDy. I was not too worried about these because the PR is not
+currently awaiting merging and is simply a discussion PR. The failing tests,
+however, were not related to the changes in the PR and so a PyDy member
+submitted a PR that fixed the tests and asked me to review it. After I looked
+it over and determined that the fix addressed the issue correctly he merged the
+PR.</p>
+
+<h3 id="future-directions">Future Directions</h3>
+
+<p>Next week I plan to continue forward with reading Featherstone&#8217;s book and, if
+possible, begin implementing one of the methods outlined in the book. Also I
+plan on beginning work on mirroring Jason&#8217;s overhaul of <code class="highlighter-rouge">KanesMethod</code> on
+<code class="highlighter-rouge">LagrangesMethod</code>.</p>
+
+<h3 id="prs-and-issues">PR&#8217;s and Issues</h3>
+
+<blockquote>
+  <ul>
+    <li>(Open) Added support for a bodies attribute to LagrangesMethod <a href="https://github.com/sympy/sympy/pull/11263">PR
+  #11263</a></li>
+    <li>(Open) Added a depencency on older version of ipywidgets <a href="https://github.com/pydy/pydy-tutorial-human-standing/pull/100">PR
+  #100</a></li>
+    <li>(Open) Blacklisted pygletplot from doctests when pyglet is installed <a href="https://github.com/sympy/sympy/pull/10856">PR
+  #10856</a></li>
+    <li>(Open) sympy.doctest(&#8220;plotting&#8221;) fails in python 3.5 <a href="https://github.com/sympy/sympy/issues/10855">Issue
+  #10855</a></li>
+    <li>(Merged) Fix multiarray import error on appveyor <a href="https://github.com/pydy/pydy/pull/354">PR
+  #354</a></li>
+  </ul>
+</blockquote>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">June 21, 2016</h2>
@@ -1029,7 +1149,7 @@ rem = Poly(5*x**2, x, domain='ZZ')
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-6163205f feed-" id="item-5ee6315a">
+		    <div class="box" class="item feed-6163205f feed-" id="item-50ff8563">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -1054,7 +1174,7 @@ rem = Poly(5*x**2, x, domain='ZZ')
 			    			<td style="vertical-align:bottom;">
 			    				<div class="row">
 							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/06/17/GSoC-week-4.html">GSoC Week 3</a></h4>
+							    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/06/17/GSoC-week-4.html">GSoC Week 4</a></h4>
 							    	</div>
 							    </div>
 			    			</td>
@@ -1075,7 +1195,7 @@ rem = Poly(5*x**2, x, domain='ZZ')
 					    </div>
 					    <div class="row">
 					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/06/17/GSoC-week-4.html">GSoC Week 3</a></h4>
+					    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/06/17/GSoC-week-4.html">GSoC Week 4</a></h4>
 					    	</div>
 					    </div>
 				    </div-->
@@ -3594,167 +3714,6 @@ This will require some digging up and a bit of research.</p>
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-aa06d76d feed-" id="item-74a78d8e">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/srajangarg.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Srajan Garg (srajangarg) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://srajangarg.github.io//2016/05/29/Wrap-a-Lot/">00:00, Sunday, 29 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/05/29/Wrap-a-Lot/">Wrap a lot</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/srajangarg.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Srajan Garg (srajangarg) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://srajangarg.github.io//2016/05/29/Wrap-a-Lot/">00:00, Sunday, 29 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/05/29/Wrap-a-Lot/">Wrap a lot</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<h3 id="overview">Overview</h3>
-
-<p>As I pointed out in last week&#8217;s post, I have begun my work on the wrapping aspects of my project. The final aim of wrapping the polynomial class is to provide users with the option of using specialized polynomial libraries like Flint and Piranha.</p>
-
-<p>Right at the beginning of the project, I was lacking the basic idea of how the wrapping will work. Mostly I was confused by the fact that we have to right common code for all the libraries (SymEngine, Flint &amp; Piranha) with the problem being, each of the these libraries have different internal representation and methods. By the end of the week, thanks to Isuru, I have much more understanding of the desired structure of the code. Here&#8217;s a short summary on how it will work.</p>
-
-<h3 id="polynomial-base">Polynomial Base</h3>
-<p>There will be four end (derived) classes. <code class="highlighter-rouge">UIntPoly</code> &amp; <code class="highlighter-rouge">UExprPoly</code> (the SymEngine) polynomials, <code class="highlighter-rouge">UIntPolyFlint</code> and also <code class="highlighter-rouge">UIntPolyPiranha</code>. Each of these classes derive from the base class called <code class="highlighter-rouge">UPolyBase</code>. Now the base class must have methods and members which can be used commonly by each of the derived classes. Thus, the base class should have two members, the <code class="highlighter-rouge">var</code> which depicts the variable of the polynomial and a <code class="highlighter-rouge">container</code> which contains the data about the polynomial (basically the coefficients corresponding to each degree).</p>
-
-<p>This is skeleton of how the classes should look like :</p>
-
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Container</span><span class="o">&gt;</span>
-<span class="k">class</span> <span class="nc">UPolyBase</span>
-<span class="p">{</span>
-	<span class="n">Symbol</span> <span class="n">var</span><span class="p">;</span>
-	<span class="n">Container</span> <span class="n">container</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="c1">// the derived polynomials
-</span><span class="k">class</span> <span class="nc">UIntPolyPiranha</span> <span class="o">:</span> <span class="n">UPolyBase</span><span class="o">&lt;</span><span class="n">piranha</span><span class="o">::</span><span class="n">polynomail</span><span class="o">&gt;</span>
-<span class="k">class</span> <span class="nc">UIntPolyFlint</span>   <span class="o">:</span> <span class="n">UPolyBase</span><span class="o">&lt;</span><span class="n">flint</span><span class="o">::</span><span class="n">fmpz_polyxx</span><span class="o">&gt;</span>
-</code></pre>
-</div>
-
-<h3 id="symengines-container">SymEngine&#8217;s Container</h3>
-
-<p>The containers of the Flint and Piranha will be discussed in detail in the upcoming weeks. We now had to think about what the container must be for SymEngine. Also we have to merge as much functionality as possible. I saw that both the external libraries had operators overloaded for addition, subtraction, multiplication and division. So, methods like <code class="highlighter-rouge">add_poly</code> and <code class="highlighter-rouge">sub_poly</code> etc. could be made common in the base class itself if I implemented a container for holding SymEngine polynomials which also has it&#8217;s operators overloaded.</p>
-
-<p>I was not familiar with the symbolic side of the polynomials, and found out that a container had already been made for <code class="highlighter-rouge">UExprPoly</code> called <code class="highlighter-rouge">UExprDict</code>. The class was nothing but a wrapper around <code class="highlighter-rouge">map&lt;int, Expression&gt;</code>. It had overloaded methods for addition, subtraction etc. So, technically this dictionary was storing all the information about the polynomials. I just had to create another similar wrapper for <code class="highlighter-rouge">map&lt;uint, integer_class&gt;</code> for the integer counterpart of the polynomial class. This resulted in <a href="https://github.com/symengine/symengine/pull/946">#946</a> and Isuru mentioned that most of the code for both these dictionary wrappers is about the same! So, I decided to make a base class for polynomial dictionary wrappers and both of these can inherit from that. Any different implementations (like <code class="highlighter-rouge">*=</code>) can be overridden in the derived class if needed.</p>
-
-<p>The ordered map base looks like :</p>
-
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Key</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Value</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Wrapper</span><span class="o">&gt;</span>
-<span class="k">class</span> <span class="nc">ODictWrapper</span>
-<span class="p">{</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">Key</span><span class="p">,</span> <span class="n">Value</span><span class="o">&gt;</span> <span class="n">dict_</span><span class="p">;</span>
-
-    <span class="k">friend</span> <span class="n">Wrapper</span> <span class="k">operator</span><span class="o">-</span><span class="p">(</span><span class="k">const</span> <span class="n">Wrapper</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">Wrapper</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">Wrapper</span> <span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
-        <span class="n">c</span> <span class="o">-=</span> <span class="n">b</span><span class="p">;</span>
-        <span class="k">return</span> <span class="n">c</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="n">Wrapper</span> <span class="k">operator</span><span class="o">-</span><span class="p">()</span> <span class="k">const</span>
-    <span class="p">{</span>
-        <span class="n">ODictWrapper</span> <span class="n">c</span> <span class="o">=</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="o">&amp;</span><span class="n">iter</span> <span class="o">:</span> <span class="n">c</span><span class="p">.</span><span class="n">dict_</span><span class="p">)</span>
-            <span class="n">iter</span><span class="p">.</span><span class="n">second</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-        <span class="k">return</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Wrapper</span> <span class="o">&amp;&gt;</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="p">....</span>
-<span class="p">}</span>
-
-<span class="c1">// the derived wrappers
-</span><span class="k">class</span> <span class="nc">UIntDict</span>  <span class="o">:</span> <span class="n">ODictWrapper</span><span class="o">&lt;</span><span class="n">uint</span><span class="p">,</span> <span class="n">integer_class</span><span class="p">,</span> <span class="n">UIntDict</span><span class="o">&gt;</span>
-<span class="k">class</span> <span class="nc">UExprDict</span> <span class="o">:</span> <span class="n">ODictWrapper</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">Expression</span><span class="p">,</span> <span class="n">UExprDict</span><span class="o">&gt;</span>
-</code></pre>
-</div>
-
-<h3 id="finishing-the-class">Finishing the class</h3>
-
-<p>After the containers for SymEngine were complete, I started implementing the polynomial base class, from which the two current polynomial classes will inherit. The class turned out to be very similar to the prototype described above. Accessor methods were added and basic polynomial functions were added <a href="https://github.com/symengine/symengine/pull/951">#951</a>.</p>
-
-<p>All we have to do now for functions like <code class="highlighter-rouge">add_poly</code> is use the overloaded operators on the containers. Also, template argument deduction will automatically allow us to call the functions directly on two same polynomial types.</p>
-
-<p>An example of a common template function for addition :</p>
-
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Poly</span><span class="o">&gt;</span>
-<span class="n">RCP</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">Poly</span><span class="o">&gt;</span> <span class="n">add_upoly</span><span class="p">(</span><span class="k">const</span> <span class="n">Poly</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">Poly</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">auto</span> <span class="n">dict</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">get_poly</span><span class="p">();</span>
-    <span class="n">dict</span> <span class="o">+=</span> <span class="n">b</span><span class="p">.</span><span class="n">get_poly</span><span class="p">();</span>
-    <span class="k">return</span> <span class="n">Poly</span><span class="o">::</span><span class="n">from_dict</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">get_var</span><span class="p">(),</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">dict</span><span class="p">));</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<p>and how easily it can be used :</p>
-
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">A</span> <span class="o">=</span> <span class="n">uint_poly</span><span class="p">(</span><span class="s">"x"</span><span class="p">,</span> <span class="p">{(</span><span class="mi">0</span> <span class="o">:</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span> <span class="o">:</span> <span class="mi">2</span><span class="p">)});</span>   <span class="c1">// 2*x + 1
-</span><span class="n">B</span> <span class="o">=</span> <span class="n">uint_poly</span><span class="p">(</span><span class="s">"x"</span><span class="p">,</span> <span class="p">{(</span><span class="mi">2</span> <span class="o">:</span> <span class="mi">2</span><span class="p">)});</span>            <span class="c1">// 2*x**2
-</span>
-<span class="n">C</span> <span class="o">=</span>  <span class="n">add_upoly</span><span class="p">(</span><span class="o">*</span><span class="n">A</span><span class="p">,</span> <span class="o">*</span><span class="n">B</span><span class="p">);</span>
-</code></pre>
-</div>
-
-<h3 id="miscellaneous-work">Miscellaneous Work</h3>
-
-<ul>
-  <li>
-    <p>The names of the classes I refer to here are the new names. The old names were a little unintuitive, so decided to change them, along with introducing a new subfolder in the repository to hold all code related to polynomials (and their tests). Some code was also shifted to places more apt, all changes can be seen here <a href="https://github.com/symengine/symengine/pull/960">#960</a>.</p>
-  </li>
-  <li>
-    <p>There are a small number of miscellaneous changes that need to be worked out in the overall structure, here they are <a href="https://github.com/symengine/symengine/pull/962">#962</a>.</p>
-  </li>
-</ul>
-
-<p>More on this and Flint next week! Goodbye!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -3783,86 +3742,86 @@ This will require some digging up and a bit of research.</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>20:02, Friday, 24 June</td>
-<td>20:17, Friday, 24 June</td>
+<td>20:22, Friday, 24 June</td>
+<td>20:37, Friday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>20:02, Friday, 24 June</td>
-<td>20:17, Friday, 24 June</td>
+<td>20:22, Friday, 24 June</td>
+<td>20:37, Friday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>20:02, Friday, 24 June</td>
-<td>20:17, Friday, 24 June</td>
+<td>20:22, Friday, 24 June</td>
+<td>20:37, Friday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>20:02, Friday, 24 June</td>
-<td>20:17, Friday, 24 June</td>
+<td>20:22, Friday, 24 June</td>
+<td>20:37, Friday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>20:02, Friday, 24 June</td>
-<td>20:17, Friday, 24 June</td>
+<td>20:22, Friday, 24 June</td>
+<td>20:37, Friday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>20:02, Friday, 24 June</td>
-<td>20:17, Friday, 24 June</td>
+<td>20:22, Friday, 24 June</td>
+<td>20:37, Friday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://github.com/kshitij10496/">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>20:02, Friday, 24 June</td>
-<td>20:17, Friday, 24 June</td>
+<td>20:22, Friday, 24 June</td>
+<td>20:37, Friday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>20:02, Friday, 24 June</td>
-<td>20:17, Friday, 24 June</td>
+<td>20:22, Friday, 24 June</td>
+<td>20:37, Friday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>20:02, Friday, 24 June</td>
-<td>20:17, Friday, 24 June</td>
+<td>20:22, Friday, 24 June</td>
+<td>20:37, Friday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>20:02, Friday, 24 June</td>
-<td>20:17, Friday, 24 June</td>
+<td>20:22, Friday, 24 June</td>
+<td>20:37, Friday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>20:02, Friday, 24 June</td>
-<td>20:17, Friday, 24 June</td>
+<td>20:22, Friday, 24 June</td>
+<td>20:37, Friday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>20:02, Friday, 24 June</td>
-<td>20:17, Friday, 24 June</td>
+<td>20:22, Friday, 24 June</td>
+<td>20:37, Friday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>20:02, Friday, 24 June</td>
-<td>20:17, Friday, 24 June</td>
+<td>20:22, Friday, 24 June</td>
+<td>20:37, Friday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>20:02, Friday, 24 June</td>
-<td>20:17, Friday, 24 June</td>
+<td>20:22, Friday, 24 June</td>
+<td>20:37, Friday, 24 June</td>
 </tr>
 </table>
 
