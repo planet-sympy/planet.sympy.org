@@ -361,6 +361,115 @@ plan on beginning work on mirroring Jason&#8217;s overhaul of <code class="highl
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-7730e356 feed-" id="item-11861e92">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/kshitij10496.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Kshitij Saraogi(kshitij10496) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://github.com/kshitij10496/2016/06/24/GSoC-Week-04-05/">00:00, Friday, 24 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://github.com/kshitij10496/2016/06/24/GSoC-Week-04-05/">GSoC Weeks 04 &amp; 05 - The One with Periodicity</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/kshitij10496.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Kshitij Saraogi(kshitij10496) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://github.com/kshitij10496/2016/06/24/GSoC-Week-04-05/">00:00, Friday, 24 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://github.com/kshitij10496/2016/06/24/GSoC-Week-04-05/">GSoC Weeks 04 &amp; 05 - The One with Periodicity</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Hi folks !</p>
+
+<p>The past couple of weeks were spent of developing heuristics for determining the
+fundamental period of a given trigonometric function.</p>
+
+<p>In our higher school, we all must have come across <code class="highlighter-rouge">Trigonometric Functions</code>.
+One of the most striking properties of these functions is their periodicty.<br />
+The ability of a function to repeat its values in regular intervals has always
+caught my imagination.</p>
+
+<h2 id="motivation"><strong>Motivation</strong></h2>
+
+<p>Well, SymPy ought to have a functionality to determine the period of a function.
+The instigated me to implement this function now was the build failure in my 
+PR#11141 on <code class="highlighter-rouge">solve_decomposition</code>.</p>
+
+<h3 id="issue"><strong>Issue</strong></h3>
+
+<p><code class="highlighter-rouge">function_range(sin(x), x, domain=S.Reals)</code> causes the build to time-out as the 
+number of critical points of <code class="highlighter-rouge">sin(x)</code> in the entire real domain is infinite.
+The same goes for other trigonometric functions as well.</p>
+
+<p>However, if we can set the <code class="highlighter-rouge">domain</code> argument to be a finite interval which 
+encompasses the entire behaviour of <code class="highlighter-rouge">sin(x)</code> over the entire real domain, our 
+issue can be solved.</p>
+
+<p>This led me to the idea of using the periodicity of the function as its domain.</p>
+
+<h2 id="design"><strong>Design</strong></h2>
+
+<p><code class="highlighter-rouge">f = sin(x) + sin(2*x) + cos(3*x)</code></p>
+
+<p>We know that the period of <code class="highlighter-rouge">f</code> is <code class="highlighter-rouge">2&#8901;&#960;</code> 
+i.e. the LCM of the periods of individual function.</p>
+
+<p><em>It is known !</em></p>
+
+<p>Hence, in order to find the period of <code class="highlighter-rouge">f</code>, we need the functionality to determine
+the period simpler trigonometric functions such as <code class="highlighter-rouge">sin(x)</code>, <code class="highlighter-rouge">sin(2*x)</code> and <code class="highlighter-rouge">cos(3*x)</code></p>
+
+<h3 id="property"><strong>Property</strong></h3>
+
+<blockquote>
+  <p>If the period of <code class="highlighter-rouge">g(x)</code> is <code class="highlighter-rouge">T</code>, then the period of <code class="highlighter-rouge">g(a*x)</code> is <code class="highlighter-rouge">T/a</code>.</p>
+</blockquote>
+
+<p>Using this property, we can easily compute the periods of <code class="highlighter-rouge">sin(2*x)</code> and <code class="highlighter-rouge">cos(3*x)</code>
+with our knowledge of the periodicity of the fundamental trigonometric functions.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">June 21, 2016</h2>
@@ -3506,91 +3615,6 @@ Out[5]: 9</code></pre>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">May 29, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-19a67809 feed-" id="item-35113064">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/rajithv.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Rajith Vidanaarachchi (rajithv) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://rajithsays.wordpress.com/2016/05/29/gsoc-week-1-progress/">08:14, Sunday, 29 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://rajithsays.wordpress.com/2016/05/29/gsoc-week-1-progress/">GSoC Week 1 Progress</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/rajithv.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Rajith Vidanaarachchi (rajithv) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://rajithsays.wordpress.com/2016/05/29/gsoc-week-1-progress/">08:14, Sunday, 29 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://rajithsays.wordpress.com/2016/05/29/gsoc-week-1-progress/">GSoC Week 1 Progress</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>The GSoC coding period started earlier this week. I have been coding for 6 days untils now, and am taking a break on Sunday!</p>
-<p>For this week, according to&#160;GSoC proposal I started with wrapping the Complex Numbers class into Ruby. This week and the next are supposed to be for Complex numbers and Doubles.</p>
-<p>Straight from my proposal :</p>
-<blockquote><p><span style="font-weight: 400;">Complex Numbers in the SymEngine can be of three different types.</span></p>
-<ul>
-<li style="font-weight: 400;"><span style="font-weight: 400;">Complex Double</span></li>
-<li style="font-weight: 400;"><span style="font-weight: 400;">Complex Int</span></li>
-<li style="font-weight: 400;"><span style="font-weight: 400;">Complex mpc</span></li>
-</ul>
-<p><span style="font-weight: 400;">Apart from wrapping these three different types into Ruby, this part will also include converting between the SymEngine Complex types and the </span><a href="http://ruby-doc.org/core-1.9.3/Complex.html"><span style="font-weight: 400;">Ruby Complex types</span></a><span style="font-weight: 400;">.</span></p>
-<p><span style="font-weight: 400;">Like wise, for floating point representation there are two types:</span></p>
-<ul>
-<li style="font-weight: 400;"><span style="font-weight: 400;">Real Double</span></li>
-<li style="font-weight: 400;"><span style="font-weight: 400;">Real mpfr</span></li>
-</ul>
-<p><span style="font-weight: 400;">These classes will be wrapped during this week of the project, as well as converting between these types and Ruby&#8217;s Float and BigDecimal data types.</span></p></blockquote>
-<p>The Complex Numbers (excluding Complex Double and &#160;Complex mpc) was wrapped successfully with <a href="https://github.com/symengine/symengine.rb/pull/39" target="_blank">PR #39</a>, while also fixing a couple of issues (<a href="https://github.com/symengine/symengine.rb/issues/19" target="_blank">Issue #19</a> and <a href="https://github.com/symengine/symengine.rb/issues/21" target="_blank">Issue #21</a>). Interestingly, the Ruby Spec was updated by @zverok during this week and I had the opportunity to learn a lot about Specs as I had to re-write the specs in the new style.</p>
-<p>On the other side, in the symengine/symengine repo, the CWrappers were updated to accommodate both Complex and Double numbers and successfully merged with <a href="https://github.com/symengine/symengine/pull/954" target="_blank">PR #954</a>.</p>
-<p>The work on Doubles and Complex Doubles have already started in <a href="https://github.com/symengine/symengine/pull/954" target="_blank">PR #46</a>, and is almost completed. This should be ready to merge by mid next week, and by the end of next week I am hoping to complete mpc and mpfr for Complex and Doubles, and move on to the actual 3rd week work. Being ahead of the schedule is always great as it reduces pressure on my self!</p>
-<p>See you next week!</p>
-<p>&nbsp;</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/232/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/232/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&#038;blog=110498904&#038;post=232&#038;subd=rajithsays&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3618,86 +3642,86 @@ Out[5]: 9</code></pre>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>16:29, Sunday, 26 June</td>
-<td>16:44, Sunday, 26 June</td>
+<td>16:49, Sunday, 26 June</td>
+<td>17:04, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>16:29, Sunday, 26 June</td>
-<td>16:44, Sunday, 26 June</td>
+<td>16:49, Sunday, 26 June</td>
+<td>17:04, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>16:29, Sunday, 26 June</td>
-<td>16:44, Sunday, 26 June</td>
+<td>16:49, Sunday, 26 June</td>
+<td>17:04, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>16:29, Sunday, 26 June</td>
-<td>16:44, Sunday, 26 June</td>
+<td>16:49, Sunday, 26 June</td>
+<td>17:04, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>16:29, Sunday, 26 June</td>
-<td>16:44, Sunday, 26 June</td>
+<td>16:49, Sunday, 26 June</td>
+<td>17:04, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>16:29, Sunday, 26 June</td>
-<td>16:44, Sunday, 26 June</td>
+<td>16:49, Sunday, 26 June</td>
+<td>17:04, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://github.com/kshitij10496/">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>16:29, Sunday, 26 June</td>
-<td>16:44, Sunday, 26 June</td>
+<td>16:49, Sunday, 26 June</td>
+<td>17:04, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>16:29, Sunday, 26 June</td>
-<td>16:44, Sunday, 26 June</td>
+<td>16:49, Sunday, 26 June</td>
+<td>17:04, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>16:29, Sunday, 26 June</td>
-<td>16:44, Sunday, 26 June</td>
+<td>16:49, Sunday, 26 June</td>
+<td>17:04, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>16:29, Sunday, 26 June</td>
-<td>16:44, Sunday, 26 June</td>
+<td>16:49, Sunday, 26 June</td>
+<td>17:04, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>16:29, Sunday, 26 June</td>
-<td>16:44, Sunday, 26 June</td>
+<td>16:49, Sunday, 26 June</td>
+<td>17:04, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>16:29, Sunday, 26 June</td>
-<td>16:44, Sunday, 26 June</td>
+<td>16:49, Sunday, 26 June</td>
+<td>17:04, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>16:29, Sunday, 26 June</td>
-<td>16:44, Sunday, 26 June</td>
+<td>16:49, Sunday, 26 June</td>
+<td>17:04, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>16:29, Sunday, 26 June</td>
-<td>16:44, Sunday, 26 June</td>
+<td>16:49, Sunday, 26 June</td>
+<td>17:04, Sunday, 26 June</td>
 </tr>
 </table>
 

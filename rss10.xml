@@ -113,6 +113,61 @@ plan on beginning work on mirroring Jason&amp;#8217;s overhaul of &lt;code class
 &lt;/blockquote&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://github.com/kshitij10496/2016/06/24/GSoC-Week-04-05/</guid>
+      <title>GSoC Weeks 04 &amp; 05 - The One with Periodicity</title>
+      <author>Kshitij Saraogi(kshitij10496)</author>
+      <pubDate>Fri, 24 Jun 2016 00:00:00 GMT</pubDate>
+      <link>https://github.com/kshitij10496/2016/06/24/GSoC-Week-04-05/</link>
+      <description>&lt;p&gt;Hi folks !&lt;/p&gt;
+
+&lt;p&gt;The past couple of weeks were spent of developing heuristics for determining the
+fundamental period of a given trigonometric function.&lt;/p&gt;
+
+&lt;p&gt;In our higher school, we all must have come across &lt;code class="highlighter-rouge"&gt;Trigonometric Functions&lt;/code&gt;.
+One of the most striking properties of these functions is their periodicty.&lt;br /&gt;
+The ability of a function to repeat its values in regular intervals has always
+caught my imagination.&lt;/p&gt;
+
+&lt;h2 id="motivation"&gt;&lt;strong&gt;Motivation&lt;/strong&gt;&lt;/h2&gt;
+
+&lt;p&gt;Well, SymPy ought to have a functionality to determine the period of a function.
+The instigated me to implement this function now was the build failure in my 
+PR#11141 on &lt;code class="highlighter-rouge"&gt;solve_decomposition&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h3 id="issue"&gt;&lt;strong&gt;Issue&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;function_range(sin(x), x, domain=S.Reals)&lt;/code&gt; causes the build to time-out as the 
+number of critical points of &lt;code class="highlighter-rouge"&gt;sin(x)&lt;/code&gt; in the entire real domain is infinite.
+The same goes for other trigonometric functions as well.&lt;/p&gt;
+
+&lt;p&gt;However, if we can set the &lt;code class="highlighter-rouge"&gt;domain&lt;/code&gt; argument to be a finite interval which 
+encompasses the entire behaviour of &lt;code class="highlighter-rouge"&gt;sin(x)&lt;/code&gt; over the entire real domain, our 
+issue can be solved.&lt;/p&gt;
+
+&lt;p&gt;This led me to the idea of using the periodicity of the function as its domain.&lt;/p&gt;
+
+&lt;h2 id="design"&gt;&lt;strong&gt;Design&lt;/strong&gt;&lt;/h2&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;f = sin(x) + sin(2*x) + cos(3*x)&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;We know that the period of &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt; is &lt;code class="highlighter-rouge"&gt;2&amp;#8901;&amp;#960;&lt;/code&gt; 
+i.e. the LCM of the periods of individual function.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;It is known !&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Hence, in order to find the period of &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt;, we need the functionality to determine
+the period simpler trigonometric functions such as &lt;code class="highlighter-rouge"&gt;sin(x)&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;sin(2*x)&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;cos(3*x)&lt;/code&gt;&lt;/p&gt;
+
+&lt;h3 id="property"&gt;&lt;strong&gt;Property&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;If the period of &lt;code class="highlighter-rouge"&gt;g(x)&lt;/code&gt; is &lt;code class="highlighter-rouge"&gt;T&lt;/code&gt;, then the period of &lt;code class="highlighter-rouge"&gt;g(a*x)&lt;/code&gt; is &lt;code class="highlighter-rouge"&gt;T/a&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Using this property, we can easily compute the periods of &lt;code class="highlighter-rouge"&gt;sin(2*x)&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;cos(3*x)&lt;/code&gt;
+with our knowledge of the periodicity of the fundamental trigonometric functions.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-5</guid>
       <title>Coding Period Week 5</title>
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
@@ -1676,34 +1731,6 @@ Out[5]: 9&lt;/code&gt;&lt;/pre&gt;
 &lt;/ul&gt;
 &lt;p&gt;Looking forward toward an another great week. Cheers!&lt;/p&gt;
 &lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/261/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/261/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=261&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=232</guid>
-      <title>GSoC Week 1 Progress</title>
-      <author>Rajith Vidanaarachchi (rajithv)</author>
-      <pubDate>Sun, 29 May 2016 08:14:24 GMT</pubDate>
-      <link>https://rajithsays.wordpress.com/2016/05/29/gsoc-week-1-progress/</link>
-      <description>&lt;p&gt;The GSoC coding period started earlier this week. I have been coding for 6 days untils now, and am taking a break on Sunday!&lt;/p&gt;
-&lt;p&gt;For this week, according to&amp;#160;GSoC proposal I started with wrapping the Complex Numbers class into Ruby. This week and the next are supposed to be for Complex numbers and Doubles.&lt;/p&gt;
-&lt;p&gt;Straight from my proposal :&lt;/p&gt;
-&lt;blockquote&gt;&lt;p&gt;&lt;span style="font-weight: 400;"&gt;Complex Numbers in the SymEngine can be of three different types.&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li style="font-weight: 400;"&gt;&lt;span style="font-weight: 400;"&gt;Complex Double&lt;/span&gt;&lt;/li&gt;
-&lt;li style="font-weight: 400;"&gt;&lt;span style="font-weight: 400;"&gt;Complex Int&lt;/span&gt;&lt;/li&gt;
-&lt;li style="font-weight: 400;"&gt;&lt;span style="font-weight: 400;"&gt;Complex mpc&lt;/span&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span style="font-weight: 400;"&gt;Apart from wrapping these three different types into Ruby, this part will also include converting between the SymEngine Complex types and the &lt;/span&gt;&lt;a href="http://ruby-doc.org/core-1.9.3/Complex.html"&gt;&lt;span style="font-weight: 400;"&gt;Ruby Complex types&lt;/span&gt;&lt;/a&gt;&lt;span style="font-weight: 400;"&gt;.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style="font-weight: 400;"&gt;Like wise, for floating point representation there are two types:&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li style="font-weight: 400;"&gt;&lt;span style="font-weight: 400;"&gt;Real Double&lt;/span&gt;&lt;/li&gt;
-&lt;li style="font-weight: 400;"&gt;&lt;span style="font-weight: 400;"&gt;Real mpfr&lt;/span&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span style="font-weight: 400;"&gt;These classes will be wrapped during this week of the project, as well as converting between these types and Ruby&amp;#8217;s Float and BigDecimal data types.&lt;/span&gt;&lt;/p&gt;&lt;/blockquote&gt;
-&lt;p&gt;The Complex Numbers (excluding Complex Double and &amp;#160;Complex mpc) was wrapped successfully with &lt;a href="https://github.com/symengine/symengine.rb/pull/39" target="_blank"&gt;PR #39&lt;/a&gt;, while also fixing a couple of issues (&lt;a href="https://github.com/symengine/symengine.rb/issues/19" target="_blank"&gt;Issue #19&lt;/a&gt; and &lt;a href="https://github.com/symengine/symengine.rb/issues/21" target="_blank"&gt;Issue #21&lt;/a&gt;). Interestingly, the Ruby Spec was updated by @zverok during this week and I had the opportunity to learn a lot about Specs as I had to re-write the specs in the new style.&lt;/p&gt;
-&lt;p&gt;On the other side, in the symengine/symengine repo, the CWrappers were updated to accommodate both Complex and Double numbers and successfully merged with &lt;a href="https://github.com/symengine/symengine/pull/954" target="_blank"&gt;PR #954&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The work on Doubles and Complex Doubles have already started in &lt;a href="https://github.com/symengine/symengine/pull/954" target="_blank"&gt;PR #46&lt;/a&gt;, and is almost completed. This should be ready to merge by mid next week, and by the end of next week I am hoping to complete mpc and mpfr for Complex and Doubles, and move on to the actual 3rd week work. Being ahead of the schedule is always great as it reduces pressure on my self!&lt;/p&gt;
-&lt;p&gt;See you next week!&lt;/p&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/232/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/232/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=232&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>
