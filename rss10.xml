@@ -59,6 +59,61 @@ DenseMatrix.FFLDU # (fraction free LDU)&lt;/pre&gt;
 &lt;p&gt;Cheers!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/442/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/442/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=442&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://srajangarg.github.io//2016/06/26/Basic-Poly</guid>
+      <title>Basic To Poly</title>
+      <author>Srajan Garg (srajangarg)</author>
+      <pubDate>Sun, 26 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://srajangarg.github.io//2016/06/26/Basic-Poly/</link>
+      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
+
+&lt;p&gt;All of my week was mostly consumed by asking questions like &amp;#8220;Should this throw?&amp;#8221; and &amp;#8220;What are it&amp;#8217;s generators?&amp;#8221;. My work for this week was to make a mechanism for converting arbitrary expression into polynomials. Turns out, it isn&amp;#8217;t as trivial as it initially sounded. I will discuss my progress below. This week has been a lot more of logic involved, and thinking about how to go ahead instead of just development, so I do not have a lot to write about.&lt;/p&gt;
+
+&lt;h3 id="the-idea"&gt;The Idea&lt;/h3&gt;
+
+&lt;p&gt;A multivariate polynomial is made of generators. A univariate polynomial is made of a single generator. Each term in a polynomial is a monomial which is multiplication of it&amp;#8217;s generators to a non-negative power, which also has a non-zero coefficient multiplied to it. Here are some polynomials and their generators :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x**2 + x**5          		-&amp;gt;      x
+
+sqrt(3) + sqrt(3)**3        -&amp;gt;		sqrt(3)
+
+(1/x**2) + (1/x**5) 		-&amp;gt; 		(1/x)
+
+x**2 + y**2 + x				-&amp;gt; 		x, y
+
+2**x + 1					-&amp;gt; 		2**x
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;I hope you get the idea. The main task is given a &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt;, we need to construct a polynomial with appropriate generator. The task is broken down into two parts. First off, we try and extract a generator from the given expression. Secondly, use the found (or user given) generator to construct the polynomial.&lt;/p&gt;
+
+&lt;p&gt;Ideally the API should look as follows:&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;RCP&amp;lt;Basic&amp;gt; UIntPoly::from_basic(Basic x);
+RCP&amp;lt;Basic&amp;gt; UIntPoly::from_basic(Basic x, Basic gen);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id="my-progress"&gt;My Progress&lt;/h3&gt;
+
+&lt;p&gt;I have only worked on the univariate polynomial class as of now, and was to write the &lt;code class="highlighter-rouge"&gt;from_basic&lt;/code&gt; method just for the univariate classes for now. Although I just had to deal with the specific case of univariate integer polynomials, I haven&amp;#8217;t successfully been able to get the job done just yet.&lt;/p&gt;
+
+&lt;p&gt;The work started with converting &lt;code class="highlighter-rouge"&gt;Symbol var&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;Basic var&lt;/code&gt;. Initially, the generators of the polynomial class could only be symbols, however this needed to be changed, as we&amp;#8217;ve seen generators can be anything! This change did not take a lot of effort.&lt;/p&gt;
+
+&lt;p&gt;I started off with a &lt;code class="highlighter-rouge"&gt;find_gen&lt;/code&gt; function which given a &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt; will try and find a unique generator for the polynomial to be constructed. Ideally, if no generator/ more than one generator is found it will throw a runtime error. I covered most of the cases but a few still remain.&lt;/p&gt;
+
+&lt;p&gt;Also, an initial implementation of the &lt;code class="highlighter-rouge"&gt;to_poly&lt;/code&gt; functionality has been done, complete with the required API. Some cases related to conversion still need to be handled. I do not want to go into the logic involved into each conversion as it is tedious and not very structured. All the work done till now can be seen in &lt;a href="https://github.com/symengine/symengine/pull/998"&gt;#998&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I hope with all the information I have gained over this week, I will wind up the &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;UPoly&lt;/code&gt; conversions for both the integer coefficients as well as the general expression coefficients by the end of next week. I also intend to make the logic more concrete, so that the same API can be used in the multivariate case.&lt;/p&gt;
+
+&lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;I made some changes in the &lt;code class="highlighter-rouge"&gt;expand&lt;/code&gt; function related to polynomials. They mostly have to deal with removal of code, which has already been implemented. It is also a partial fix for &lt;a href="https://github.com/symengine/symengine/issues/886"&gt;#886&lt;/a&gt;, work is in &lt;a href="https://github.com/symengine/symengine/pull/999"&gt;#999&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Tata!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=636</guid>
       <title>GSoC Week 5</title>
       <author>Sampad Saha (sampadsaha5)</author>
@@ -1711,23 +1766,6 @@ but I want &lt;code class="highlighter-rouge"&gt;imageset(Lambda(n, n*pi), S.Int
 &lt;code class="highlighter-rouge"&gt;2*sin(x) - 2*sqrt(3)*cos(x) - sqrt(3)*tan(x) +3 = 0&lt;/code&gt; can be easily solved if we factorize it correctly. But I haven&amp;#8217;t found
 a good way to get its factor. I tried &lt;code class="highlighter-rouge"&gt;factor&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;expand(Trig + True)&lt;/code&gt; , &lt;code class="highlighter-rouge"&gt;expand_trig&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;rewrite(sin)&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=201</guid>
-      <title>GSoC: Week 2 Begins</title>
-      <author>Subham Tibra (shubhamtibra)</author>
-      <pubDate>Mon, 30 May 2016 16:00:08 GMT</pubDate>
-      <link>https://shubhamtibra.wordpress.com/2016/05/30/gsoc-week-2-begins/</link>
-      <description>&lt;p&gt;First, I am going to&amp;#160;talk about what has been done since last week. I implemented methods to find a recurrence relation in the coefficients of Power series expansion of a Holonomic Function, and then method to find the Power series.&lt;/p&gt;
-&lt;p&gt;One of the many interesting properties of Holonomic Functions is that the coefficients in Power series expansion of a Holonomic function is a Holonomic sequence, i.e. these coefficients satisfy a recurrence relation having polynomial coefficients.&lt;/p&gt;
-&lt;p&gt;This recurrence relation can be used to efficiently calculate the coefficients of Power series. The PR&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11153" target="_blank"&gt;11153&lt;/a&gt;&amp;#160;had these methods and got merged today. Here are a couple of examples of the implementation.&lt;/p&gt;
-&lt;blockquote&gt;&lt;p&gt;In []: p = HolonomicFunction(Dx &amp;#8211; 1, x, 0, [1]) &amp;#160;# exp(x)&lt;br /&gt;
-In []: p.to_sequence()&lt;/p&gt;
-&lt;p&gt;Out []:&amp;#160;HolonomicSequence((-1) + (n + 1)Sn, n), u(0) = 1&lt;/p&gt;
-&lt;p&gt;In []: p.series()&lt;/p&gt;
-&lt;p&gt;Out []:&amp;#160;1 + x + x**2/2 + x**3/6 + x**4/24 + x**5/120 + O(x**6)&lt;/p&gt;&lt;/blockquote&gt;
-&lt;p&gt;For this week it is planned first to implement a method to numerically integrate differential equations of holonomic type from any point &lt;code&gt;x=a&lt;/code&gt;&amp;#160;to &lt;code&gt;x=b&lt;/code&gt;&amp;#160;in the complex plane. The next thing to implement after this&amp;#160;would probably be converting symbolic functions/expressions to Holonomic Functions.&lt;/p&gt;
-&lt;p&gt;Cheers and Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/201/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/201/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=201&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>

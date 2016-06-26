@@ -250,6 +250,115 @@ DenseMatrix.FFLDU # (fraction free LDU)</pre>
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-5453a04f">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/srajangarg.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Srajan Garg (srajangarg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://srajangarg.github.io//2016/06/26/Basic-Poly/">00:00, Sunday, 26 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/06/26/Basic-Poly/">Basic To Poly</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/srajangarg.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Srajan Garg (srajangarg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://srajangarg.github.io//2016/06/26/Basic-Poly/">00:00, Sunday, 26 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/06/26/Basic-Poly/">Basic To Poly</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<h3 id="overview">Overview</h3>
+
+<p>All of my week was mostly consumed by asking questions like &#8220;Should this throw?&#8221; and &#8220;What are it&#8217;s generators?&#8221;. My work for this week was to make a mechanism for converting arbitrary expression into polynomials. Turns out, it isn&#8217;t as trivial as it initially sounded. I will discuss my progress below. This week has been a lot more of logic involved, and thinking about how to go ahead instead of just development, so I do not have a lot to write about.</p>
+
+<h3 id="the-idea">The Idea</h3>
+
+<p>A multivariate polynomial is made of generators. A univariate polynomial is made of a single generator. Each term in a polynomial is a monomial which is multiplication of it&#8217;s generators to a non-negative power, which also has a non-zero coefficient multiplied to it. Here are some polynomials and their generators :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>x**2 + x**5          		-&gt;      x
+
+sqrt(3) + sqrt(3)**3        -&gt;		sqrt(3)
+
+(1/x**2) + (1/x**5) 		-&gt; 		(1/x)
+
+x**2 + y**2 + x				-&gt; 		x, y
+
+2**x + 1					-&gt; 		2**x
+</code></pre>
+</div>
+
+<p>I hope you get the idea. The main task is given a <code class="highlighter-rouge">Basic</code>, we need to construct a polynomial with appropriate generator. The task is broken down into two parts. First off, we try and extract a generator from the given expression. Secondly, use the found (or user given) generator to construct the polynomial.</p>
+
+<p>Ideally the API should look as follows:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>RCP&lt;Basic&gt; UIntPoly::from_basic(Basic x);
+RCP&lt;Basic&gt; UIntPoly::from_basic(Basic x, Basic gen);
+</code></pre>
+</div>
+
+<h3 id="my-progress">My Progress</h3>
+
+<p>I have only worked on the univariate polynomial class as of now, and was to write the <code class="highlighter-rouge">from_basic</code> method just for the univariate classes for now. Although I just had to deal with the specific case of univariate integer polynomials, I haven&#8217;t successfully been able to get the job done just yet.</p>
+
+<p>The work started with converting <code class="highlighter-rouge">Symbol var</code> to <code class="highlighter-rouge">Basic var</code>. Initially, the generators of the polynomial class could only be symbols, however this needed to be changed, as we&#8217;ve seen generators can be anything! This change did not take a lot of effort.</p>
+
+<p>I started off with a <code class="highlighter-rouge">find_gen</code> function which given a <code class="highlighter-rouge">Basic</code> will try and find a unique generator for the polynomial to be constructed. Ideally, if no generator/ more than one generator is found it will throw a runtime error. I covered most of the cases but a few still remain.</p>
+
+<p>Also, an initial implementation of the <code class="highlighter-rouge">to_poly</code> functionality has been done, complete with the required API. Some cases related to conversion still need to be handled. I do not want to go into the logic involved into each conversion as it is tedious and not very structured. All the work done till now can be seen in <a href="https://github.com/symengine/symengine/pull/998">#998</a>.</p>
+
+<p>I hope with all the information I have gained over this week, I will wind up the <code class="highlighter-rouge">Basic</code> to <code class="highlighter-rouge">UPoly</code> conversions for both the integer coefficients as well as the general expression coefficients by the end of next week. I also intend to make the logic more concrete, so that the same API can be used in the multivariate case.</p>
+
+<h3 id="miscellaneous-work">Miscellaneous Work</h3>
+
+<ul>
+  <li>I made some changes in the <code class="highlighter-rouge">expand</code> function related to polynomials. They mostly have to deal with removal of code, which has already been implemented. It is also a partial fix for <a href="https://github.com/symengine/symengine/issues/886">#886</a>, work is in <a href="https://github.com/symengine/symengine/pull/999">#999</a>.</li>
+</ul>
+
+<p>Tata!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">June 24, 2016</h2>
@@ -3538,80 +3647,6 @@ a good way to get its factor. I tried <code class="highlighter-rouge">factor</co
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">May 30, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-3ebbee70 feed-" id="item-ec5bb45e">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/shubham.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Subham Tibra (shubhamtibra) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://shubhamtibra.wordpress.com/2016/05/30/gsoc-week-2-begins/">16:00, Monday, 30 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://shubhamtibra.wordpress.com/2016/05/30/gsoc-week-2-begins/">GSoC: Week 2 Begins</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/shubham.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Subham Tibra (shubhamtibra) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://shubhamtibra.wordpress.com/2016/05/30/gsoc-week-2-begins/">16:00, Monday, 30 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://shubhamtibra.wordpress.com/2016/05/30/gsoc-week-2-begins/">GSoC: Week 2 Begins</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>First, I am going to&#160;talk about what has been done since last week. I implemented methods to find a recurrence relation in the coefficients of Power series expansion of a Holonomic Function, and then method to find the Power series.</p>
-<p>One of the many interesting properties of Holonomic Functions is that the coefficients in Power series expansion of a Holonomic function is a Holonomic sequence, i.e. these coefficients satisfy a recurrence relation having polynomial coefficients.</p>
-<p>This recurrence relation can be used to efficiently calculate the coefficients of Power series. The PR&#160;<a href="https://github.com/sympy/sympy/pull/11153" target="_blank">11153</a>&#160;had these methods and got merged today. Here are a couple of examples of the implementation.</p>
-<blockquote><p>In []: p = HolonomicFunction(Dx &#8211; 1, x, 0, [1]) &#160;# exp(x)<br />
-In []: p.to_sequence()</p>
-<p>Out []:&#160;HolonomicSequence((-1) + (n + 1)Sn, n), u(0) = 1</p>
-<p>In []: p.series()</p>
-<p>Out []:&#160;1 + x + x**2/2 + x**3/6 + x**4/24 + x**5/120 + O(x**6)</p></blockquote>
-<p>For this week it is planned first to implement a method to numerically integrate differential equations of holonomic type from any point <code>x=a</code>&#160;to <code>x=b</code>&#160;in the complex plane. The next thing to implement after this&#160;would probably be converting symbolic functions/expressions to Holonomic Functions.</p>
-<p>Cheers and Happy Coding.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/201/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/201/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&#038;blog=106149936&#038;post=201&#038;subd=shubhamtibra&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3639,86 +3674,86 @@ In []: p.to_sequence()</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>19:51, Sunday, 26 June</td>
-<td>20:06, Sunday, 26 June</td>
+<td>20:11, Sunday, 26 June</td>
+<td>20:26, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>19:51, Sunday, 26 June</td>
-<td>20:06, Sunday, 26 June</td>
+<td>20:11, Sunday, 26 June</td>
+<td>20:26, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>19:51, Sunday, 26 June</td>
-<td>20:06, Sunday, 26 June</td>
+<td>20:11, Sunday, 26 June</td>
+<td>20:26, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>19:51, Sunday, 26 June</td>
-<td>20:06, Sunday, 26 June</td>
+<td>20:11, Sunday, 26 June</td>
+<td>20:26, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>19:51, Sunday, 26 June</td>
-<td>20:06, Sunday, 26 June</td>
+<td>20:11, Sunday, 26 June</td>
+<td>20:26, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>19:51, Sunday, 26 June</td>
-<td>20:06, Sunday, 26 June</td>
+<td>20:11, Sunday, 26 June</td>
+<td>20:26, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://github.com/kshitij10496/">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>19:51, Sunday, 26 June</td>
-<td>20:06, Sunday, 26 June</td>
+<td>20:11, Sunday, 26 June</td>
+<td>20:26, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>19:51, Sunday, 26 June</td>
-<td>20:06, Sunday, 26 June</td>
+<td>20:11, Sunday, 26 June</td>
+<td>20:26, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>19:51, Sunday, 26 June</td>
-<td>20:06, Sunday, 26 June</td>
+<td>20:11, Sunday, 26 June</td>
+<td>20:26, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>19:51, Sunday, 26 June</td>
-<td>20:06, Sunday, 26 June</td>
+<td>20:11, Sunday, 26 June</td>
+<td>20:26, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>19:51, Sunday, 26 June</td>
-<td>20:06, Sunday, 26 June</td>
+<td>20:11, Sunday, 26 June</td>
+<td>20:26, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>19:51, Sunday, 26 June</td>
-<td>20:06, Sunday, 26 June</td>
+<td>20:11, Sunday, 26 June</td>
+<td>20:26, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>19:51, Sunday, 26 June</td>
-<td>20:06, Sunday, 26 June</td>
+<td>20:11, Sunday, 26 June</td>
+<td>20:26, Sunday, 26 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>19:51, Sunday, 26 June</td>
-<td>20:06, Sunday, 26 June</td>
+<td>20:11, Sunday, 26 June</td>
+<td>20:26, Sunday, 26 June</td>
 </tr>
 </table>
 
