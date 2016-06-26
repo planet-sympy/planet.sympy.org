@@ -7,6 +7,44 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=318</guid>
+      <title>GSoC Wek 5 Progress</title>
+      <author>Rajith Vidanaarachchi (rajithv)</author>
+      <pubDate>Sun, 26 Jun 2016 18:56:20 GMT</pubDate>
+      <link>https://rajithsays.wordpress.com/2016/06/26/gsoc-wek-5-progress/</link>
+      <description>&lt;p&gt;We&amp;#8217;re halfway there!&lt;/p&gt;
+&lt;p&gt;The past two weeks were supposed to be for implementing Matrices. But as I mentioned in the previous post, things got complicated with evalf methods, and I could not start working on the Matrices. This week &lt;a href="https://github.com/symengine/symengine/pull/987" target="_blank"&gt;PR #987&lt;/a&gt; was merged up for evalf CWrappers. (The spec for the Ruby Wrapper needs some changes, which I have kept aside for now)&lt;/p&gt;
+&lt;p&gt;In SymEngine, matrices are of two forms, the DenseMatrix and the SparseMatrix. I have implemented the following constructors for them:&lt;/p&gt;
+&lt;pre&gt;mat = SymEngine::DenseMatrix.new()
+mat = SymEngine::DenseMatrix.new(SymEngine::DenseMatrix)
+mat = SymEngine::DenseMatrix.new(Array)
+mat = SymEngine::DenseMatrix.new(no_rows, no_columns)
+
+mat = SymEngine::SparseMatrix.new()
+mat = SymEngine::SparseMatrix.new(no_rows, no_columns)&lt;/pre&gt;
+&lt;p&gt;Apart from that, for the DenseMatrix, the following methods were wrapped:&lt;/p&gt;
+&lt;pre&gt;DenseMatrix.get(row, col)
+DenseMatrix.set(row, col, SymEngine::Basic)
+DenseMatrix.inv
+DenseMatrix.det
+DenseMatrix.transpose
+DenseMatrix.submatrix(row_start, col_start, row_end, col_end, row_step, col_step)
+DenseMatrix.rows
+DenseMatrix.cols
++ operator for Matrix and Scalar addition
+* operator for Matrix and Scalar addition
+DenseMatrix.to_s
+DenseMatrix.inspect&lt;/pre&gt;
+&lt;p&gt;Soon to be wrapped are:&lt;/p&gt;
+&lt;pre&gt;DenseMatrix.LU
+DenseMatrix.LDLDenseMatrix.LU_solve # (to solve Ax = B type equations with LU decomposition)
+DenseMatrix.FFLU # (fraction free LU)
+DenseMatrix.FFLDU # (fraction free LDU)&lt;/pre&gt;
+&lt;p&gt;The work can be views at &lt;a href="https://github.com/symengine/symengine/pull/992" target="_blank"&gt;PR #992&lt;/a&gt; at symengine repo and &lt;a href="https://github.com/symengine/symengine.rb/pull/56" target="_blank"&gt;PR #56&lt;/a&gt; at symengine.rb repo.&lt;/p&gt;
+&lt;p&gt;This week was really nice for me in getting significant parts of the Matrices done,and with the luck continuing I will be able to wrap the necessary methods for SparseMatrix, get done with the tests and finish the Matrix part within the coming week, putting me back in track with the time-line.&lt;/p&gt;
+&lt;p&gt;Wish me luck!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/318/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/318/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=318&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=442</guid>
       <title>GSoC Week 5</title>
       <author>Subham Tibra (shubhamtibra)</author>
@@ -1690,47 +1728,6 @@ In []: p.to_sequence()&lt;/p&gt;
 &lt;p&gt;Out []:&amp;#160;1 + x + x**2/2 + x**3/6 + x**4/24 + x**5/120 + O(x**6)&lt;/p&gt;&lt;/blockquote&gt;
 &lt;p&gt;For this week it is planned first to implement a method to numerically integrate differential equations of holonomic type from any point &lt;code&gt;x=a&lt;/code&gt;&amp;#160;to &lt;code&gt;x=b&lt;/code&gt;&amp;#160;in the complex plane. The next thing to implement after this&amp;#160;would probably be converting symbolic functions/expressions to Holonomic Functions.&lt;/p&gt;
 &lt;p&gt;Cheers and Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/201/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/201/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=201&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=261</guid>
-      <title>GSoC Week 1</title>
-      <author>Sampad Saha (sampadsaha5)</author>
-      <pubDate>Mon, 30 May 2016 14:18:39 GMT</pubDate>
-      <link>https://sampadblog.wordpress.com/2016/05/30/gsoc-week-1/</link>
-      <description>&lt;p&gt;The First week of the coding period has come to an end, I had a meeting with Jason and Sartaj, my mentors, on 22nd of May. I was going to start working on the Singularity Functions class, so we had a discussion on how to proceed. We exchanged our thoughts on removing the is_real check for the arguments passed through the rewrite(Piecewise) method. We also discussed how we can let the pretty printer prints the derivatives of DiracDelta class. They suggested me to review some Pull Requests of other members in order to encourage them, interact with other community members &amp;#160;and learn. The meeting was quite interesting. We ended up discussing many new things that we can implement.&lt;/p&gt;
-&lt;h4&gt;&lt;em&gt;&lt;strong&gt;Progress of Week 1&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;In&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11139"&gt;PR 11139&lt;/a&gt;, I was trying to figure out how to pretty print the derivative of DiracDelta class as:-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;In [1]: DiracDelta(y, 3)
-Out[1]:
- (3)
-&amp;#948;   (y)&lt;/pre&gt;
-&lt;p&gt;Jason helped me to figure out the&amp;#160;way. I will try to complete the implementation part by the middle of the next week.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;In&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11178"&gt;PR 11178&lt;/a&gt;, I have started working on the Singularity Functions class. Sartaj suggested me to keep the implementation of pretty printing part for later. Till now I have defined eval(), fdiff(), rewrite(Piecewise) only.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code&gt;In [2]: SingularityFunction(x, a, n)
-Out[2]: &lt;/code&gt;&lt;code&gt;SingularityFunction(x, a, n)
-
-&lt;/code&gt;&lt;code&gt;In [3]: SingularityFunction(y, &lt;span class="pl-c1"&gt;6&lt;/span&gt;, &lt;span class="pl-c1"&gt;2&lt;/span&gt;).diff(y)
-Out[3]: &lt;span class="pl-c1"&gt;2&lt;/span&gt;&lt;span class="pl-k"&gt;*&lt;/span&gt;SingularityFunction(y, &lt;span class="pl-c1"&gt;6&lt;/span&gt;, &lt;span class="pl-c1"&gt;1&lt;/span&gt;)
-
-In [4]: SingularityFunction(x, &lt;span class="pl-c1"&gt;4&lt;/span&gt;, &lt;span class="pl-c1"&gt;5&lt;/span&gt;).rewrite(Piecewise)
-Out[4]: Piecewise(((x &lt;span class="pl-k"&gt;-&lt;/span&gt; &lt;span class="pl-c1"&gt;4&lt;/span&gt;)&lt;span class="pl-k"&gt;**&lt;/span&gt;&lt;span class="pl-c1"&gt;5&lt;/span&gt;, x &lt;span class="pl-k"&gt;-&lt;/span&gt; &lt;span class="pl-c1"&gt;4&lt;/span&gt; &lt;span class="pl-k"&gt;&amp;gt;&lt;/span&gt; &lt;span class="pl-c1"&gt;0&lt;/span&gt;), (&lt;span class="pl-c1"&gt;0&lt;/span&gt;, &lt;span class="pl-c1"&gt;True&lt;/span&gt;))
-
-&lt;/code&gt;&lt;code&gt;In [5]: SingularityFunction(x, 3, 2).subs(x, 6)
-Out[5]: 9&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;I was reviewing&amp;#160;&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11065" target="_blank"&gt;PR 11065&lt;/a&gt;&amp;#160;and have suggested some modifications. The idea of having an another argument for defining the value of Heaviside(0) is great. But at the same time, we can not allow that argument to pass values other than 1 and 1/2.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;&lt;em&gt;&lt;strong&gt;Next Week&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;Implementation of a&amp;#160;method to integrate Singularity Functions.&lt;/li&gt;
-&lt;li&gt;Adding the&amp;#160;pretty printing of the derivatives of DiracDelta.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Looking forward toward an another great week. Cheers!&lt;/p&gt;
-&lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/261/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/261/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=261&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>
