@@ -7,6 +7,55 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Fifth-Week</guid>
+      <title>GSoC Fifth Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Mon, 27 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Fifth-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This week, I had been working on &lt;a href="https://en.wikipedia.org/wiki/Factorization_of_polynomials_over_finite_fields#Distinct-degree_factorization"&gt;distinct degree factorization&lt;/a&gt; in &lt;a href="https://github.com/symengine/symengine/pull/995"&gt;this&lt;/a&gt; PR.&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;Distinct degree factorization splits a square-free polynomial into a product of polynomials whose irreducible factors all have the same degree.
+&lt;br /&gt;Suppose we have a polynomial:&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x**15 - 1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;When we do distinct degree factorization of it, we get:&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x**5 + 10
+x**10 + x**5 + 1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Both the results consist of product of some polynomials with equal degree.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x**5 + 10
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;It is product of polynomials of degree 1, while:&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x**10 + x**5 + 1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;is product of polynomials of degree 2.&lt;/p&gt;
+
+&lt;p&gt;The factorization is achieved by exploiting the fact that:&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt="Lemma" src="http://i.imgur.com/N9zZW26.png" /&gt;&lt;/p&gt;
+
+&lt;p&gt;So, for every degree &lt;code class="highlighter-rouge"&gt;i&lt;/code&gt; less than half of polynomial&amp;#8217;s degree, we find the &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; of above computed polynomial and the given polynomial. If it&amp;#8217;s not one, we add it to existing list of factors.&lt;/p&gt;
+
+&lt;p&gt;Then we have to find its equal degree factorization, I have implemented it and I am testing it with different cases.
+It will run on every input provided from distinct-degree factorization, and break it into polynomials with equal degrees.
+&lt;br /&gt;
+Currently I am implementing Cantor-Zassenhaus&amp;#8217;s algorithm.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=318</guid>
       <title>GSoC Wek 5 Progress</title>
       <author>Rajith Vidanaarachchi (rajithv)</author>
@@ -1646,126 +1695,6 @@ work on in order to implement his method in SymPy.&lt;/p&gt;
    2)&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/blockquote&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period_week-2</guid>
-      <title>Coding Period Week 2</title>
-      <author>Shekhar Prasad Rajak (shekharrajak)</author>
-      <pubDate>Wed, 01 Jun 2016 00:00:00 GMT</pubDate>
-      <link>http://shekharrajak.github.io/Coding-Period_week-2/</link>
-      <description>&lt;h3 id="system-of-inequalities"&gt;System of Inequalities&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Right now solve uses &lt;code class="highlighter-rouge"&gt;reduce_inequalitie&lt;/code&gt;s to solve system of equations. But it is not designed for more than one variable.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;ex: system = &lt;code class="highlighter-rouge"&gt;[2*x - 3*y &amp;lt;= 12, x+5*y &amp;lt;=20, x&amp;gt;0] symbols = [x,y])  &lt;/code&gt;
-you will get :&lt;br /&gt;
-&lt;code class="highlighter-rouge"&gt;NotImplementedError&lt;/code&gt;:&lt;br /&gt;
-inequality has more than one symbol of interest&lt;br /&gt;
-We know answer is &lt;code class="highlighter-rouge"&gt;[0 &amp;lt; x &amp;lt;120/13 and 2(x-6)/3 &amp;lt;= y &amp;lt;= (20-x)/5]&lt;/code&gt;&lt;br /&gt;
-&lt;code class="highlighter-rouge"&gt;[x = 120/13 and y = 28/13]&lt;/code&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;But &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt; already have project on this &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Ideas#cylindrical-algebraic-decomposition"&gt;Cylindrical algebraic decomposition&lt;/a&gt; to Provide an interface for solving systems of polynomial inequalities.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;If we want to feature like old &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; then just need to pass system of inequalities having one variable to solve
-for one variable. After checking this use &lt;code class="highlighter-rouge"&gt;reduce_inequalitie(system, symbol)&lt;/code&gt; it will return solution. It is easy to implement.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id="general-solution-for-trigonometric-equations"&gt;General solution for Trigonometric equations&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11188"&gt;#11188&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Previous work in this problem : &lt;a href="https://github.com/sympy/sympy/pull/10898"&gt;#10898&lt;/a&gt;,
-&lt;a href="https://github.com/sympy/sympy/pull/10713"&gt;#10713&lt;/a&gt;, &lt;a href="https://github.com/sympy/sympy/pull/10733"&gt;#10733&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Problems in old method :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;_solve_trig&lt;/code&gt; changes the trig equation in &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; form (it&amp;#8217;s fine). But then fraction and solving equation
-for it&amp;#8217;s parts makes more number of &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt;. If we have more number of &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; then we get more number of &lt;code class="highlighter-rouge"&gt;imageset&lt;/code&gt;,
-Since we &lt;code class="highlighter-rouge"&gt;_invert&lt;/code&gt; for each &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; factors.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;It retuns &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; when it can&amp;#8217;t solve, but its expression is in ` exp&lt;code class="highlighter-rouge"&gt; form mostly with &lt;/code&gt;I` and
-in complicated form.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;some times &lt;code class="highlighter-rouge"&gt;_solve_as_poly&lt;/code&gt; can solve Trig equations, but it is not using it.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;New implemention :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;I added &lt;code class="highlighter-rouge"&gt;reduce_imageset&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;solveset.py&lt;/code&gt; to reduce the number of union returned by &lt;code class="highlighter-rouge"&gt;_solve_trig&lt;/code&gt; method. As Harsh said it is
-no specific to &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;, so I moved the method to &lt;code class="highlighter-rouge"&gt;sets/sets.py&lt;/code&gt;. I added the doctests and test-cases in &lt;code class="highlighter-rouge"&gt;test_sets.py&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Now solving the &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; form directly using &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;. This makes the less number of &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; in many cases.
-But to solve equation having &lt;code class="highlighter-rouge"&gt;tan&lt;/code&gt; in it, will be complicated, for that I changed the &lt;code class="highlighter-rouge"&gt;solve_rational&lt;/code&gt; method,
-so that it can handle  &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; with &lt;code class="highlighter-rouge"&gt;I&lt;/code&gt;. in denominator.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Now using &lt;code class="highlighter-rouge"&gt;_solve_as_poly&lt;/code&gt; when &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; can&amp;#8217;t solve it using &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; form. If this also can&amp;#8217;t solve then retuns
-the &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; having simple trig functions, which is understandable.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;reduce_imageset :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;reduce_imageset&lt;/code&gt; take the &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; or Union of &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; and returns the minimum number of &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;First we extract the &lt;code class="highlighter-rouge"&gt;Lambda&lt;/code&gt; expression from the each &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; and take principle values. Separate the positive and negative principle values and sort them.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;+ve and -ve values are passed into &lt;code class="highlighter-rouge"&gt;interpolate&lt;/code&gt; method defined in &lt;code class="highlighter-rouge"&gt;polys/polyfuncs.py&lt;/code&gt; to get the general function in terms
-of Dummy &lt;code class="highlighter-rouge"&gt;n&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;If only one &lt;code class="highlighter-rouge"&gt;Imageset&lt;/code&gt; or value in +ve or -ve value list then return that as it is. Here we need to note that Dummy &lt;code class="highlighter-rouge"&gt;n&lt;/code&gt; defined here
-is different then original lambda expression, so need to return original &lt;code class="highlighter-rouge"&gt;imageset&lt;/code&gt;. So I am storing original &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; in dict with
-its principle vales.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;If more than one +ve/-ve values are there then interpolate expression will be &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; expression and return.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Here I separe the -ve and +ve values because interpolate returns complicated expressions if we both types of values.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Also I sorted the +ve and -ve list, to get simplified expression from interpolate.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Problems :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;In this PR &lt;code class="highlighter-rouge"&gt;solveset_real(tan(x), x)&lt;/code&gt; returns &lt;code class="highlighter-rouge"&gt;imageset(Lambda(n, pi*(n - 1)), S.Integers)&lt;/code&gt;
-but I want &lt;code class="highlighter-rouge"&gt;imageset(Lambda(n, n*pi), S.Integers)&lt;/code&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Issues :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Meanwhile I found a issue in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;. &lt;a href="https://github.com/sympy/sympy/issues/11194"&gt;issues/11194&lt;/a&gt;.
-&lt;code class="highlighter-rouge"&gt;2*sin(x) - 2*sqrt(3)*cos(x) - sqrt(3)*tan(x) +3 = 0&lt;/code&gt; can be easily solved if we factorize it correctly. But I haven&amp;#8217;t found
-a good way to get its factor. I tried &lt;code class="highlighter-rouge"&gt;factor&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;expand(Trig + True)&lt;/code&gt; , &lt;code class="highlighter-rouge"&gt;expand_trig&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;rewrite(sin)&lt;/code&gt;.&lt;/li&gt;
-&lt;/ul&gt;</description>
     </item>
   </channel>
 </rss>
