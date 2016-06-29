@@ -108,6 +108,125 @@ DenseMatrix.FFLDU # (fraction free LDU)&lt;/pre&gt;
 &lt;p&gt;Cheers!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/442/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/442/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=442&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-6</guid>
+      <title>Coding Period Week 6</title>
+      <author>Shekhar Prasad Rajak (shekharrajak)</author>
+      <pubDate>Sun, 26 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://shekharrajak.github.io/Coding-Period-week-6/</link>
+      <description>&lt;p&gt;&lt;strong&gt;Continue nonlinsolve :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11111"&gt;#11111&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Removed the dependency of old solvers &lt;code class="highlighter-rouge"&gt;_invert&lt;/code&gt;. It was basically helpful for removing &lt;code class="highlighter-rouge"&gt;sqrt&lt;/code&gt; or Rational power.
+Now using &lt;code class="highlighter-rouge"&gt;unrad&lt;/code&gt; and little changes in &lt;code class="highlighter-rouge"&gt;substitution&lt;/code&gt; function can handle the system havning &lt;code class="highlighter-rouge"&gt;sqrt&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;cube root&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Continue - Diophantine in Solveset :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11234"&gt;11234&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Some points we discussed :&lt;/p&gt;
+
+    &lt;ol&gt;
+      &lt;li&gt;
+        &lt;p&gt;&lt;code class="highlighter-rouge"&gt;Solveset&lt;/code&gt; should return all the solution, so we need to check for which kind of eq. &lt;code class="highlighter-rouge"&gt;diophantine&lt;/code&gt; returns all
+  the solution. We can get the equation type using &lt;code class="highlighter-rouge"&gt;classify_diop&lt;/code&gt; defined in &lt;code class="highlighter-rouge"&gt;diophantine.py&lt;/code&gt;.&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;If there is the case where &lt;code class="highlighter-rouge"&gt;diophantine&lt;/code&gt; doesn&amp;#8217;t return all the solutions then just return &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; or try to
+  make all solution (e.g. if just need to permute sign in values then use &lt;code class="highlighter-rouge"&gt;permute_signs&lt;/code&gt;).&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;After reading the &lt;a href="http://docs.sympy.org/dev/modules/solvers/diophantine.html"&gt;diophantine Documentation&lt;/a&gt; and &lt;code class="highlighter-rouge"&gt;diophantine&lt;/code&gt; doctests and examples, I found that :&lt;/p&gt;
+
+    &lt;ol&gt;
+      &lt;li&gt;Currently, following five types of Diophantine equations can be solved using &lt;code class="highlighter-rouge"&gt;~sympy.solvers.diophantine.diophantine&lt;/code&gt; and other helper functions of the Diophantine module.&lt;/li&gt;
+    &lt;/ol&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;Linear Diophantine equations:&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;a1*x1 + a2*x2 + ... + an*xn = b&lt;/code&gt;.&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;General binary quadratic equation:&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;ax^2 + bxy + cy^2 + dx + ey + f = 0&lt;/code&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;Homogeneous ternary quadratic equation:&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;ax^2 + by^2 + cz^2 + dxy + eyz + fzx = 0&lt;/code&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;Extended Pythagorean equation:&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;a_{1} * x_{1}^2 + a_{2} * x_{2}^2 + ....  + a_{n} * x_{n}^2 = a_{n+1} * x_{n+1}^2&lt;/code&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;General sum of squares:&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;x_{1}^2 + x_{2}^2 + \ldots + x_{n}^2 = k&lt;/code&gt;&lt;/p&gt;
+
+    &lt;ol&gt;
+      &lt;li&gt;
+        &lt;p&gt;If I am correct then &lt;code class="highlighter-rouge"&gt;Diophantine&lt;/code&gt; returns all the soln if eq is Linear Diophantine equations, General binary quadratic equation and Homogeneous ternary quadratic equation. I tried some Linear Diophantine equations and cross checked with online Diophantine solvers.&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;In last 2 (Extended Pythagorean equation and General sum of squares) we need to do &lt;code class="highlighter-rouge"&gt;permute_signs&lt;/code&gt; to get all the soln.&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ol&gt;
+
+    &lt;p&gt;E.g.&lt;/p&gt;
+
+    &lt;p&gt;```
+     &amp;#160;&amp;#187;&amp;gt; from sympy.utilities.iterables import permute_signs
+     &amp;#160;&amp;#187;&amp;gt; list(permute_signs((1, 12)))
+      [(1, 12), (-1, 12), (1, -12), (-1, -12)]&lt;/p&gt;
+
+    &lt;p&gt;```&lt;/p&gt;
+
+    &lt;ol&gt;
+      &lt;li&gt;&lt;code class="highlighter-rouge"&gt;classify_diop&lt;/code&gt; can returns these &lt;code class="highlighter-rouge"&gt;diop_type&lt;/code&gt; :&lt;/li&gt;
+    &lt;/ol&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;linear&lt;/li&gt;
+      &lt;li&gt;univariate&lt;/li&gt;
+      &lt;li&gt;binary_quadratic -&amp;gt; permute sign&lt;/li&gt;
+      &lt;li&gt;inhomogeneous_ternary_quadratic&lt;/li&gt;
+      &lt;li&gt;homogeneous_ternary_quadratic_normal&lt;/li&gt;
+      &lt;li&gt;homogeneous_ternary_quadratic&lt;/li&gt;
+      &lt;li&gt;inhomogeneous_general_quadratic&lt;/li&gt;
+      &lt;li&gt;inhomogeneous_general_quadratic&lt;/li&gt;
+      &lt;li&gt;homogeneous_general_quadratic&lt;/li&gt;
+      &lt;li&gt;general_sum_of_squares -&amp;gt;permute sign&lt;/li&gt;
+      &lt;li&gt;general_pythagorean&lt;/li&gt;
+      &lt;li&gt;cubic_thue&lt;/li&gt;
+      &lt;li&gt;general_sum_of_even_powers -&amp;gt;permute sign&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;If the equation type is none of these then &lt;code class="highlighter-rouge"&gt;solveset_integers&lt;/code&gt; should returns &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt;.Because currently &lt;code class="highlighter-rouge"&gt;diophantine&lt;/code&gt;
+   can handle these kinds of eq only.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;continue&amp;#8230;&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://srajangarg.github.io//2016/06/26/Basic-Poly</guid>
       <title>Basic To Poly</title>
       <author>Srajan Garg (srajangarg)</author>
@@ -1600,101 +1719,6 @@ My goal for next week would be to implement the above-said functions.&lt;/p&gt;
 &lt;p&gt;After a very bumpy ride, mainly because of me not being very much used to memory management in C, and some issues which had to be fixed along the way (&lt;a href="https://github.com/symengine/symengine/issues/974" target="_blank"&gt;Issue #974&lt;/a&gt;). Struggling with that, I somehow was able to finish the MPFR part (actually currently waiting for all the tests to run), and will be able to move on to MPC (should be easier and doable within a day, now that MPFR is already done).&lt;/p&gt;
 &lt;p&gt;But that means when I start next week, I will have a backlog, which I don&amp;#8217;t like to have hovering over me. Anyway, I hope to clear the backlog and get back to track by next weekend.&lt;/p&gt;
 &lt;p&gt;Have a nice weekend!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/255/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/255/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=255&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://jbm950.github.io//2016/06/03/GSoC-week-2.html</guid>
-      <title>GSoC Week 2</title>
-      <author>James Milam (jbm950)</author>
-      <pubDate>Fri, 03 Jun 2016 00:00:00 GMT</pubDate>
-      <link>http://jbm950.github.io//2016/06/03/GSoC-week-2.html</link>
-      <description>&lt;p&gt;This week involved more research and learning than coding and as such the
-results are less visible. I made some changes to the test code for models.py
-under mechanics, I spend time looking through the structure and workings of
-&lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;LagrangesMethod&lt;/code&gt;, and created a
-&lt;a href="https://github.com/sympy/sympy/pull/11182"&gt;PR&lt;/a&gt; to hold the EOM class
-development discussion.&lt;/p&gt;
-
-&lt;p&gt;The tests for test_models.py were timing out and so it was suggested that I
-change the tests from using rhs() to testing mass matrices and force vectors. I
-put these changes together and on my machine this halved the run time of the
-tests. After this change was added to &lt;a href="https://github.com/sympy/sympy/pull/11168"&gt;PR
-#11168&lt;/a&gt; and the tests passed the
-models.py and its test code files were merged.&lt;/p&gt;
-
-&lt;p&gt;To learn more about how &lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;LagrangesMethod&lt;/code&gt; work I began by
-reading through much of the documentation for the mechanics module. Included
-were the pages on the two methods themselves, information on how linearization
-is performed in the code and three different examples in which the two methods
-are used to solve dynamics problems. As I read through the documents I
-occassionally found places that could use some minor adjustments and I presented
-these changes in &lt;a href="https://github.com/sympy/sympy/pull/11117"&gt;PR #11117&lt;/a&gt; which
-has since been merged.&lt;/p&gt;
-
-&lt;p&gt;In addition to reading the documentation for information, I went through the
-code for each method themselves. I made note of all of the attributes,
-properties and methods that each of the classes contained and compared these
-between the classes. In order to compare the differences in how information was
-stored in each of the classes I needed to return to the Kane&amp;#8217;s method and
-Lagrange&amp;#8217;s method documentation pages. At this point Jason was able to clarify
-much of my confusion regarding the different equations that the pages
-contained. Jason decided this clarification would be useful to add to the pages
-themselves and introduced &lt;a href="https://github.com/sympy/sympy/pull/11183"&gt;PR
-#11183&lt;/a&gt;. I reviewed this PR for him
-though my contribution was more along the lines of pointing out places that
-might need clarification and changes that might improve the flow of the page
-rather than of the content itself.&lt;/p&gt;
-
-&lt;p&gt;Last major line of work this week was beginning the equations of motion class
-itself. It was suggested by Jason that it might be useful to have the *Method
-classes return a class containing the equations of motion information. I have
-decided that for the moment this would be a better pursuit than creating a
-parent class from which the *Methods would inherit. The *Methods classes tend to
-be different in their approach to forming the equations of motion and thus I do
-now currently believe that a parent class could be overly useful for multiple
-*Methods. What new methods could benefit from, however, is a unified output
-format as the rest of the code could be written to accept the new output rather
-than specific Method classes. This would I feel would promote the addition of
-new Methods more than a inherited base class would. Along this line I have
-created a branch that holds the code for the new equations of motion class and
-its test code. Currently the work is to transfer the pseudo-code I have into
-real code.&lt;/p&gt;
-
-&lt;p&gt;I have finished reading A Beginners Guide to 6-D Vectors (Part 2) but have made
-no other progress towards Featherstone&amp;#8217;s method this week other than locating a
-copy of his book.&lt;/p&gt;
-
-&lt;h3 id="future-directions"&gt;Future Directions&lt;/h3&gt;
-
-&lt;p&gt;Next week I plan to continue working on filling out the equation of motion
-class along with its test code. The next step would be to integrate this into
-&lt;code class="highlighter-rouge"&gt;KanesMethod&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;LagrangesMethod&lt;/code&gt; to see what tests fail and where additional
-work would be needed. Also I plan to look into Featherstone&amp;#8217;s book and the
-python implementation of spatial vector algebra to see what I might need to
-work on in order to implement his method in SymPy.&lt;/p&gt;
-
-&lt;h3 id="prs-and-issues-referenced-in-post"&gt;PR&amp;#8217;s and Issues Referenced in Post&lt;/h3&gt;
-
-&lt;blockquote&gt;
-  &lt;ul&gt;
-    &lt;li&gt;(Merged) Pydy models migration &lt;a href="https://github.com/sympy/sympy/pull/11168"&gt;PR
-  #11168&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;(Merged) Physics documentation &lt;a href="https://github.com/sympy/sympy/pull/11117"&gt;PR
-  #11117&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;(Open) Improved the explanation of the 5 equations in the Kane&amp;#8217;s Method
-  docs &lt;a href="https://github.com/sympy/sympy/pull/11183"&gt;PR #11183&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;(Open) [WIP] EOMBase class development &lt;a href="https://github.com/sympy/sympy/pull/11182"&gt;PR
-  #11182&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id="articlesbooks-referenced-in-post"&gt;Articles/Books Referenced in Post&lt;/h3&gt;
-
-&lt;blockquote&gt;
-  &lt;ul&gt;
-    &lt;li&gt;&lt;a href="http://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;amp;arnumber=5663690"&gt;A Beginners Guide to 6-D Vectors (Part
-   2)&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;</description>
     </item>
   </channel>
 </rss>
