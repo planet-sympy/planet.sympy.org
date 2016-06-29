@@ -359,7 +359,7 @@ DenseMatrix.FFLDU # (fraction free LDU)</pre>
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-4164ee9e">
+		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-8baeb561">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -498,7 +498,49 @@ Now using <code class="highlighter-rouge">unrad</code> and little changes in <co
 </code></pre>
     </div>
 
-    <p>In general if variables have even powers then we should do <code class="highlighter-rouge">permute_signs</code>.</p>
+    <p>In general if all variables have even powers then we should do <code class="highlighter-rouge">permute_signs</code>. <code class="highlighter-rouge">Diophantine</code> solves the factors of the eq
+  so if we have eq like this <code class="highlighter-rouge">x**2 - y**2</code>, diophantine solves factors <code class="highlighter-rouge">x + y</code> and <code class="highlighter-rouge">x - y</code>.</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>  ```
+    &gt;&gt;&gt; from sympy.solvers.diophantine import diophantine
+    &gt;&gt;&gt; from sympy.abc import x, y, z
+    &gt;&gt;&gt; diophantine(x**2 - y**2)
+    set([(-t_0, -t_0), (t_0, -t_0)])
+
+  ```   so we should check even powers and permute sign.
+</code></pre>
+    </div>
+
+    <p>other examples :</p>
+
+    <p>```
+ &#160;&#187;&gt; diop_general_sum_of_squares(a<strong>2 + b</strong>2 + c<strong>2 + d</strong>2 + e**2 - 2345)
+  set([(15, 22, 22, 24, 24)])</p>
+
+    <blockquote>
+      <blockquote>
+        <blockquote>
+          <p>from sympy.solvers.diophantine import diop_general_pythagorean
+from sympy.abc import a, b, c, d, e
+diop_general_pythagorean(a<strong>2 + b</strong>2 + c<strong>2 - d</strong>2)
+  (m1<strong>2 + m2</strong>2 - m3<strong>2, 2<em>m1</em>m3, 2<em>m2</em>m3, m1</strong>2 + m2<strong>2 + m3</strong>2)
+diop_general_pythagorean(9<em>a<strong>2 - 4*b</strong>2 + 16</em>c<strong>2 + 25<em>d**2 + e**2)
+  (10</em>m1</strong>2  + 10<em>m2<strong>2  + 10*m3</strong>2 - 10</em>m4<strong>2, 15<em>m1**2  + 15</em>m2</strong>2  + 15<em>m3<strong>2  + 15*m4</strong>2, 15</em>m1<em>m4, 12</em>m2<em>m4, 60</em>m3*m4)</p>
+        </blockquote>
+      </blockquote>
+    </blockquote>
+
+    <blockquote>
+      <blockquote>
+        <blockquote>
+          <p>diop_general_sum_of_even_powers(a<strong>4 + b</strong>4 - (2<strong>4 + 3</strong>4))
+  set([(2, 3)])</p>
+        </blockquote>
+      </blockquote>
+    </blockquote>
+
+    <p>```
+  In above these types of cases we need <code class="highlighter-rouge">permute_signs</code>.</p>
 
     <ol>
       <li>
@@ -507,17 +549,17 @@ Now using <code class="highlighter-rouge">unrad</code> and little changes in <co
         <ul>
           <li>linear</li>
           <li>univariate</li>
-          <li>binary_quadratic -&gt; permute sign</li>
+          <li>binary_quadratic</li>
           <li>inhomogeneous_ternary_quadratic</li>
           <li>homogeneous_ternary_quadratic_normal</li>
           <li>homogeneous_ternary_quadratic</li>
           <li>inhomogeneous_general_quadratic</li>
           <li>inhomogeneous_general_quadratic</li>
           <li>homogeneous_general_quadratic</li>
-          <li>general_sum_of_squares -&gt;permute sign</li>
+          <li>general_sum_of_squares</li>
           <li>general_pythagorean</li>
           <li>cubic_thue</li>
-          <li>general_sum_of_even_powers -&gt;permute sign</li>
+          <li>general_sum_of_even_powers</li>
         </ul>
       </li>
     </ol>
@@ -3633,86 +3675,86 @@ My goal for next week would be to implement the above-said functions.</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>11:48, Wednesday, 29 June</td>
-<td>12:03, Wednesday, 29 June</td>
+<td>12:09, Wednesday, 29 June</td>
+<td>12:24, Wednesday, 29 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>11:48, Wednesday, 29 June</td>
-<td>12:03, Wednesday, 29 June</td>
+<td>12:09, Wednesday, 29 June</td>
+<td>12:24, Wednesday, 29 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>11:48, Wednesday, 29 June</td>
-<td>12:03, Wednesday, 29 June</td>
+<td>12:09, Wednesday, 29 June</td>
+<td>12:24, Wednesday, 29 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>11:48, Wednesday, 29 June</td>
-<td>12:03, Wednesday, 29 June</td>
+<td>12:09, Wednesday, 29 June</td>
+<td>12:24, Wednesday, 29 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>11:48, Wednesday, 29 June</td>
-<td>12:03, Wednesday, 29 June</td>
+<td>12:09, Wednesday, 29 June</td>
+<td>12:24, Wednesday, 29 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>11:48, Wednesday, 29 June</td>
-<td>12:03, Wednesday, 29 June</td>
+<td>12:09, Wednesday, 29 June</td>
+<td>12:24, Wednesday, 29 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://github.com/kshitij10496/">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>11:48, Wednesday, 29 June</td>
-<td>12:03, Wednesday, 29 June</td>
+<td>12:09, Wednesday, 29 June</td>
+<td>12:24, Wednesday, 29 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>11:48, Wednesday, 29 June</td>
-<td>12:03, Wednesday, 29 June</td>
+<td>12:09, Wednesday, 29 June</td>
+<td>12:24, Wednesday, 29 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>11:48, Wednesday, 29 June</td>
-<td>12:03, Wednesday, 29 June</td>
+<td>12:09, Wednesday, 29 June</td>
+<td>12:24, Wednesday, 29 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>11:48, Wednesday, 29 June</td>
-<td>12:03, Wednesday, 29 June</td>
+<td>12:09, Wednesday, 29 June</td>
+<td>12:24, Wednesday, 29 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>11:48, Wednesday, 29 June</td>
-<td>12:03, Wednesday, 29 June</td>
+<td>12:09, Wednesday, 29 June</td>
+<td>12:24, Wednesday, 29 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>11:48, Wednesday, 29 June</td>
-<td>12:03, Wednesday, 29 June</td>
+<td>12:09, Wednesday, 29 June</td>
+<td>12:24, Wednesday, 29 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>11:48, Wednesday, 29 June</td>
-<td>12:03, Wednesday, 29 June</td>
+<td>12:09, Wednesday, 29 June</td>
+<td>12:24, Wednesday, 29 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>11:48, Wednesday, 29 June</td>
-<td>12:03, Wednesday, 29 June</td>
+<td>12:09, Wednesday, 29 June</td>
+<td>12:24, Wednesday, 29 June</td>
 </tr>
 </table>
 

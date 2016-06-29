@@ -199,7 +199,49 @@ Now using &lt;code class="highlighter-rouge"&gt;unrad&lt;/code&gt; and little ch
 &lt;/code&gt;&lt;/pre&gt;
     &lt;/div&gt;
 
-    &lt;p&gt;In general if variables have even powers then we should do &lt;code class="highlighter-rouge"&gt;permute_signs&lt;/code&gt;.&lt;/p&gt;
+    &lt;p&gt;In general if all variables have even powers then we should do &lt;code class="highlighter-rouge"&gt;permute_signs&lt;/code&gt;. &lt;code class="highlighter-rouge"&gt;Diophantine&lt;/code&gt; solves the factors of the eq
+  so if we have eq like this &lt;code class="highlighter-rouge"&gt;x**2 - y**2&lt;/code&gt;, diophantine solves factors &lt;code class="highlighter-rouge"&gt;x + y&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;x - y&lt;/code&gt;.&lt;/p&gt;
+
+    &lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;  ```
+    &amp;gt;&amp;gt;&amp;gt; from sympy.solvers.diophantine import diophantine
+    &amp;gt;&amp;gt;&amp;gt; from sympy.abc import x, y, z
+    &amp;gt;&amp;gt;&amp;gt; diophantine(x**2 - y**2)
+    set([(-t_0, -t_0), (t_0, -t_0)])
+
+  ```   so we should check even powers and permute sign.
+&lt;/code&gt;&lt;/pre&gt;
+    &lt;/div&gt;
+
+    &lt;p&gt;other examples :&lt;/p&gt;
+
+    &lt;p&gt;```
+ &amp;#160;&amp;#187;&amp;gt; diop_general_sum_of_squares(a&lt;strong&gt;2 + b&lt;/strong&gt;2 + c&lt;strong&gt;2 + d&lt;/strong&gt;2 + e**2 - 2345)
+  set([(15, 22, 22, 24, 24)])&lt;/p&gt;
+
+    &lt;blockquote&gt;
+      &lt;blockquote&gt;
+        &lt;blockquote&gt;
+          &lt;p&gt;from sympy.solvers.diophantine import diop_general_pythagorean
+from sympy.abc import a, b, c, d, e
+diop_general_pythagorean(a&lt;strong&gt;2 + b&lt;/strong&gt;2 + c&lt;strong&gt;2 - d&lt;/strong&gt;2)
+  (m1&lt;strong&gt;2 + m2&lt;/strong&gt;2 - m3&lt;strong&gt;2, 2&lt;em&gt;m1&lt;/em&gt;m3, 2&lt;em&gt;m2&lt;/em&gt;m3, m1&lt;/strong&gt;2 + m2&lt;strong&gt;2 + m3&lt;/strong&gt;2)
+diop_general_pythagorean(9&lt;em&gt;a&lt;strong&gt;2 - 4*b&lt;/strong&gt;2 + 16&lt;/em&gt;c&lt;strong&gt;2 + 25&lt;em&gt;d**2 + e**2)
+  (10&lt;/em&gt;m1&lt;/strong&gt;2  + 10&lt;em&gt;m2&lt;strong&gt;2  + 10*m3&lt;/strong&gt;2 - 10&lt;/em&gt;m4&lt;strong&gt;2, 15&lt;em&gt;m1**2  + 15&lt;/em&gt;m2&lt;/strong&gt;2  + 15&lt;em&gt;m3&lt;strong&gt;2  + 15*m4&lt;/strong&gt;2, 15&lt;/em&gt;m1&lt;em&gt;m4, 12&lt;/em&gt;m2&lt;em&gt;m4, 60&lt;/em&gt;m3*m4)&lt;/p&gt;
+        &lt;/blockquote&gt;
+      &lt;/blockquote&gt;
+    &lt;/blockquote&gt;
+
+    &lt;blockquote&gt;
+      &lt;blockquote&gt;
+        &lt;blockquote&gt;
+          &lt;p&gt;diop_general_sum_of_even_powers(a&lt;strong&gt;4 + b&lt;/strong&gt;4 - (2&lt;strong&gt;4 + 3&lt;/strong&gt;4))
+  set([(2, 3)])&lt;/p&gt;
+        &lt;/blockquote&gt;
+      &lt;/blockquote&gt;
+    &lt;/blockquote&gt;
+
+    &lt;p&gt;```
+  In above these types of cases we need &lt;code class="highlighter-rouge"&gt;permute_signs&lt;/code&gt;.&lt;/p&gt;
 
     &lt;ol&gt;
       &lt;li&gt;
@@ -208,17 +250,17 @@ Now using &lt;code class="highlighter-rouge"&gt;unrad&lt;/code&gt; and little ch
         &lt;ul&gt;
           &lt;li&gt;linear&lt;/li&gt;
           &lt;li&gt;univariate&lt;/li&gt;
-          &lt;li&gt;binary_quadratic -&amp;gt; permute sign&lt;/li&gt;
+          &lt;li&gt;binary_quadratic&lt;/li&gt;
           &lt;li&gt;inhomogeneous_ternary_quadratic&lt;/li&gt;
           &lt;li&gt;homogeneous_ternary_quadratic_normal&lt;/li&gt;
           &lt;li&gt;homogeneous_ternary_quadratic&lt;/li&gt;
           &lt;li&gt;inhomogeneous_general_quadratic&lt;/li&gt;
           &lt;li&gt;inhomogeneous_general_quadratic&lt;/li&gt;
           &lt;li&gt;homogeneous_general_quadratic&lt;/li&gt;
-          &lt;li&gt;general_sum_of_squares -&amp;gt;permute sign&lt;/li&gt;
+          &lt;li&gt;general_sum_of_squares&lt;/li&gt;
           &lt;li&gt;general_pythagorean&lt;/li&gt;
           &lt;li&gt;cubic_thue&lt;/li&gt;
-          &lt;li&gt;general_sum_of_even_powers -&amp;gt;permute sign&lt;/li&gt;
+          &lt;li&gt;general_sum_of_even_powers&lt;/li&gt;
         &lt;/ul&gt;
       &lt;/li&gt;
     &lt;/ol&gt;
@@ -1021,13 +1063,7 @@ As this work is in progress, I will post about it in the next week&amp;#8217;s p
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
       <pubDate>Mon, 13 Jun 2016 00:00:00 GMT</pubDate>
       <link>http://shekharrajak.github.io/Coding-Period-week-4/</link>
-      <description>&lt;h4 id="solveset-when-domain--sintegers"&gt;&lt;code class="highlighter-rouge"&gt;Solveset&lt;/code&gt; when &lt;code class="highlighter-rouge"&gt;domain = S.Integers&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11234"&gt;#11234&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Right now we may not get our solution in Integer domain but we can use concept of diophantine equations in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;.
-When I messaged about this in giiter channel Aaron told about the &lt;code class="highlighter-rouge"&gt;diophantine&lt;/code&gt;, already defined in solvers/diophantine.py.
-So we can use &lt;code class="highlighter-rouge"&gt;diophantine&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; to get Integer solution.&lt;code class="highlighter-rouge"&gt;diophantine&lt;/code&gt; is coded p</description>
+      <description></description>
     </item>
     <item>
       <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=276</guid>
