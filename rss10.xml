@@ -181,7 +181,7 @@ Now using &lt;code class="highlighter-rouge"&gt;unrad&lt;/code&gt; and little ch
 
     &lt;ol&gt;
       &lt;li&gt;
-        &lt;p&gt;If I am correct then &lt;code class="highlighter-rouge"&gt;Diophantine&lt;/code&gt; returns all the soln if eq is Linear Diophantine equations, General binary quadratic equation and Homogeneous ternary quadratic equation. I tried some Linear Diophantine equations and cross checked with online Diophantine solvers.&lt;/p&gt;
+        &lt;p&gt;If I am correct then &lt;code class="highlighter-rouge"&gt;Diophantine&lt;/code&gt; returns all the soln if eq is Linear Diophantine equations, General binary quadratic equation and Homogeneous ternary quadratic equation. I tried some Linear Diophantine equations and cross checked with online Diophantine solvers(one of the solver is &lt;a href="http://www.numbertheory.org/php/main_pell.html"&gt;here&lt;/a&gt;).&lt;/p&gt;
       &lt;/li&gt;
       &lt;li&gt;
         &lt;p&gt;In last 2 (Extended Pythagorean equation and General sum of squares) we need to do &lt;code class="highlighter-rouge"&gt;permute_signs&lt;/code&gt; to get all the soln.&lt;/p&gt;
@@ -203,45 +203,41 @@ Now using &lt;code class="highlighter-rouge"&gt;unrad&lt;/code&gt; and little ch
   so if we have eq like this &lt;code class="highlighter-rouge"&gt;x**2 - y**2&lt;/code&gt;, diophantine solves factors &lt;code class="highlighter-rouge"&gt;x + y&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;x - y&lt;/code&gt;.&lt;/p&gt;
 
     &lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;  ```
+
     &amp;gt;&amp;gt;&amp;gt; from sympy.solvers.diophantine import diophantine
     &amp;gt;&amp;gt;&amp;gt; from sympy.abc import x, y, z
     &amp;gt;&amp;gt;&amp;gt; diophantine(x**2 - y**2)
     set([(-t_0, -t_0), (t_0, -t_0)])
 
-  ```   so we should check even powers and permute sign.
+  ```
 &lt;/code&gt;&lt;/pre&gt;
     &lt;/div&gt;
 
+    &lt;p&gt;so we should check even powers and permute sign.&lt;/p&gt;
+
     &lt;p&gt;other examples :&lt;/p&gt;
 
-    &lt;p&gt;```
- &amp;#160;&amp;#187;&amp;gt; diop_general_sum_of_squares(a&lt;strong&gt;2 + b&lt;/strong&gt;2 + c&lt;strong&gt;2 + d&lt;/strong&gt;2 + e**2 - 2345)
-  set([(15, 22, 22, 24, 24)])&lt;/p&gt;
+    &lt;p&gt;```&lt;/p&gt;
 
-    &lt;blockquote&gt;
-      &lt;blockquote&gt;
-        &lt;blockquote&gt;
-          &lt;p&gt;from sympy.solvers.diophantine import diop_general_pythagorean
-from sympy.abc import a, b, c, d, e
-diop_general_pythagorean(a&lt;strong&gt;2 + b&lt;/strong&gt;2 + c&lt;strong&gt;2 - d&lt;/strong&gt;2)
-  (m1&lt;strong&gt;2 + m2&lt;/strong&gt;2 - m3&lt;strong&gt;2, 2&lt;em&gt;m1&lt;/em&gt;m3, 2&lt;em&gt;m2&lt;/em&gt;m3, m1&lt;/strong&gt;2 + m2&lt;strong&gt;2 + m3&lt;/strong&gt;2)
-diop_general_pythagorean(9&lt;em&gt;a&lt;strong&gt;2 - 4*b&lt;/strong&gt;2 + 16&lt;/em&gt;c&lt;strong&gt;2 + 25&lt;em&gt;d**2 + e**2)
-  (10&lt;/em&gt;m1&lt;/strong&gt;2  + 10&lt;em&gt;m2&lt;strong&gt;2  + 10*m3&lt;/strong&gt;2 - 10&lt;/em&gt;m4&lt;strong&gt;2, 15&lt;em&gt;m1**2  + 15&lt;/em&gt;m2&lt;/strong&gt;2  + 15&lt;em&gt;m3&lt;strong&gt;2  + 15*m4&lt;/strong&gt;2, 15&lt;/em&gt;m1&lt;em&gt;m4, 12&lt;/em&gt;m2&lt;em&gt;m4, 60&lt;/em&gt;m3*m4)&lt;/p&gt;
-        &lt;/blockquote&gt;
-      &lt;/blockquote&gt;
-    &lt;/blockquote&gt;
+    &lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; diop_general_sum_of_squares(a**2 + b**2 + c**2 + d**2 + e**2 - 2345)
+set([(15, 22, 22, 24, 24)])
 
-    &lt;blockquote&gt;
-      &lt;blockquote&gt;
-        &lt;blockquote&gt;
-          &lt;p&gt;diop_general_sum_of_even_powers(a&lt;strong&gt;4 + b&lt;/strong&gt;4 - (2&lt;strong&gt;4 + 3&lt;/strong&gt;4))
-  set([(2, 3)])&lt;/p&gt;
-        &lt;/blockquote&gt;
-      &lt;/blockquote&gt;
-    &lt;/blockquote&gt;
+&amp;gt;&amp;gt;&amp;gt; from sympy.solvers.diophantine import diop_general_pythagorean
+&amp;gt;&amp;gt;&amp;gt; from sympy.abc import a, b, c, d, e
+&amp;gt;&amp;gt;&amp;gt; diop_general_pythagorean(a**2 + b**2 + c**2 - d**2)
+(m1**2 + m2**2 - m3**2, 2*m1*m3, 2*m2*m3, m1**2 + m2**2 + m3**2)
+&amp;gt;&amp;gt;&amp;gt; diop_general_pythagorean(9*a**2 - 4*b**2 + 16*c**2 + 25*d**2 + e**2)
+(10*m1**2  + 10*m2**2  + 10*m3**2 - 10*m4**2, 15*m1**2  + 15*m2**2  
+  + 15*m3**2  + 15*m4**2, 15*m1*m4, 12*m2*m4, 60*m3*m4)
 
-    &lt;p&gt;```
-  In above these types of cases we need &lt;code class="highlighter-rouge"&gt;permute_signs&lt;/code&gt;.&lt;/p&gt;
+&amp;gt;&amp;gt;&amp;gt; diop_general_sum_of_even_powers(a**4 + b**4 - (2**4 + 3**4))
+set([(2, 3)])
+&lt;/code&gt;&lt;/pre&gt;
+    &lt;/div&gt;
+
+    &lt;p&gt;```&lt;/p&gt;
+
+    &lt;p&gt;In above these types of cases we need &lt;code class="highlighter-rouge"&gt;permute_signs&lt;/code&gt;.&lt;/p&gt;
 
     &lt;ol&gt;
       &lt;li&gt;
