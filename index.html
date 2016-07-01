@@ -89,6 +89,159 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">June 30, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-b298e897 feed-" id="item-1d4919e4">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/gxyd.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Gaurav Dhingra (gxyd) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://gxyd.github.io/gsoc2016/gsoc_week_6.html">18:30, Thursday, 30 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://gxyd.github.io/gsoc2016/gsoc_week_6.html">GSoC Week 6</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/gxyd.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Gaurav Dhingra (gxyd) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://gxyd.github.io/gsoc2016/gsoc_week_6.html">18:30, Thursday, 30 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://gxyd.github.io/gsoc2016/gsoc_week_6.html">GSoC Week 6</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>
+First of all the good news, I have <i>passed</i> the mid-term evaluations.
+I received the feedback from Kalevi, "I have had some problems with the blog posts.".
+Though Kalevi, mentioned to not take the post seriously.
+Well, not to say, that is definitely true. I don't claim that I will be
+able to remedy this, but lets see what happens.
+</p>
+
+<p>
+Kalevi, had sent me a mail, mentioning "next things to do", it included
+"Cosets in Permuations group" and "Finitely Presented Abelian groups".
+(its been quite sometime since that mail).
+It was more of my decision to implement the topic of "presentation of subroups".
+To be true, I particularly chose this topic, since that makes the output
+of out work done till now, to look beautiful :) . Earlier I had a constant doubts
+when I was making proposal about what it exactly means by "presentation of subgroups".
+So while I read the examples from the Handbook, it became clear to me.
+</p>
+
+<p>
+As to the progress in the topic, here's what we have done, I opened the PR on sunday.
+This week we started with the implementation of subgroup presentations. There are
+two methods to compute "presentation of a subgroup", first being called
+"computing presentations on schreier generators" also called the Reidemeister Schreier
+procedure. Since we have already implemented the "Todd Coxeter"
+procedure, which is used as the first step in Reidemeister Schreier for coset
+enumeration. It uses a routine which is called "define_schreier_generators",
+Second being "computing presentation on the generators of subgroup".
+Well the pseudo code is there for both the two implementations. The code of
+</p>
+
+<p>
+The important part of finding the "presentation of subgroup" being simplifying
+the "presentations", i.e reducing the three factors |X| (no. of subgroup generators),
+|R| (no. of subgroup relators) and l (total length of subgroup relators). Though
+there doesn't seem to any pseudo code available anywhere for the implementation (this makes
+it quite interesting to implement). But the paper by Havas [Reidemeister Schreier program]
+(http://staff.itee.uq.edu.au/havas/1974h.pdf) neatly explains the things.
+</p>
+
+<p>
+Last 2 days were spent on trying to make "elimination_technique_1" work. Its still not
+fully functional, since it still returns some dependent relators as a part of the presentation.
+
+As for an example, currently Reidemeister Schreier procedure presentation works this way.
+
+<pre>
+<code>
+>>> F, x, y = free_group("x, y")
+>>> f = FpGroup(F, [x**2*y**2, y**-1*x*y*x**-3])
+>>> H = [x]
+>>> reidemeister_presentation(f, H)
+([x_1], [x_1**-4, x_1**-8])
+
+</code>
+</pre>
+
+<p>
+Two things need to be fixed here. First being, removal of -ve powers of single syllable
+relators, $x_1^{-4}$ -> $x_1^4$, similarly for the other relator.
+Second thing being, since $x_1^4 = 0$ implies that $x_1^8 = 0$ (dependent relator) so the relator
+should be removed. Perhaps the issue with this is, where should the code for checking this dependence
+be introduced? Kalevi seems a bit busy these days with other project. That is not the issue. I believe there may be
+something more to the simplification in the "Handbook", (have been referring to [2] for the
+elimination of generators, relators and simplification of presentations).
+</p>
+
+<p>
+Yesterday, I Thought of focussing on a new topic "simplification of presentations", the method
+is short descripted in [2], but that is sufficient enough. It starts by checking whether any relator
+is of the form $gen^n$, where $n \in \mathbb{N}$. If any such relators are found then all other relators
+are processed for strings in the $gen$ known order. All string length exceeding length $n/2$ are
+replaced by their shortest equivalent. Further, for even `n` strings gen$^{-n/2}$ replaced by
+gen$^{n/2}$. I have written its code, perhaps it only requires a few more tests to be added
+to it.
+</p>
+
+<p>
+I think I will be busy with "presentation of subgroups", this week and next week as well.
+</p>
+<h4>References</h4>
+<i>
+<ul>
+<li>1. Derek F. Holt, Bettina Eick, Bettina, Eamonn A. O'Brien, "Handbook of computational group theory", Discrete Mathematics and its Applications (Boca Raton). Chapman & Hall/CRC, Boca Raton, FL, 2005. ISBN 1-5848-372-3 .</li>
+
+<li>2.<a href="http://staff.itee.uq.edu.au/havas/1973cdhw.pdf"> George Havas, "Reidemeister-Schreier program"</a></li>
+</i>
+<br />
+</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">June 27, 2016</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -359,7 +512,7 @@ DenseMatrix.FFLDU # (fraction free LDU)</pre>
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-c519d4b0">
+		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-c0ae0026">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -537,7 +690,7 @@ set([(2, 3)])
     <p>```</p>
 
     <p>In above these types of cases we need <code class="highlighter-rouge">permute_signs</code>. If we check these solution you can see that <code class="highlighter-rouge">permute_signs</code>
-  is needed when we solutions is not parameterized.</p>
+  is needed when solutions is not parameterized.</p>
 
     <p>e.g.</p>
 
@@ -554,7 +707,11 @@ set([(2, 3)])
 
     <p>solution <code class="highlighter-rouge">set([(-t_0, -t_0), (t_0, -t_0)])</code> is same as <code class="highlighter-rouge">set([(-t_0, -t_0), (t_0, t_0), (-t_0, t_0), (t_0, -t_0)])</code>.(because <code class="highlighter-rouge">t_0</code> can take any integer value.)</p>
 
-    <p>I discussed these things with <a href="https://github.com/thilinarmtb">@thilinarmtb</a> (He have worked on <code class="highlighter-rouge">diophantine</code>. Blog link : <a href="https://thilinaatsympy.wordpress.com/page/2/">https://thilinaatsympy.wordpress.com/</a>). His words are &#8220;only the linear solver is incomplete, Rather the algorithm in Diophantine module should be fixed. We can use <code class="highlighter-rouge">permute_signs</code> when we have even powers. you can update Diophantine module to use permute sign&#8221;.</p>
+    <p>I discussed these things with <a href="https://github.com/thilinarmtb">@thilinarmtb</a> (He have worked on <code class="highlighter-rouge">diophantine</code>. Blog link : <a href="https://thilinaatsympy.wordpress.com/page/2/">https://thilinaatsympy.wordpress.com/</a>). Main points are :</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>Only the linear solver is incomplete, the algorithm in Diophantine module should be fixed (`permute_signs` or something like that won't help). We can use `permute_signs` when we have even powers in all variables. We should update Diophantine module to use permute sign. But we should not returns `ConditionSet` for linear diophantine eq. because for linear diophantine eq `diophantine()`returns parameterized solution which is complete most of the time.
+</code></pre>
+    </div>
 
     <ol>
       <li>
@@ -3592,76 +3749,6 @@ My goal for next week would be to implement the above-said functions.</p>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">June 03, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-19a67809 feed-" id="item-9b48d286">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/rajithv.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Rajith Vidanaarachchi (rajithv) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://rajithsays.wordpress.com/2016/06/03/gsoc-week-2-progress/">17:09, Friday, 03 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://rajithsays.wordpress.com/2016/06/03/gsoc-week-2-progress/">GSoC Week 2 Progress</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/rajithv.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Rajith Vidanaarachchi (rajithv) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://rajithsays.wordpress.com/2016/06/03/gsoc-week-2-progress/">17:09, Friday, 03 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://rajithsays.wordpress.com/2016/06/03/gsoc-week-2-progress/">GSoC Week 2 Progress</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Despite having a smooth flow in week 1, my luck ran over halfway through this week. It can be called quite a bumpy ride.</p>
-<p>At the start of the week it was really great, I got Complex Doubles ready with the <a href="https://github.com/symengine/symengine.rb/pull/46" target="_blank">PR #46</a>, along with the Real Doubles. Another quick fix for the CWrapper was covered with <a href="https://github.com/symengine/symengine/pull/966" target="_blank">PR &#160;#966</a>.</p>
-<p>But the troubles began to appear with me moving into wrapping RealMPFRs. <a href="http://www.mpfr.org/" target="_blank">MPFR</a>&#160;is a library for arbitrary precision floating point numbers. This is implemented in SymEngine as RealMPFR, and I started work on wrapping this, along with MPC for complex numbers for both C (<a href="https://github.com/symengine/symengine/pull/972" target="_blank">PR #972</a>) and Ruby (<a href="https://github.com/symengine/symengine.rb/pull/49" target="_blank">PR #49</a>). On the Ruby side, it was expected to&#160;be initialized with Floats, Strings or BigDecimals.</p>
-<p>After a very bumpy ride, mainly because of me not being very much used to memory management in C, and some issues which had to be fixed along the way (<a href="https://github.com/symengine/symengine/issues/974" target="_blank">Issue #974</a>). Struggling with that, I somehow was able to finish the MPFR part (actually currently waiting for all the tests to run), and will be able to move on to MPC (should be easier and doable within a day, now that MPFR is already done).</p>
-<p>But that means when I start next week, I will have a backlog, which I don&#8217;t like to have hovering over me. Anyway, I hope to clear the backlog and get back to track by next weekend.</p>
-<p>Have a nice weekend!</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/255/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/255/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&#038;blog=110498904&#038;post=255&#038;subd=rajithsays&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3689,86 +3776,86 @@ My goal for next week would be to implement the above-said functions.</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>04:53, Friday, 01 July</td>
-<td>05:08, Friday, 01 July</td>
+<td>05:13, Friday, 01 July</td>
+<td>05:28, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>04:53, Friday, 01 July</td>
-<td>05:08, Friday, 01 July</td>
+<td>05:13, Friday, 01 July</td>
+<td>05:28, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>04:53, Friday, 01 July</td>
-<td>05:08, Friday, 01 July</td>
+<td>05:13, Friday, 01 July</td>
+<td>05:28, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>04:53, Friday, 01 July</td>
-<td>05:08, Friday, 01 July</td>
+<td>05:13, Friday, 01 July</td>
+<td>05:28, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>04:53, Friday, 01 July</td>
-<td>05:08, Friday, 01 July</td>
+<td>05:13, Friday, 01 July</td>
+<td>05:28, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>04:53, Friday, 01 July</td>
-<td>05:08, Friday, 01 July</td>
+<td>05:13, Friday, 01 July</td>
+<td>05:28, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://github.com/kshitij10496/">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>04:53, Friday, 01 July</td>
-<td>05:08, Friday, 01 July</td>
+<td>05:13, Friday, 01 July</td>
+<td>05:28, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>04:53, Friday, 01 July</td>
-<td>05:08, Friday, 01 July</td>
+<td>05:13, Friday, 01 July</td>
+<td>05:28, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>04:53, Friday, 01 July</td>
-<td>05:08, Friday, 01 July</td>
+<td>05:13, Friday, 01 July</td>
+<td>05:28, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>04:53, Friday, 01 July</td>
-<td>05:08, Friday, 01 July</td>
+<td>05:13, Friday, 01 July</td>
+<td>05:28, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>04:53, Friday, 01 July</td>
-<td>05:08, Friday, 01 July</td>
+<td>05:13, Friday, 01 July</td>
+<td>05:28, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>04:53, Friday, 01 July</td>
-<td>05:08, Friday, 01 July</td>
+<td>05:13, Friday, 01 July</td>
+<td>05:28, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>04:53, Friday, 01 July</td>
-<td>05:08, Friday, 01 July</td>
+<td>05:13, Friday, 01 July</td>
+<td>05:28, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>04:53, Friday, 01 July</td>
-<td>05:08, Friday, 01 July</td>
+<td>05:13, Friday, 01 July</td>
+<td>05:28, Friday, 01 July</td>
 </tr>
 </table>
 

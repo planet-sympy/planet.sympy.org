@@ -7,6 +7,102 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://gxyd.github.io/GSoC Week 6</guid>
+      <title>GSoC Week 6</title>
+      <author>Gaurav Dhingra (gxyd)</author>
+      <pubDate>Thu, 30 Jun 2016 18:30:00 GMT</pubDate>
+      <link>https://gxyd.github.io/gsoc2016/gsoc_week_6.html</link>
+      <description>&lt;p&gt;
+First of all the good news, I have &lt;i&gt;passed&lt;/i&gt; the mid-term evaluations.
+I received the feedback from Kalevi, "I have had some problems with the blog posts.".
+Though Kalevi, mentioned to not take the post seriously.
+Well, not to say, that is definitely true. I don't claim that I will be
+able to remedy this, but lets see what happens.
+&lt;/p&gt;
+
+&lt;p&gt;
+Kalevi, had sent me a mail, mentioning "next things to do", it included
+"Cosets in Permuations group" and "Finitely Presented Abelian groups".
+(its been quite sometime since that mail).
+It was more of my decision to implement the topic of "presentation of subroups".
+To be true, I particularly chose this topic, since that makes the output
+of out work done till now, to look beautiful :) . Earlier I had a constant doubts
+when I was making proposal about what it exactly means by "presentation of subgroups".
+So while I read the examples from the Handbook, it became clear to me.
+&lt;/p&gt;
+
+&lt;p&gt;
+As to the progress in the topic, here's what we have done, I opened the PR on sunday.
+This week we started with the implementation of subgroup presentations. There are
+two methods to compute "presentation of a subgroup", first being called
+"computing presentations on schreier generators" also called the Reidemeister Schreier
+procedure. Since we have already implemented the "Todd Coxeter"
+procedure, which is used as the first step in Reidemeister Schreier for coset
+enumeration. It uses a routine which is called "define_schreier_generators",
+Second being "computing presentation on the generators of subgroup".
+Well the pseudo code is there for both the two implementations. The code of
+&lt;/p&gt;
+
+&lt;p&gt;
+The important part of finding the "presentation of subgroup" being simplifying
+the "presentations", i.e reducing the three factors |X| (no. of subgroup generators),
+|R| (no. of subgroup relators) and l (total length of subgroup relators). Though
+there doesn't seem to any pseudo code available anywhere for the implementation (this makes
+it quite interesting to implement). But the paper by Havas [Reidemeister Schreier program]
+(http://staff.itee.uq.edu.au/havas/1974h.pdf) neatly explains the things.
+&lt;/p&gt;
+
+&lt;p&gt;
+Last 2 days were spent on trying to make "elimination_technique_1" work. Its still not
+fully functional, since it still returns some dependent relators as a part of the presentation.
+
+As for an example, currently Reidemeister Schreier procedure presentation works this way.
+
+&lt;pre&gt;
+&lt;code&gt;
+&gt;&gt;&gt; F, x, y = free_group("x, y")
+&gt;&gt;&gt; f = FpGroup(F, [x**2*y**2, y**-1*x*y*x**-3])
+&gt;&gt;&gt; H = [x]
+&gt;&gt;&gt; reidemeister_presentation(f, H)
+([x_1], [x_1**-4, x_1**-8])
+
+&lt;/code&gt;
+&lt;/pre&gt;
+
+&lt;p&gt;
+Two things need to be fixed here. First being, removal of -ve powers of single syllable
+relators, $x_1^{-4}$ -&gt; $x_1^4$, similarly for the other relator.
+Second thing being, since $x_1^4 = 0$ implies that $x_1^8 = 0$ (dependent relator) so the relator
+should be removed. Perhaps the issue with this is, where should the code for checking this dependence
+be introduced? Kalevi seems a bit busy these days with other project. That is not the issue. I believe there may be
+something more to the simplification in the "Handbook", (have been referring to [2] for the
+elimination of generators, relators and simplification of presentations).
+&lt;/p&gt;
+
+&lt;p&gt;
+Yesterday, I Thought of focussing on a new topic "simplification of presentations", the method
+is short descripted in [2], but that is sufficient enough. It starts by checking whether any relator
+is of the form $gen^n$, where $n \in \mathbb{N}$. If any such relators are found then all other relators
+are processed for strings in the $gen$ known order. All string length exceeding length $n/2$ are
+replaced by their shortest equivalent. Further, for even `n` strings gen$^{-n/2}$ replaced by
+gen$^{n/2}$. I have written its code, perhaps it only requires a few more tests to be added
+to it.
+&lt;/p&gt;
+
+&lt;p&gt;
+I think I will be busy with "presentation of subgroups", this week and next week as well.
+&lt;/p&gt;
+&lt;h4&gt;References&lt;/h4&gt;
+&lt;i&gt;
+&lt;ul&gt;
+&lt;li&gt;1. Derek F. Holt, Bettina Eick, Bettina, Eamonn A. O'Brien, "Handbook of computational group theory", Discrete Mathematics and its Applications (Boca Raton). Chapman &amp; Hall/CRC, Boca Raton, FL, 2005. ISBN 1-5848-372-3 .&lt;/li&gt;
+
+&lt;li&gt;2.&lt;a href="http://staff.itee.uq.edu.au/havas/1973cdhw.pdf"&gt; George Havas, "Reidemeister-Schreier program"&lt;/a&gt;&lt;/li&gt;
+&lt;/i&gt;
+&lt;br /&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://nishnik.github.io/GSoC-Fifth-Week</guid>
       <title>GSoC Fifth Week</title>
       <author>Nishant Nikhil (nishnik)</author>
@@ -238,7 +334,7 @@ set([(2, 3)])
     &lt;p&gt;```&lt;/p&gt;
 
     &lt;p&gt;In above these types of cases we need &lt;code class="highlighter-rouge"&gt;permute_signs&lt;/code&gt;. If we check these solution you can see that &lt;code class="highlighter-rouge"&gt;permute_signs&lt;/code&gt;
-  is needed when we solutions is not parameterized.&lt;/p&gt;
+  is needed when solutions is not parameterized.&lt;/p&gt;
 
     &lt;p&gt;e.g.&lt;/p&gt;
 
@@ -255,7 +351,11 @@ set([(2, 3)])
 
     &lt;p&gt;solution &lt;code class="highlighter-rouge"&gt;set([(-t_0, -t_0), (t_0, -t_0)])&lt;/code&gt; is same as &lt;code class="highlighter-rouge"&gt;set([(-t_0, -t_0), (t_0, t_0), (-t_0, t_0), (t_0, -t_0)])&lt;/code&gt;.(because &lt;code class="highlighter-rouge"&gt;t_0&lt;/code&gt; can take any integer value.)&lt;/p&gt;
 
-    &lt;p&gt;I discussed these things with &lt;a href="https://github.com/thilinarmtb"&gt;@thilinarmtb&lt;/a&gt; (He have worked on &lt;code class="highlighter-rouge"&gt;diophantine&lt;/code&gt;. Blog link : &lt;a href="https://thilinaatsympy.wordpress.com/page/2/"&gt;https://thilinaatsympy.wordpress.com/&lt;/a&gt;). His words are &amp;#8220;only the linear solver is incomplete, Rather the algorithm in Diophantine module should be fixed. We can use &lt;code class="highlighter-rouge"&gt;permute_signs&lt;/code&gt; when we have even powers. you can update Diophantine module to use permute sign&amp;#8221;.&lt;/p&gt;
+    &lt;p&gt;I discussed these things with &lt;a href="https://github.com/thilinarmtb"&gt;@thilinarmtb&lt;/a&gt; (He have worked on &lt;code class="highlighter-rouge"&gt;diophantine&lt;/code&gt;. Blog link : &lt;a href="https://thilinaatsympy.wordpress.com/page/2/"&gt;https://thilinaatsympy.wordpress.com/&lt;/a&gt;). Main points are :&lt;/p&gt;
+
+    &lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;Only the linear solver is incomplete, the algorithm in Diophantine module should be fixed (`permute_signs` or something like that won't help). We can use `permute_signs` when we have even powers in all variables. We should update Diophantine module to use permute sign. But we should not returns `ConditionSet` for linear diophantine eq. because for linear diophantine eq `diophantine()`returns parameterized solution which is complete most of the time.
+&lt;/code&gt;&lt;/pre&gt;
+    &lt;/div&gt;
 
     &lt;ol&gt;
       &lt;li&gt;
@@ -1077,7 +1177,7 @@ As this work is in progress, I will post about it in the next week&amp;#8217;s p
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
       <pubDate>Mon, 13 Jun 2016 00:00:00 GMT</pubDate>
       <link>http://shekharrajak.github.io/Coding-Period-week-4/</link>
-      <description></description>
+      <description>&lt;h4 id="solveset-when-domain--sintegers"&gt;&lt;code class="highlighter-rouge"&gt;Solveset&lt;/code&gt; when &lt;code class="highlighter-rouge"&gt;domain = S.Integers&lt;/code</description>
     </item>
     <item>
       <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=276</guid>
@@ -1768,19 +1868,6 @@ i.e &lt;code class="highlighter-rouge"&gt;sin(x) &amp;#8712; [-1, 1]&lt;/code&gt
 My goal for next week would be to implement the above-said functions.&lt;/p&gt;
 
 &lt;p&gt;Looking forward to another exciting week !&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=255</guid>
-      <title>GSoC Week 2 Progress</title>
-      <author>Rajith Vidanaarachchi (rajithv)</author>
-      <pubDate>Fri, 03 Jun 2016 17:09:47 GMT</pubDate>
-      <link>https://rajithsays.wordpress.com/2016/06/03/gsoc-week-2-progress/</link>
-      <description>&lt;p&gt;Despite having a smooth flow in week 1, my luck ran over halfway through this week. It can be called quite a bumpy ride.&lt;/p&gt;
-&lt;p&gt;At the start of the week it was really great, I got Complex Doubles ready with the &lt;a href="https://github.com/symengine/symengine.rb/pull/46" target="_blank"&gt;PR #46&lt;/a&gt;, along with the Real Doubles. Another quick fix for the CWrapper was covered with &lt;a href="https://github.com/symengine/symengine/pull/966" target="_blank"&gt;PR &amp;#160;#966&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;But the troubles began to appear with me moving into wrapping RealMPFRs. &lt;a href="http://www.mpfr.org/" target="_blank"&gt;MPFR&lt;/a&gt;&amp;#160;is a library for arbitrary precision floating point numbers. This is implemented in SymEngine as RealMPFR, and I started work on wrapping this, along with MPC for complex numbers for both C (&lt;a href="https://github.com/symengine/symengine/pull/972" target="_blank"&gt;PR #972&lt;/a&gt;) and Ruby (&lt;a href="https://github.com/symengine/symengine.rb/pull/49" target="_blank"&gt;PR #49&lt;/a&gt;). On the Ruby side, it was expected to&amp;#160;be initialized with Floats, Strings or BigDecimals.&lt;/p&gt;
-&lt;p&gt;After a very bumpy ride, mainly because of me not being very much used to memory management in C, and some issues which had to be fixed along the way (&lt;a href="https://github.com/symengine/symengine/issues/974" target="_blank"&gt;Issue #974&lt;/a&gt;). Struggling with that, I somehow was able to finish the MPFR part (actually currently waiting for all the tests to run), and will be able to move on to MPC (should be easier and doable within a day, now that MPFR is already done).&lt;/p&gt;
-&lt;p&gt;But that means when I start next week, I will have a backlog, which I don&amp;#8217;t like to have hovering over me. Anyway, I hope to clear the backlog and get back to track by next weekend.&lt;/p&gt;
-&lt;p&gt;Have a nice weekend!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/255/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/255/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=255&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>
