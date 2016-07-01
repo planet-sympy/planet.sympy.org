@@ -237,7 +237,25 @@ set([(2, 3)])
 
     &lt;p&gt;```&lt;/p&gt;
 
-    &lt;p&gt;In above these types of cases we need &lt;code class="highlighter-rouge"&gt;permute_signs&lt;/code&gt;.&lt;/p&gt;
+    &lt;p&gt;In above these types of cases we need &lt;code class="highlighter-rouge"&gt;permute_signs&lt;/code&gt;. If we check these solution you can see that &lt;code class="highlighter-rouge"&gt;permute_signs&lt;/code&gt;
+  is needed when we solutions is not parameterized.&lt;/p&gt;
+
+    &lt;p&gt;e.g.&lt;/p&gt;
+
+    &lt;p&gt;```&lt;/p&gt;
+
+    &lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;  &amp;gt;&amp;gt;&amp;gt; from sympy.solvers.diophantine import diophantine
+  &amp;gt;&amp;gt;&amp;gt; from sympy.abc import x, y, z
+  &amp;gt;&amp;gt;&amp;gt; diophantine(x**2 - y**2)
+  set([(-t_0, -t_0), (t_0, -t_0)])
+&lt;/code&gt;&lt;/pre&gt;
+    &lt;/div&gt;
+
+    &lt;p&gt;```&lt;/p&gt;
+
+    &lt;p&gt;solution &lt;code class="highlighter-rouge"&gt;set([(-t_0, -t_0), (t_0, -t_0)])&lt;/code&gt; is same as &lt;code class="highlighter-rouge"&gt;set([(-t_0, -t_0), (t_0, t_0), (-t_0, t_0), (t_0, -t_0)])&lt;/code&gt;.(because &lt;code class="highlighter-rouge"&gt;t_0&lt;/code&gt; can take any integer value.)&lt;/p&gt;
+
+    &lt;p&gt;I discussed these things with &lt;a href="https://github.com/thilinarmtb"&gt;@thilinarmtb&lt;/a&gt; (He have worked on &lt;code class="highlighter-rouge"&gt;diophantine&lt;/code&gt;. Blog link : &lt;a href="https://thilinaatsympy.wordpress.com/page/2/"&gt;https://thilinaatsympy.wordpress.com/&lt;/a&gt;). His words are &amp;#8220;only the linear solver is incomplete, Rather the algorithm in Diophantine module should be fixed. We can use &lt;code class="highlighter-rouge"&gt;permute_signs&lt;/code&gt; when we have even powers. you can update Diophantine module to use permute sign&amp;#8221;.&lt;/p&gt;
 
     &lt;ol&gt;
       &lt;li&gt;
