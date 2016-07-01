@@ -103,6 +103,73 @@ I think I will be busy with "presentation of subgroups", this week and next week
 &lt;/ul&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://gxyd.github.io/GSoC Week 5</guid>
+      <title>GSoC Week 5</title>
+      <author>Gaurav Dhingra (gxyd)</author>
+      <pubDate>Thu, 30 Jun 2016 18:30:00 GMT</pubDate>
+      <link>https://gxyd.github.io/gsoc2016/gsoc_week_6.html</link>
+      <description>&lt;p&gt;
+Hi everyone. Here's a brief summary of 5th week of my GSoC.
+&lt;/p&gt;
+&lt;br /&gt;
+&lt;p&gt;
+In the 5th week we worked upon the implementation of Low Index Subgroups algorithm.
+The basic problem dealt with by this algorithm is: 
+&lt;br /&gt;&lt;br /&gt;
+&lt;i&gt;find all subgroups H
+such that the index $|G:H|$ is at most a specified number $N &gt; 0$.
+&lt;/i&gt;
+&lt;br /&gt;&lt;br /&gt;
+The term
+"low" is used to indicate the impracticalness of solving the problem for large
+$N$ values. The Handbook [1] contains the necessary pseudo code for its
+implementation, in which it has been explained in a top-down approch instead
+of the usual bottom-up approach.
+
+Complexity of the algorithm: exponential.
+&lt;/p&gt;
+&lt;p&gt;
+Status update: completion of Low Index Subgroup algorithm.
+The main function for calling the algorithm is &lt;code&gt;low_index_subgroups&lt;/code&gt; with signature &lt;code&gt;(G, N, Y=[])&lt;/code&gt;, here $G$ is the group for which we want to find the subgroups for, $N$ being a positive integer specifying the upper bound on the index value of subgroup generated, and $Y$ is optional argument specifying.
+&lt;/p&gt;
+&lt;p&gt;
+This routine also (&lt;code&gt;coset_enumeration_c&lt;/code&gt; to needed this) makes use of calling &lt;i&gt;cyclic conjugates&lt;/i&gt; of cyclic reductions of a set of relators, so I made a method in &lt;code&gt;CosetTable&lt;/code&gt; named &lt;code&gt;conjugates&lt;/code&gt;, which does this task now. We have a list $S$, which stores the coset tables for the founds subgroups. The algorithm later calls a routine called &lt;code&gt;descendant_subgroups&lt;/code&gt;. One of the things being that in &lt;code&gt;low_index_subgroups&lt;/code&gt; the &lt;code&gt;descendant_subgroups&lt;/code&gt; routine can be called on any of the generators of inverse of generator of group $G$, though this isn't clear in the Handbook, but I some intuition to it.
+&lt;/p&gt;
+&lt;p&gt;
+
+descendant_subgroups($C$, $\{R_{1x}^C \}$, $R_2$, $N$)
+&lt;br /&gt;&lt;br /&gt;
+try_descendant($C$, $\{R_{1x}^C\}$, $R_2$, $N$, $\alpha$, $x$, $\beta$)
+
+&lt;/p&gt;
+&lt;p&gt;
+Here is an example of Low Index Subgroup algorithm in work, Yay :) !!
+
+&lt;code&gt;&lt;pre&gt;
+&gt;&gt;&gt; from sympy.combinatorics.free_group import free_group
+&gt;&gt;&gt; from sympy.combinatorics.fp_groups import FpGroup, low_index_subgroups
+&gt;&gt;&gt; F, x, y = free_group("x, y")
+&gt;&gt;&gt; f = FpGroup(F, [x**2, y**3, (x*y)**4])
+&gt;&gt;&gt; L = low_index_subgroups(f, 10)
+&gt;&gt;&gt; for i in L:
+...     print(i.table)
+
+[[0, 0, 0, 0]]
+[[0, 0, 1, 2], [1, 1, 2, 0], [3, 3, 0, 1], [2, 2, 3, 3]]
+[[0, 0, 1, 2], [2, 2, 2, 0], [1, 1, 0, 1]]
+[[0, 0, 1, 2], [3, 3, 2, 0], [4, 4, 0, 1], [1, 1, 5, 4], [2, 2, 3, 5], [5, 5, 4, 3]]
+[[1, 1, 0, 0], [0, 0, 1, 1]]
+[[1, 1, 0, 0], [0, 0, 2, 3], [4, 4, 3, 1], [5, 5, 1, 2], [2, 2, 5, 6], [3, 3, 6, 4], [7, 7, 4, 5], [6, 6, 7, 7]]
+[[1, 1, 1, 2], [0, 0, 2, 0], [3, 3, 0, 1], [2, 2, 4, 5], [5, 5, 5, 3], [4, 4, 3, 4]]
+[[1, 1, 2, 3], [0, 0, 4, 5], [5, 5, 3, 0], [4, 4, 0, 2], [3, 3, 5, 1], [2, 2, 1, 4]]
+&lt;/pre&gt;&lt;/code&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+Things I would love to have for this algorithm is to give, a presentation in the form Magma gives the subgroup returned in the form of generators of subgroup. That is coding the &lt;b&gt;Reidemeister Schreier&lt;/b&gt; and its variant algorithms.
+&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://nishnik.github.io/GSoC-Fifth-Week</guid>
       <title>GSoC Fifth Week</title>
       <author>Nishant Nikhil (nishnik)</author>
@@ -1798,85 +1865,6 @@ Out[6]:
 &lt;/ul&gt;
 &lt;p&gt;That&amp;#8217;s all for now, looking forward to week 3.&lt;/p&gt;
 &lt;p&gt;Cheers. Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/336/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/336/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=336&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://github.com/kshitij10496/2016/06/04/GSoC-Week-02/</guid>
-      <title>GSoC Week 02 - The One With Function Range (Part I)</title>
-      <author>Kshitij Saraogi(kshitij10496)</author>
-      <pubDate>Sat, 04 Jun 2016 00:00:00 GMT</pubDate>
-      <link>https://github.com/kshitij10496/2016/06/04/GSoC-Week-02/</link>
-      <description>&lt;p&gt;This week I worked on developing methods for computing the range of an univariate function.
-For this pupose, I spent most of my time in research; reading previous discussions on mailing lists, pull requests and wikis.&lt;/p&gt;
-
-&lt;h3 id="progress"&gt;&lt;strong&gt;Progress&lt;/strong&gt;&lt;/h3&gt;
-
-&lt;p&gt;Suppose, we want to solve the following equation in the variable &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt;:&lt;/p&gt;
-
-&lt;p&gt;&lt;code class="highlighter-rouge"&gt;sin(x) = &amp;#960; / 2&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;We can straight away state that this equations has &lt;em&gt;no solutions&lt;/em&gt; as the range of the function &lt;code class="highlighter-rouge"&gt;sin&lt;/code&gt; is -1 to 1 &lt;br /&gt;
-i.e &lt;code class="highlighter-rouge"&gt;sin(x) &amp;#8712; [-1, 1]&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Thus, we find that the range of the function can also be used to leverage the solutions of an equation. The implementation of a function to determine the range of a function in a given domain is particularly interesting for checking whether an equation is at all solvable.&lt;/p&gt;
-
-&lt;p&gt;In the last meeting, Amit had suggested me to read the conversation on&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/2723"&gt;PR#2723&lt;/a&gt; : Fixed imageset for Interval&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/2925"&gt;PR#2925&lt;/a&gt; : find singularities for any expression.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Along with this, I read the following mailing lists discussions:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://groups.google.com/forum/#!searchin/sympy/minimize/sympy/Na_p5pm1I7M/V6uv4ZAkp2oJ"&gt;Find minimum value of a function symbolically&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://groups.google.com/forum/#!topic/sympy/8TM8cnuzkG8"&gt;Best way to find extrema of function over interval&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://groups.google.com/forum/#!searchin/sympy/singularity/sympy/ijhl7rkHEbk/lsWTuJ2Nb8wJ"&gt;GSoC 2013 Idea - Find Domain / Range / Continuity / Singularity of a Function&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://groups.google.com/forum/#!searchin/sympy/singularity/sympy/c_fpCu9QiII/n2KaXN-z3rwJ"&gt;On a general representation for singularities and infinities&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://groups.google.com/forum/#!searchin/sympy/singularity/sympy/mJlCxuZ5uZw/peWogHzbKekJ"&gt;Functions: Singularity and Continuity&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;All this research helped me appreciate the difficulty of the problem at hand. Also, my approach to solving this issue is heavily inspired from these discussions.&lt;/p&gt;
-
-&lt;h3 id="design"&gt;&lt;strong&gt;Design&lt;/strong&gt;&lt;/h3&gt;
-
-&lt;p&gt;The methodology of determining the range of a function:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Determine the points of discontinuities in the concerned domain.&lt;/li&gt;
-  &lt;li&gt;Divide the entire domain into sub-domains about the above-determined singularities.&lt;/li&gt;
-  &lt;li&gt;Use the &lt;a href="https://en.wikipedia.org/wiki/Derivative_test#Second_derivative_test"&gt;Derivative Test&lt;/a&gt; to locate the critical points of the function within each sub-domain.&lt;/li&gt;
-  &lt;li&gt;Calcuate the corresponding values of the function at the critical points and the boundary values of the sub-domains.&lt;/li&gt;
-  &lt;li&gt;The extremas of the function in the entire domain are the maximum and minimum values in all the smaller domains combined.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;For now, I have thought of designing 2 functions to solve this issue:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Function to divide the domain into sub-domains.&lt;/li&gt;
-  &lt;li&gt;Function to calculate the extremum values.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id="git-log"&gt;&lt;strong&gt;$ git log&lt;/strong&gt;&lt;/h3&gt;
-&lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/11141"&gt;PR#11141&lt;/a&gt; : Method for solving equations using Decomposition and Rewriting
-&lt;a href="https://github.com/sympy/sympy/pull/11164"&gt;PR#11164&lt;/a&gt; : Intersection of certain ImageSets with Intervals&lt;/p&gt;
-
-&lt;h3 id="thoughts"&gt;&lt;strong&gt;Thoughts&lt;/strong&gt;&lt;/h3&gt;
-
-&lt;p&gt;After tommorrow&amp;#8217;s meeting, I will iron out a more concrete design.
-My goal for next week would be to implement the above-said functions.&lt;/p&gt;
-
-&lt;p&gt;Looking forward to another exciting week !&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

@@ -240,6 +240,127 @@ I think I will be busy with "presentation of subgroups", this week and next week
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-b298e897 feed-" id="item-9bbbdd11">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/gxyd.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Gaurav Dhingra (gxyd) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://gxyd.github.io/gsoc2016/gsoc_week_6.html">18:30, Thursday, 30 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://gxyd.github.io/gsoc2016/gsoc_week_6.html">GSoC Week 5</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/gxyd.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Gaurav Dhingra (gxyd) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://gxyd.github.io/gsoc2016/gsoc_week_6.html">18:30, Thursday, 30 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://gxyd.github.io/gsoc2016/gsoc_week_6.html">GSoC Week 5</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>
+Hi everyone. Here's a brief summary of 5th week of my GSoC.
+</p>
+<br />
+<p>
+In the 5th week we worked upon the implementation of Low Index Subgroups algorithm.
+The basic problem dealt with by this algorithm is: 
+<br /><br />
+<i>find all subgroups H
+such that the index $|G:H|$ is at most a specified number $N > 0$.
+</i>
+<br /><br />
+The term
+"low" is used to indicate the impracticalness of solving the problem for large
+$N$ values. The Handbook [1] contains the necessary pseudo code for its
+implementation, in which it has been explained in a top-down approch instead
+of the usual bottom-up approach.
+
+Complexity of the algorithm: exponential.
+</p>
+<p>
+Status update: completion of Low Index Subgroup algorithm.
+The main function for calling the algorithm is <code>low_index_subgroups</code> with signature <code>(G, N, Y=[])</code>, here $G$ is the group for which we want to find the subgroups for, $N$ being a positive integer specifying the upper bound on the index value of subgroup generated, and $Y$ is optional argument specifying.
+</p>
+<p>
+This routine also (<code>coset_enumeration_c</code> to needed this) makes use of calling <i>cyclic conjugates</i> of cyclic reductions of a set of relators, so I made a method in <code>CosetTable</code> named <code>conjugates</code>, which does this task now. We have a list $S$, which stores the coset tables for the founds subgroups. The algorithm later calls a routine called <code>descendant_subgroups</code>. One of the things being that in <code>low_index_subgroups</code> the <code>descendant_subgroups</code> routine can be called on any of the generators of inverse of generator of group $G$, though this isn't clear in the Handbook, but I some intuition to it.
+</p>
+<p>
+
+descendant_subgroups($C$, $\{R_{1x}^C \}$, $R_2$, $N$)
+<br /><br />
+try_descendant($C$, $\{R_{1x}^C\}$, $R_2$, $N$, $\alpha$, $x$, $\beta$)
+
+</p>
+<p>
+Here is an example of Low Index Subgroup algorithm in work, Yay :) !!
+
+<code><pre>
+>>> from sympy.combinatorics.free_group import free_group
+>>> from sympy.combinatorics.fp_groups import FpGroup, low_index_subgroups
+>>> F, x, y = free_group("x, y")
+>>> f = FpGroup(F, [x**2, y**3, (x*y)**4])
+>>> L = low_index_subgroups(f, 10)
+>>> for i in L:
+...     print(i.table)
+
+[[0, 0, 0, 0]]
+[[0, 0, 1, 2], [1, 1, 2, 0], [3, 3, 0, 1], [2, 2, 3, 3]]
+[[0, 0, 1, 2], [2, 2, 2, 0], [1, 1, 0, 1]]
+[[0, 0, 1, 2], [3, 3, 2, 0], [4, 4, 0, 1], [1, 1, 5, 4], [2, 2, 3, 5], [5, 5, 4, 3]]
+[[1, 1, 0, 0], [0, 0, 1, 1]]
+[[1, 1, 0, 0], [0, 0, 2, 3], [4, 4, 3, 1], [5, 5, 1, 2], [2, 2, 5, 6], [3, 3, 6, 4], [7, 7, 4, 5], [6, 6, 7, 7]]
+[[1, 1, 1, 2], [0, 0, 2, 0], [3, 3, 0, 1], [2, 2, 4, 5], [5, 5, 5, 3], [4, 4, 3, 4]]
+[[1, 1, 2, 3], [0, 0, 4, 5], [5, 5, 3, 0], [4, 4, 0, 2], [3, 3, 5, 1], [2, 2, 1, 4]]
+</pre></code>
+</p>
+
+<p>
+Things I would love to have for this algorithm is to give, a presentation in the form Magma gives the subgroup returned in the form of generators of subgroup. That is coding the <b>Reidemeister Schreier</b> and its variant algorithms.
+</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">June 27, 2016</h2>
@@ -3622,142 +3743,6 @@ Out[6]:
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">June 04, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7730e356 feed-" id="item-f3dbb2df">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/kshitij10496.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Kshitij Saraogi(kshitij10496) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://github.com/kshitij10496/2016/06/04/GSoC-Week-02/">00:00, Saturday, 04 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://github.com/kshitij10496/2016/06/04/GSoC-Week-02/">GSoC Week 02 - The One With Function Range (Part I)</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/kshitij10496.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Kshitij Saraogi(kshitij10496) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://github.com/kshitij10496/2016/06/04/GSoC-Week-02/">00:00, Saturday, 04 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://github.com/kshitij10496/2016/06/04/GSoC-Week-02/">GSoC Week 02 - The One With Function Range (Part I)</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This week I worked on developing methods for computing the range of an univariate function.
-For this pupose, I spent most of my time in research; reading previous discussions on mailing lists, pull requests and wikis.</p>
-
-<h3 id="progress"><strong>Progress</strong></h3>
-
-<p>Suppose, we want to solve the following equation in the variable <code class="highlighter-rouge">x</code>:</p>
-
-<p><code class="highlighter-rouge">sin(x) = &#960; / 2</code></p>
-
-<p>We can straight away state that this equations has <em>no solutions</em> as the range of the function <code class="highlighter-rouge">sin</code> is -1 to 1 <br />
-i.e <code class="highlighter-rouge">sin(x) &#8712; [-1, 1]</code>.</p>
-
-<p>Thus, we find that the range of the function can also be used to leverage the solutions of an equation. The implementation of a function to determine the range of a function in a given domain is particularly interesting for checking whether an equation is at all solvable.</p>
-
-<p>In the last meeting, Amit had suggested me to read the conversation on</p>
-
-<ul>
-  <li><a href="https://github.com/sympy/sympy/pull/2723">PR#2723</a> : Fixed imageset for Interval</li>
-  <li><a href="https://github.com/sympy/sympy/pull/2925">PR#2925</a> : find singularities for any expression.</li>
-</ul>
-
-<p>Along with this, I read the following mailing lists discussions:</p>
-
-<ol>
-  <li>
-    <p><a href="https://groups.google.com/forum/#!searchin/sympy/minimize/sympy/Na_p5pm1I7M/V6uv4ZAkp2oJ">Find minimum value of a function symbolically</a></p>
-  </li>
-  <li>
-    <p><a href="https://groups.google.com/forum/#!topic/sympy/8TM8cnuzkG8">Best way to find extrema of function over interval</a></p>
-  </li>
-  <li>
-    <p><a href="https://groups.google.com/forum/#!searchin/sympy/singularity/sympy/ijhl7rkHEbk/lsWTuJ2Nb8wJ">GSoC 2013 Idea - Find Domain / Range / Continuity / Singularity of a Function</a></p>
-  </li>
-  <li>
-    <p><a href="https://groups.google.com/forum/#!searchin/sympy/singularity/sympy/c_fpCu9QiII/n2KaXN-z3rwJ">On a general representation for singularities and infinities</a></p>
-  </li>
-  <li>
-    <p><a href="https://groups.google.com/forum/#!searchin/sympy/singularity/sympy/mJlCxuZ5uZw/peWogHzbKekJ">Functions: Singularity and Continuity</a></p>
-  </li>
-</ol>
-
-<p>All this research helped me appreciate the difficulty of the problem at hand. Also, my approach to solving this issue is heavily inspired from these discussions.</p>
-
-<h3 id="design"><strong>Design</strong></h3>
-
-<p>The methodology of determining the range of a function:</p>
-
-<ol>
-  <li>Determine the points of discontinuities in the concerned domain.</li>
-  <li>Divide the entire domain into sub-domains about the above-determined singularities.</li>
-  <li>Use the <a href="https://en.wikipedia.org/wiki/Derivative_test#Second_derivative_test">Derivative Test</a> to locate the critical points of the function within each sub-domain.</li>
-  <li>Calcuate the corresponding values of the function at the critical points and the boundary values of the sub-domains.</li>
-  <li>The extremas of the function in the entire domain are the maximum and minimum values in all the smaller domains combined.</li>
-</ol>
-
-<p>For now, I have thought of designing 2 functions to solve this issue:</p>
-
-<ol>
-  <li>Function to divide the domain into sub-domains.</li>
-  <li>Function to calculate the extremum values.</li>
-</ol>
-
-<h3 id="git-log"><strong>$ git log</strong></h3>
-<p><a href="https://github.com/sympy/sympy/pull/11141">PR#11141</a> : Method for solving equations using Decomposition and Rewriting
-<a href="https://github.com/sympy/sympy/pull/11164">PR#11164</a> : Intersection of certain ImageSets with Intervals</p>
-
-<h3 id="thoughts"><strong>Thoughts</strong></h3>
-
-<p>After tommorrow&#8217;s meeting, I will iron out a more concrete design.
-My goal for next week would be to implement the above-said functions.</p>
-
-<p>Looking forward to another exciting week !</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3785,86 +3770,86 @@ My goal for next week would be to implement the above-said functions.</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>14:59, Friday, 01 July</td>
-<td>15:14, Friday, 01 July</td>
+<td>15:19, Friday, 01 July</td>
+<td>15:34, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>14:59, Friday, 01 July</td>
-<td>15:14, Friday, 01 July</td>
+<td>15:19, Friday, 01 July</td>
+<td>15:34, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>14:59, Friday, 01 July</td>
-<td>15:14, Friday, 01 July</td>
+<td>15:19, Friday, 01 July</td>
+<td>15:34, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>14:59, Friday, 01 July</td>
-<td>15:14, Friday, 01 July</td>
+<td>15:19, Friday, 01 July</td>
+<td>15:34, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>14:59, Friday, 01 July</td>
-<td>15:14, Friday, 01 July</td>
+<td>15:19, Friday, 01 July</td>
+<td>15:34, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>14:59, Friday, 01 July</td>
-<td>15:14, Friday, 01 July</td>
+<td>15:19, Friday, 01 July</td>
+<td>15:34, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://github.com/kshitij10496/">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>14:59, Friday, 01 July</td>
-<td>15:14, Friday, 01 July</td>
+<td>15:19, Friday, 01 July</td>
+<td>15:34, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>14:59, Friday, 01 July</td>
-<td>15:14, Friday, 01 July</td>
+<td>15:19, Friday, 01 July</td>
+<td>15:34, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>14:59, Friday, 01 July</td>
-<td>15:14, Friday, 01 July</td>
+<td>15:19, Friday, 01 July</td>
+<td>15:34, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>14:59, Friday, 01 July</td>
-<td>15:14, Friday, 01 July</td>
+<td>15:19, Friday, 01 July</td>
+<td>15:34, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>14:59, Friday, 01 July</td>
-<td>15:14, Friday, 01 July</td>
+<td>15:19, Friday, 01 July</td>
+<td>15:34, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>14:59, Friday, 01 July</td>
-<td>15:14, Friday, 01 July</td>
+<td>15:19, Friday, 01 July</td>
+<td>15:34, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>14:59, Friday, 01 July</td>
-<td>15:14, Friday, 01 July</td>
+<td>15:19, Friday, 01 July</td>
+<td>15:34, Friday, 01 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>14:59, Friday, 01 July</td>
-<td>15:14, Friday, 01 July</td>
+<td>15:19, Friday, 01 July</td>
+<td>15:34, Friday, 01 July</td>
 </tr>
 </table>
 
