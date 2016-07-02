@@ -89,6 +89,105 @@ may resume on the base class.&lt;/p&gt;
 &lt;/blockquote&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://kshitij10496.github.io//2016/07/01/GSoC-Week-06/</guid>
+      <title>GSoC Week 06 - The One with Singularities</title>
+      <author>Kshitij Saraogi(kshitij10496)</author>
+      <pubDate>Fri, 01 Jul 2016 00:00:00 GMT</pubDate>
+      <link>http://kshitij10496.github.io//2016/07/01/GSoC-Week-06/</link>
+      <description>&lt;p&gt;This week I worked on two topics:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;singularities&lt;/li&gt;
+  &lt;li&gt;periodicity&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So, lets discuss each in turn.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;em&gt;Singularities&lt;/em&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;A singularity is in general a point at which a given mathematical object is not defined.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Examples:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;1/x&lt;/code&gt; has a singularity at &lt;code class="highlighter-rouge"&gt;x = 0&lt;/code&gt; as it seems to reach infinity.&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;|x| (Absolute)&lt;/code&gt; has a singularity at &lt;code class="highlighter-rouge"&gt;x = 0&lt;/code&gt; since it is not differentiable at that point.&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;&amp;#8730;x (Square root)&lt;/code&gt; has a singularity at &lt;code class="highlighter-rouge"&gt;x = 0&lt;/code&gt; since it doesnot admit a tangent there.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In real analysis, singularities are either discontinuities or discontinuities of
+the derivative (sometimes also discontinuities of higher order derivatives).&lt;/p&gt;
+
+&lt;p&gt;A &lt;strong&gt;removable singularity&lt;/strong&gt; of a function is a point at which the function is undefined, 
+but it is possible to redefine the function at that point in such a way that the resulting 
+function is regular in a neighbourhood of that point.&lt;/p&gt;
+
+&lt;p&gt;For instance,&lt;/p&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;f(z) = sin(z)/z&lt;/code&gt; has a removable singularity at &lt;code class="highlighter-rouge"&gt;z = 0&lt;/code&gt;.&lt;br /&gt;
+This singularity can be removed by defining &lt;code class="highlighter-rouge"&gt;f(0) := 1&lt;/code&gt;, which is the limit of &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt; as &lt;code class="highlighter-rouge"&gt;z&lt;/code&gt; tends to &lt;code class="highlighter-rouge"&gt;0&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;In SymPy, we try to automatically simplify some of the expressions before passing it for
+further processing.&lt;/p&gt;
+
+&lt;p&gt;For example,&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;x/x&lt;/code&gt; simplifies to &lt;code class="highlighter-rouge"&gt;1&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;(x-1)^2/(x-1)&lt;/code&gt; simplifies to &lt;code class="highlighter-rouge"&gt;x-1&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;At times, this can lead to incorrect behaviour.
+Suppose, we are interested to find the singularities ( and/or domain ) of the function &lt;code class="highlighter-rouge"&gt;f(x) = x/x&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In []: f = x/x
+In []: singularities(f, x)
+Out[]: S.EmptySet # no singularities
+In []: continuous_domain(f, x, S.Reals) # finding the valid domain of f on the real line
+Out[]: S.Reals # should be (-oo, 0) U (0, oo)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;After some discussion about this issue of automatic simplification, we came to the
+conclusion that removable singularities should be treated as part of the domain of the function.
+This will help in justifying the behaviour of expressions which are automatically simplified.&lt;/p&gt;
+
+&lt;p&gt;So, I studied about how to classify a singularity as a removable one.
+For this, we use the &lt;strong&gt;Reimann&amp;#8217;s theorem&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Let &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt; a function defined on the set &lt;code class="highlighter-rouge"&gt;D \{a}&lt;/code&gt;.
+   The point &lt;code class="highlighter-rouge"&gt;a&lt;/code&gt; is a removable discontinuity if there exists a neighborhood of &lt;code class="highlighter-rouge"&gt;a&lt;/code&gt; on which &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt; is bounded.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Mathematically,&lt;/p&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;lim   (z -a)*f(z)&lt;/code&gt;&lt;br /&gt;
+&lt;code class="highlighter-rouge"&gt;z-&amp;gt;a+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;I have implemented this theorem in the form of a function but I face certain issues with
+the values returned by &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; due to &lt;code class="highlighter-rouge"&gt;check_domain&lt;/code&gt; function (which checks the bound of a 
+function at a particular value). This remains to be discussed in the meeting.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;em&gt;Periodicity&lt;/em&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The PR related to the implementation of computing the periodic behaviour of a trigonometric
+function is up for review. 
+This week I read about possible ways to generalise the implemented method over a wide range of
+functions. I created a note of my readings &lt;a href="https://hackmd.io/JwIwLAhmCMBsIFoBMBmAHAdgWArAEzATWAlgQgGM8AGUPJNCEAUyA==="&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;After Thoughts&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;I have lots to discuss with my mentors on these issues.&lt;br /&gt;
+After merging the PR#11277, I think &lt;code class="highlighter-rouge"&gt;solve_decomposition&lt;/code&gt; method will be good to go.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://gxyd.github.io/GSoC Week 6</guid>
       <title>GSoC Week 6</title>
       <author>Gaurav Dhingra (gxyd)</author>
@@ -704,11 +803,11 @@ plan on beginning work on mirroring Jason&amp;#8217;s overhaul of &lt;code class
 &lt;/blockquote&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://github.com/kshitij10496/2016/06/24/GSoC-Week-04-05/</guid>
+      <guid isPermaLink="false">http://kshitij10496.github.io//2016/06/24/GSoC-Week-04-05/</guid>
       <title>GSoC Weeks 04 &amp; 05 - The One with Periodicity</title>
       <author>Kshitij Saraogi(kshitij10496)</author>
       <pubDate>Fri, 24 Jun 2016 00:00:00 GMT</pubDate>
-      <link>https://github.com/kshitij10496/2016/06/24/GSoC-Week-04-05/</link>
+      <link>http://kshitij10496.github.io//2016/06/24/GSoC-Week-04-05/</link>
       <description>&lt;p&gt;Hi folks !&lt;/p&gt;
 
 &lt;p&gt;The past couple of weeks were spent of developing heuristics for determining the
@@ -1345,13 +1444,7 @@ As this work is in progress, I will post about it in the next week&amp;#8217;s p
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
       <pubDate>Mon, 13 Jun 2016 00:00:00 GMT</pubDate>
       <link>http://shekharrajak.github.io/Coding-Period-week-4/</link>
-      <description>&lt;h4 id="solveset-when-domain--sintegers"&gt;&lt;code class="highlighter-rouge"&gt;Solveset&lt;/code&gt; when &lt;code class="highlighter-rouge"&gt;domain = S.Integers&lt;/code&gt;&lt;/h4&gt;
-
-&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11234"&gt;#11234&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Right now we may not get our solution in Integer domain but we can use concept of diophantine equations in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;.
-When I messaged about this in giiter channel Aaron told about the &lt;code class="highlighter-rouge"&gt;diophantine&lt;/code&gt;, already defined in solvers/diophantine.py.
-So we can use &lt;code class="highlighter-rouge"&gt;diophantine&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; to get Integer solution.&lt;code class="highlighter-rouge"&gt;diophantine&lt;/code&gt; is c</description>
+      <description></description>
     </item>
     <item>
       <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=276</guid>
@@ -1587,11 +1680,11 @@ API I will begin implementing the base class itself.&lt;/p&gt;
 &lt;/blockquote&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://github.com/kshitij10496/2016/06/10/GSoC-Week-03/</guid>
+      <guid isPermaLink="false">http://kshitij10496.github.io//2016/06/10/GSoC-Week-03/</guid>
       <title>GSoC Week 03 - The One With Function Range (Part II)</title>
       <author>Kshitij Saraogi(kshitij10496)</author>
       <pubDate>Fri, 10 Jun 2016 00:00:00 GMT</pubDate>
-      <link>https://github.com/kshitij10496/2016/06/10/GSoC-Week-03/</link>
+      <link>http://kshitij10496.github.io//2016/06/10/GSoC-Week-03/</link>
       <description>&lt;p&gt;Hey !&lt;/p&gt;
 
 &lt;p&gt;This week I worked on implementing a method for finding the range of a function in a given domain.
@@ -1756,84 +1849,6 @@ PR for the blog link update in planet: &lt;a href="https://github.com/sympy/plan
 &lt;p&gt;I am now looking for bugs inside everything implemented so far in the module, will be working on solving them and also will make things optimal wherever there is a possibility. More on what to implement next is yet to be discussed.&lt;/p&gt;
 &lt;p&gt;Thank You!&lt;/p&gt;
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/291/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/291/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=291&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Second-Week</guid>
-      <title>GSoC Second Week</title>
-      <author>Nishant Nikhil (nishnik)</author>
-      <pubDate>Mon, 06 Jun 2016 00:00:00 GMT</pubDate>
-      <link>http://nishnik.github.io/GSoC-Second-Week/</link>
-      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
-
-&lt;p&gt;This week, I implemented some algorithms (&lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;gf_gcd&lt;/code&gt; etc.) and apart from it I looked into the design consideration also.&lt;/p&gt;
-
-&lt;h1 id="algorithms-implemented"&gt;Algorithms Implemented&lt;/h1&gt;
-
-&lt;p&gt;I implemented 
-- &lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class="language-C+++"&gt;void GaloisFieldDict::gf_div(const GaloisFieldDict &amp;amp;o,
-                         const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;quo,
-                         const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;rem) const
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This will change the value of &lt;code class="highlighter-rouge"&gt;quo&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;rem&lt;/code&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_quo&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;This will return the quotient only. It will help when we only need quotient after dividing.
-It is better than &lt;code class="highlighter-rouge"&gt;gf_div&lt;/code&gt; in terms of time complexity.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_lshift&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;It is efficient way to multiply a polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; by &lt;code class="highlighter-rouge"&gt;x**n&lt;/code&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_rshift&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;It is efficient way to divide a polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; by &lt;code class="highlighter-rouge"&gt;x**n&lt;/code&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class="language-C++"&gt;void GaloisFieldDict::gf_rshift(const integer_class n,
-                            const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;quo,
-                            const Ptr&amp;lt;GaloisFieldDict&amp;gt; &amp;amp;rem) const
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Just like gf_div, it also changes the value of &lt;code class="highlighter-rouge"&gt;quo&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;rem&lt;/code&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_sqr&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;This will square the polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_pow&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;It uses binary multiplication to power a polynomial in &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_monic&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Changes a polynomial to its monic representation, i.e. &lt;code class="highlighter-rouge"&gt;3*x**2 + 4&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;GF(5)&lt;/code&gt; becomes &lt;code class="highlighter-rouge"&gt;x**2 + 3&lt;/code&gt;. Here leading coefficient becomes &lt;code class="highlighter-rouge"&gt;one&lt;/code&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;gf_gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;gf_lcm&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;code class="highlighter-rouge"&gt;gf_gcd&lt;/code&gt; by Euclidean Algorithm and &lt;code class="highlighter-rouge"&gt;gf_lcm&lt;/code&gt; is product of the two polys divided by their gcd in the finite field.&lt;/p&gt;
-
-&lt;h1 id="design-change"&gt;Design Change&lt;/h1&gt;
-
-&lt;p&gt;SymEngine&amp;#8217;s codebase for &lt;code class="highlighter-rouge"&gt;UIntPoly&lt;/code&gt; has changed, it inherits &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt;, which has two private variables, one is to store the variable and other is container. &lt;code class="highlighter-rouge"&gt;UIntPoly&lt;/code&gt; uses &lt;code class="highlighter-rouge"&gt;UIntDict&lt;/code&gt; as a container and &lt;code class="highlighter-rouge"&gt;UIntDict&lt;/code&gt; is inherited from &lt;code class="highlighter-rouge"&gt;ODictWrapper&lt;/code&gt;.
-Now as &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; is just representation of polynomial so I needed something similar, so I made &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; inherit from &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt;, and made a container named &lt;code class="highlighter-rouge"&gt;GaloisFieldDict&lt;/code&gt;.
-This prevented a lot of code duplicacy.
-Still there is a lot of conversation going on this topic, I will better post after the final design is fixed.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
