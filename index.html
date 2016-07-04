@@ -89,6 +89,213 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">July 03, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-5b0f9c08">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/srajangarg.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Srajan Garg (srajangarg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://srajangarg.github.io//2016/07/03/Generators-Poly-Conversions/">00:00, Sunday, 03 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/07/03/Generators-Poly-Conversions/">Finding Generators &amp; Polynomial Conversions</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/srajangarg.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Srajan Garg (srajangarg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://srajangarg.github.io//2016/07/03/Generators-Poly-Conversions/">00:00, Sunday, 03 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/07/03/Generators-Poly-Conversions/">Finding Generators &amp; Polynomial Conversions</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<h3 id="overview">Overview</h3>
+
+<p>This week I continued my work from last week, but in a cleaner and structured fashion. The PR with last week&#8217;s work was closed in favour of a new PR, with better and scalable code. I&#8217;ll briefly explain how the functionality is implemented and the main ideas behind it. All the work is in <a href="https://github.com/symengine/symengine/pull/1003">#1003</a>.</p>
+
+<h3 id="finding-generators">Finding Generators</h3>
+
+<p>You can refer to last week&#8217;s post to know what a generator for a polynomial is at a preliminary level. An expression may have any number of generators, but our job is to get the least number of generators which will be able to construct the given expression. The only rule is that a generator cannot be a <code class="highlighter-rouge">Number</code> (ie <code class="highlighter-rouge">Rational</code> or <code class="highlighter-rouge">Integer</code>). So <code class="highlighter-rouge">sqrt(3)</code> and <code class="highlighter-rouge">pi</code> can be generators but <code class="highlighter-rouge">2</code> or <code class="highlighter-rouge">1/2</code> can&#8217;t.</p>
+
+<p>Initially, the approach I was trying out was not general (as I catered to only the Univariate Int case), and expanding it to other polynomials would prove to be immensely difficult. Isuru suggested that the function should return all the possible generators. This will be the most general case for this function, and we can adapt to specific cases based on how many / which generators the function returns. I will try and summarize how the function works at a high level.</p>
+
+<p>If the expression passed to <code class="highlighter-rouge">find_gen</code> is a</p>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">Add</code> and <code class="highlighter-rouge">Mul</code> : We can just call <code class="highlighter-rouge">find_gen</code> recursively on each of the expressions being added/multiplied. <code class="highlighter-rouge">x + y</code> or <code class="highlighter-rouge">x*y</code> will return both <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code> as the generators. This follows from the fact that polynomials can be multiplied or added up to give the resultant polynomial.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">Number</code> : Do nothing, as numbers can never act as generators of polynomials.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">Pow</code> : Few cases arise in if the expression is a <code class="highlighter-rouge">Pow</code>. If the exponent is a positive integer, it suffices to find the generators of only the base of the expression. If it is a negative integer, we update the current generator set with <code class="highlighter-rouge">base**(-1)</code>. For eg.</p>
+  </li>
+</ul>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">find_gen</span><span class="p">((</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span> <span class="o">=</span> <span class="n">find_gen</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">find_gen</span><span class="p">((</span><span class="n">x</span><span class="o">**-</span><span class="mi">2</span><span class="p">))</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">**-</span><span class="mi">1</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>If the exponent is not an integer, the situation becomes a little complicated. It would seem intuitive that the generators in this case would be the base powered to the generators of the exponent. Like so,</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">find_gen</span><span class="p">(</span><span class="n">base</span><span class="o">**</span><span class="n">exp</span><span class="p">)</span> <span class="o">=</span> <span class="n">base</span><span class="o">**</span><span class="n">find_gen</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+<span class="n">eg</span><span class="p">.</span> 
+<span class="n">find_gen</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">))</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">find_gen</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="n">y</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>This would seem to be working, but actually the same <code class="highlighter-rouge">find_gen</code> function cannot be used to get the generators of the exponent expression. The <code class="highlighter-rouge">find_gen</code> works in a different way once we are &#8220;inside&#8221; an exponent. Take for example :</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="c1">// Incorrect
+</span><span class="n">find_gen</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)))</span>
+<span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">find_gen</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+<span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">x</span>
+
+<span class="c1">// Correct
+</span><span class="n">find_gen</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)))</span>
+<span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">find_gen_pow</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+<span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">find_gen_pow</code> is another function which returns generators keeping in mind that the current expression it is dealing with is actually the exponent of another expression. So, it&#8217;s behaviour varies from the simple <code class="highlighter-rouge">find_gen</code>. Here is another example :</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="c1">// Incorrect
+</span><span class="n">find_gen</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+<span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">find_gen</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+<span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">x</span>
+
+<span class="c1">// Correct
+</span><span class="n">find_gen</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+<span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">find_gen_pow</span><span class="p">((</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+<span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+</code></pre>
+</div>
+
+<ul>
+  <li><code class="highlighter-rouge">Basic</code> : For all other structures like <code class="highlighter-rouge">Symbol</code> and <code class="highlighter-rouge">Function</code>, they themselves act as generators of the polynomial. We just need to update the generator set.</li>
+</ul>
+
+<p>It is to be kept in mind that whenever we obtain a new potential generator, we update the current generator set. This may lead to modification of an already existing generator or add in a new one. This method thus takes care of some cases, not done by SymPy. A similar updation rule is followed for <code class="highlighter-rouge">find_gen_pow</code> where this is done on the coefficients of each expression instead of their powers.</p>
+
+<p><code class="highlighter-rouge">find_gen</code> :</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">gen_set</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="c1">// addition
+</span><span class="n">update_gen_set</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+<span class="n">gen_set</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span> <span class="n">z</span><span class="p">)</span>
+
+<span class="c1">// modification
+</span><span class="n">update_gen_set</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">gen_set</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">))</span>
+
+<span class="c1">// no change
+</span><span class="n">update_gen_set</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">gen_set</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">find_gen_pow</code> :</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="c1">// "find_gen_pow"
+</span><span class="n">gen_set</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1">// addition
+</span><span class="n">update_gen_set</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">gen_set</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="c1">// modification
+</span><span class="n">update_gen_set</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">gen_set</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span>
+
+<span class="c1">// no change
+</span><span class="n">update_gen_set</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">gen_set</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<p>I have a short description on the storage of these generators in the PR description and subsequent comments. Please do have a look!</p>
+
+<h3 id="polynomial-conversions">Polynomial Conversions</h3>
+
+<p>The next half of the week&#8217;s work involved actually converting a <code class="highlighter-rouge">Basic</code> into a polynomial. The API is too look as follows</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">RCP</span><span class="o">&lt;</span><span class="n">Basic</span><span class="o">&gt;</span> <span class="n">UIntPoly</span><span class="o">::</span><span class="n">from_basic</span><span class="p">(</span><span class="n">Basic</span> <span class="n">x</span><span class="p">);</span>
+<span class="n">RCP</span><span class="o">&lt;</span><span class="n">Basic</span><span class="o">&gt;</span> <span class="n">UIntPoly</span><span class="o">::</span><span class="n">from_basic</span><span class="p">(</span><span class="n">Basic</span> <span class="n">x</span><span class="p">,</span> <span class="n">Basic</span> <span class="n">gen</span><span class="p">);</span>
+</code></pre>
+</div>
+
+<p>The user can either supply a generator or one will automatically be deduced and used. The functions will throw of exactly one generator is not found, as we are dealing with univariate polynomials. Initially, I planned to write two different functions for <code class="highlighter-rouge">UIntPoly</code> and <code class="highlighter-rouge">UExprPoly</code> conversions, but soon I realized that most of the code was going to be identical. So, I formed a template function base with most of the common code, while the specific visitors inherit from this template base class with special methods.</p>
+
+<p>The actual conversion was not too difficult, it just had to be broken down into cases like the <code class="highlighter-rouge">find_gen</code> problem. I leave it to the reader to try and theorize how this can be done. For eg. Imagine an <code class="highlighter-rouge">Add</code>, you can call <code class="highlighter-rouge">b2poly</code> on each expression added and add up the resulting polynomials. The code right now is scalable, and if we add in more polynomial classes like <code class="highlighter-rouge">URatPoly</code> there will be no issues in adding them in.</p>
+
+<h3 id="miscellaneous-work">Miscellaneous Work</h3>
+
+<ul>
+  <li>
+    <p>Templatized <code class="highlighter-rouge">pow_upoly</code> so that it can be used by any general polynomial class. Also removed some redundant code in the <code class="highlighter-rouge">ExpandVisitor</code> related to said function. Can be seen in <a href="https://github.com/symengine/symengine/pull/1010">#1010</a></p>
+  </li>
+  <li>
+    <p>I was just testing out how the parser is working out with the basic to polynomial conversions. It is working very seamlessly, constructing polynomials has never been easier :smile:. It&#8217;s as simple as</p>
+  </li>
+</ul>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">s</span> <span class="o">=</span> <span class="s">"2*(x+1)**10 + 3*(x+2)**5"</span><span class="p">;</span>
+<span class="n">poly</span> <span class="o">=</span> <span class="n">UIntPoly</span><span class="o">::</span><span class="n">from_basic</span><span class="p">(</span><span class="n">parse</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="s">"((x+1)**5)*(x+2)*(2*x + 1)**3"</span><span class="p">;</span>
+<span class="n">poly</span> <span class="o">=</span> <span class="n">UIntPoly</span><span class="o">::</span><span class="n">from_basic</span><span class="p">(</span><span class="n">parse</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
+</code></pre>
+</div>
+
+<p>Laters!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 02, 2016</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -3586,155 +3793,6 @@ I aim to get all these PR merged before the midterm evaluation.</p>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">June 08, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-24231d0b">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/shekharrajak.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://shekharrajak.github.io/Coding-Period-week-3/">00:00, Wednesday, 08 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-3/">Coding Period Week 3</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/shekharrajak.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://shekharrajak.github.io/Coding-Period-week-3/">00:00, Wednesday, 08 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-3/">Coding Period Week 3</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<h3 id="continue-simplified-solution-for-trigonometric-equation">Continue: Simplified solution for Trigonometric Equation:</h3>
-
-<p>PR <a href="https://github.com/sympy/sympy/pull/11188">#11188</a></p>
-
-<p><strong>New Problems :</strong></p>
-
-<ul>
-  <li>When I tried more testcases having sqrt and other types I found new issues on <code class="highlighter-rouge">reduce_imageset</code> method. Some of the Simplified
-solutions contains undesired <code class="highlighter-rouge">n</code> values.</li>
-</ul>
-
-<p><strong>Changes in solveset/_solve_radical</strong></p>
-
-<ul>
-  <li>Sometimes <code class="highlighter-rouge">_solve_radical</code> may get <code class="highlighter-rouge">exp(I*x)</code> terms and solving them we give Imageset, I added the</li>
-</ul>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>if isinstance(result, ImageSet) or any(isinstance(r, ImageSet) for r in result.args):
-        return result
-</code></pre>
-</div>
-
-<p>in the method.</p>
-
-<p><strong>Using <code class="highlighter-rouge">factor_list</code> in solve_trig :</strong></p>
-
-<ul>
-  <li>
-    <p>There are many cases we can do factor of expression and solve each factor may give us more simplified solution.</p>
-  </li>
-  <li>
-    <p>I added the <code class="highlighter-rouge">factor_list</code> and solving each factors and union the solution.</p>
-  </li>
-  <li>
-    <p>When I analyzed how <code class="highlighter-rouge">exp</code> form is solved and found correct order to use <code class="highlighter-rouge">factor</code> or <code class="highlighter-rouge">factor_list</code> ,the summery
-is in this <a href="https://gist.github.com/Shekharrajak/17fdcd2320f572fc9fc8674823137e20">gist</a></p>
-  </li>
-</ul>
-
-
-
-<ul>
-  <li>I implemented the above order and shifted the <code class="highlighter-rouge">reduce_imageset</code> method in <code class="highlighter-rouge">_union</code> for <code class="highlighter-rouge">ImageSet</code>.
-I created <code class="highlighter-rouge">_union_simiplify</code> a helper method for <code class="highlighter-rouge">_union</code> .</li>
-</ul>
-
-<p><strong><code class="highlighter-rouge">_union_simplify</code> better than my previous implementation :</strong></p>
-
-<ul>
-  <li>
-    <p>Previous implementation was returning solution in simplified <code class="highlighter-rouge">ImageSet</code>, although it passed the all
-test-case except 2-3 cases. But these 2-3 test-cases taught me you are doing over simplification.
-So now I understood that we should not simplify the <code class="highlighter-rouge">ImageSet(s)</code> of the one factor solution, it may get simplified
-with other factor solution ImageSet(s).</p>
-  </li>
-  <li>
-    <p>Simplify them if there is difference of <code class="highlighter-rouge">pi</code>, that means club [(2<em>n + 1) and (2</em>n) =&gt; (n<em>pi)] or [(2</em>n* + 1)
-and (2<em>n</em>pi + 2) =&gt; (n*pi)].</p>
-  </li>
-</ul>
-
-<p><strong>So now _solve_trig uses factor_list for trig eq and then solve each factor F_i. To solve each factor F_i first do
-F_i.rewrite(exp) and get this exp form factors F_ij so now the unnecessary exp will come out that dont contribute in
-final solution. That&#8217;s why we get simplified <code class="highlighter-rouge">ImageSet</code> that will be Union with previous solution. Inside the
-Union =&gt; _union =&gt; _union_simplify checks for simplification with already present <code class="highlighter-rouge">ImageSet</code>. This is the process
-till last factor F_i.</strong></p>
-
-<p><strong>Meanwhile :</strong></p>
-
-<ul>
-  <li>
-    <p>After working on blog for 1 week created my own blog template powered by Jekyll. and shifted the old blog into github.
-PR for the blog link update in planet: <a href="https://github.com/sympy/planet-sympy/pull/42">pull/42</a></p>
-  </li>
-  <li>
-    <p>I edited my old template(already hosted on <a href="http://s-hacker.info">s-hacker.info</a>) to make it mobile responsive. Now it works perfectly for mobile. <a href="http://shekharrajak.github.io/">shekharrajak.github.io</a></p>
-  </li>
-  <li>
-    <p>Found a issue in <code class="highlighter-rouge">factor_list</code>. <a href="https://github.com/sympy/sympy/issues/11198">issues/11198</a> , When I passed
-<code class="highlighter-rouge">f = sqrt(2)*sin(x) -1</code> into <code class="highlighter-rouge">solveset</code> I got this problem.</p>
-  </li>
-  <li>
-    <p>To solve <code class="highlighter-rouge">factor_list</code> issue I opened a PR <a href="https://github.com/sympy/sympy/pull/11201">pull/11201</a>.</p>
-  </li>
-</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3762,86 +3820,86 @@ PR for the blog link update in planet: <a href="https://github.com/sympy/planet-
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>11:40, Monday, 04 July</td>
-<td>11:55, Monday, 04 July</td>
+<td>12:00, Monday, 04 July</td>
+<td>12:15, Monday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>11:40, Monday, 04 July</td>
-<td>11:55, Monday, 04 July</td>
+<td>12:00, Monday, 04 July</td>
+<td>12:15, Monday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>11:40, Monday, 04 July</td>
-<td>11:55, Monday, 04 July</td>
+<td>12:00, Monday, 04 July</td>
+<td>12:15, Monday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>11:40, Monday, 04 July</td>
-<td>11:55, Monday, 04 July</td>
+<td>12:00, Monday, 04 July</td>
+<td>12:15, Monday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>11:40, Monday, 04 July</td>
-<td>11:55, Monday, 04 July</td>
+<td>12:00, Monday, 04 July</td>
+<td>12:15, Monday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>11:40, Monday, 04 July</td>
-<td>11:55, Monday, 04 July</td>
+<td>12:00, Monday, 04 July</td>
+<td>12:15, Monday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://kshitij10496.github.io//">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>11:40, Monday, 04 July</td>
-<td>11:55, Monday, 04 July</td>
+<td>12:00, Monday, 04 July</td>
+<td>12:15, Monday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>11:40, Monday, 04 July</td>
-<td>11:55, Monday, 04 July</td>
+<td>12:00, Monday, 04 July</td>
+<td>12:15, Monday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>11:40, Monday, 04 July</td>
-<td>11:55, Monday, 04 July</td>
+<td>12:00, Monday, 04 July</td>
+<td>12:15, Monday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>11:40, Monday, 04 July</td>
-<td>11:55, Monday, 04 July</td>
+<td>12:00, Monday, 04 July</td>
+<td>12:15, Monday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>11:40, Monday, 04 July</td>
-<td>11:55, Monday, 04 July</td>
+<td>12:00, Monday, 04 July</td>
+<td>12:15, Monday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>11:40, Monday, 04 July</td>
-<td>11:55, Monday, 04 July</td>
+<td>12:00, Monday, 04 July</td>
+<td>12:15, Monday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>11:40, Monday, 04 July</td>
-<td>11:55, Monday, 04 July</td>
+<td>12:00, Monday, 04 July</td>
+<td>12:15, Monday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>11:40, Monday, 04 July</td>
-<td>11:55, Monday, 04 July</td>
+<td>12:00, Monday, 04 July</td>
+<td>12:15, Monday, 04 July</td>
 </tr>
 </table>
 
