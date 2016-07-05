@@ -7,6 +7,59 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-7</guid>
+      <title>Coding Period Week 7</title>
+      <author>Shekhar Prasad Rajak (shekharrajak)</author>
+      <pubDate>Mon, 04 Jul 2016 00:00:00 GMT</pubDate>
+      <link>http://shekharrajak.github.io/Coding-Period-week-7/</link>
+      <description>&lt;p&gt;&lt;strong&gt;ImageSet.put_values() :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11343"&gt;#11343&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;We need &lt;code class="highlighter-rouge"&gt;put_values&lt;/code&gt; attribute, because we can&amp;#8217;t do &lt;code class="highlighter-rouge"&gt;subs&lt;/code&gt; to put finite values in &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In [1]: imgset = ImageSet(Lambda((n, m), n**2), S.Reals)
+
+In [2]: imgset.subs(n,1)
+---------------------------------------------------------------------------
+TypeError: variable is not a symbol: 1
+
+In [3]: imgset.subs(n,x)
+Out[3]:
+&amp;#9127; 2           &amp;#9131;
+&amp;#9128;x  | x, m &amp;#8714; &amp;#8477;&amp;#9132;
+&amp;#9129;             &amp;#9133;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Using this PR :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In [1]: img = ImageSet(Lambda((n, m), n**2) , S.Reals)
+
+In [2]: img.put_values({n: 1, m: 2})
+Out[2]: {1}
+
+In [3]: img = ImageSet(Lambda((n, m), n**2 + m) , S.Reals)
+
+In [4]: img.put_values({n: 1, m: 2})
+Out[4]: {3}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;I want to use this in PR &lt;a href="https://github.com/sympy/sympy/pull/11188"&gt;#11188&lt;/a&gt; and
+&lt;a href="https://github.com/sympy/sympy/pull/11257"&gt;#11257&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;continue..&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://srajangarg.github.io//2016/07/03/Generators-Poly-Conversions</guid>
       <title>Finding Generators &amp; Polynomial Conversions</title>
       <author>Srajan Garg (srajangarg)</author>
@@ -1853,71 +1906,6 @@ API I will begin implementing the base class itself.&lt;/p&gt;
   #10693&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/blockquote&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://kshitij10496.github.io//2016/06/10/GSoC-Week-03/</guid>
-      <title>GSoC Week 03 - The One With Function Range (Part II)</title>
-      <author>Kshitij Saraogi(kshitij10496)</author>
-      <pubDate>Fri, 10 Jun 2016 00:00:00 GMT</pubDate>
-      <link>http://kshitij10496.github.io//2016/06/10/GSoC-Week-03/</link>
-      <description>&lt;p&gt;Hey !&lt;/p&gt;
-
-&lt;p&gt;This week I worked on implementing a method for finding the range of a function in a given domain.
-Following from last weeek&amp;#8217;s research on the same, I tried to develop these utility functions.&lt;/p&gt;
-
-&lt;h3 id="implementation"&gt;&lt;strong&gt;Implementation&lt;/strong&gt;&lt;/h3&gt;
-
-&lt;p&gt;Here, I have defined the two functions along with some of their implementation details:&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;code class="highlighter-rouge"&gt;continuous_in(f, x, interval)&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;The function returns the sub-domains as an &lt;code class="highlighter-rouge"&gt;Union&lt;/code&gt; of &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt; in case a discontinuity exists in the &lt;code class="highlighter-rouge"&gt;interval&lt;/code&gt;. If the function is continuous in the entire domain, the &lt;code class="highlighter-rouge"&gt;interval&lt;/code&gt; itself is returned.&lt;/p&gt;
-
-&lt;p&gt;For this we need to consider 2 primary conditions:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Domain constraints for real functions&lt;/strong&gt;
-I have also added some code for domain constraints in &lt;code class="highlighter-rouge"&gt;sqrt&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;log&lt;/code&gt; functions.
-Using the &lt;code class="highlighter-rouge"&gt;solve_univariate_inequality&lt;/code&gt; method (as the name suggests, it solves univariate inequalities),
-we calculate these constraints.&lt;br /&gt;
-Given &lt;code class="highlighter-rouge"&gt;f(x) = sqrt(g(x))&lt;/code&gt;, we determine the range of values of &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt; for which the function &lt;code class="highlighter-rouge"&gt;g(x) &amp;gt;= 0&lt;/code&gt;.&lt;br /&gt;
-Similarly, for &lt;code class="highlighter-rouge"&gt;f(x) = log(g(x))&lt;/code&gt;, the interval of &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt; in which &lt;code class="highlighter-rouge"&gt;g(x) &amp;gt; 0&lt;/code&gt; is the constrained interval.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Singularities&lt;/strong&gt;
-For determining the discontinuities, I tried to solve the reciprocal of the given function using &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;:&lt;code class="highlighter-rouge"&gt;
-solveset(1/f, x, interval)&lt;/code&gt;. The &lt;code class="highlighter-rouge"&gt;singularities&lt;/code&gt; function can also be used here but its implementation is 
-restricted to rational functions only. There are possibilities of improving this function to create a universal
-function which returns all the possible singularities of the function in a given domain.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;code class="highlighter-rouge"&gt;function_range(f, x, domain)&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Like the name suggests, this method returns the range of a univariate function in a given domain. This function is primarily designed for the purpose of &lt;code class="highlighter-rouge"&gt;solve_decomposition&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;This function calls the above implemented &lt;code class="highlighter-rouge"&gt;continuous_in&lt;/code&gt; method for finding the actual domain of &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt;. Following this, we iterate over each &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt; object returned by &lt;code class="highlighter-rouge"&gt;continuous_in&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;By using the boundaries of the interval and first derivate test, we determine the crtical points in the interval 
-and their corresponding critical values.&lt;/p&gt;
-
-&lt;p&gt;For determining the values of the function at the singularities, we determine its limit at that point. 
-For this, I use the &lt;code class="highlighter-rouge"&gt;limit&lt;/code&gt; function of SymPy.&lt;/p&gt;
-
-&lt;p&gt;After calculating the local extremas, I calculate the global minima and maxima using the &lt;code class="highlighter-rouge"&gt;inf&lt;/code&gt;(infimum) and &lt;code class="highlighter-rouge"&gt;sup&lt;/code&gt;(supremum) of the &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; of all critical values. The range, which is the &lt;code class="highlighter-rouge"&gt;Interval&lt;/code&gt; of these extremasm, is returned.&lt;/p&gt;
-
-&lt;h3 id="git-log"&gt;&lt;strong&gt;$ git log&lt;/strong&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/11141"&gt;PR#11141&lt;/a&gt;: Method for solving equations using Decomposition and Rewriting
-&lt;em&gt;Opened this week&lt;/em&gt; &lt;br /&gt;
-&lt;a href="https://github.com/sympy/sympy/pull/11224"&gt;PR#11224&lt;/a&gt;: Methods for finding the range of a function in a given domain&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Final Thoughts&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;That was all for this week.&lt;br /&gt;
-My task for the upcoming days would be to update my &lt;code class="highlighter-rouge"&gt;solve_decomposition&lt;/code&gt; method to accomodate these methods.
-I aim to get all these PR merged before the midterm evaluation.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
