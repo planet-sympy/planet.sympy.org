@@ -7,6 +7,52 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=604</guid>
+      <title>GSoC Week 7</title>
+      <author>Subham Tibra (shubhamtibra)</author>
+      <pubDate>Sun, 10 Jul 2016 17:19:17 GMT</pubDate>
+      <link>https://shubhamtibra.wordpress.com/2016/07/10/gsoc-week-7/</link>
+      <description>&lt;p&gt;I started working on the support for additional symbolic parameters in the module. So I added an extra argument in the method&amp;#160;&lt;code&gt;expr_to_holonomic&lt;/code&gt; for using custom domains. This will be helpful in integrations. For instance:&lt;/p&gt;
+&lt;pre class="brush: python; title: ; notranslate"&gt;
+In [5]: expr_to_holonomic(sin(x*y), x=x, domain=QQ[y]).integrate(x).to_expr()
+Out[5]:
+-cos(x&amp;#8901;y) + 1
+&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;
+     y
+In [15]: expr_to_holonomic(log(x*y), x=x, domain=QQ[y]).integrate((x, 1, x)).to_expr()
+Out[15]: x&amp;#8901;log(x) + x&amp;#8901;log(y) - x - log(y) + 1
+&lt;/pre&gt;
+&lt;p&gt;Code upto here was merged at&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11330"&gt;#11330&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;After that I implemented the &lt;code&gt;Frobenius method&lt;/code&gt;&amp;#160;to support functions where the series may have negative or fractional exponents. Although there are limitations in the algorithm. First one being that we don&amp;#8217;t have an algorithm to compute the general solution. There doesn&amp;#8217;t seem to be a direct algorithm if roots of the &lt;code&gt;indicial equation&lt;/code&gt;&amp;#160;differ by an integer. Second one is the initial conditions. Initial conditions of the function (most of the times they won&amp;#8217;t even exist) can&amp;#8217;t be used if the exponents are fractional or negative.&lt;/p&gt;
+&lt;pre class="brush: python; title: ; notranslate"&gt;
+In [23]: expr_to_holonomic(sqrt(x**2-x)).series()
+Out[23]:
+            3/2       5/2       7/2         9/2         11/2
+        C&amp;#8320;&amp;#8901;x      C&amp;#8320;&amp;#8901;x      C&amp;#8320;&amp;#8901;x      5&amp;#8901;C&amp;#8320;&amp;#8901;x      7&amp;#8901;C&amp;#8320;&amp;#8901;x        &amp;#9115; 6&amp;#9118;
+C&amp;#8320;&amp;#8901;&amp;#8730;x - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; + O&amp;#9117;x &amp;#9120;
+           2         8         16        128         256            
+
+In [28]: expr_to_holonomic(cos(x)**2/x**2, initcond=False).series()
+Out[28]:
+         2         4                       3         5
+     C&amp;#8322;&amp;#8901;x    2&amp;#8901;C&amp;#8322;&amp;#8901;x    C&amp;#8321;   2&amp;#8901;C&amp;#8321;&amp;#8901;x   2&amp;#8901;C&amp;#8321;&amp;#8901;x    4&amp;#8901;C&amp;#8321;&amp;#8901;x    C&amp;#8320;    &amp;#9115; 6&amp;#9118;
+C&amp;#8322; - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; + &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; + &amp;#9472;&amp;#9472; - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; + &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; + &amp;#9472;&amp;#9472; + O&amp;#9117;x &amp;#9120;
+       3        45     x      3         15       315      2
+                                                         x
+&lt;/pre&gt;
+&lt;p&gt;I will be working more on this and hope to add more functionality in this method.&lt;/p&gt;
+&lt;p&gt;Right now I am working on an algorithm to convert a given Holonomic Function to Meijer G-function. This also doesn&amp;#8217;t look so straightforward. Kalevi helped me with the theory and we wrote a basic that works for some cases. We hope to add more things in it.&lt;/p&gt;
+&lt;pre class="brush: python; title: ; notranslate"&gt;
+In [17]: hyperexpand(expr_to_holonomic(exp(x)).to_meijerg())
+Out[17]:
+ x
+&amp;#8495;
+In [19]: hyperexpand(expr_to_holonomic(log(x)).to_meijerg()).simplify()
+Out[19]: log(x)
+&lt;/pre&gt;
+&lt;p&gt;These are at&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11360"&gt;#11360&lt;/a&gt;.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/604/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/604/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=604&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=761</guid>
       <title>GSoc Week 7</title>
       <author>Sampad Saha (sampadsaha5)</author>
@@ -1843,14 +1889,6 @@ Then, as we had already implemented the division operation in Finite field, so I
 Down the way, I saw one test constantly failing in Travis CI. The platform it was failing on was OSX. As I don&amp;#8217;t have access to OSX, the debugging took a long time, But after the debugging, I fixed some good bugs. It highlights the importance of writing good tests including corner cases.&lt;br /&gt;&lt;br /&gt;
 It was all fine till now. Isuru (my mentor) realized that as we have to do a lot amount of division, and in that we will have to access all the elements of map less than degree of divisor (for calculating remainder). It will take more time with &lt;code class="highlighter-rouge"&gt;map&lt;/code&gt; than &lt;code class="highlighter-rouge"&gt;vector&lt;/code&gt;. So we decided to shift our &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; type to &lt;code class="highlighter-rouge"&gt;std::vector&amp;lt;integer_class&amp;gt;&lt;/code&gt;. Now the &lt;code class="highlighter-rouge"&gt;GaloisFieldDict&lt;/code&gt; class doesn&amp;#8217;t inherit from &lt;code class="highlighter-rouge"&gt;ODictWrapper&lt;/code&gt; while the &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; class still have the same structure. Now &lt;code class="highlighter-rouge"&gt;GaloisFieldDict&lt;/code&gt;&amp;#8217;s &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; being a &lt;code class="highlighter-rouge"&gt;vector&lt;/code&gt;, I had to implement a function &lt;code class="highlighter-rouge"&gt;gf_istrip()&lt;/code&gt;, which strips off the leading zeroes, so that the degree of our polynomial can be accessed directly by &lt;code class="highlighter-rouge"&gt;dict_.size()-1&lt;/code&gt; and most importantly the number of computation decreases.&lt;br /&gt;
 As this work is in progress, I will post about it in the next week&amp;#8217;s post.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-4</guid>
-      <title>Coding Period Week 4</title>
-      <author>Shekhar Prasad Rajak (shekharrajak)</author>
-      <pubDate>Mon, 13 Jun 2016 00:00:00 GMT</pubDate>
-      <link>http://shekharrajak.github.io/Coding-Period-week-4/</link>
-      <description></description>
     </item>
   </channel>
 </rss>
