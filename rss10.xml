@@ -177,47 +177,60 @@ I am sorry that I couldn&amp;#8217;t work this week as I was at &lt;em&gt;&lt;a 
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
       <pubDate>Mon, 04 Jul 2016 00:00:00 GMT</pubDate>
       <link>http://shekharrajak.github.io/Coding-Period-week-7/</link>
-      <description>&lt;p&gt;&lt;strong&gt;ImageSet.put_values() :&lt;/strong&gt;&lt;/p&gt;
+      <description>
 
-&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11343"&gt;#11343&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Continue nonlinsolve :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;PR [#11111]((https://github.com/sympy/sympy/pull/11111)&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;We need &lt;code class="highlighter-rouge"&gt;put_values&lt;/code&gt; attribute, because we can&amp;#8217;t do &lt;code class="highlighter-rouge"&gt;subs&lt;/code&gt; to put finite values in &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;How Intersections and Complements are handled :&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In [1]: imgset = ImageSet(Lambda((n, m), n**2), S.Reals)
+&lt;p&gt;see these examples:&lt;/p&gt;
 
-In [2]: imgset.subs(n,1)
----------------------------------------------------------------------------
-TypeError: variable is not a symbol: 1
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In [ ]: intr = Intersection(FiniteSet(x), Interval(1,10))
 
-In [3]: imgset.subs(n,x)
-Out[3]:
-&amp;#9127; 2           &amp;#9131;
-&amp;#9128;x  | x, m &amp;#8714; &amp;#8477;&amp;#9132;
-&amp;#9129;             &amp;#9133;
+In [ ]: comp = Complement(FiniteSet(x), Interval(1,10))
 
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+In [ ]: intr
+Out[ ]: [1, 10] &amp;#8745; {x}
 
-&lt;p&gt;Using this PR :&lt;/p&gt;
+In [ ]: comp
+Out[ ]: {x} \ [1, 10]
 
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In [1]: img = ImageSet(Lambda((n, m), n**2) , S.Reals)
+In [ ]: type( Intersection(comp, Interval(1,11)))
+Out[ ]: sympy.sets.sets.Complement
 
-In [2]: img.put_values({n: 1, m: 2})
-Out[2]: {1}
+In [ ]: type(Complement(intr, Interval(1,2)))
+Out[ ]: sympy.sets.sets.Complement
 
-In [3]: img = ImageSet(Lambda((n, m), n**2 + m) , S.Reals)
-
-In [4]: img.put_values({n: 1, m: 2})
-Out[4]: {3}
 
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
+
+&lt;p&gt;So first handling the Complements and then intersection will be checked in solveset soln.&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;I want to use this in PR &lt;a href="https://github.com/sympy/sympy/pull/11188"&gt;#11188&lt;/a&gt; and
-&lt;a href="https://github.com/sympy/sympy/pull/11257"&gt;#11257&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;nonlinsolve&lt;/code&gt; can handle simple trigonometric system of equations but when complex equations
+is used then it will return &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; since &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; trig solver is not smart enough right now.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Trying to break the code into the functions to make the code better.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;Continue Simplified Trig soln&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;PR [#11188]((https://github.com/sympy/sympy/pull/11188)&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;I was getting problem in ImageSet union when you run test. Sometimes it pass all the cases but not always.
+I found the problem (most probably because order of args in union.reduce is not always same for all the python version
+I am using FiniteSet so I hope it is good way to handle this.) Now it passes all the checks all time.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;hr /&gt;

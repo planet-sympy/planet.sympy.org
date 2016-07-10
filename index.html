@@ -483,7 +483,7 @@ I am sorry that I couldn&#8217;t work this week as I was at <em><a href="http://
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-ef05b97b">
+		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-c0d1760b">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -536,47 +536,60 @@ I am sorry that I couldn&#8217;t work this week as I was at <em><a href="http://
 				</div>
 				<div class="row">
 					<div class="col-md-12 col-xs-12 descript">
-						<p><strong>ImageSet.put_values() :</strong></p>
+						
 
-<p>PR <a href="https://github.com/sympy/sympy/pull/11343">#11343</a></p>
+<p><strong>Continue nonlinsolve :</strong></p>
+
+<p>PR [#11111]((https://github.com/sympy/sympy/pull/11111)</p>
 
 <ul>
-  <li>We need <code class="highlighter-rouge">put_values</code> attribute, because we can&#8217;t do <code class="highlighter-rouge">subs</code> to put finite values in <code class="highlighter-rouge">ImageSet</code>.</li>
+  <li>How Intersections and Complements are handled :</li>
 </ul>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>In [1]: imgset = ImageSet(Lambda((n, m), n**2), S.Reals)
+<p>see these examples:</p>
 
-In [2]: imgset.subs(n,1)
----------------------------------------------------------------------------
-TypeError: variable is not a symbol: 1
+<div class="highlighter-rouge"><pre class="highlight"><code>In [ ]: intr = Intersection(FiniteSet(x), Interval(1,10))
 
-In [3]: imgset.subs(n,x)
-Out[3]:
-&#9127; 2           &#9131;
-&#9128;x  | x, m &#8714; &#8477;&#9132;
-&#9129;             &#9133;
+In [ ]: comp = Complement(FiniteSet(x), Interval(1,10))
 
-</code></pre>
-</div>
+In [ ]: intr
+Out[ ]: [1, 10] &#8745; {x}
 
-<p>Using this PR :</p>
+In [ ]: comp
+Out[ ]: {x} \ [1, 10]
 
-<div class="highlighter-rouge"><pre class="highlight"><code>In [1]: img = ImageSet(Lambda((n, m), n**2) , S.Reals)
+In [ ]: type( Intersection(comp, Interval(1,11)))
+Out[ ]: sympy.sets.sets.Complement
 
-In [2]: img.put_values({n: 1, m: 2})
-Out[2]: {1}
+In [ ]: type(Complement(intr, Interval(1,2)))
+Out[ ]: sympy.sets.sets.Complement
 
-In [3]: img = ImageSet(Lambda((n, m), n**2 + m) , S.Reals)
-
-In [4]: img.put_values({n: 1, m: 2})
-Out[4]: {3}
 
 </code></pre>
 </div>
+
+<p>So first handling the Complements and then intersection will be checked in solveset soln.</p>
 
 <ul>
-  <li>I want to use this in PR <a href="https://github.com/sympy/sympy/pull/11188">#11188</a> and
-<a href="https://github.com/sympy/sympy/pull/11257">#11257</a></li>
+  <li>
+    <p><code class="highlighter-rouge">nonlinsolve</code> can handle simple trigonometric system of equations but when complex equations
+is used then it will return <code class="highlighter-rouge">ConditionSet</code> since <code class="highlighter-rouge">solveset</code> trig solver is not smart enough right now.</p>
+  </li>
+  <li>
+    <p>Trying to break the code into the functions to make the code better.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong>Continue Simplified Trig soln</strong></p>
+
+<p>PR [#11188]((https://github.com/sympy/sympy/pull/11188)</p>
+
+<ul>
+  <li>I was getting problem in ImageSet union when you run test. Sometimes it pass all the cases but not always.
+I found the problem (most probably because order of args in union.reduce is not always same for all the python version
+I am using FiniteSet so I hope it is good way to handle this.) Now it passes all the checks all time.</li>
 </ul>
 
 <hr />
@@ -3743,86 +3756,86 @@ NotImplementedError: No solver has been written for cubic_thue.
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>06:46, Sunday, 10 July</td>
-<td>07:01, Sunday, 10 July</td>
+<td>07:06, Sunday, 10 July</td>
+<td>07:21, Sunday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>06:46, Sunday, 10 July</td>
-<td>07:01, Sunday, 10 July</td>
+<td>07:06, Sunday, 10 July</td>
+<td>07:21, Sunday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>06:46, Sunday, 10 July</td>
-<td>07:01, Sunday, 10 July</td>
+<td>07:06, Sunday, 10 July</td>
+<td>07:21, Sunday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>06:46, Sunday, 10 July</td>
-<td>07:01, Sunday, 10 July</td>
+<td>07:06, Sunday, 10 July</td>
+<td>07:21, Sunday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>06:46, Sunday, 10 July</td>
-<td>07:01, Sunday, 10 July</td>
+<td>07:06, Sunday, 10 July</td>
+<td>07:21, Sunday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>06:46, Sunday, 10 July</td>
-<td>07:01, Sunday, 10 July</td>
+<td>07:06, Sunday, 10 July</td>
+<td>07:21, Sunday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://kshitij10496.github.io//">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>06:46, Sunday, 10 July</td>
-<td>07:01, Sunday, 10 July</td>
+<td>07:06, Sunday, 10 July</td>
+<td>07:21, Sunday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>06:46, Sunday, 10 July</td>
-<td>07:01, Sunday, 10 July</td>
+<td>07:06, Sunday, 10 July</td>
+<td>07:21, Sunday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>06:46, Sunday, 10 July</td>
-<td>07:01, Sunday, 10 July</td>
+<td>07:06, Sunday, 10 July</td>
+<td>07:21, Sunday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>06:46, Sunday, 10 July</td>
-<td>07:01, Sunday, 10 July</td>
+<td>07:06, Sunday, 10 July</td>
+<td>07:21, Sunday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>06:46, Sunday, 10 July</td>
-<td>07:01, Sunday, 10 July</td>
+<td>07:06, Sunday, 10 July</td>
+<td>07:21, Sunday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>06:46, Sunday, 10 July</td>
-<td>07:01, Sunday, 10 July</td>
+<td>07:06, Sunday, 10 July</td>
+<td>07:21, Sunday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>06:46, Sunday, 10 July</td>
-<td>07:01, Sunday, 10 July</td>
+<td>07:06, Sunday, 10 July</td>
+<td>07:21, Sunday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>06:46, Sunday, 10 July</td>
-<td>07:01, Sunday, 10 July</td>
+<td>07:06, Sunday, 10 July</td>
+<td>07:21, Sunday, 10 July</td>
 </tr>
 </table>
 
