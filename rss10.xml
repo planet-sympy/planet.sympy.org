@@ -335,6 +335,99 @@ Featherstone&amp;#8217;s articulated body method to the base class.&lt;/p&gt;
 &lt;/blockquote&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://kshitij10496.github.io//2016/07/07/GSoC-Week-07/</guid>
+      <title>GSoC Week 07 - The One With Generalised Periodicity</title>
+      <author>Kshitij Saraogi(kshitij10496)</author>
+      <pubDate>Thu, 07 Jul 2016 00:00:00 GMT</pubDate>
+      <link>http://kshitij10496.github.io//2016/07/07/GSoC-Week-07/</link>
+      <description>&lt;p&gt;This week I updated my &lt;a href="https://github.com/sympy/sympy/pull/11277"&gt;PR#11277&lt;/a&gt; to find the period of a &lt;strong&gt;general function&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h3 id="periodicity"&gt;&lt;strong&gt;&lt;em&gt;Periodicity&lt;/em&gt;&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;In the past few weeks, I dedicated a lot of my time reading about the property of periodicity of a function.
+Earlier, I had implemented a trivial(and restricted) functionality for this task.
+This motivated me to study this topic as I planned to generalise the function.&lt;/p&gt;
+
+&lt;p&gt;Here are my notes on periodicity which were the literature reference for the development of the method:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Note that &lt;code class="highlighter-rouge"&gt;2&amp;#960;&lt;/code&gt; is a period of &lt;code class="highlighter-rouge"&gt;sin(x)&lt;/code&gt;.
+But &lt;code class="highlighter-rouge"&gt;sin(x)&lt;/code&gt; has many other periods, such as &lt;code class="highlighter-rouge"&gt;4&amp;#960;&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;6&amp;#960;&lt;/code&gt;, and so on. 
+However, &lt;code class="highlighter-rouge"&gt;sin(x)&lt;/code&gt; has no (positive) period shorter than &lt;code class="highlighter-rouge"&gt;2&amp;#960;&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;blockquote&gt;
+      &lt;p&gt;If &lt;code class="highlighter-rouge"&gt;p&lt;/code&gt; is a period of &lt;code class="highlighter-rouge"&gt;f(x)&lt;/code&gt;, and &lt;code class="highlighter-rouge"&gt;H&lt;/code&gt; is any function, then &lt;code class="highlighter-rouge"&gt;p&lt;/code&gt; is a period of &lt;code class="highlighter-rouge"&gt;H(f(x))&lt;/code&gt;.&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;blockquote&gt;
+      &lt;p&gt;For sums and products, the general situation is complicated.&lt;/p&gt;
+    &lt;/blockquote&gt;
+
+    &lt;p&gt;Let &lt;code class="highlighter-rouge"&gt;p&lt;/code&gt; be a period of &lt;code class="highlighter-rouge"&gt;f(x)&lt;/code&gt; and let &lt;code class="highlighter-rouge"&gt;q&lt;/code&gt; be a period of &lt;code class="highlighter-rouge"&gt;g(x)&lt;/code&gt;. 
+Suppose that there are positive integers &lt;code class="highlighter-rouge"&gt;a&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;b&lt;/code&gt; such that &lt;code class="highlighter-rouge"&gt;ap=bq=r&lt;/code&gt;.&lt;br /&gt;
+Then &lt;code class="highlighter-rouge"&gt;r&lt;/code&gt; is a period of &lt;code class="highlighter-rouge"&gt;f(x)+g(x)&lt;/code&gt;, and also of &lt;code class="highlighter-rouge"&gt;f(x)g(x)&lt;/code&gt;.&lt;br /&gt;
+However, the point to note here is that &lt;code class="highlighter-rouge"&gt;r&lt;/code&gt; need not be the shortest period of &lt;code class="highlighter-rouge"&gt;f(x)+g(x)&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;f(x)g(x)&lt;/code&gt;.&lt;/p&gt;
+
+    &lt;p&gt;For example: 
+The shortest period of &lt;code class="highlighter-rouge"&gt;sin(x)&lt;/code&gt; is &lt;code class="highlighter-rouge"&gt;2&amp;#960;&lt;/code&gt;, while the shortest period of &lt;code class="highlighter-rouge"&gt;(sinx)**2&lt;/code&gt; is &lt;code class="highlighter-rouge"&gt;&amp;#960;&lt;/code&gt;.&lt;/p&gt;
+
+    &lt;p&gt;Another example: Let &lt;code class="highlighter-rouge"&gt;f(x)=sin(x)&lt;/code&gt;, and &lt;code class="highlighter-rouge"&gt;g(x)=&amp;#8722;sin(x)&lt;/code&gt;.
+Each function has smallest period &lt;code class="highlighter-rouge"&gt;2&amp;#960;&lt;/code&gt;. But their sum is the &lt;code class="highlighter-rouge"&gt;0&lt;/code&gt;-function, which has every positive number &lt;code class="highlighter-rouge"&gt;p&lt;/code&gt; as a period!&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;blockquote&gt;
+      &lt;p&gt;If &lt;code class="highlighter-rouge"&gt;p&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;q&lt;/code&gt; are periods of &lt;code class="highlighter-rouge"&gt;f(x)&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;g(x)&lt;/code&gt; respectively, then any common multiple of &lt;code class="highlighter-rouge"&gt;p&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;q&lt;/code&gt; is a period of &lt;code class="highlighter-rouge"&gt;H(f(x),g(x))&lt;/code&gt; 
+for any function &lt;code class="highlighter-rouge"&gt;H(u,v)&lt;/code&gt;, in particular when &lt;code class="highlighter-rouge"&gt;H&lt;/code&gt; is addition, multiplication or division. However, it need not be the smallest period.&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;blockquote&gt;
+      &lt;p&gt;The sum of two periodic functions need not be periodic.&lt;/p&gt;
+    &lt;/blockquote&gt;
+
+    &lt;p&gt;For example: Let &lt;code class="highlighter-rouge"&gt;f(x)=sin(x)+cos(2&amp;#960;x)&lt;/code&gt;. 
+The function is not periodic. &lt;br /&gt;
+The problem is that &lt;code class="highlighter-rouge"&gt;1&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;2&amp;#960;&lt;/code&gt; are incommensurable. There do not exist positive integers &lt;code class="highlighter-rouge"&gt;a&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;b&lt;/code&gt; 
+such that &lt;code class="highlighter-rouge"&gt;(a)(1)=(b)(2&amp;#960;)&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id="issues"&gt;&lt;strong&gt;&lt;em&gt;Issues&lt;/em&gt;&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;I am abstracting the details of implementation so as not to make the post even further boring.&lt;/p&gt;
+
+&lt;p&gt;During the period of development, I faced few issues and had a lot of queries to make.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;The new implementation returns a value which might not be the &lt;strong&gt;fundamental period&lt;/strong&gt; of the given function.
+The previous implementation, though limited, returned the fundamental period of the given function.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;The ability to find the LCM of irrationals.
+We will be dealing with the iconic &lt;code class="highlighter-rouge"&gt;&amp;#960;&lt;/code&gt;(and its multiples) in many of our cases(as is evident from the example above).
+Currently, we donot have the functionality to find the LCM of
+irrational numbers. A method needs to be developed to handle this issue.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Issue with automatic simplification while verifying the result.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;After Thoughts&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;I am looking forward to addressing all these issues in tonight&amp;#8217;s meeting.
+Apart from that, implementing this was a lot of fun.
+I got to learn about inheritance and abstraction while implementing instance methods for periodic functions.&lt;/p&gt;
+
+&lt;p&gt;Hopefully, all my effort doesn&amp;#8217;t go in vain.&lt;/p&gt;
+
+&lt;p&gt;Till next time !&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://nishnik.github.io/GSoC-Sixth-Week</guid>
       <title>GSoC Sixth Week</title>
       <author>Nishant Nikhil (nishnik)</author>
@@ -782,18 +875,9 @@ may resume on the base class.&lt;/p&gt;
       <author>Kshitij Saraogi(kshitij10496)</author>
       <pubDate>Fri, 01 Jul 2016 00:00:00 GMT</pubDate>
       <link>http://kshitij10496.github.io//2016/07/01/GSoC-Week-06/</link>
-      <description>&lt;p&gt;This week I worked on two topics:&lt;/p&gt;
+      <description>&lt;p&gt;This week I worked on the topic of &lt;em&gt;singularities&lt;/em&gt;.&lt;/p&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;singularities&lt;/li&gt;
-  &lt;li&gt;periodicity&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;So, lets discuss each in turn.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;&lt;em&gt;Singularities&lt;/em&gt;&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;h3 id="singularities"&gt;&lt;strong&gt;&lt;em&gt;Singularities&lt;/em&gt;&lt;/strong&gt;&lt;/h3&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;A singularity is in general a point at which a given mathematical object is not defined.&lt;/p&gt;
@@ -860,15 +944,6 @@ For this, we use the &lt;strong&gt;Reimann&amp;#8217;s theorem&lt;/strong&gt;:&l
 &lt;p&gt;I have implemented this theorem in the form of a function but I face certain issues with
 the values returned by &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; due to &lt;code class="highlighter-rouge"&gt;check_domain&lt;/code&gt; function (which checks the bound of a 
 function at a particular value). This remains to be discussed in the meeting.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;&lt;em&gt;Periodicity&lt;/em&gt;&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The PR related to the implementation of computing the periodic behaviour of a trigonometric
-function is up for review. 
-This week I read about possible ways to generalise the implemented method over a wide range of
-functions. I created a note of my readings &lt;a href="https://hackmd.io/JwIwLAhmCMBsIFoBMBmAHAdgWArAEzATWAlgQgGM8AGUPJNCEAUyA==="&gt;here&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;After Thoughts&lt;/strong&gt;&lt;/p&gt;
 
@@ -2022,28 +2097,6 @@ rem = Poly(5*x**2, x, domain='ZZ')
 &lt;p&gt;I will write &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;lcm&lt;/code&gt; for SymEngine polynomials, and start on &lt;code class="highlighter-rouge"&gt;Basic -&amp;gt; Poly&lt;/code&gt; conversion to add to the coercion framework decided for SymEngine, soon.&lt;/p&gt;
 
 &lt;p&gt;See you!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=546</guid>
-      <title>GSoC Week 4</title>
-      <author>Sampad Saha (sampadsaha5)</author>
-      <pubDate>Fri, 17 Jun 2016 19:07:30 GMT</pubDate>
-      <link>https://sampadblog.wordpress.com/2016/06/17/gsoc-week-4/</link>
-      <description>&lt;p&gt;Hi there! It&amp;#8217;s been four weeks at GSoC. This week, I have been working on integrations. I had a meeting with my mentors on 12th June. It was great. I got stuck while implementing the integrations of Singularity Function earlier.&amp;#160;I had already discussed that in my previous blog post.&amp;#160;But at the&amp;#160;meeting, I got some good ideas from Sartaj and Jason&amp;#160;which not only cleared my doubts but also helped me to complete the implementation&amp;#160;of integration of Singularity Functions. Firstly, they suggested me to start with the integration part in a new PR, since&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11178"&gt;PR 11178&lt;/a&gt;&amp;#160;was quite good enough to get merged. Secondly, to integrate the Singularity Functions having exponents -1, we need to rewrite it as &amp;#160;DiracDeltas and then to use the methods of integration which are already available&amp;#160;at sympy&amp;#160;and then again rewrite it back as Singularity Functions. &amp;#160;Now I am almost completed with the &amp;#8220;Implementation of Singularity Functions&amp;#8221;.&lt;/p&gt;
-&lt;h4&gt;&lt;em&gt;&lt;strong&gt;So Far&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;In&amp;#160;&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11178"&gt;PR 11178&lt;/a&gt;, I have&amp;#160;added the changes that Jason had suggested. This PR is now ready.&lt;/li&gt;
-&lt;li&gt;In&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11237"&gt;PR 11237&lt;/a&gt;, I have almost completed implementing the integrations of Singularity Function both definite and indefinite. I have implemented methods to rewrite DiracDeltas and Heaviside back to Singularity Functions. &amp;#160;The arguments of DiracDeltas and Heavisides should be a&amp;#160;linear polynomial to use these methods.&lt;/li&gt;
-&lt;li&gt;I have added a module named &amp;#8220;singularityfunctions&amp;#8221; in the integrals directory. In there I have defined a function &amp;#8220;singularityintegrate&amp;#8221;. This one is the core function to integrate the Singularity Functions. SingularityFunction(x, a, -1) perfectly behaves as DiracDelta(x &amp;#8211; a).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;&lt;em&gt;&lt;strong&gt;Next Week&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;To polish&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11178"&gt;PR 11178 &lt;/a&gt;&amp;#160;and&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11237"&gt;PR 11237&lt;/a&gt;&amp;#160;and get them merged.&lt;/li&gt;
-&lt;li&gt;To start working with Beam Bending Module.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Looking forward toward an another great week. Cheers!&lt;/p&gt;
-&lt;p&gt;Midterm Evaluation is Coming !!! All the best.&lt;/p&gt;
-&lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/546/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/546/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=546&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>

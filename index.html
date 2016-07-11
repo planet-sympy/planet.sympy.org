@@ -754,6 +754,153 @@ Featherstone&#8217;s articulated body method to the base class.</p>
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-7730e356 feed-" id="item-eb5d9875">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/kshitij10496.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Kshitij Saraogi(kshitij10496) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://kshitij10496.github.io//2016/07/07/GSoC-Week-07/">00:00, Thursday, 07 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://kshitij10496.github.io//2016/07/07/GSoC-Week-07/">GSoC Week 07 - The One With Generalised Periodicity</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/kshitij10496.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Kshitij Saraogi(kshitij10496) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://kshitij10496.github.io//2016/07/07/GSoC-Week-07/">00:00, Thursday, 07 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://kshitij10496.github.io//2016/07/07/GSoC-Week-07/">GSoC Week 07 - The One With Generalised Periodicity</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>This week I updated my <a href="https://github.com/sympy/sympy/pull/11277">PR#11277</a> to find the period of a <strong>general function</strong>.</p>
+
+<h3 id="periodicity"><strong><em>Periodicity</em></strong></h3>
+
+<p>In the past few weeks, I dedicated a lot of my time reading about the property of periodicity of a function.
+Earlier, I had implemented a trivial(and restricted) functionality for this task.
+This motivated me to study this topic as I planned to generalise the function.</p>
+
+<p>Here are my notes on periodicity which were the literature reference for the development of the method:</p>
+
+<ul>
+  <li>
+    <p>Note that <code class="highlighter-rouge">2&#960;</code> is a period of <code class="highlighter-rouge">sin(x)</code>.
+But <code class="highlighter-rouge">sin(x)</code> has many other periods, such as <code class="highlighter-rouge">4&#960;</code>, <code class="highlighter-rouge">6&#960;</code>, and so on. 
+However, <code class="highlighter-rouge">sin(x)</code> has no (positive) period shorter than <code class="highlighter-rouge">2&#960;</code>.</p>
+  </li>
+  <li>
+    <blockquote>
+      <p>If <code class="highlighter-rouge">p</code> is a period of <code class="highlighter-rouge">f(x)</code>, and <code class="highlighter-rouge">H</code> is any function, then <code class="highlighter-rouge">p</code> is a period of <code class="highlighter-rouge">H(f(x))</code>.</p>
+    </blockquote>
+  </li>
+  <li>
+    <blockquote>
+      <p>For sums and products, the general situation is complicated.</p>
+    </blockquote>
+
+    <p>Let <code class="highlighter-rouge">p</code> be a period of <code class="highlighter-rouge">f(x)</code> and let <code class="highlighter-rouge">q</code> be a period of <code class="highlighter-rouge">g(x)</code>. 
+Suppose that there are positive integers <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code> such that <code class="highlighter-rouge">ap=bq=r</code>.<br />
+Then <code class="highlighter-rouge">r</code> is a period of <code class="highlighter-rouge">f(x)+g(x)</code>, and also of <code class="highlighter-rouge">f(x)g(x)</code>.<br />
+However, the point to note here is that <code class="highlighter-rouge">r</code> need not be the shortest period of <code class="highlighter-rouge">f(x)+g(x)</code> or <code class="highlighter-rouge">f(x)g(x)</code>.</p>
+
+    <p>For example: 
+The shortest period of <code class="highlighter-rouge">sin(x)</code> is <code class="highlighter-rouge">2&#960;</code>, while the shortest period of <code class="highlighter-rouge">(sinx)**2</code> is <code class="highlighter-rouge">&#960;</code>.</p>
+
+    <p>Another example: Let <code class="highlighter-rouge">f(x)=sin(x)</code>, and <code class="highlighter-rouge">g(x)=&#8722;sin(x)</code>.
+Each function has smallest period <code class="highlighter-rouge">2&#960;</code>. But their sum is the <code class="highlighter-rouge">0</code>-function, which has every positive number <code class="highlighter-rouge">p</code> as a period!</p>
+  </li>
+  <li>
+    <blockquote>
+      <p>If <code class="highlighter-rouge">p</code> and <code class="highlighter-rouge">q</code> are periods of <code class="highlighter-rouge">f(x)</code> and <code class="highlighter-rouge">g(x)</code> respectively, then any common multiple of <code class="highlighter-rouge">p</code> and <code class="highlighter-rouge">q</code> is a period of <code class="highlighter-rouge">H(f(x),g(x))</code> 
+for any function <code class="highlighter-rouge">H(u,v)</code>, in particular when <code class="highlighter-rouge">H</code> is addition, multiplication or division. However, it need not be the smallest period.</p>
+    </blockquote>
+  </li>
+  <li>
+    <blockquote>
+      <p>The sum of two periodic functions need not be periodic.</p>
+    </blockquote>
+
+    <p>For example: Let <code class="highlighter-rouge">f(x)=sin(x)+cos(2&#960;x)</code>. 
+The function is not periodic. <br />
+The problem is that <code class="highlighter-rouge">1</code> and <code class="highlighter-rouge">2&#960;</code> are incommensurable. There do not exist positive integers <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code> 
+such that <code class="highlighter-rouge">(a)(1)=(b)(2&#960;)</code>.</p>
+  </li>
+</ul>
+
+<h3 id="issues"><strong><em>Issues</em></strong></h3>
+
+<p>I am abstracting the details of implementation so as not to make the post even further boring.</p>
+
+<p>During the period of development, I faced few issues and had a lot of queries to make.</p>
+
+<ol>
+  <li>
+    <p>The new implementation returns a value which might not be the <strong>fundamental period</strong> of the given function.
+The previous implementation, though limited, returned the fundamental period of the given function.</p>
+  </li>
+  <li>
+    <p>The ability to find the LCM of irrationals.
+We will be dealing with the iconic <code class="highlighter-rouge">&#960;</code>(and its multiples) in many of our cases(as is evident from the example above).
+Currently, we donot have the functionality to find the LCM of
+irrational numbers. A method needs to be developed to handle this issue.</p>
+  </li>
+  <li>
+    <p>Issue with automatic simplification while verifying the result.</p>
+  </li>
+</ol>
+
+<p><strong>After Thoughts</strong></p>
+
+<p>I am looking forward to addressing all these issues in tonight&#8217;s meeting.
+Apart from that, implementing this was a lot of fun.
+I got to learn about inheritance and abstraction while implementing instance methods for periodic functions.</p>
+
+<p>Hopefully, all my effort doesn&#8217;t go in vain.</p>
+
+<p>Till next time !</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-89ae9fcb feed-" id="item-839fe43d">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -1532,7 +1679,7 @@ may resume on the base class.</p>
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7730e356 feed-" id="item-348bac5b">
+		    <div class="box" class="item feed-7730e356 feed-" id="item-f6223371">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -1585,18 +1732,9 @@ may resume on the base class.</p>
 				</div>
 				<div class="row">
 					<div class="col-md-12 col-xs-12 descript">
-						<p>This week I worked on two topics:</p>
+						<p>This week I worked on the topic of <em>singularities</em>.</p>
 
-<ul>
-  <li>singularities</li>
-  <li>periodicity</li>
-</ul>
-
-<p>So, lets discuss each in turn.</p>
-
-<ul>
-  <li><strong><em>Singularities</em></strong></li>
-</ul>
+<h3 id="singularities"><strong><em>Singularities</em></strong></h3>
 
 <blockquote>
   <p>A singularity is in general a point at which a given mathematical object is not defined.</p>
@@ -1663,15 +1801,6 @@ For this, we use the <strong>Reimann&#8217;s theorem</strong>:</p>
 <p>I have implemented this theorem in the form of a function but I face certain issues with
 the values returned by <code class="highlighter-rouge">solveset</code> due to <code class="highlighter-rouge">check_domain</code> function (which checks the bound of a 
 function at a particular value). This remains to be discussed in the meeting.</p>
-
-<ul>
-  <li><strong><em>Periodicity</em></strong></li>
-</ul>
-
-<p>The PR related to the implementation of computing the periodic behaviour of a trigonometric
-function is up for review. 
-This week I read about possible ways to generalise the implemented method over a wide range of
-functions. I created a note of my readings <a href="https://hackmd.io/JwIwLAhmCMBsIFoBMBmAHAdgWArAEzATWAlgQgGM8AGUPJNCEAUyA===">here</a>.</p>
 
 <p><strong>After Thoughts</strong></p>
 
@@ -3716,85 +3845,6 @@ rem = Poly(5*x**2, x, domain='ZZ')
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">June 17, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-05db50a0 feed-" id="item-1e1b6100">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/sampad.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Sampad Saha (sampadsaha5) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://sampadblog.wordpress.com/2016/06/17/gsoc-week-4/">19:07, Friday, 17 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://sampadblog.wordpress.com/2016/06/17/gsoc-week-4/">GSoC Week 4</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/sampad.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Sampad Saha (sampadsaha5) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://sampadblog.wordpress.com/2016/06/17/gsoc-week-4/">19:07, Friday, 17 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://sampadblog.wordpress.com/2016/06/17/gsoc-week-4/">GSoC Week 4</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Hi there! It&#8217;s been four weeks at GSoC. This week, I have been working on integrations. I had a meeting with my mentors on 12th June. It was great. I got stuck while implementing the integrations of Singularity Function earlier.&#160;I had already discussed that in my previous blog post.&#160;But at the&#160;meeting, I got some good ideas from Sartaj and Jason&#160;which not only cleared my doubts but also helped me to complete the implementation&#160;of integration of Singularity Functions. Firstly, they suggested me to start with the integration part in a new PR, since&#160;<a href="https://github.com/sympy/sympy/pull/11178">PR 11178</a>&#160;was quite good enough to get merged. Secondly, to integrate the Singularity Functions having exponents -1, we need to rewrite it as &#160;DiracDeltas and then to use the methods of integration which are already available&#160;at sympy&#160;and then again rewrite it back as Singularity Functions. &#160;Now I am almost completed with the &#8220;Implementation of Singularity Functions&#8221;.</p>
-<h4><em><strong>So Far</strong></em></h4>
-<ul>
-<li>In&#160;&#160;<a href="https://github.com/sympy/sympy/pull/11178">PR 11178</a>, I have&#160;added the changes that Jason had suggested. This PR is now ready.</li>
-<li>In&#160;<a href="https://github.com/sympy/sympy/pull/11237">PR 11237</a>, I have almost completed implementing the integrations of Singularity Function both definite and indefinite. I have implemented methods to rewrite DiracDeltas and Heaviside back to Singularity Functions. &#160;The arguments of DiracDeltas and Heavisides should be a&#160;linear polynomial to use these methods.</li>
-<li>I have added a module named &#8220;singularityfunctions&#8221; in the integrals directory. In there I have defined a function &#8220;singularityintegrate&#8221;. This one is the core function to integrate the Singularity Functions. SingularityFunction(x, a, -1) perfectly behaves as DiracDelta(x &#8211; a).</li>
-</ul>
-<h4><em><strong>Next Week</strong></em></h4>
-<ul>
-<li>To polish&#160;<a href="https://github.com/sympy/sympy/pull/11178">PR 11178 </a>&#160;and&#160;<a href="https://github.com/sympy/sympy/pull/11237">PR 11237</a>&#160;and get them merged.</li>
-<li>To start working with Beam Bending Module.</li>
-</ul>
-<p>Looking forward toward an another great week. Cheers!</p>
-<p>Midterm Evaluation is Coming !!! All the best.</p>
-<p>Happy Coding.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/546/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/546/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&#038;blog=102728326&#038;post=546&#038;subd=sampadblog&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3822,86 +3872,86 @@ rem = Poly(5*x**2, x, domain='ZZ')
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>18:28, Monday, 11 July</td>
-<td>18:43, Monday, 11 July</td>
+<td>18:48, Monday, 11 July</td>
+<td>19:03, Monday, 11 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>18:28, Monday, 11 July</td>
-<td>18:43, Monday, 11 July</td>
+<td>18:48, Monday, 11 July</td>
+<td>19:03, Monday, 11 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>18:28, Monday, 11 July</td>
-<td>18:43, Monday, 11 July</td>
+<td>18:48, Monday, 11 July</td>
+<td>19:03, Monday, 11 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>18:28, Monday, 11 July</td>
-<td>18:43, Monday, 11 July</td>
+<td>18:48, Monday, 11 July</td>
+<td>19:03, Monday, 11 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>18:28, Monday, 11 July</td>
-<td>18:43, Monday, 11 July</td>
+<td>18:48, Monday, 11 July</td>
+<td>19:03, Monday, 11 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>18:28, Monday, 11 July</td>
-<td>18:43, Monday, 11 July</td>
+<td>18:48, Monday, 11 July</td>
+<td>19:03, Monday, 11 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://kshitij10496.github.io//">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>18:28, Monday, 11 July</td>
-<td>18:43, Monday, 11 July</td>
+<td>18:48, Monday, 11 July</td>
+<td>19:03, Monday, 11 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>18:28, Monday, 11 July</td>
-<td>18:43, Monday, 11 July</td>
+<td>18:48, Monday, 11 July</td>
+<td>19:03, Monday, 11 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>18:28, Monday, 11 July</td>
-<td>18:43, Monday, 11 July</td>
+<td>18:48, Monday, 11 July</td>
+<td>19:03, Monday, 11 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>18:28, Monday, 11 July</td>
-<td>18:43, Monday, 11 July</td>
+<td>18:48, Monday, 11 July</td>
+<td>19:03, Monday, 11 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>18:28, Monday, 11 July</td>
-<td>18:43, Monday, 11 July</td>
+<td>18:48, Monday, 11 July</td>
+<td>19:03, Monday, 11 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>18:28, Monday, 11 July</td>
-<td>18:43, Monday, 11 July</td>
+<td>18:48, Monday, 11 July</td>
+<td>19:03, Monday, 11 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>18:28, Monday, 11 July</td>
-<td>18:43, Monday, 11 July</td>
+<td>18:48, Monday, 11 July</td>
+<td>19:03, Monday, 11 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>18:28, Monday, 11 July</td>
-<td>18:43, Monday, 11 July</td>
+<td>18:48, Monday, 11 July</td>
+<td>19:03, Monday, 11 July</td>
 </tr>
 </table>
 
