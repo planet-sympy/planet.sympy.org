@@ -89,6 +89,99 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">July 13, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-89ae9fcb feed-" id="item-2c698d09">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/nishnik.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Nishant Nikhil (nishnik) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://nishnik.github.io/GSoC-Seventh-Week/">00:00, Wednesday, 13 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Seventh-Week/">GSoC Seventh Week</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/nishnik.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Nishant Nikhil (nishnik) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://nishnik.github.io/GSoC-Seventh-Week/">00:00, Wednesday, 13 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Seventh-Week/">GSoC Seventh Week</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p><img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /></p>
+
+<p>Previous week, I had started the work on Equal degree factorization <a href="https://github.com/symengine/symengine/pull/1026">here</a>. Here I was storing the factors in a vector and then sorting the factors. Certik pointed out that its better to use some other data structure instead of <code class="highlighter-rouge">vector</code>. So I have changed the container type to <code class="highlighter-rouge">set</code>.
+<br />Then after both Distinct degree factorization and Equal degree factorization being implemented, I started to work on factoring a polynomial in finite field, this needed integrating square free factorization with these two. I worked on <code class="highlighter-rouge">gf_factor()</code> method. In this method we take a polynomial in a given field as input, and return all the factors and their respective powers, and polynomial&#8217;s leading coefficient as output.
+<br /></p>
+
+<pre><code class="language-C++">GaloisFieldDict::gf_factor() const
+{
+  integer_class lc;
+  GaloisFieldDict monic;
+  gf_monic(lc, outArg(monic));
+  if (monic.degree() &lt; 1)
+      return std::make_pair(lc, factors);
+  std::vector&lt;std::pair&lt;GaloisFieldDict, integer_class&gt;&gt; sqf_list
+      = monic.gf_sqf_list();
+  for (auto a : sqf_list) {
+      auto temp = (a.first).gf_zassenhaus();
+      for (auto f : temp)
+          factors.insert({f, a.second});
+  }
+  return factors;
+}
+</code></pre>
+
+<p>For a given polynomial firstly we get its monic representation and it leading coefficient. Then we find the Square free factors of the monic representation. And on each of the square free factor we run the <code class="highlighter-rouge">zassenhaus</code>&#8217;s algorithm.
+<br />
+I have been working on <a href="https://github.com/nishnik/symengine/tree/gf_factor">this</a> branch, will create a PR after the Equal degree factorization PR gets merged.
+<br />
+Then I have started working on Shoup&#8217;s algorithm for polynomial factorization, will post about it in the coming weeks.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 10, 2016</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -3706,144 +3799,6 @@ mat = SymEngine::DenseMatrix.new(no_rows, no_columns)</pre>
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-aa06d76d feed-" id="item-e3857505">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/srajangarg.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Srajan Garg (srajangarg) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://srajangarg.github.io//2016/06/19/Polynomial-Functionality/">00:00, Sunday, 19 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/06/19/Polynomial-Functionality/">Polynomial Functionalities</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/srajangarg.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Srajan Garg (srajangarg) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://srajangarg.github.io//2016/06/19/Polynomial-Functionality/">00:00, Sunday, 19 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/06/19/Polynomial-Functionality/">Polynomial Functionalities</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<h3 id="overview">Overview</h3>
-
-<p>The last week was spent on adding more functionality to all the three types of Integer Polynomials in SymEngine. Which meant that I had to basically wrap methods already existing in Piranha and Flint, and write new methods for the SymEngine polynomials to provide the required functionality. Details about said functions and the problems faced while implementing them are described in the rest of the post.</p>
-
-<p>Also this Saturday, some friends and I decided to visit the hill station of Lonavala for the day. It was a replenishing experience, and a break from the regular routine. Here&#8217;s us!</p>
-
-<p><img alt="" src="http://srajangarg.github.io/assets/lonavala.jpg" /></p>
-
-<h3 id="functions">Functions</h3>
-
-<p>I wanted to start off by adding a <code class="highlighter-rouge">div_upoly</code> functions for dividing two univariate polynomials. It is obvious that division of two polynomials with integer coefficients may very well result in polynomials with rational coefficients. But a rational polynomial class does not exist. So what does it mean to divide two univariate polynomials and get a integer polynomial quotient and remainder? The domain <code class="highlighter-rouge">ZZ[x]</code> is not a <a href="https://en.wikipedia.org/wiki/Euclidean_domain">Euclidean Domain</a>. Here is what we mean by Euclidean division,</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>Two polynomials p, q can uniquely be written as
-p = quo * q + rem 
-deg(rem) &lt; deg(q) or rem = 0
-</code></pre>
-</div>
-
-<p>Thus the euclidean division that we are so familiar with is not defined for this domain. So how do other libraries handle this division? I tried the division with Flint, Sage and SymPy.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>In [14]: q = Poly(2*x)
-In [15]: p = Poly(5*x**2)
-In [16]: div(p, q, domain=ZZ)
-</code></pre>
-</div>
-
-<p>Flint and Sage gave :</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>quo = Poly(2*x, x, domain='ZZ') 
-rem = Poly(x**2, x, domain='ZZ')
-</code></pre>
-</div>
-
-<p>while SymPy gave :</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>quo = Poly(0, x, domain='ZZ') 
-rem = Poly(5*x**2, x, domain='ZZ')
-</code></pre>
-</div>
-
-<p>This was interesting, as SymPy gave a different answer than the other two. I asked about this behaviour on gitter, and had a brief explanation given by <a href="https://github.com/jksuom">@jksuom</a>,</p>
-
-<blockquote>
-  <p>The operation <code class="highlighter-rouge">quo_rem</code> is mathematically well defined only in so-called Euclidean domains. They are principal ideal domains (PIDs) equipped with a &#8216;Euclidean function. <code class="highlighter-rouge">ZZ[x]</code> is not a PID, so there is no universal agreement on how <code class="highlighter-rouge">quo_rem</code> should be defined. I think that there are some appealing features in the way it is defined in sage, but one cannot say that SymPy&#8217;s way would be wrong, either.</p>
-</blockquote>
-
-<blockquote>
-  <p>It seems that the main (only?) practical use of <code class="highlighter-rouge">quo_rem</code> in non-Euclidean domains is for testing if an element is divisible by another. That happens when the remainder vanishes. Both ways of defining <code class="highlighter-rouge">quo_rem</code> in <code class="highlighter-rouge">ZZ[x]</code> can be used to decide this.</p>
-</blockquote>
-
-<p>This explanation made a lot of sense, but I was anyways asked to open up <a href="https://github.com/sympy/sympy/issues/11240">#11240</a>, to know why SymPy handled division the way it did, and if it could be changed. Taking in all the inputs, I decided that I should not go ahead with a <code class="highlighter-rouge">div_upoly</code> function for now, instead I made a <code class="highlighter-rouge">divides_upoly</code> function which basically tells wether a polynomial divides the other or not. I had to implement the straight forward algorithm in SymEngine, while Flint already had a <code class="highlighter-rouge">divides</code> function and Piranha throws an exception on inexact division,  which I used to port it for Piranha polynomials.</p>
-
-<p>Other methods which were wrapped were <code class="highlighter-rouge">gcd</code> and <code class="highlighter-rouge">lcm</code> for both the Flint and the Piranha polynomials. I have not been able to write these functions for SymEngine polynomials yet. The most trivial algorithms for finding GCD of two univariate polynomials depends on euclidean division, and that does not exist in the integer ring polynomials. Some more information from <a href="https://github.com/jksuom">@jksuom</a>,</p>
-
-<blockquote>
-  <p>The ring <code class="highlighter-rouge">ZZ[x]</code> is a unique factorization domain (UFD) even if it is not euclidean. It has <code class="highlighter-rouge">gcd</code> and <code class="highlighter-rouge">lcm</code>, but there is no euclidean algorithm for them.</p>
-</blockquote>
-
-<p>Isuru suggested a hint for a simple algorithm, but I have not been able to follow it up yet. I&#8217;ll catch up with it in the coming week. The next function I worked on was <code class="highlighter-rouge">pow</code>. Again this was already implemented in the two other libraries and I just had to wrap them. For SymEngine, I had to decide which algorithm to use, a naive repeated approach or the <a href="https://en.wikipedia.org/wiki/Exponentiation_by_squaring">exponention by squaring</a> algorithm. I also benchmarked the <code class="highlighter-rouge">pow</code> methods of Piranha too. All the work and the benchmarks are in <a href="https://github.com/symengine/symengine/pull/989">#989</a>.</p>
-
-<h3 id="miscellaneous-work">Miscellaneous Work</h3>
-
-<ul>
-  <li>
-    <p>Other functionalities like <code class="highlighter-rouge">multieval</code>, <code class="highlighter-rouge">derivative</code> and <code class="highlighter-rouge">get_lc</code> were also added for all the three intger polynomials.</p>
-  </li>
-  <li>
-    <p>There was an error in the Flint documentation, which was related with incorrect ordering of the arguments being passed to the <code class="highlighter-rouge">divides</code> function. It was reported in <a href="https://github.com/wbhart/flint2/issues/267">#267</a>.</p>
-  </li>
-  <li>
-    <p>Piranha required some implementations to be explicitly provided on the coefficient class, we are going to use. Thus, I had to overwrite some implementations like <code class="highlighter-rouge">gcd_impl</code>, <code class="highlighter-rouge">pow_impl</code> and <code class="highlighter-rouge">divexact_impl</code> for <code class="highlighter-rouge">SymEngine::intger_class</code> to work with <code class="highlighter-rouge">piranha::polynomial</code>.</p>
-  </li>
-</ul>
-
-<p>I will write <code class="highlighter-rouge">gcd</code> and <code class="highlighter-rouge">lcm</code> for SymEngine polynomials, and start on <code class="highlighter-rouge">Basic -&gt; Poly</code> conversion to add to the coercion framework decided for SymEngine, soon.</p>
-
-<p>See you!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -3872,86 +3827,86 @@ rem = Poly(5*x**2, x, domain='ZZ')
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>06:51, Wednesday, 13 July</td>
-<td>07:06, Wednesday, 13 July</td>
+<td>07:12, Wednesday, 13 July</td>
+<td>07:27, Wednesday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>06:51, Wednesday, 13 July</td>
-<td>07:06, Wednesday, 13 July</td>
+<td>07:12, Wednesday, 13 July</td>
+<td>07:27, Wednesday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>06:51, Wednesday, 13 July</td>
-<td>07:06, Wednesday, 13 July</td>
+<td>07:12, Wednesday, 13 July</td>
+<td>07:27, Wednesday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>06:51, Wednesday, 13 July</td>
-<td>07:06, Wednesday, 13 July</td>
+<td>07:12, Wednesday, 13 July</td>
+<td>07:27, Wednesday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>06:51, Wednesday, 13 July</td>
-<td>07:06, Wednesday, 13 July</td>
+<td>07:12, Wednesday, 13 July</td>
+<td>07:27, Wednesday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>06:51, Wednesday, 13 July</td>
-<td>07:06, Wednesday, 13 July</td>
+<td>07:12, Wednesday, 13 July</td>
+<td>07:27, Wednesday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://kshitij10496.github.io//">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>06:51, Wednesday, 13 July</td>
-<td>07:06, Wednesday, 13 July</td>
+<td>07:12, Wednesday, 13 July</td>
+<td>07:27, Wednesday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>06:51, Wednesday, 13 July</td>
-<td>07:06, Wednesday, 13 July</td>
+<td>07:12, Wednesday, 13 July</td>
+<td>07:27, Wednesday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>06:51, Wednesday, 13 July</td>
-<td>07:06, Wednesday, 13 July</td>
+<td>07:12, Wednesday, 13 July</td>
+<td>07:27, Wednesday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>06:51, Wednesday, 13 July</td>
-<td>07:06, Wednesday, 13 July</td>
+<td>07:12, Wednesday, 13 July</td>
+<td>07:27, Wednesday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>06:51, Wednesday, 13 July</td>
-<td>07:06, Wednesday, 13 July</td>
+<td>07:12, Wednesday, 13 July</td>
+<td>07:27, Wednesday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>06:51, Wednesday, 13 July</td>
-<td>07:06, Wednesday, 13 July</td>
+<td>07:12, Wednesday, 13 July</td>
+<td>07:27, Wednesday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>06:51, Wednesday, 13 July</td>
-<td>07:06, Wednesday, 13 July</td>
+<td>07:12, Wednesday, 13 July</td>
+<td>07:27, Wednesday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>06:51, Wednesday, 13 July</td>
-<td>07:06, Wednesday, 13 July</td>
+<td>07:12, Wednesday, 13 July</td>
+<td>07:27, Wednesday, 13 July</td>
 </tr>
 </table>
 

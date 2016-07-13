@@ -7,6 +7,42 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Seventh-Week</guid>
+      <title>GSoC Seventh Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Wed, 13 Jul 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Seventh-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;Previous week, I had started the work on Equal degree factorization &lt;a href="https://github.com/symengine/symengine/pull/1026"&gt;here&lt;/a&gt;. Here I was storing the factors in a vector and then sorting the factors. Certik pointed out that its better to use some other data structure instead of &lt;code class="highlighter-rouge"&gt;vector&lt;/code&gt;. So I have changed the container type to &lt;code class="highlighter-rouge"&gt;set&lt;/code&gt;.
+&lt;br /&gt;Then after both Distinct degree factorization and Equal degree factorization being implemented, I started to work on factoring a polynomial in finite field, this needed integrating square free factorization with these two. I worked on &lt;code class="highlighter-rouge"&gt;gf_factor()&lt;/code&gt; method. In this method we take a polynomial in a given field as input, and return all the factors and their respective powers, and polynomial&amp;#8217;s leading coefficient as output.
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;GaloisFieldDict::gf_factor() const
+{
+  integer_class lc;
+  GaloisFieldDict monic;
+  gf_monic(lc, outArg(monic));
+  if (monic.degree() &amp;lt; 1)
+      return std::make_pair(lc, factors);
+  std::vector&amp;lt;std::pair&amp;lt;GaloisFieldDict, integer_class&amp;gt;&amp;gt; sqf_list
+      = monic.gf_sqf_list();
+  for (auto a : sqf_list) {
+      auto temp = (a.first).gf_zassenhaus();
+      for (auto f : temp)
+          factors.insert({f, a.second});
+  }
+  return factors;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For a given polynomial firstly we get its monic representation and it leading coefficient. Then we find the Square free factors of the monic representation. And on each of the square free factor we run the &lt;code class="highlighter-rouge"&gt;zassenhaus&lt;/code&gt;&amp;#8217;s algorithm.
+&lt;br /&gt;
+I have been working on &lt;a href="https://github.com/nishnik/symengine/tree/gf_factor"&gt;this&lt;/a&gt; branch, will create a PR after the Equal degree factorization PR gets merged.
+&lt;br /&gt;
+Then I have started working on Shoup&amp;#8217;s algorithm for polynomial factorization, will post about it in the coming weeks.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://gxyd.github.io/GSoC Week 7</guid>
       <title>GSoC Week 7</title>
       <author>Gaurav Dhingra (gxyd)</author>
@@ -2013,90 +2049,6 @@ mat = SymEngine::DenseMatrix.new(no_rows, no_columns)&lt;/pre&gt;
 &lt;p&gt;This week I will be continuing my work on converting to &lt;code&gt;hyper&lt;/code&gt;&amp;#160;and then further extending it to convert to expressions using &lt;code&gt;hyperexpand&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Good&amp;#160;luck to all fellow GSoCers&amp;#160;for Midterm Evaluation.&lt;/p&gt;
 &lt;p&gt;Goodbye!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/347/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/347/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=347&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://srajangarg.github.io//2016/06/19/Polynomial-Functionality</guid>
-      <title>Polynomial Functionalities</title>
-      <author>Srajan Garg (srajangarg)</author>
-      <pubDate>Sun, 19 Jun 2016 00:00:00 GMT</pubDate>
-      <link>http://srajangarg.github.io//2016/06/19/Polynomial-Functionality/</link>
-      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
-
-&lt;p&gt;The last week was spent on adding more functionality to all the three types of Integer Polynomials in SymEngine. Which meant that I had to basically wrap methods already existing in Piranha and Flint, and write new methods for the SymEngine polynomials to provide the required functionality. Details about said functions and the problems faced while implementing them are described in the rest of the post.&lt;/p&gt;
-
-&lt;p&gt;Also this Saturday, some friends and I decided to visit the hill station of Lonavala for the day. It was a replenishing experience, and a break from the regular routine. Here&amp;#8217;s us!&lt;/p&gt;
-
-&lt;p&gt;&lt;img alt="" src="http://srajangarg.github.io/assets/lonavala.jpg" /&gt;&lt;/p&gt;
-
-&lt;h3 id="functions"&gt;Functions&lt;/h3&gt;
-
-&lt;p&gt;I wanted to start off by adding a &lt;code class="highlighter-rouge"&gt;div_upoly&lt;/code&gt; functions for dividing two univariate polynomials. It is obvious that division of two polynomials with integer coefficients may very well result in polynomials with rational coefficients. But a rational polynomial class does not exist. So what does it mean to divide two univariate polynomials and get a integer polynomial quotient and remainder? The domain &lt;code class="highlighter-rouge"&gt;ZZ[x]&lt;/code&gt; is not a &lt;a href="https://en.wikipedia.org/wiki/Euclidean_domain"&gt;Euclidean Domain&lt;/a&gt;. Here is what we mean by Euclidean division,&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;Two polynomials p, q can uniquely be written as
-p = quo * q + rem 
-deg(rem) &amp;lt; deg(q) or rem = 0
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Thus the euclidean division that we are so familiar with is not defined for this domain. So how do other libraries handle this division? I tried the division with Flint, Sage and SymPy.&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In [14]: q = Poly(2*x)
-In [15]: p = Poly(5*x**2)
-In [16]: div(p, q, domain=ZZ)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Flint and Sage gave :&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;quo = Poly(2*x, x, domain='ZZ') 
-rem = Poly(x**2, x, domain='ZZ')
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;while SymPy gave :&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;quo = Poly(0, x, domain='ZZ') 
-rem = Poly(5*x**2, x, domain='ZZ')
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;This was interesting, as SymPy gave a different answer than the other two. I asked about this behaviour on gitter, and had a brief explanation given by &lt;a href="https://github.com/jksuom"&gt;@jksuom&lt;/a&gt;,&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;The operation &lt;code class="highlighter-rouge"&gt;quo_rem&lt;/code&gt; is mathematically well defined only in so-called Euclidean domains. They are principal ideal domains (PIDs) equipped with a &amp;#8216;Euclidean function. &lt;code class="highlighter-rouge"&gt;ZZ[x]&lt;/code&gt; is not a PID, so there is no universal agreement on how &lt;code class="highlighter-rouge"&gt;quo_rem&lt;/code&gt; should be defined. I think that there are some appealing features in the way it is defined in sage, but one cannot say that SymPy&amp;#8217;s way would be wrong, either.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;It seems that the main (only?) practical use of &lt;code class="highlighter-rouge"&gt;quo_rem&lt;/code&gt; in non-Euclidean domains is for testing if an element is divisible by another. That happens when the remainder vanishes. Both ways of defining &lt;code class="highlighter-rouge"&gt;quo_rem&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;ZZ[x]&lt;/code&gt; can be used to decide this.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;This explanation made a lot of sense, but I was anyways asked to open up &lt;a href="https://github.com/sympy/sympy/issues/11240"&gt;#11240&lt;/a&gt;, to know why SymPy handled division the way it did, and if it could be changed. Taking in all the inputs, I decided that I should not go ahead with a &lt;code class="highlighter-rouge"&gt;div_upoly&lt;/code&gt; function for now, instead I made a &lt;code class="highlighter-rouge"&gt;divides_upoly&lt;/code&gt; function which basically tells wether a polynomial divides the other or not. I had to implement the straight forward algorithm in SymEngine, while Flint already had a &lt;code class="highlighter-rouge"&gt;divides&lt;/code&gt; function and Piranha throws an exception on inexact division,  which I used to port it for Piranha polynomials.&lt;/p&gt;
-
-&lt;p&gt;Other methods which were wrapped were &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;lcm&lt;/code&gt; for both the Flint and the Piranha polynomials. I have not been able to write these functions for SymEngine polynomials yet. The most trivial algorithms for finding GCD of two univariate polynomials depends on euclidean division, and that does not exist in the integer ring polynomials. Some more information from &lt;a href="https://github.com/jksuom"&gt;@jksuom&lt;/a&gt;,&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;The ring &lt;code class="highlighter-rouge"&gt;ZZ[x]&lt;/code&gt; is a unique factorization domain (UFD) even if it is not euclidean. It has &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;lcm&lt;/code&gt;, but there is no euclidean algorithm for them.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Isuru suggested a hint for a simple algorithm, but I have not been able to follow it up yet. I&amp;#8217;ll catch up with it in the coming week. The next function I worked on was &lt;code class="highlighter-rouge"&gt;pow&lt;/code&gt;. Again this was already implemented in the two other libraries and I just had to wrap them. For SymEngine, I had to decide which algorithm to use, a naive repeated approach or the &lt;a href="https://en.wikipedia.org/wiki/Exponentiation_by_squaring"&gt;exponention by squaring&lt;/a&gt; algorithm. I also benchmarked the &lt;code class="highlighter-rouge"&gt;pow&lt;/code&gt; methods of Piranha too. All the work and the benchmarks are in &lt;a href="https://github.com/symengine/symengine/pull/989"&gt;#989&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Other functionalities like &lt;code class="highlighter-rouge"&gt;multieval&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;derivative&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;get_lc&lt;/code&gt; were also added for all the three intger polynomials.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;There was an error in the Flint documentation, which was related with incorrect ordering of the arguments being passed to the &lt;code class="highlighter-rouge"&gt;divides&lt;/code&gt; function. It was reported in &lt;a href="https://github.com/wbhart/flint2/issues/267"&gt;#267&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Piranha required some implementations to be explicitly provided on the coefficient class, we are going to use. Thus, I had to overwrite some implementations like &lt;code class="highlighter-rouge"&gt;gcd_impl&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;pow_impl&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;divexact_impl&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;SymEngine::intger_class&lt;/code&gt; to work with &lt;code class="highlighter-rouge"&gt;piranha::polynomial&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;I will write &lt;code class="highlighter-rouge"&gt;gcd&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;lcm&lt;/code&gt; for SymEngine polynomials, and start on &lt;code class="highlighter-rouge"&gt;Basic -&amp;gt; Poly&lt;/code&gt; conversion to add to the coercion framework decided for SymEngine, soon.&lt;/p&gt;
-
-&lt;p&gt;See you!&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
