@@ -7,6 +7,32 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=393</guid>
+      <title>GSoC Week 8 Progress</title>
+      <author>Rajith Vidanaarachchi (rajithv)</author>
+      <pubDate>Sat, 16 Jul 2016 16:09:06 GMT</pubDate>
+      <link>https://rajithsays.wordpress.com/2016/07/16/gsoc-week-8-progress/</link>
+      <description>&lt;p&gt;When this week started, most of the work up to week 7 were done. In the first couple of days this week, code for parsing was merged, and I started looking into wrapping lambdification of SymEngine Basic expressions.&lt;/p&gt;
+&lt;p&gt;This was a seemingly easy task, with two options ahead of me. One was to directly wrap C++&amp;#8217;s lambdify_double method, while the other was to create Ruby lambdas directly.&lt;/p&gt;
+&lt;p&gt;After considering various aspects, and with feedback from other contributors, I decided to go ahead with writing them directly in Ruby.&lt;/p&gt;
+&lt;p&gt;It is now completed, and undergoing review.&lt;/p&gt;
+&lt;p&gt;The code implemented allows lamdifying SymEngine::Basic expressions with free symbols.&lt;/p&gt;
+&lt;p&gt;i.e. let, f = x + y, where x and y are SymEngine::Symbols,&lt;/p&gt;
+&lt;p&gt;a lambda is expected, such that it can be called, f_lambda.call(3, 4) which would return 7.&lt;/p&gt;
+&lt;p&gt;For expressions with single or multiple symbols, it works as following:&lt;/p&gt;
+&lt;pre&gt;f = x + y
+f_lambda = SymEngine::lambdify(f, [x, y])&lt;/pre&gt;
+&lt;p&gt;For expressions with a single symbol, it can be used through the to_proc method, using a &amp;amp; call.&lt;/p&gt;
+&lt;pre&gt;f_diam = 2 * SymEngine::PI * r
+radii = [2, 3, 4]
+diams = radii.map(&amp;amp;f_diam)&lt;/pre&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;With another day left already, I am looking at Exception Handling, which I expect to be complicated in implementing.&lt;/p&gt;
+&lt;p&gt;See you next week!&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/393/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/393/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=393&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=841</guid>
       <title>GSoC Week 8</title>
       <author>Sampad Saha (sampadsaha5)</author>
@@ -2044,27 +2070,6 @@ Out[10]: [[0, 0, 1, 2],
                     &lt;/i&gt;
                     &lt;br /&gt;
                     &lt;/ul&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=305</guid>
-      <title>GSoC Week 4 Progress</title>
-      <author>Rajith Vidanaarachchi (rajithv)</author>
-      <pubDate>Sun, 19 Jun 2016 18:10:16 GMT</pubDate>
-      <link>https://rajithsays.wordpress.com/2016/06/19/gsoc-week-4-progress/</link>
-      <description>&lt;p&gt;As week #4 comes to an end, the headway I made last week was lost, with lots of memory related errors. But in terms of experience it was quite a good week.&lt;/p&gt;
-&lt;p&gt;First of all, some loose ends of &lt;a href="https://github.com/symengine/symengine.rb/pull/51" target="_blank"&gt;PR #51&lt;/a&gt; in symengine.rb was tied up and it was merged, fully completing the FunctionSymbol functionality.&lt;/p&gt;
-&lt;p&gt;Next, as I explained in the previous blogpost, the evaluation methods were implemented. The method &amp;#8216;evalf&amp;#8217; provides a single point to evaluate floating point values of mathematics expressions (real &amp;amp; complex), at a given precision.&lt;/p&gt;
-&lt;p&gt;This was the first time I was contributing code directly to the SymEngine&amp;#8217;s C++ code. The coding part was pretty much straight-forward, as the method required only to get the expression to be evaluated, the precision needed, and whether it was a real number or not. Using these information, the evaluation was to be forwarded to eval_double, eval_mpfr, eval_complex_double or eval_mpc. But some memory leaks were present, costing me quite a lot of time to localize the errors and to rectify them.&lt;/p&gt;
-&lt;p&gt;Now, except for a certain case in the cwrapper tests, everything seems to be working fine, and the work can be checked out under &lt;a href="https://github.com/symengine/symengine/pull/987" target="_blank"&gt;PR #987&lt;/a&gt; in symengine, and &lt;a href="https://github.com/symengine/symengine.rb/pull/55" target="_blank"&gt;PR #55&lt;/a&gt; in symengine.rb repository.&lt;/p&gt;
-&lt;p&gt;Also, during this week I was checking out the possible implementation of matrices for the Ruby Wrappers. I decided to interface SymEngine matrices to NMatrix through the Ruby API. So, for the starters I will be going ahead with the SymEngine::DenseMatrix class.&lt;/p&gt;
-&lt;p&gt;In Ruby, I plan to implement the following ways of implementing the DenseMatrix:&lt;/p&gt;
-&lt;pre&gt;mat = SymEngine::DenseMatrix.new()
-mat = SymEngine::DenseMatrix.new(SymEngine::DenseMatrix)
-mat = SymEngine::DenseMatrix.new(NMatrix)
-mat = SymEngine::DenseMatrix.new(Array)
-mat = SymEngine::DenseMatrix.new(no_rows, no_columns)&lt;/pre&gt;
-&lt;p&gt;Apart from the coding work, last week&amp;#8217;s code reviews were an interesting part of the learning experience. I was reviewing code of Gaurav &amp;#8211; another SciRuby GSoCer, who is also writing Ruby wrappers. Looking at his code and hearing what he had to tell about mine was quite interesting.&lt;/p&gt;
-&lt;p&gt;See you next week, hopefully with better news on the SymEngine matrices!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/305/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/305/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=305&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>
