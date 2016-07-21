@@ -62,27 +62,6 @@ And also, I changed the container (which stores factors) type to &lt;code class=
 Will send a PR soon.&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-9</guid>
-      <title>Coding Period Week 8</title>
-      <author>Shekhar Prasad Rajak (shekharrajak)</author>
-      <pubDate>Wed, 20 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://shekharrajak.github.io/Coding-Period-week-9/</link>
-      <description>&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Meanwhile :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;I found some basic issues in &lt;code class="highlighter-rouge"&gt;ComplexInfinity&lt;/code&gt; and trying to solve them in this PR &lt;a href="https://github.com/sympy/sympy/pull/11409"&gt;11409&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;there may be many things to be added about &lt;code class="highlighter-rouge"&gt;ComplexInfinity&lt;/code&gt;, one can refer this link to implement them :&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;http://reference.wolfram.com/language/ref/ComplexInfinity.html&lt;/p&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-8</guid>
       <title>Coding Period Week 8</title>
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
@@ -1920,6 +1899,104 @@ the period simpler trigonometric functions such as &lt;code class="highlighter-r
 
 &lt;p&gt;Using this property, we can easily compute the periods of &lt;code class="highlighter-rouge"&gt;sin(2*x)&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;cos(3*x)&lt;/code&gt;
 with our knowledge of the periodicity of the fundamental trigonometric functions.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-5</guid>
+      <title>Coding Period Week 5</title>
+      <author>Shekhar Prasad Rajak (shekharrajak)</author>
+      <pubDate>Tue, 21 Jun 2016 00:00:00 GMT</pubDate>
+      <link>http://shekharrajak.github.io/Coding-Period-week-5/</link>
+      <description>&lt;p&gt;&lt;strong&gt;Continue- nonlinsolve :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11111"&gt;#11111&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;I found the case where complex solution is missed. When &lt;code class="highlighter-rouge"&gt;solve_poly_system&lt;/code&gt; is solving polynomial equation and that result is used
+in solving non polynomial-equation to get other soln. May be &lt;code class="highlighter-rouge"&gt;solve_poly_system&lt;/code&gt; return only real solution( so complex solution is not being used for further steps) thats why further step is with this real solution.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;It seems &lt;code class="highlighter-rouge"&gt;solve_poly_system&lt;/code&gt; is doing it&amp;#8217;s job since it is not designed for all solution. But we have &lt;code class="highlighter-rouge"&gt;substitution&lt;/code&gt; method using
+&lt;code class="highlighter-rouge"&gt;solveset_real&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;solveset_complex&lt;/code&gt; and retuning all solutionn. In new commits I improved the code and now &lt;code class="highlighter-rouge"&gt;substitution&lt;/code&gt; method can solve all kind of system independently.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;I come across these kind of situation many times :&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In [68]: x, y, z, r, t = symbols('x, y, z, r, t', real = True)
+
+In [69]: soln = solveset(sqrt(r)*Abs(tan(t))/sqrt(tan(t)**2 + 1) + x*tan(t),x,S.Reals)
+
+In [70]: soln
+Out[70]:
+          &amp;#9127;      &amp;#8730;r&amp;#8901;&amp;#9474;tan(t)&amp;#9474;      &amp;#9131;
+(-&amp;#8734;, &amp;#8734;) &amp;#8745; &amp;#9130;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9130;
+          &amp;#9128;   _____________       &amp;#9132;
+          &amp;#9130;  &amp;#9585;    2               &amp;#9130;
+          &amp;#9129;&amp;#9586;&amp;#9585;  tan (t) + 1 &amp;#8901;tan(t)&amp;#9133;
+
+In [71]: soln = solveset(sqrt(r)*Abs(tan(t))/sqrt(tan(t)**2 + 1) + x*tan(t),x)
+
+In [72]: soln
+Out[72]:
+&amp;#9127;     -&amp;#8730;r&amp;#8901;&amp;#9474;tan(t)&amp;#9474;      &amp;#9131;
+&amp;#9130;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9130;
+&amp;#9128;   _____________       &amp;#9132;
+&amp;#9130;  &amp;#9585;    2               &amp;#9130;
+&amp;#9129;&amp;#9586;&amp;#9585;  tan (t) + 1 &amp;#8901;tan(t)&amp;#9133;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;In other words :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In [1]: Intersection(FiniteSet(-x), S.Reals)
+Out[1]: (-&amp;#8734;, &amp;#8734;) &amp;#8745; {x}
+
+In [2]: Intersection(FiniteSet(x), S.Reals)
+Out[2]: &amp;#8477; &amp;#8745; {x}
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;So I am not able to extract the &lt;code class="highlighter-rouge"&gt;-x&lt;/code&gt; here. Because of this &lt;code class="highlighter-rouge"&gt;nonlinsolve&lt;/code&gt; returning some extra soln.
+One case is in test file : &lt;code class="highlighter-rouge"&gt;test_issue_5132&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I opened a PR for this &lt;a href="https://github.com/sympy/sympy/pull/11280"&gt;#11280&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;If someone wants to see the changes I did in &lt;code class="highlighter-rouge"&gt;nonlinsolve&lt;/code&gt; then check these gist &lt;a href="https://gist.github.com/Shekharrajak/5e77fe344c996c17c177985853884985"&gt;nonlinsolve_till_24june_2016&lt;/a&gt;,
+&lt;a href="https://gist.github.com/Shekharrajak/5d285ce0cf113cfc217c3e33c3ca04c0"&gt;nonlinsolve_till_21jun2016.py&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;previous PRs update :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/11188"&gt;#11188&lt;/a&gt; - Simplified Solution for Trigonometric equation :
+ I did some minor changes.Now I hope it is good to go.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/11234"&gt;#11234&lt;/a&gt; - Connecting Diophantine and solveset to get Integer solution:
+added some testcases. I have defined &lt;code class="highlighter-rouge"&gt;solveset_integers&lt;/code&gt; for this, it take take list of symbols(to get soln in that order).t
+But Currently solveset takes one symbol. I hope this PR is good to go.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/11257"&gt;11257&lt;/a&gt; - solveset univariate trig inequality solvers : Actually to simplify the
+soln I need to use PR &lt;a href="https://github.com/sympy/sympy/pull/11188"&gt;#11188&lt;/a&gt;, so if it got merged that code will help me in this PR.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;Meanwhile :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;I worked on these previous PRs regarding issues I reported &lt;a href="https://github.com/sympy/sympy/pull/11239"&gt;#11239&lt;/a&gt;, &lt;a href="https://github.com/sympy/sympy/pull/11280"&gt;11280&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;continue..&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
