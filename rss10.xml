@@ -7,6 +7,81 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=780</guid>
+      <title>GSoC Week 10</title>
+      <author>Subham Tibra (shubhamtibra)</author>
+      <pubDate>Mon, 01 Aug 2016 07:31:06 GMT</pubDate>
+      <link>https://shubhamtibra.wordpress.com/2016/08/01/gsoc-week-10/</link>
+      <description>&lt;p&gt;Started off this week by continuing my work on &lt;a href="https://github.com/sympy/sympy/pull/11422"&gt;#11422&lt;/a&gt;. I added support for singular initial conditions in multiplication and made some amendments in addition too. They now can return a Holonomic function with singular initial condition. The input functions can have singular initial condition both or one of them can have singular one and the other one with ordinary initial condition.&lt;/p&gt;
+&lt;pre class="brush: python; title: ; notranslate"&gt;
+# one function have singular initial condition and the other have ordinary.
+In [4]: expr_to_holonomic(x) + expr_to_holonomic(sqrt(x))
+Out[4]: HolonomicFunction((1/2) + (-x/2)Dx + (x**2)Dx**2, x), {1/2: [1], 1: [1]}
+
+In [5]: _4.to_expr()
+Out[5]: &amp;#8730;x + x
+
+In [6]: expr_to_holonomic(x) * expr_to_holonomic(sqrt(x))
+Out[6]: HolonomicFunction((-3/2) + (x)Dx, x), {3/2: [1]}
+
+In [7]: _6.to_expr()
+Out[7]:
+ 3/2
+x
+
+# both have singular initial conditions.
+In [9]: expr_to_holonomic((x)**(S(1)/3)) + expr_to_holonomic(sqrt(x))
+Out[9]: HolonomicFunction((1/6) + (x/6)Dx + (x**2)Dx**2, x), {1/3: [1], 1/2: [1]}
+
+In [10]: _9.to_expr()
+Out[10]:
+3 ___
+&amp;#9586;&amp;#9585; x  + &amp;#8730;x
+In [11]: expr_to_holonomic((x)**(S(1)/3))*expr_to_holonomic(sqrt(x))
+Out[11]: HolonomicFunction((-5/6) + (x)Dx, x), {5/6: [1]}
+
+In [12]: _11.to_expr()
+Out[12]:
+ 5/6
+x
+&lt;/pre&gt;
+&lt;p&gt;I found some problems in coding because of storing these initial conditions in two different attributes. So I merged them to a single attribute and instead added methods to check which one is stored and refactored the existing code using it.&lt;/p&gt;
+&lt;p&gt;I opened a new PR&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11451"&gt;#11451&lt;/a&gt;&amp;#160;majorly focused on adding singular initial conditions to the result of &lt;code&gt;.expr_to_holonomic()&lt;/code&gt;&amp;#160;when necessary. At first I added it in converting polynomials. Here are some examples:&lt;/p&gt;
+&lt;pre class="brush: python; title: ; notranslate"&gt;
+In [14]: expr_to_holonomic(3*x**3+4*x**2)
+Out[14]: HolonomicFunction((-9*x - 8) + (3*x**2 + 4*x)Dx, x), {2: [4, 3]}
+
+In [15]: _14.to_expr()
+Out[15]:
+ 2
+x &amp;#8901;(3&amp;#8901;x + 4)
+
+In [16]: expr_to_holonomic(x)
+Out[16]: HolonomicFunction((-1) + (x)Dx, x), {1: [1]}
+
+In [17]: _16.to_expr()
+Out[17]: x
+&lt;/pre&gt;
+&lt;p&gt;I also a found a bug in &lt;code&gt;.to_hyper()&lt;/code&gt;&amp;#160;when the recurrence relation has order &lt;code&gt;0&lt;/code&gt;. Added its fix too. Earlier the output also consider negative exponents which weren&amp;#8217;t needed.&lt;/p&gt;
+&lt;pre class="brush: python; title: ; notranslate"&gt;
+# previously
+In [18]: expr_to_holonomic(y*x, x).integrate(x).to_expr()
+Out[18]:
+ 2
+x &amp;#8901;y
+&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; + C&amp;#8321;
+ 2
+# after fix
+In [19]: expr_to_holonomic(y*x, x).integrate(x).to_expr()
+Out[19]:
+ 2
+x &amp;#8901;y
+&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;
+ 2  
+
+&lt;/pre&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/780/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/780/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=780&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-10</guid>
       <title>Coding Period Week 10</title>
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
@@ -1724,87 +1799,6 @@ may resume on the base class.&lt;/p&gt;
   #11331&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/blockquote&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://kshitij10496.github.io//2016/07/01/GSoC-Week-06/</guid>
-      <title>GSoC Week 06 - The One with Singularities</title>
-      <author>Kshitij Saraogi(kshitij10496)</author>
-      <pubDate>Fri, 01 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://kshitij10496.github.io//2016/07/01/GSoC-Week-06/</link>
-      <description>&lt;p&gt;This week I worked on the topic of &lt;em&gt;singularities&lt;/em&gt;.&lt;/p&gt;
-
-&lt;h3 id="singularities"&gt;&lt;strong&gt;&lt;em&gt;Singularities&lt;/em&gt;&lt;/strong&gt;&lt;/h3&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;A singularity is in general a point at which a given mathematical object is not defined.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Examples:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;1/x&lt;/code&gt; has a singularity at &lt;code class="highlighter-rouge"&gt;x = 0&lt;/code&gt; as it seems to reach infinity.&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;|x| (Absolute)&lt;/code&gt; has a singularity at &lt;code class="highlighter-rouge"&gt;x = 0&lt;/code&gt; since it is not differentiable at that point.&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;&amp;#8730;x (Square root)&lt;/code&gt; has a singularity at &lt;code class="highlighter-rouge"&gt;x = 0&lt;/code&gt; since it doesnot admit a tangent there.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;In real analysis, singularities are either discontinuities or discontinuities of
-the derivative (sometimes also discontinuities of higher order derivatives).&lt;/p&gt;
-
-&lt;p&gt;A &lt;strong&gt;removable singularity&lt;/strong&gt; of a function is a point at which the function is undefined, 
-but it is possible to redefine the function at that point in such a way that the resulting 
-function is regular in a neighbourhood of that point.&lt;/p&gt;
-
-&lt;p&gt;For instance,&lt;/p&gt;
-
-&lt;p&gt;&lt;code class="highlighter-rouge"&gt;f(z) = sin(z)/z&lt;/code&gt; has a removable singularity at &lt;code class="highlighter-rouge"&gt;z = 0&lt;/code&gt;.&lt;br /&gt;
-This singularity can be removed by defining &lt;code class="highlighter-rouge"&gt;f(0) := 1&lt;/code&gt;, which is the limit of &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt; as &lt;code class="highlighter-rouge"&gt;z&lt;/code&gt; tends to &lt;code class="highlighter-rouge"&gt;0&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;In SymPy, we try to automatically simplify some of the expressions before passing it for
-further processing.&lt;/p&gt;
-
-&lt;p&gt;For example,&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;x/x&lt;/code&gt; simplifies to &lt;code class="highlighter-rouge"&gt;1&lt;/code&gt;.&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;(x-1)^2/(x-1)&lt;/code&gt; simplifies to &lt;code class="highlighter-rouge"&gt;x-1&lt;/code&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;At times, this can lead to incorrect behaviour.
-Suppose, we are interested to find the singularities ( and/or domain ) of the function &lt;code class="highlighter-rouge"&gt;f(x) = x/x&lt;/code&gt;.&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In []: f = x/x
-In []: singularities(f, x)
-Out[]: S.EmptySet # no singularities
-In []: continuous_domain(f, x, S.Reals) # finding the valid domain of f on the real line
-Out[]: S.Reals # should be (-oo, 0) U (0, oo)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;After some discussion about this issue of automatic simplification, we came to the
-conclusion that removable singularities should be treated as part of the domain of the function.
-This will help in justifying the behaviour of expressions which are automatically simplified.&lt;/p&gt;
-
-&lt;p&gt;So, I studied about how to classify a singularity as a removable one.
-For this, we use the &lt;strong&gt;Reimann&amp;#8217;s theorem&lt;/strong&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Let &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt; a function defined on the set &lt;code class="highlighter-rouge"&gt;D \{a}&lt;/code&gt;.
-   The point &lt;code class="highlighter-rouge"&gt;a&lt;/code&gt; is a removable discontinuity if there exists a neighborhood of &lt;code class="highlighter-rouge"&gt;a&lt;/code&gt; on which &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt; is bounded.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Mathematically,&lt;/p&gt;
-
-&lt;p&gt;&lt;code class="highlighter-rouge"&gt;lim   (z -a)*f(z)&lt;/code&gt;&lt;br /&gt;
-&lt;code class="highlighter-rouge"&gt;z-&amp;gt;a+&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;I have implemented this theorem in the form of a function but I face certain issues with
-the values returned by &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; due to &lt;code class="highlighter-rouge"&gt;check_domain&lt;/code&gt; function (which checks the bound of a 
-function at a particular value). This remains to be discussed in the meeting.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;After Thoughts&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;I have lots to discuss with my mentors on these issues.&lt;br /&gt;
-After merging the PR#11277, I think &lt;code class="highlighter-rouge"&gt;solve_decomposition&lt;/code&gt; method will be good to go.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

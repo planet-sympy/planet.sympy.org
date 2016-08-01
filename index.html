@@ -89,6 +89,138 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">August 01, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-3ebbee70 feed-" id="item-18300f2c">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shubham.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Subham Tibra (shubhamtibra) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://shubhamtibra.wordpress.com/2016/08/01/gsoc-week-10/">07:31, Monday, 01 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://shubhamtibra.wordpress.com/2016/08/01/gsoc-week-10/">GSoC Week 10</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shubham.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Subham Tibra (shubhamtibra) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://shubhamtibra.wordpress.com/2016/08/01/gsoc-week-10/">07:31, Monday, 01 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://shubhamtibra.wordpress.com/2016/08/01/gsoc-week-10/">GSoC Week 10</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Started off this week by continuing my work on <a href="https://github.com/sympy/sympy/pull/11422">#11422</a>. I added support for singular initial conditions in multiplication and made some amendments in addition too. They now can return a Holonomic function with singular initial condition. The input functions can have singular initial condition both or one of them can have singular one and the other one with ordinary initial condition.</p>
+<pre class="brush: python; title: ; notranslate">
+# one function have singular initial condition and the other have ordinary.
+In [4]: expr_to_holonomic(x) + expr_to_holonomic(sqrt(x))
+Out[4]: HolonomicFunction((1/2) + (-x/2)Dx + (x**2)Dx**2, x), {1/2: [1], 1: [1]}
+
+In [5]: _4.to_expr()
+Out[5]: &#8730;x + x
+
+In [6]: expr_to_holonomic(x) * expr_to_holonomic(sqrt(x))
+Out[6]: HolonomicFunction((-3/2) + (x)Dx, x), {3/2: [1]}
+
+In [7]: _6.to_expr()
+Out[7]:
+ 3/2
+x
+
+# both have singular initial conditions.
+In [9]: expr_to_holonomic((x)**(S(1)/3)) + expr_to_holonomic(sqrt(x))
+Out[9]: HolonomicFunction((1/6) + (x/6)Dx + (x**2)Dx**2, x), {1/3: [1], 1/2: [1]}
+
+In [10]: _9.to_expr()
+Out[10]:
+3 ___
+&#9586;&#9585; x  + &#8730;x
+In [11]: expr_to_holonomic((x)**(S(1)/3))*expr_to_holonomic(sqrt(x))
+Out[11]: HolonomicFunction((-5/6) + (x)Dx, x), {5/6: [1]}
+
+In [12]: _11.to_expr()
+Out[12]:
+ 5/6
+x
+</pre>
+<p>I found some problems in coding because of storing these initial conditions in two different attributes. So I merged them to a single attribute and instead added methods to check which one is stored and refactored the existing code using it.</p>
+<p>I opened a new PR&#160;<a href="https://github.com/sympy/sympy/pull/11451">#11451</a>&#160;majorly focused on adding singular initial conditions to the result of <code>.expr_to_holonomic()</code>&#160;when necessary. At first I added it in converting polynomials. Here are some examples:</p>
+<pre class="brush: python; title: ; notranslate">
+In [14]: expr_to_holonomic(3*x**3+4*x**2)
+Out[14]: HolonomicFunction((-9*x - 8) + (3*x**2 + 4*x)Dx, x), {2: [4, 3]}
+
+In [15]: _14.to_expr()
+Out[15]:
+ 2
+x &#8901;(3&#8901;x + 4)
+
+In [16]: expr_to_holonomic(x)
+Out[16]: HolonomicFunction((-1) + (x)Dx, x), {1: [1]}
+
+In [17]: _16.to_expr()
+Out[17]: x
+</pre>
+<p>I also a found a bug in <code>.to_hyper()</code>&#160;when the recurrence relation has order <code>0</code>. Added its fix too. Earlier the output also consider negative exponents which weren&#8217;t needed.</p>
+<pre class="brush: python; title: ; notranslate">
+# previously
+In [18]: expr_to_holonomic(y*x, x).integrate(x).to_expr()
+Out[18]:
+ 2
+x &#8901;y
+&#9472;&#9472;&#9472;&#9472; + C&#8321;
+ 2
+# after fix
+In [19]: expr_to_holonomic(y*x, x).integrate(x).to_expr()
+Out[19]:
+ 2
+x &#8901;y
+&#9472;&#9472;&#9472;&#9472;
+ 2  
+
+</pre><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/780/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/780/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&#038;blog=106149936&#038;post=780&#038;subd=shubhamtibra&#038;ref=&#038;feed=1" width="1" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 30, 2016</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -3429,141 +3561,6 @@ may resume on the base class.</p>
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7730e356 feed-" id="item-f6223371">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/kshitij10496.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Kshitij Saraogi(kshitij10496) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://kshitij10496.github.io//2016/07/01/GSoC-Week-06/">00:00, Friday, 01 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://kshitij10496.github.io//2016/07/01/GSoC-Week-06/">GSoC Week 06 - The One with Singularities</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/kshitij10496.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Kshitij Saraogi(kshitij10496) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://kshitij10496.github.io//2016/07/01/GSoC-Week-06/">00:00, Friday, 01 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://kshitij10496.github.io//2016/07/01/GSoC-Week-06/">GSoC Week 06 - The One with Singularities</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This week I worked on the topic of <em>singularities</em>.</p>
-
-<h3 id="singularities"><strong><em>Singularities</em></strong></h3>
-
-<blockquote>
-  <p>A singularity is in general a point at which a given mathematical object is not defined.</p>
-</blockquote>
-
-<p>Examples:</p>
-
-<ul>
-  <li><code class="highlighter-rouge">1/x</code> has a singularity at <code class="highlighter-rouge">x = 0</code> as it seems to reach infinity.</li>
-  <li><code class="highlighter-rouge">|x| (Absolute)</code> has a singularity at <code class="highlighter-rouge">x = 0</code> since it is not differentiable at that point.</li>
-  <li><code class="highlighter-rouge">&#8730;x (Square root)</code> has a singularity at <code class="highlighter-rouge">x = 0</code> since it doesnot admit a tangent there.</li>
-</ul>
-
-<p>In real analysis, singularities are either discontinuities or discontinuities of
-the derivative (sometimes also discontinuities of higher order derivatives).</p>
-
-<p>A <strong>removable singularity</strong> of a function is a point at which the function is undefined, 
-but it is possible to redefine the function at that point in such a way that the resulting 
-function is regular in a neighbourhood of that point.</p>
-
-<p>For instance,</p>
-
-<p><code class="highlighter-rouge">f(z) = sin(z)/z</code> has a removable singularity at <code class="highlighter-rouge">z = 0</code>.<br />
-This singularity can be removed by defining <code class="highlighter-rouge">f(0) := 1</code>, which is the limit of <code class="highlighter-rouge">f</code> as <code class="highlighter-rouge">z</code> tends to <code class="highlighter-rouge">0</code>.</p>
-
-<p>In SymPy, we try to automatically simplify some of the expressions before passing it for
-further processing.</p>
-
-<p>For example,</p>
-
-<ul>
-  <li><code class="highlighter-rouge">x/x</code> simplifies to <code class="highlighter-rouge">1</code>.</li>
-  <li><code class="highlighter-rouge">(x-1)^2/(x-1)</code> simplifies to <code class="highlighter-rouge">x-1</code>.</li>
-</ul>
-
-<p>At times, this can lead to incorrect behaviour.
-Suppose, we are interested to find the singularities ( and/or domain ) of the function <code class="highlighter-rouge">f(x) = x/x</code>.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>In []: f = x/x
-In []: singularities(f, x)
-Out[]: S.EmptySet # no singularities
-In []: continuous_domain(f, x, S.Reals) # finding the valid domain of f on the real line
-Out[]: S.Reals # should be (-oo, 0) U (0, oo)
-</code></pre>
-</div>
-
-<p>After some discussion about this issue of automatic simplification, we came to the
-conclusion that removable singularities should be treated as part of the domain of the function.
-This will help in justifying the behaviour of expressions which are automatically simplified.</p>
-
-<p>So, I studied about how to classify a singularity as a removable one.
-For this, we use the <strong>Reimann&#8217;s theorem</strong>:</p>
-
-<blockquote>
-  <p>Let <code class="highlighter-rouge">f</code> a function defined on the set <code class="highlighter-rouge">D \{a}</code>.
-   The point <code class="highlighter-rouge">a</code> is a removable discontinuity if there exists a neighborhood of <code class="highlighter-rouge">a</code> on which <code class="highlighter-rouge">f</code> is bounded.</p>
-</blockquote>
-
-<p>Mathematically,</p>
-
-<p><code class="highlighter-rouge">lim   (z -a)*f(z)</code><br />
-<code class="highlighter-rouge">z-&gt;a+</code></p>
-
-<p>I have implemented this theorem in the form of a function but I face certain issues with
-the values returned by <code class="highlighter-rouge">solveset</code> due to <code class="highlighter-rouge">check_domain</code> function (which checks the bound of a 
-function at a particular value). This remains to be discussed in the meeting.</p>
-
-<p><strong>After Thoughts</strong></p>
-
-<p>I have lots to discuss with my mentors on these issues.<br />
-After merging the PR#11277, I think <code class="highlighter-rouge">solve_decomposition</code> method will be good to go.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -3592,86 +3589,86 @@ After merging the PR#11277, I think <code class="highlighter-rouge">solve_decomp
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>07:15, Monday, 01 August</td>
-<td>07:30, Monday, 01 August</td>
+<td>07:36, Monday, 01 August</td>
+<td>07:51, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>07:15, Monday, 01 August</td>
-<td>07:30, Monday, 01 August</td>
+<td>07:36, Monday, 01 August</td>
+<td>07:51, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>07:15, Monday, 01 August</td>
-<td>07:30, Monday, 01 August</td>
+<td>07:36, Monday, 01 August</td>
+<td>07:51, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>07:15, Monday, 01 August</td>
-<td>07:30, Monday, 01 August</td>
+<td>07:36, Monday, 01 August</td>
+<td>07:51, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>07:15, Monday, 01 August</td>
-<td>07:30, Monday, 01 August</td>
+<td>07:36, Monday, 01 August</td>
+<td>07:51, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>07:15, Monday, 01 August</td>
-<td>07:30, Monday, 01 August</td>
+<td>07:36, Monday, 01 August</td>
+<td>07:51, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://kshitij10496.github.io//">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>07:15, Monday, 01 August</td>
-<td>07:30, Monday, 01 August</td>
+<td>07:36, Monday, 01 August</td>
+<td>07:51, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>07:15, Monday, 01 August</td>
-<td>07:30, Monday, 01 August</td>
+<td>07:36, Monday, 01 August</td>
+<td>07:51, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>07:15, Monday, 01 August</td>
-<td>07:30, Monday, 01 August</td>
+<td>07:36, Monday, 01 August</td>
+<td>07:51, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>07:15, Monday, 01 August</td>
-<td>07:30, Monday, 01 August</td>
+<td>07:36, Monday, 01 August</td>
+<td>07:51, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>07:15, Monday, 01 August</td>
-<td>07:30, Monday, 01 August</td>
+<td>07:36, Monday, 01 August</td>
+<td>07:51, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>07:15, Monday, 01 August</td>
-<td>07:30, Monday, 01 August</td>
+<td>07:36, Monday, 01 August</td>
+<td>07:51, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>07:15, Monday, 01 August</td>
-<td>07:30, Monday, 01 August</td>
+<td>07:36, Monday, 01 August</td>
+<td>07:51, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>07:15, Monday, 01 August</td>
-<td>07:30, Monday, 01 August</td>
+<td>07:36, Monday, 01 August</td>
+<td>07:51, Monday, 01 August</td>
 </tr>
 </table>
 
