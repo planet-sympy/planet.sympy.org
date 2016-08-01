@@ -85,6 +85,45 @@ x &amp;#8901;y
 &amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/780/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/780/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=780&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://srajangarg.github.io//2016/08/01/Multivariate-Polynomails</guid>
+      <title>Multivariate Polynomials</title>
+      <author>Srajan Garg (srajangarg)</author>
+      <pubDate>Mon, 01 Aug 2016 00:00:00 GMT</pubDate>
+      <link>http://srajangarg.github.io//2016/08/01/Multivariate-Polynomails/</link>
+      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
+
+&lt;p&gt;After college has started, work has been slower than usual. Last week I finally wound up Rational Polynomials in &lt;a href="https://github.com/symengine/symengine/pull/1028"&gt;#1028&lt;/a&gt;. Some minor changes still remain in some parts of the code. Most of the changes left are mainly related to code duplication, and will be fixed by writing their templated versions.&lt;/p&gt;
+
+&lt;h3 id="multivariate-polynomials"&gt;Multivariate Polynomials&lt;/h3&gt;
+
+&lt;p&gt;I started off by reading and understanding how the multivariate class is implemented currently in SymEngine. It was developed by the UC Davis team as a part of their course project. The basic idea is pretty simple. It still is a sparse representation and maps from a vector (representing the powers of each generator in the monomial) to the non-zero coefficient multiplied to it. We use an unordered map instead of the ordered map used in the univariate counterpart. The choice does make some sense, as deciding order between two monomials is subjective and does not make sense (for eg. which is larger &lt;code class="highlighter-rouge"&gt;x**2*y&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;x*y**2&lt;/code&gt;) Even if we define a custom ordering, there are no real benefits I could think of that it would provide.&lt;/p&gt;
+
+&lt;p&gt;On a side note, it kind of makes me think why we have stuck to the ordered map implementation for our univariate polynomials. The places it offers benefits are &lt;code class="highlighter-rouge"&gt;eval&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;mul&lt;/code&gt; (in some ways) I worked with ordered maps, as that was the implementation the initial polynomial class was built on. I&amp;#8217;m also wondering if it is healthy to use two different implementations for both the polynomial types, univariate and multivariate. This needs to be discussed.&lt;/p&gt;
+
+&lt;p&gt;Right now, I&amp;#8217;m basically refactoring most of the code written in the multivariate class, so that it matches the API more or less from the univariate case. Some functions have been re-written and some unnecessary storage within the polynomials have been removed. Initially, I thought I will stick with the same container based approach I used in the univariate case. This proves to be non trivial for the multivariate case. So, after some discussion with Isuru, we decided to stick with different implementations for SymEngine polynomials and Piranha polynomials, as combining code was not easy. The current work is in &lt;a href="https://github.com/symengine/symengine/pull/1049"&gt;#1049&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id="future-work"&gt;Future Work&lt;/h3&gt;
+
+&lt;p&gt;A lot is on my plate right now. Some of the work I plan to finish by the end of the next two weeks are&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Finish up the refactoring of multivariate polynomials, and make their interaction with univariate polynomials as seamless as possible&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Introduce wrappers for piranha polynomials to be used as multivariate polynomials within SymEngine&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Fix up the remainder of rational polynomials, and template code wherever possible to remove code duplicates&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Write conversions from &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt; to multivariate polynomials, which will finish up one part of the coercion framework as proposed by Isuru&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Off to work!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-10</guid>
       <title>Coding Period Week 10</title>
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
@@ -1768,59 +1807,6 @@ Out[10]: Mod(2&amp;#8901;&amp;#8520;, 1 + 3&amp;#8901;&amp;#8520;)
 &lt;/ul&gt;
 &lt;p&gt;That&amp;#8217;s all for this week. Cheers !!&lt;/p&gt;
 &lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/688/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/688/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=688&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://jbm950.github.io//2016/07/01/GSoC-week-6.html</guid>
-      <title>GSoC Week 6</title>
-      <author>James Milam (jbm950)</author>
-      <pubDate>Fri, 01 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://jbm950.github.io//2016/07/01/GSoC-week-6.html</link>
-      <description>&lt;p&gt;The main theme of this week is Featherstone&amp;#8217;s method. I have finished reading
-all of the text book that I feel I need to in order to finish my project. After
-reading I realize that I have been improper about addressing my project.
-Instead of saying I am introducing Featherstone&amp;#8217;s method to SymPy, it would be
-more accurate to say that I am introducing one of Featherstone&amp;#8217;s methods. The
-book introduced two equations of motion generation methods for open loop
-kinematic trees and one method for a closed loop kinematic tree (I stopped
-reading after chapter 8 and so there may have been even more methods). For my
-project I have decided to focus on the articulated body method of equation of
-motion generation for kinematic trees. This method is presented as being more
-efficient than the composite body method and the closed loop method seems
-rather complicated.&lt;/p&gt;
-
-&lt;p&gt;With this in mind I began digging deeper into the articulated body method and
-better learning how it works. With this mindset I went over the three passes
-that the method uses and looked for places where code would be needed that
-isn&amp;#8217;t specifically part of the method. I compiled a list of these functions and
-have written docstrings and presented them in &lt;a href="https://github.com/sympy/sympy/pull/11331"&gt;PR
-#11331&lt;/a&gt;. The support code for the
-method includes operations for spatial (6D) vectors and a function and library
-for extracing relevant joint information.&lt;/p&gt;
-
-&lt;p&gt;This week I reviewed &lt;a href="https://github.com/sympy/sympy/pull/11333"&gt;PR #11333&lt;/a&gt;.
-The pull request adds docstrings to method that did not have them previously
-which is a big plus but the docstrings that were added were minimal and vague.
-I asked that the contributer add more information to the docstrings and he said
-he will get to it.&lt;/p&gt;
-
-&lt;h3 id="future-directions"&gt;Future Directions&lt;/h3&gt;
-
-&lt;p&gt;Next week I plan on furthering my work on the articulated body method. I hope
-to have the support functions completely written up and to begin writing the
-equation of motion generator itself. These plans may be set aside, however, as
-my most active mentor will be coming back from traveling next week and so work
-may resume on the base class.&lt;/p&gt;
-
-&lt;h3 id="prs-and-issues"&gt;PR&amp;#8217;s and Issues&lt;/h3&gt;
-
-&lt;blockquote&gt;
-  &lt;ul&gt;
-    &lt;li&gt;(Open) Added docstrings to ast.py &lt;a href="https://github.com/sympy/sympy/pull/11333"&gt;PR
-  #11333&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;(Open) [WIP] Featherstones EOM support &lt;a href="https://github.com/sympy/sympy/pull/11331"&gt;PR
-  #11331&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;</description>
     </item>
   </channel>
 </rss>

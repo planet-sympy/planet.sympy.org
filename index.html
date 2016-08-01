@@ -222,6 +222,99 @@ x &#8901;y
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-4f15c42a">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/srajangarg.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Srajan Garg (srajangarg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://srajangarg.github.io//2016/08/01/Multivariate-Polynomails/">00:00, Monday, 01 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/08/01/Multivariate-Polynomails/">Multivariate Polynomials</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/srajangarg.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Srajan Garg (srajangarg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://srajangarg.github.io//2016/08/01/Multivariate-Polynomails/">00:00, Monday, 01 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/08/01/Multivariate-Polynomails/">Multivariate Polynomials</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<h3 id="overview">Overview</h3>
+
+<p>After college has started, work has been slower than usual. Last week I finally wound up Rational Polynomials in <a href="https://github.com/symengine/symengine/pull/1028">#1028</a>. Some minor changes still remain in some parts of the code. Most of the changes left are mainly related to code duplication, and will be fixed by writing their templated versions.</p>
+
+<h3 id="multivariate-polynomials">Multivariate Polynomials</h3>
+
+<p>I started off by reading and understanding how the multivariate class is implemented currently in SymEngine. It was developed by the UC Davis team as a part of their course project. The basic idea is pretty simple. It still is a sparse representation and maps from a vector (representing the powers of each generator in the monomial) to the non-zero coefficient multiplied to it. We use an unordered map instead of the ordered map used in the univariate counterpart. The choice does make some sense, as deciding order between two monomials is subjective and does not make sense (for eg. which is larger <code class="highlighter-rouge">x**2*y</code> or <code class="highlighter-rouge">x*y**2</code>) Even if we define a custom ordering, there are no real benefits I could think of that it would provide.</p>
+
+<p>On a side note, it kind of makes me think why we have stuck to the ordered map implementation for our univariate polynomials. The places it offers benefits are <code class="highlighter-rouge">eval</code> and <code class="highlighter-rouge">mul</code> (in some ways) I worked with ordered maps, as that was the implementation the initial polynomial class was built on. I&#8217;m also wondering if it is healthy to use two different implementations for both the polynomial types, univariate and multivariate. This needs to be discussed.</p>
+
+<p>Right now, I&#8217;m basically refactoring most of the code written in the multivariate class, so that it matches the API more or less from the univariate case. Some functions have been re-written and some unnecessary storage within the polynomials have been removed. Initially, I thought I will stick with the same container based approach I used in the univariate case. This proves to be non trivial for the multivariate case. So, after some discussion with Isuru, we decided to stick with different implementations for SymEngine polynomials and Piranha polynomials, as combining code was not easy. The current work is in <a href="https://github.com/symengine/symengine/pull/1049">#1049</a></p>
+
+<h3 id="future-work">Future Work</h3>
+
+<p>A lot is on my plate right now. Some of the work I plan to finish by the end of the next two weeks are</p>
+
+<ul>
+  <li>
+    <p>Finish up the refactoring of multivariate polynomials, and make their interaction with univariate polynomials as seamless as possible</p>
+  </li>
+  <li>
+    <p>Introduce wrappers for piranha polynomials to be used as multivariate polynomials within SymEngine</p>
+  </li>
+  <li>
+    <p>Fix up the remainder of rational polynomials, and template code wherever possible to remove code duplicates</p>
+  </li>
+  <li>
+    <p>Write conversions from <code class="highlighter-rouge">Basic</code> to multivariate polynomials, which will finish up one part of the coercion framework as proposed by Isuru</p>
+  </li>
+</ul>
+
+<p>Off to work!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">July 30, 2016</h2>
@@ -3476,113 +3569,6 @@ Out[10]: Mod(2&#8901;&#8520;, 1 + 3&#8901;&#8520;)
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-6163205f feed-" id="item-87e249c1">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/jbm950.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">James Milam (jbm950) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://jbm950.github.io//2016/07/01/GSoC-week-6.html">00:00, Friday, 01 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/07/01/GSoC-week-6.html">GSoC Week 6</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/jbm950.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">James Milam (jbm950) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://jbm950.github.io//2016/07/01/GSoC-week-6.html">00:00, Friday, 01 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/07/01/GSoC-week-6.html">GSoC Week 6</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>The main theme of this week is Featherstone&#8217;s method. I have finished reading
-all of the text book that I feel I need to in order to finish my project. After
-reading I realize that I have been improper about addressing my project.
-Instead of saying I am introducing Featherstone&#8217;s method to SymPy, it would be
-more accurate to say that I am introducing one of Featherstone&#8217;s methods. The
-book introduced two equations of motion generation methods for open loop
-kinematic trees and one method for a closed loop kinematic tree (I stopped
-reading after chapter 8 and so there may have been even more methods). For my
-project I have decided to focus on the articulated body method of equation of
-motion generation for kinematic trees. This method is presented as being more
-efficient than the composite body method and the closed loop method seems
-rather complicated.</p>
-
-<p>With this in mind I began digging deeper into the articulated body method and
-better learning how it works. With this mindset I went over the three passes
-that the method uses and looked for places where code would be needed that
-isn&#8217;t specifically part of the method. I compiled a list of these functions and
-have written docstrings and presented them in <a href="https://github.com/sympy/sympy/pull/11331">PR
-#11331</a>. The support code for the
-method includes operations for spatial (6D) vectors and a function and library
-for extracing relevant joint information.</p>
-
-<p>This week I reviewed <a href="https://github.com/sympy/sympy/pull/11333">PR #11333</a>.
-The pull request adds docstrings to method that did not have them previously
-which is a big plus but the docstrings that were added were minimal and vague.
-I asked that the contributer add more information to the docstrings and he said
-he will get to it.</p>
-
-<h3 id="future-directions">Future Directions</h3>
-
-<p>Next week I plan on furthering my work on the articulated body method. I hope
-to have the support functions completely written up and to begin writing the
-equation of motion generator itself. These plans may be set aside, however, as
-my most active mentor will be coming back from traveling next week and so work
-may resume on the base class.</p>
-
-<h3 id="prs-and-issues">PR&#8217;s and Issues</h3>
-
-<blockquote>
-  <ul>
-    <li>(Open) Added docstrings to ast.py <a href="https://github.com/sympy/sympy/pull/11333">PR
-  #11333</a></li>
-    <li>(Open) [WIP] Featherstones EOM support <a href="https://github.com/sympy/sympy/pull/11331">PR
-  #11331</a></li>
-  </ul>
-</blockquote>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -3611,86 +3597,86 @@ may resume on the base class.</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>15:21, Monday, 01 August</td>
-<td>15:36, Monday, 01 August</td>
+<td>15:41, Monday, 01 August</td>
+<td>15:56, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>15:21, Monday, 01 August</td>
-<td>15:36, Monday, 01 August</td>
+<td>15:41, Monday, 01 August</td>
+<td>15:56, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>15:21, Monday, 01 August</td>
-<td>15:36, Monday, 01 August</td>
+<td>15:41, Monday, 01 August</td>
+<td>15:56, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>15:21, Monday, 01 August</td>
-<td>15:36, Monday, 01 August</td>
+<td>15:41, Monday, 01 August</td>
+<td>15:56, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>15:21, Monday, 01 August</td>
-<td>15:36, Monday, 01 August</td>
+<td>15:41, Monday, 01 August</td>
+<td>15:56, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>15:21, Monday, 01 August</td>
-<td>15:36, Monday, 01 August</td>
+<td>15:41, Monday, 01 August</td>
+<td>15:56, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://kshitij10496.github.io//">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>15:21, Monday, 01 August</td>
-<td>15:36, Monday, 01 August</td>
+<td>15:41, Monday, 01 August</td>
+<td>15:56, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>15:21, Monday, 01 August</td>
-<td>15:36, Monday, 01 August</td>
+<td>15:41, Monday, 01 August</td>
+<td>15:56, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>15:21, Monday, 01 August</td>
-<td>15:36, Monday, 01 August</td>
+<td>15:41, Monday, 01 August</td>
+<td>15:56, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>15:21, Monday, 01 August</td>
-<td>15:36, Monday, 01 August</td>
+<td>15:41, Monday, 01 August</td>
+<td>15:56, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>15:21, Monday, 01 August</td>
-<td>15:36, Monday, 01 August</td>
+<td>15:41, Monday, 01 August</td>
+<td>15:56, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>15:21, Monday, 01 August</td>
-<td>15:36, Monday, 01 August</td>
+<td>15:41, Monday, 01 August</td>
+<td>15:56, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>15:21, Monday, 01 August</td>
-<td>15:36, Monday, 01 August</td>
+<td>15:41, Monday, 01 August</td>
+<td>15:56, Monday, 01 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>15:21, Monday, 01 August</td>
-<td>15:36, Monday, 01 August</td>
+<td>15:41, Monday, 01 August</td>
+<td>15:56, Monday, 01 August</td>
 </tr>
 </table>
 
