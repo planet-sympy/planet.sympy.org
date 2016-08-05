@@ -7,6 +7,61 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Tenth-Week</guid>
+      <title>GSoC Tenth Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Fri, 05 Aug 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Tenth-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This week, I had been working on implementaion of &lt;code class="highlighter-rouge"&gt;Union&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Contains&lt;/code&gt; in &lt;a href="https://github.com/symengine/symengine/pull/1053"&gt;this&lt;/a&gt; PR. &lt;br /&gt;
+Our &lt;code class="highlighter-rouge"&gt;Set::contains&lt;/code&gt; function has been changed from :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;virtual bool contains(const RCP&amp;lt;const Basic&amp;gt; &amp;amp;a) const = 0;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;to&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;virtual RCP&amp;lt;const Boolean&amp;gt; contains(const RCP&amp;lt;const Basic&amp;gt; &amp;amp;a) const = 0;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And these functions:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;virtual bool is_subset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const = 0;
+virtual bool is_proper_subset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const = 0;
+virtual bool is_superset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const = 0;
+virtual bool is_proper_superset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const = 0;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;have been changed to:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;bool is_subset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const
+{
+    return eq(*this-&amp;gt;set_intersection(o), *this);
+}
+bool is_proper_subset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const
+{
+    return not eq(*this, *o) and this-&amp;gt;is_subset(o);
+}
+bool is_superset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const
+{
+    return o-&amp;gt;is_subset(rcp_from_this_cast&amp;lt;const Set&amp;gt;());
+}
+bool is_proper_superset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const
+{
+    return not eq(*this, *o) and this-&amp;gt;is_superset(o);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;depending solely on &lt;code class="highlighter-rouge"&gt;set_intersection&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Then the &lt;code class="highlighter-rouge"&gt;SymEngine::set_union(const set_set &amp;amp;in, bool solve = true)&lt;/code&gt; has been defined which will create a &lt;code class="highlighter-rouge"&gt;Union&lt;/code&gt; object with &lt;code class="highlighter-rouge"&gt;in&lt;/code&gt; if it is not solvable, or will do union operation on all of them.
+&lt;br /&gt;
+Our &lt;code class="highlighter-rouge"&gt;Union&lt;/code&gt; class has &lt;code class="highlighter-rouge"&gt;std::set&lt;/code&gt; of &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt; to store the different Set containers which can&amp;#8217;t be unified into one single container.
+&lt;br /&gt;
+Apart from it, the &lt;code class="highlighter-rouge"&gt;set_intersection&lt;/code&gt; ans &lt;code class="highlighter-rouge"&gt;set_union&lt;/code&gt; virtual functions have been restructured to handle other &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt; types case by case.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=780</guid>
       <title>GSoC Week 10</title>
       <author>Subham Tibra (shubhamtibra)</author>
@@ -1778,35 +1833,6 @@ Out[10]: Mod(2&amp;#8901;&amp;#8520;, 1 + 3&amp;#8901;&amp;#8520;)
 &lt;p&gt;Currently I am trying&amp;#160;to make &lt;code&gt;from_sympy()&lt;/code&gt;&amp;#160;work&amp;#160;if&amp;#160;additional &lt;code&gt;symbols&lt;/code&gt; are given in the expression and also support other types of fields (&lt;code&gt;floats&lt;/code&gt;, &lt;code&gt;rationals&lt;/code&gt; (default right now), &lt;code&gt;integers&lt;/code&gt;&amp;#160; ). This involves extending the ground domain of the Polynomials used internally. Hopefully this should&amp;#160;be done in the next couple of days.&lt;/p&gt;
 &lt;p&gt;The unmerged fixes are at&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11330"&gt;#11330&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/491/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/491/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=491&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=688</guid>
-      <title>GSoc Week 6</title>
-      <author>Sampad Saha (sampadsaha5)</author>
-      <pubDate>Fri, 01 Jul 2016 18:21:44 GMT</pubDate>
-      <link>https://sampadblog.wordpress.com/2016/07/01/gsoc-week-6/</link>
-      <description>&lt;p style="text-align: justify;"&gt;Hi there! It&amp;#8217;s been six weeks into the coding period, and it marks the half of GSoC.&amp;#160;The Midterm evaluations have been done now and I have passed the mid-term evaluations. I am very much thankful to my mentors. This week I was having some physical illness due to this reason I was not able to attend the meeting with my mentors. This affected my workflow too. I was not able to work for almost 3 days. I will try to compensate&amp;#160;the time lag by working some extra hours in the upcoming days.&lt;/p&gt;
-&lt;p style="text-align: justify;"&gt;&lt;em&gt;&lt;strong&gt;So Far&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li style="text-align: justify;"&gt;Until last week, I have completed the implementation of&amp;#160;&lt;em&gt;PointLoad&amp;#160;&lt;/em&gt;and &amp;#160;&lt;em&gt;DistributedLoad.&amp;#160;&lt;/em&gt;This week I started implementing the class for&amp;#160;the principle object of the Beam Bending problems. I have implemented the Beam class. The work is not completed yet. I have initiated the class with &lt;em&gt;length&lt;/em&gt;, &lt;em&gt;Young&amp;#8217;s Modulus&lt;/em&gt; and &lt;em&gt;Moment of Inertia.&amp;#160;&lt;/em&gt;I have to discuss with the mentor about the mutability of this class.&lt;/li&gt;
-&lt;li style="text-align: justify;"&gt;&lt;em&gt;&lt;strong&gt;BoundaryConditions&lt;/strong&gt; &lt;/em&gt;:- It is a public method of the beam class which takes the boundary conditions of the beam bending problem as input. I found out that there are only three types of boundary conditions : Deflection, Shear and Moment. So, I made them input in the form of keyword arguments and for each key, the value would be a list of tuples where each of the tuples would contain location and value in this format : (location, value). This method returns the boundary conditions in the form of a python dictionary. For example: &amp;#160;Let a problem have boundary conditions as: Moment(x = 0) = 1, Deflection(x = 0) = 0,&amp;#160;Deflection(x = 4) = 0. Then the API is:&lt;/li&gt;
-&lt;li style="text-align: justify;"&gt;
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.physics.mechanics.beam import Beam
-&amp;gt;&amp;gt;&amp;gt; from sympy import Symbol
-&amp;gt;&amp;gt;&amp;gt; E = Symbol('E')
-&amp;gt;&amp;gt;&amp;gt; I = Symbol('I')
-&amp;gt;&amp;gt;&amp;gt; b = Beam(4, E, I)
-&amp;gt;&amp;gt;&amp;gt; b.BoundaryConditions(moment = [(0, 1)], deflection = [(0, 0), (4, 0)])
-{'deflection': &lt;/code&gt;&lt;code&gt;[(0, 0), (4, 0)]&lt;/code&gt;&lt;code&gt;, 'moment': &lt;/code&gt;&lt;code&gt;[(0, 1)]}&lt;/code&gt;&lt;/pre&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;em&gt;&lt;strong&gt;Next Week&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;I will try to get&amp;#160;&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11178"&gt;PR 11178 &lt;/a&gt;&amp;#160;and&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11237"&gt;PR 11237&lt;/a&gt;&amp;#160;merged.&lt;/li&gt;
-&lt;li&gt;Modify the Beam class with new methods.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;That&amp;#8217;s all for this week. Cheers !!&lt;/p&gt;
-&lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/688/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/688/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=688&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>
