@@ -7,6 +7,75 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://jbm950.github.io//2016/08/05/GSoC-week-12.html</guid>
+      <title>GSoC Week 12</title>
+      <author>James Milam (jbm950)</author>
+      <pubDate>Fri, 05 Aug 2016 00:00:00 GMT</pubDate>
+      <link>http://jbm950.github.io//2016/08/05/GSoC-week-12.html</link>
+      <description>&lt;p&gt;This week my main work was on Featherstone&amp;#8217;s articulated body algorithm. I
+started by prototyping what I thought his algorith might look like in python
+code (the algorithm was pulled from chapter 7 of his book). With the passes
+prototyped it was apparent that I would need a full description of the
+kinematic tree and so I prototyped the building of the kinematic tree from a
+single &amp;#8220;base&amp;#8221; body. I then went on to see what it would look like if the
+kinematic tree was built during the first pass of his articulated body
+algorithm and decided that keeping the two separate would result in cleaner
+code.&lt;/p&gt;
+
+&lt;p&gt;With the three passes prototyped and the kinematic tree built I started digging
+into Featherstone&amp;#8217;s book to better determine the definition of each of the
+variables in the algorithm. While doing this I ended up reading a second source
+where Featherstone describes the articulated body algorithm and it was helpful
+in furthering my understanding of the algorithm as it was a condensed summary.
+I then compared the written version of the algorith in his book and this
+article with the two matlab versions he has posted online and the python
+version her provides a link for online. This helped me see where some terms he
+includes in his book he doesn&amp;#8217;t include in his code. It also helped me to see
+what code for the algorithm might look like.&lt;/p&gt;
+
+&lt;p&gt;After working on the mock up of the passes and trying to better understand
+them, I switched focus to the joint code that needs to be finished so that it
+can be used in my implementation of the articulated body algorithm. This has
+lead to some confusion about the design decisions that were made in the past
+when putting together the joint code and this is the current stage I am sitting
+at as I await feedback on some of my questions.&lt;/p&gt;
+
+&lt;p&gt;This week I also looked over a couple of documentation PR&amp;#8217;s. One was a simple
+matter of fixing some indentation and seems mostly ready to merge but the
+second turned some docstrings into raw strings so they could add latex math
+code. I don&amp;#8217;t know what the general stance is on the latter but I&amp;#8217;m of the
+opinion that the docstrings should be human readable since people may actually
+look through the code for them or hope that help(function) provides something
+useful. In this case the latex math code is cluttered and would be better off
+in .rst files where people are only going to be reading the rendered version.
+On that PR I am awaiting response from someone with sympy to see if this is
+indeed prefered.&lt;/p&gt;
+
+&lt;h3 id="future-directions"&gt;Future Directions&lt;/h3&gt;
+
+&lt;p&gt;Hopefully I&amp;#8217;ll recieve some feedback about the joints and Featherstone&amp;#8217;s method
+so I can keep moving forward with these. In the mean time there are a few other
+bits of code I will need to complete that the algorithm uses that is not
+directly related to my questions. If I finish these tasks before recieving
+feedback I will move forward with changing the joint code as I think would be
+best.&lt;/p&gt;
+
+&lt;h3 id="prs-and-issues"&gt;PR&amp;#8217;s and Issues&lt;/h3&gt;
+
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;(Open) [WIP] Added system.py to physics/mechanics &lt;a href="https://github.com/sympy/sympy/pull/11431"&gt;PR
+  #11431&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Open) Intendation fixes &amp;#8211; sympy/concrete/summations.py &lt;a href="https://github.com/sympy/sympy/pull/11473"&gt;PR
+  #11473&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Open) Adjustments to Legendre, Jacobi symbols docstrings &lt;a href="https://github.com/sympy/sympy/pull/11474"&gt;PR
+  #11474&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Open) [WIP] FeatherstonesMethod &lt;a href="https://github.com/sympy/sympy/pull/11415"&gt;PR
+  #11415&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://nishnik.github.io/GSoC-Tenth-Week</guid>
       <title>GSoC Tenth Week</title>
       <author>Nishant Nikhil (nishnik)</author>
@@ -1817,22 +1886,6 @@ Out[10]: Mod(2&amp;#8901;&amp;#8520;, 1 + 3&amp;#8901;&amp;#8520;)
 &lt;/div&gt;
 
 &lt;p&gt;Laters!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=491</guid>
-      <title>GSoC: Week 6</title>
-      <author>Subham Tibra (shubhamtibra)</author>
-      <pubDate>Sat, 02 Jul 2016 20:00:42 GMT</pubDate>
-      <link>https://shubhamtibra.wordpress.com/2016/07/02/gsoc-week-6/</link>
-      <description>&lt;p&gt;This week was majorly focused on fixing issues. Thanks to Ondrej, Aaron and Kalevi for testing the module and pointing them out. Some of the issues required a new functionality to be added and some were just plain technical bugs.&lt;/p&gt;
-&lt;p&gt;I started by writing a method which allows the user to change the point &lt;code&gt;x0&lt;/code&gt;&amp;#160;where the initial conditions are stored. Firstly it tries converting to SymPy and then convert back to holonomic i.e.&amp;#160;&lt;code&gt;from_sympy(self.to_sympy(), x0=b)&lt;/code&gt;. If the process fails somewhere then the method numerically integrates the differential equation to the point &lt;code&gt;b&lt;/code&gt;. This method was then used in&amp;#160;adding support for initial conditions at different points in addition and multiplication. Issues are &amp;#160;&lt;a href="https://github.com/sympy/sympy/issues/11292"&gt;#11292&lt;/a&gt;&amp;#160;and&amp;#160;&lt;a href="https://github.com/sympy/sympy/issues/11293"&gt;#11293&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;After that I implemented differentiation for a holonomic function. The algorithm is described &lt;a href="https://github.com/sympy/sympy/pull/11297#issuecomment-229461674"&gt;here&lt;/a&gt;. A limitation is that sometimes it&amp;#8217;s not able to compute sufficient initial conditions (mainly if the point &lt;code&gt;x0&lt;/code&gt;&amp;#160;is singular).&lt;/p&gt;
-&lt;p&gt;There was also a bug in&amp;#160;&lt;code&gt;to_sequence()&lt;/code&gt;&amp;#160;method. Apparently, whenever there weren&amp;#8217;t sufficient initial conditions for the recurrence relation, &amp;#160;&lt;code&gt;to_sympy()&lt;/code&gt;&amp;#160;would fail. So I changed it to make &lt;code&gt;to_recurrence()&lt;/code&gt;&amp;#160;return unknown symbols &lt;code&gt;C_j&lt;/code&gt;&amp;#160;, where &lt;code&gt;C_j&lt;/code&gt; representing the coefficient of &lt;code&gt;x^j&lt;/code&gt;&amp;#160;in the power series. So now even if we don&amp;#8217;t have enough initial conditions,&amp;#160;&lt;code&gt;to_sympy()&lt;/code&gt;&amp;#160;will return an answer with arbitrary symbols in it. This is also useful in power series expansion.&lt;/p&gt;
-&lt;p&gt;Earlier the method &lt;code&gt;to_sympy()&lt;/code&gt;&amp;#160;would only work if initial conditions are stored at &lt;code&gt;0&lt;/code&gt;&amp;#160;which is a big limitation. Thanks to Kalevi for the solution we now can find the &lt;code&gt;hyper()&lt;/code&gt;&amp;#160;representation of a holonomic function for&amp;#160;any point &lt;code&gt;x0&lt;/code&gt;&amp;#160;.(of course only if it exists.) This is further used by &lt;code&gt;to_sympy()&lt;/code&gt;&amp;#160;to convert to expressions. There is also something interesting Kalevi said &amp;#8220;The best points to search for a hypergeometric series are the regular singular points&amp;#8221;. I observed this turned out to be true a lot of times. We should keep this in mind when using &lt;code&gt;to_sympy()&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Later I added functionality to convert an algebraic function of the form &lt;code&gt;p^(m/n)&lt;/code&gt;&amp;#160;, for a polynomial&amp;#160;&lt;code&gt;p&lt;/code&gt;&amp;#160;. Thanks to Aaron and Ondrej for the solution. Also&amp;#160;added custom &lt;code&gt;Exception&lt;/code&gt;&amp;#160;to use in the holonomic module. Some small bugs&amp;#160;&lt;a href="https://github.com/sympy/sympy/issues/11319"&gt;#11319&lt;/a&gt;,&amp;#160;&lt;a href="https://github.com/sympy/sympy/issues/11316"&gt;#11316&lt;/a&gt;&amp;#160;and&amp;#160;&lt;a href="https://github.com/sympy/sympy/issues/11318"&gt;11318&lt;/a&gt;&amp;#160;were also fixed.&lt;/p&gt;
-&lt;p&gt;Currently I am trying&amp;#160;to make &lt;code&gt;from_sympy()&lt;/code&gt;&amp;#160;work&amp;#160;if&amp;#160;additional &lt;code&gt;symbols&lt;/code&gt; are given in the expression and also support other types of fields (&lt;code&gt;floats&lt;/code&gt;, &lt;code&gt;rationals&lt;/code&gt; (default right now), &lt;code&gt;integers&lt;/code&gt;&amp;#160; ). This involves extending the ground domain of the Polynomials used internally. Hopefully this should&amp;#160;be done in the next couple of days.&lt;/p&gt;
-&lt;p&gt;The unmerged fixes are at&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11330"&gt;#11330&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/491/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/491/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=491&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>
