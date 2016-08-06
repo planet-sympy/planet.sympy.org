@@ -7,6 +7,36 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=1005</guid>
+      <title>GSoC Week 11</title>
+      <author>Sampad Saha (sampadsaha5)</author>
+      <pubDate>Sat, 06 Aug 2016 12:59:00 GMT</pubDate>
+      <link>https://sampadblog.wordpress.com/2016/08/06/gsoc-week-11/</link>
+      <description>&lt;p&gt;Hi there! It&amp;#8217;s been eleven weeks into GSoC . The module for solving beam bending problems is almost ready. Now, I am focusing fully on example documentation part because it&amp;#8217;s very important to let others know what&amp;#160;can be done.&lt;/p&gt;
+&lt;h4&gt;&lt;em&gt;&lt;strong&gt;So Far&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
+&lt;p&gt;Let us see the capabilities:-&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Can create a beam object of certain length, second moment of area and modulus of elasticity. A symbol can also be passed for further uses.&lt;/li&gt;
+&lt;li&gt;Can apply loads using its value, start, end and order.&lt;/li&gt;
+&lt;li&gt;Can set boundary conditions for the beam.&lt;/li&gt;
+&lt;li&gt;Can find the load distribution function.&lt;/li&gt;
+&lt;li&gt;Can find the shear force function.&lt;/li&gt;
+&lt;li&gt;Can find the bending moment function.&lt;/li&gt;
+&lt;li&gt;Can find the slope function.&lt;/li&gt;
+&lt;li&gt;Can find the deflection function.&lt;/li&gt;
+&lt;li&gt;Can represent each of those function in the Piecewise form.&lt;/li&gt;
+&lt;li&gt;Can perform all sorts of mathematical operations on these functions.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A full fledged documentation of tutorial and example for this module is on its way.&lt;/p&gt;
+&lt;h4&gt;&lt;em&gt;&lt;strong&gt;Next Week&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;To complete documenting examples and tutorials.&lt;/li&gt;
+&lt;li&gt;Get&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11374"&gt;PR 11374&lt;/a&gt;&amp;#160;merged.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;That&amp;#8217;s all for now, looking forward for week 12.&lt;/p&gt;
+&lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/1005/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/1005/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=1005&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://jbm950.github.io//2016/08/05/GSoC-week-12.html</guid>
       <title>GSoC Week 12</title>
       <author>James Milam (jbm950)</author>
@@ -1736,156 +1766,6 @@ Out[10]: Mod(2&amp;#8901;&amp;#8520;, 1 + 3&amp;#8901;&amp;#8520;)
 
 &lt;hr /&gt;
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;continue..&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://srajangarg.github.io//2016/07/03/Generators-Poly-Conversions</guid>
-      <title>Finding Generators &amp; Polynomial Conversions</title>
-      <author>Srajan Garg (srajangarg)</author>
-      <pubDate>Sun, 03 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://srajangarg.github.io//2016/07/03/Generators-Poly-Conversions/</link>
-      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
-
-&lt;p&gt;This week I continued my work from last week, but in a cleaner and structured fashion. The PR with last week&amp;#8217;s work was closed in favour of a new PR, with better and scalable code. I&amp;#8217;ll briefly explain how the functionality is implemented and the main ideas behind it. All the work is in &lt;a href="https://github.com/symengine/symengine/pull/1003"&gt;#1003&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3 id="finding-generators"&gt;Finding Generators&lt;/h3&gt;
-
-&lt;p&gt;You can refer to last week&amp;#8217;s post to know what a generator for a polynomial is at a preliminary level. An expression may have any number of generators, but our job is to get the least number of generators which will be able to construct the given expression. The only rule is that a generator cannot be a &lt;code class="highlighter-rouge"&gt;Number&lt;/code&gt; (ie &lt;code class="highlighter-rouge"&gt;Rational&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;Integer&lt;/code&gt;). So &lt;code class="highlighter-rouge"&gt;sqrt(3)&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;pi&lt;/code&gt; can be generators but &lt;code class="highlighter-rouge"&gt;2&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;1/2&lt;/code&gt; can&amp;#8217;t.&lt;/p&gt;
-
-&lt;p&gt;Initially, the approach I was trying out was not general (as I catered to only the Univariate Int case), and expanding it to other polynomials would prove to be immensely difficult. Isuru suggested that the function should return all the possible generators. This will be the most general case for this function, and we can adapt to specific cases based on how many / which generators the function returns. I will try and summarize how the function works at a high level.&lt;/p&gt;
-
-&lt;p&gt;If the expression passed to &lt;code class="highlighter-rouge"&gt;find_gen&lt;/code&gt; is a&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;Add&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Mul&lt;/code&gt; : We can just call &lt;code class="highlighter-rouge"&gt;find_gen&lt;/code&gt; recursively on each of the expressions being added/multiplied. &lt;code class="highlighter-rouge"&gt;x + y&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;x*y&lt;/code&gt; will return both &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;y&lt;/code&gt; as the generators. This follows from the fact that polynomials can be multiplied or added up to give the resultant polynomial.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;Number&lt;/code&gt; : Do nothing, as numbers can never act as generators of polynomials.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;Pow&lt;/code&gt; : Few cases arise in if the expression is a &lt;code class="highlighter-rouge"&gt;Pow&lt;/code&gt;. If the exponent is a positive integer, it suffices to find the generators of only the base of the expression. If it is a negative integer, we update the current generator set with &lt;code class="highlighter-rouge"&gt;base**(-1)&lt;/code&gt;. For eg.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;find_gen&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;find_gen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;find_gen&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**-&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;If the exponent is not an integer, the situation becomes a little complicated. It would seem intuitive that the generators in this case would be the base powered to the generators of the exponent. Like so,&lt;/p&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;find_gen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;base&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;exp&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;base&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;find_gen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;exp&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;eg&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt; 
-&lt;span class="n"&gt;find_gen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;find_gen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;This would seem to be working, but actually the same &lt;code class="highlighter-rouge"&gt;find_gen&lt;/code&gt; function cannot be used to get the generators of the exponent expression. The &lt;code class="highlighter-rouge"&gt;find_gen&lt;/code&gt; works in a different way once we are &amp;#8220;inside&amp;#8221; an exponent. Take for example :&lt;/p&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="c1"&gt;// Incorrect
-&lt;/span&gt;&lt;span class="n"&gt;find_gen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
-&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;find_gen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;
-
-&lt;span class="c1"&gt;// Correct
-&lt;/span&gt;&lt;span class="n"&gt;find_gen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
-&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;find_gen_pow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;&lt;code class="highlighter-rouge"&gt;find_gen_pow&lt;/code&gt; is another function which returns generators keeping in mind that the current expression it is dealing with is actually the exponent of another expression. So, it&amp;#8217;s behaviour varies from the simple &lt;code class="highlighter-rouge"&gt;find_gen&lt;/code&gt;. Here is another example :&lt;/p&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="c1"&gt;// Incorrect
-&lt;/span&gt;&lt;span class="n"&gt;find_gen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;find_gen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;
-
-&lt;span class="c1"&gt;// Correct
-&lt;/span&gt;&lt;span class="n"&gt;find_gen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;find_gen_pow&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt; : For all other structures like &lt;code class="highlighter-rouge"&gt;Symbol&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Function&lt;/code&gt;, they themselves act as generators of the polynomial. We just need to update the generator set.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;It is to be kept in mind that whenever we obtain a new potential generator, we update the current generator set. This may lead to modification of an already existing generator or add in a new one. This method thus takes care of some cases, not done by SymPy. A similar updation rule is followed for &lt;code class="highlighter-rouge"&gt;find_gen_pow&lt;/code&gt; where this is done on the coefficients of each expression instead of their powers.&lt;/p&gt;
-
-&lt;p&gt;&lt;code class="highlighter-rouge"&gt;find_gen&lt;/code&gt; :&lt;/p&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;gen_set&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-
-&lt;span class="c1"&gt;// addition
-&lt;/span&gt;&lt;span class="n"&gt;update_gen_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;gen_set&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-&lt;span class="c1"&gt;// modification
-&lt;/span&gt;&lt;span class="n"&gt;update_gen_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;span class="n"&gt;gen_set&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-
-&lt;span class="c1"&gt;// no change
-&lt;/span&gt;&lt;span class="n"&gt;update_gen_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;gen_set&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;&lt;code class="highlighter-rouge"&gt;find_gen_pow&lt;/code&gt; :&lt;/p&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="c1"&gt;// "find_gen_pow"
-&lt;/span&gt;&lt;span class="n"&gt;gen_set&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-&lt;span class="c1"&gt;// addition
-&lt;/span&gt;&lt;span class="n"&gt;update_gen_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;span class="n"&gt;gen_set&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-
-&lt;span class="c1"&gt;// modification
-&lt;/span&gt;&lt;span class="n"&gt;update_gen_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;gen_set&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-&lt;span class="c1"&gt;// no change
-&lt;/span&gt;&lt;span class="n"&gt;update_gen_set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;gen_set&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;I have a short description on the storage of these generators in the PR description and subsequent comments. Please do have a look!&lt;/p&gt;
-
-&lt;h3 id="polynomial-conversions"&gt;Polynomial Conversions&lt;/h3&gt;
-
-&lt;p&gt;The next half of the week&amp;#8217;s work involved actually converting a &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt; into a polynomial. The API is too look as follows&lt;/p&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;RCP&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Basic&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;UIntPoly&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;from_basic&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Basic&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;span class="n"&gt;RCP&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Basic&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;UIntPoly&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;from_basic&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Basic&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Basic&lt;/span&gt; &lt;span class="n"&gt;gen&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;The user can either supply a generator or one will automatically be deduced and used. The functions will throw of exactly one generator is not found, as we are dealing with univariate polynomials. Initially, I planned to write two different functions for &lt;code class="highlighter-rouge"&gt;UIntPoly&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;UExprPoly&lt;/code&gt; conversions, but soon I realized that most of the code was going to be identical. So, I formed a template function base with most of the common code, while the specific visitors inherit from this template base class with special methods.&lt;/p&gt;
-
-&lt;p&gt;The actual conversion was not too difficult, it just had to be broken down into cases like the &lt;code class="highlighter-rouge"&gt;find_gen&lt;/code&gt; problem. I leave it to the reader to try and theorize how this can be done. For eg. Imagine an &lt;code class="highlighter-rouge"&gt;Add&lt;/code&gt;, you can call &lt;code class="highlighter-rouge"&gt;b2poly&lt;/code&gt; on each expression added and add up the resulting polynomials. The code right now is scalable, and if we add in more polynomial classes like &lt;code class="highlighter-rouge"&gt;URatPoly&lt;/code&gt; there will be no issues in adding them in.&lt;/p&gt;
-
-&lt;h3 id="miscellaneous-work"&gt;Miscellaneous Work&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Templatized &lt;code class="highlighter-rouge"&gt;pow_upoly&lt;/code&gt; so that it can be used by any general polynomial class. Also removed some redundant code in the &lt;code class="highlighter-rouge"&gt;ExpandVisitor&lt;/code&gt; related to said function. Can be seen in &lt;a href="https://github.com/symengine/symengine/pull/1010"&gt;#1010&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;I was just testing out how the parser is working out with the basic to polynomial conversions. It is working very seamlessly, constructing polynomials has never been easier! It&amp;#8217;s as simple as&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;"2*(x+1)**10 + 3*(x+2)**5"&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="n"&gt;poly&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;UIntPoly&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;from_basic&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;parse&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
-
-&lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;"((x+1)**5)*(x+2)*(2*x + 1)**3"&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="n"&gt;poly&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;UIntPoly&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;from_basic&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;parse&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Laters!&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
