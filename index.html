@@ -287,6 +287,174 @@ I try to make up for the lost time during the weekend and meet the 40 hour weekl
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-18ee937b">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shekharrajak.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://shekharrajak.github.io/Coding-Period-week-11/">00:00, Sunday, 07 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-11/">Coding Period Week 11</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shekharrajak.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://shekharrajak.github.io/Coding-Period-week-11/">00:00, Sunday, 07 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-11/">Coding Period Week 11</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<hr />
+
+<p><strong>eliminate() continue:</strong></p>
+
+<ul>
+  <li>
+    <p>PR : <a href="https://github.com/sympy/sympy/pull/11485">#11485</a></p>
+  </li>
+  <li>
+    <p>Regarding issue <a href="https://github.com/sympy/sympy/issues/2720">#2720</a>, It is something similar to <code class="highlighter-rouge">eliminate</code> present in
+<a href="http://reference.wolfram.com/mathematica/ref/Eliminate.html">wolfram</a>.</p>
+  </li>
+  <li>
+    <p>Right now it is working for real domain and not considering ImageSet, Intersection. Complement. If it find ImageSet, Intersection. Complement
+for the symbol to be eliminated, then just raises <code class="highlighter-rouge">NotImaplementedError</code>(in near future it can be implemented).</p>
+  </li>
+  <li>
+    <p>It can take <code class="highlighter-rouge">N</code> nummber of equations and <code class="highlighter-rouge">M</code> number of <code class="highlighter-rouge">symbols</code> to be eliminated. It returns <code class="highlighter-rouge">FiniteSet</code> of equations which doesn&#8217;t contains
+these <code class="highlighter-rouge">symbols</code>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong>Continue - Diophantine in Solveset :</strong></p>
+
+<p>PR <a href="https://github.com/sympy/sympy/pull/11234">11234</a></p>
+
+<ul>
+  <li>In <a href="https://github.com/sympy/sympy/pull/11234/commits/6bd9689d37647d6c28111097c433accc2127262e">commit</a> : returning
+<code class="highlighter-rouge">ConditionSet</code> when it <code class="highlighter-rouge">diophantine</code> doesn&#8217;t the diophantine equation type and not able to solve.</li>
+</ul>
+
+<hr />
+
+<p><strong>Idea about improved _solve_trig in Solveset :</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+In [1]: solveset(sin(x) + cos(y), x, S.Reals)
+Out[1]: {x | x &#8714; &#8477; &#8743; sin(x) + cos(y) = 0}
+
+In [2]: solve(sin(x) + cos(y), x)
+Out[2]: [asin(cos(y)) + &#960;, -asin(cos(y))]
+
+</code></pre>
+</div>
+
+<ul>
+  <li>
+    <p>This above examples is enough to tell that <code class="highlighter-rouge">_solve_trig</code> is not using inverse trigonometric function. We can have something, which can solve trig equations by making free the symbol in lhs and in rhs inverse trig function.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">solveset(sin(2*x) - sqrt(3)*cos(2*x), x, S.Reals)</code> for this right now <code class="highlighter-rouge">_solve_trig</code> is converting it into <code class="highlighter-rouge">exp</code> form and solving it.
+But it is can be simply solved using <code class="highlighter-rouge">sin(x + y) == sin(x)*cos(y) + cos(x)*sin(y)</code> formula.</p>
+  </li>
+  <li>
+    <p>First divide both side with <code class="highlighter-rouge">sqrt(a**2 + b**2)</code> where <code class="highlighter-rouge">a, b</code> is coeff of <code class="highlighter-rouge">sin(2*x)</code> , <code class="highlighter-rouge">cos(2*x)</code>.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">sin(2*x)/2 - (sqrt(3)/2)*cos(2*x)</code> ==&gt; <code class="highlighter-rouge">sin(2*x)*cos(pi/3) - sin(pi/3)*cos(2*x)</code> ==&gt; <code class="highlighter-rouge">sin(2*x - pi/3)</code>.</p>
+  </li>
+  <li>
+    <p>Now <code class="highlighter-rouge">sin(2*x - pi/3)</code> is solvable using <code class="highlighter-rouge">solve_decomposition</code>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong>Meanwhile :</strong></p>
+
+<ul>
+  <li>Some analysis about <code class="highlighter-rouge">Abs</code> solver :</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+In [1]: solveset(Abs(x) - 1,  x)
+ValueError:
+Absolute values cannot be inverted in the complex domain.
+
+In [2]: solveset(Abs(x) - (1 + I), x)
+ValueError:
+Absolute values cannot be inverted in the complex domain.
+
+In [3]: solveset(Abs(x) - y , x)
+ValueError:
+
+</code></pre>
+</div>
+<p>Absolute values cannot be inverted in the complex domain.
+- In 1st case (for complex domain) ans should be <a href="http://www.wolframalpha.com/input/?i=Abs(x)+-+(1+)+%3D0+for+x">http://www.wolframalpha.com/input/?i=Abs(x)+-+(1+)+%3D0+for+x</a></p>
+
+<ul>
+  <li>
+    <p>In 2nd case EmptySet.
+and in 3rd case (general solution when domain=S.Complexes) soln should be <a href="http://www.wolframalpha.com/input/?i=Abs(x)+-+y+%3D0+for+x">http://www.wolframalpha.com/input/?i=Abs(x)+-+y+%3D0+for+x</a></p>
+  </li>
+  <li>
+    <p>In general( 3rd case) it should print
+ConditionSet(x, -Abs(re(y)) &lt;= re(x) and re(x) &lt;= Abs(re(y)) and re(y)&gt;0, Eq(im(y), 0) , S.Complexes).</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong><em>continue..</em></strong></p>
+
+<hr />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">August 06, 2016</h2>
@@ -3415,125 +3583,6 @@ I got to learn about inheritance and abstraction while implementing instance met
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-89ae9fcb feed-" id="item-839fe43d">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/nishnik.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Nishant Nikhil (nishnik) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://nishnik.github.io/GSoC-Sixth-Week/">00:00, Thursday, 07 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Sixth-Week/">GSoC Sixth Week</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/nishnik.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Nishant Nikhil (nishnik) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://nishnik.github.io/GSoC-Sixth-Week/">00:00, Thursday, 07 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Sixth-Week/">GSoC Sixth Week</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p><img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /></p>
-
-<p>After Distinct degree factorization being merged in this <a href="https://github.com/symengine/symengine/pull/995">PR</a>, I started working on Equal degree factorization.
-<br />
-Following up from previous example, we had:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>x**5 + 10
-</code></pre>
-</div>
-
-<p>and</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>x**10 + x**5 + 1
-</code></pre>
-</div>
-
-<p>as distinct degree factors.
-<br /></p>
-
-<p>Now we run Equal degree factorization on both of the above given polynomial, from
-<code class="highlighter-rouge">
-x**10 + x**5 + 1
-</code></p>
-
-<p>We get:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>x**2 + x + 1
-x**2 + 3x + 9
-x**2 + 4x + 5
-x**2 + 5x + 3
-x**2 + 9x + 4
-</code></pre>
-</div>
-
-<p>And for:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>x**5 + 10
-</code></pre>
-</div>
-
-<p>We get:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>x + 2
-x + 6
-x + 7
-x + 8
-x + 10
-</code></pre>
-</div>
-
-<p>See that the first one gave degree two factors and the second one gave degree one factors.</p>
-
-<p>I have implemented the algorithm in <a href="https://github.com/symengine/symengine/pull/1026">this</a> PR.
-<br />
-Combining the distinct degree and equal degree factorization, we get the factors of a polynomial in finite field.
-For factorizing a polynomial in integral fielf we need to convert it to some finite field polynomial, factor it and then lift it back to integral field. This is <a href="https://en.wikipedia.org/wiki/Hensel%27s_lemma">Hensel&#8217;s Lifting</a>, I will write about it in the coming blog posts.
-<br /><br />
-I am sorry that I couldn&#8217;t work this week as I was at <em><a href="http://www.robocup2016.org/en/">Robo Cup</a></em>. Looking forward to a good week ahead.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -3562,86 +3611,86 @@ I am sorry that I couldn&#8217;t work this week as I was at <em><a href="http://
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>16:59, Sunday, 07 August</td>
-<td>17:14, Sunday, 07 August</td>
+<td>17:19, Sunday, 07 August</td>
+<td>17:34, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>16:59, Sunday, 07 August</td>
-<td>17:14, Sunday, 07 August</td>
+<td>17:19, Sunday, 07 August</td>
+<td>17:34, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>16:59, Sunday, 07 August</td>
-<td>17:14, Sunday, 07 August</td>
+<td>17:19, Sunday, 07 August</td>
+<td>17:34, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>16:59, Sunday, 07 August</td>
-<td>17:14, Sunday, 07 August</td>
+<td>17:19, Sunday, 07 August</td>
+<td>17:34, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>16:59, Sunday, 07 August</td>
-<td>17:14, Sunday, 07 August</td>
+<td>17:19, Sunday, 07 August</td>
+<td>17:34, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>16:59, Sunday, 07 August</td>
-<td>17:14, Sunday, 07 August</td>
+<td>17:19, Sunday, 07 August</td>
+<td>17:34, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://kshitij10496.github.io//">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>16:59, Sunday, 07 August</td>
-<td>17:14, Sunday, 07 August</td>
+<td>17:19, Sunday, 07 August</td>
+<td>17:34, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>16:59, Sunday, 07 August</td>
-<td>17:14, Sunday, 07 August</td>
+<td>17:19, Sunday, 07 August</td>
+<td>17:34, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>16:59, Sunday, 07 August</td>
-<td>17:14, Sunday, 07 August</td>
+<td>17:19, Sunday, 07 August</td>
+<td>17:34, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>16:59, Sunday, 07 August</td>
-<td>17:14, Sunday, 07 August</td>
+<td>17:19, Sunday, 07 August</td>
+<td>17:34, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>16:59, Sunday, 07 August</td>
-<td>17:14, Sunday, 07 August</td>
+<td>17:19, Sunday, 07 August</td>
+<td>17:34, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>16:59, Sunday, 07 August</td>
-<td>17:14, Sunday, 07 August</td>
+<td>17:19, Sunday, 07 August</td>
+<td>17:34, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>16:59, Sunday, 07 August</td>
-<td>17:14, Sunday, 07 August</td>
+<td>17:19, Sunday, 07 August</td>
+<td>17:34, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>16:59, Sunday, 07 August</td>
-<td>17:14, Sunday, 07 August</td>
+<td>17:19, Sunday, 07 August</td>
+<td>17:34, Sunday, 07 August</td>
 </tr>
 </table>
 

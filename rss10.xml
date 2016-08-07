@@ -150,6 +150,120 @@ I try to make up for the lost time during the weekend and meet the 40 hour weekl
 &lt;p&gt;With the endsem evaluation soon approaching, I expect this PR to get merged and count as a part of my project.&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-11</guid>
+      <title>Coding Period Week 11</title>
+      <author>Shekhar Prasad Rajak (shekharrajak)</author>
+      <pubDate>Sun, 07 Aug 2016 00:00:00 GMT</pubDate>
+      <link>http://shekharrajak.github.io/Coding-Period-week-11/</link>
+      <description>&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;eliminate() continue:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;PR : &lt;a href="https://github.com/sympy/sympy/pull/11485"&gt;#11485&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Regarding issue &lt;a href="https://github.com/sympy/sympy/issues/2720"&gt;#2720&lt;/a&gt;, It is something similar to &lt;code class="highlighter-rouge"&gt;eliminate&lt;/code&gt; present in
+&lt;a href="http://reference.wolfram.com/mathematica/ref/Eliminate.html"&gt;wolfram&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Right now it is working for real domain and not considering ImageSet, Intersection. Complement. If it find ImageSet, Intersection. Complement
+for the symbol to be eliminated, then just raises &lt;code class="highlighter-rouge"&gt;NotImaplementedError&lt;/code&gt;(in near future it can be implemented).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;It can take &lt;code class="highlighter-rouge"&gt;N&lt;/code&gt; nummber of equations and &lt;code class="highlighter-rouge"&gt;M&lt;/code&gt; number of &lt;code class="highlighter-rouge"&gt;symbols&lt;/code&gt; to be eliminated. It returns &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; of equations which doesn&amp;#8217;t contains
+these &lt;code class="highlighter-rouge"&gt;symbols&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;Continue - Diophantine in Solveset :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11234"&gt;11234&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;In &lt;a href="https://github.com/sympy/sympy/pull/11234/commits/6bd9689d37647d6c28111097c433accc2127262e"&gt;commit&lt;/a&gt; : returning
+&lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; when it &lt;code class="highlighter-rouge"&gt;diophantine&lt;/code&gt; doesn&amp;#8217;t the diophantine equation type and not able to solve.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;Idea about improved _solve_trig in Solveset :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;
+In [1]: solveset(sin(x) + cos(y), x, S.Reals)
+Out[1]: {x | x &amp;#8714; &amp;#8477; &amp;#8743; sin(x) + cos(y) = 0}
+
+In [2]: solve(sin(x) + cos(y), x)
+Out[2]: [asin(cos(y)) + &amp;#960;, -asin(cos(y))]
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;This above examples is enough to tell that &lt;code class="highlighter-rouge"&gt;_solve_trig&lt;/code&gt; is not using inverse trigonometric function. We can have something, which can solve trig equations by making free the symbol in lhs and in rhs inverse trig function.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;solveset(sin(2*x) - sqrt(3)*cos(2*x), x, S.Reals)&lt;/code&gt; for this right now &lt;code class="highlighter-rouge"&gt;_solve_trig&lt;/code&gt; is converting it into &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; form and solving it.
+But it is can be simply solved using &lt;code class="highlighter-rouge"&gt;sin(x + y) == sin(x)*cos(y) + cos(x)*sin(y)&lt;/code&gt; formula.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;First divide both side with &lt;code class="highlighter-rouge"&gt;sqrt(a**2 + b**2)&lt;/code&gt; where &lt;code class="highlighter-rouge"&gt;a, b&lt;/code&gt; is coeff of &lt;code class="highlighter-rouge"&gt;sin(2*x)&lt;/code&gt; , &lt;code class="highlighter-rouge"&gt;cos(2*x)&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;sin(2*x)/2 - (sqrt(3)/2)*cos(2*x)&lt;/code&gt; ==&amp;gt; &lt;code class="highlighter-rouge"&gt;sin(2*x)*cos(pi/3) - sin(pi/3)*cos(2*x)&lt;/code&gt; ==&amp;gt; &lt;code class="highlighter-rouge"&gt;sin(2*x - pi/3)&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Now &lt;code class="highlighter-rouge"&gt;sin(2*x - pi/3)&lt;/code&gt; is solvable using &lt;code class="highlighter-rouge"&gt;solve_decomposition&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;Meanwhile :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Some analysis about &lt;code class="highlighter-rouge"&gt;Abs&lt;/code&gt; solver :&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;
+In [1]: solveset(Abs(x) - 1,  x)
+ValueError:
+Absolute values cannot be inverted in the complex domain.
+
+In [2]: solveset(Abs(x) - (1 + I), x)
+ValueError:
+Absolute values cannot be inverted in the complex domain.
+
+In [3]: solveset(Abs(x) - y , x)
+ValueError:
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;Absolute values cannot be inverted in the complex domain.
+- In 1st case (for complex domain) ans should be &lt;a href="http://www.wolframalpha.com/input/?i=Abs(x)+-+(1+)+%3D0+for+x"&gt;http://www.wolframalpha.com/input/?i=Abs(x)+-+(1+)+%3D0+for+x&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;In 2nd case EmptySet.
+and in 3rd case (general solution when domain=S.Complexes) soln should be &lt;a href="http://www.wolframalpha.com/input/?i=Abs(x)+-+y+%3D0+for+x"&gt;http://www.wolframalpha.com/input/?i=Abs(x)+-+y+%3D0+for+x&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;In general( 3rd case) it should print
+ConditionSet(x, -Abs(re(y)) &amp;lt;= re(x) and re(x) &amp;lt;= Abs(re(y)) and re(y)&amp;gt;0, Eq(im(y), 0) , S.Complexes).&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;continue..&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=1005</guid>
       <title>GSoC Week 11</title>
       <author>Sampad Saha (sampadsaha5)</author>
@@ -1710,71 +1824,6 @@ I got to learn about inheritance and abstraction while implementing instance met
 &lt;p&gt;Hopefully, all my effort doesn&amp;#8217;t go in vain.&lt;/p&gt;
 
 &lt;p&gt;Till next time !&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Sixth-Week</guid>
-      <title>GSoC Sixth Week</title>
-      <author>Nishant Nikhil (nishnik)</author>
-      <pubDate>Thu, 07 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://nishnik.github.io/GSoC-Sixth-Week/</link>
-      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
-
-&lt;p&gt;After Distinct degree factorization being merged in this &lt;a href="https://github.com/symengine/symengine/pull/995"&gt;PR&lt;/a&gt;, I started working on Equal degree factorization.
-&lt;br /&gt;
-Following up from previous example, we had:&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x**5 + 10
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;and&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x**10 + x**5 + 1
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;as distinct degree factors.
-&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;Now we run Equal degree factorization on both of the above given polynomial, from
-&lt;code class="highlighter-rouge"&gt;
-x**10 + x**5 + 1
-&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;We get:&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x**2 + x + 1
-x**2 + 3x + 9
-x**2 + 4x + 5
-x**2 + 5x + 3
-x**2 + 9x + 4
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;And for:&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x**5 + 10
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;We get:&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x + 2
-x + 6
-x + 7
-x + 8
-x + 10
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;See that the first one gave degree two factors and the second one gave degree one factors.&lt;/p&gt;
-
-&lt;p&gt;I have implemented the algorithm in &lt;a href="https://github.com/symengine/symengine/pull/1026"&gt;this&lt;/a&gt; PR.
-&lt;br /&gt;
-Combining the distinct degree and equal degree factorization, we get the factors of a polynomial in finite field.
-For factorizing a polynomial in integral fielf we need to convert it to some finite field polynomial, factor it and then lift it back to integral field. This is &lt;a href="https://en.wikipedia.org/wiki/Hensel%27s_lemma"&gt;Hensel&amp;#8217;s Lifting&lt;/a&gt;, I will write about it in the coming blog posts.
-&lt;br /&gt;&lt;br /&gt;
-I am sorry that I couldn&amp;#8217;t work this week as I was at &lt;em&gt;&lt;a href="http://www.robocup2016.org/en/"&gt;Robo Cup&lt;/a&gt;&lt;/em&gt;. Looking forward to a good week ahead.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
