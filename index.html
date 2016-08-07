@@ -89,6 +89,206 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">August 07, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-7730e356 feed-" id="item-b7819b39">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/kshitij10496.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Kshitij Saraogi(kshitij10496) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://kshitij10496.github.io//2016/08/07/GSoC-Week-10-11/">00:00, Sunday, 07 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://kshitij10496.github.io//2016/08/07/GSoC-Week-10-11/">GSoC Week 10 &amp; 11 - The One with `solvify`</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/kshitij10496.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Kshitij Saraogi(kshitij10496) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://kshitij10496.github.io//2016/08/07/GSoC-Week-10-11/">00:00, Sunday, 07 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://kshitij10496.github.io//2016/08/07/GSoC-Week-10-11/">GSoC Week 10 &amp; 11 - The One with `solvify`</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>During the past couple of weeks, I worked on replacing <code class="highlighter-rouge">solve</code> with <code class="highlighter-rouge">solveset</code> in solving inequalities.</p>
+
+<h3 id="issue"><strong>Issue</strong></h3>
+
+<p>SymPy&#8217;s univariate inequality solver, <code class="highlighter-rouge">solve_univariate_inequality</code> relies on <code class="highlighter-rouge">solve</code> for reducing inequalities.</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">In</span><span class="p">[]</span> <span class="p">:</span> <span class="n">isolve</span> <span class="o">=</span> <span class="n">solve_univariate_inequality</span> <span class="c"># for simplicity</span>
+</code></pre>
+</div>
+
+<p>As we would prefer using <code class="highlighter-rouge">solveset</code> internally, it is important to remove the dependency on <code class="highlighter-rouge">solve</code> here.
+However, there are a lot of issues which need to be handled carefully. Here are a few of them:</p>
+
+<ol>
+  <li>
+    <p>The major issue with using <code class="highlighter-rouge">solveset</code> is the <code class="highlighter-rouge">Set</code> output API.
+ As <code class="highlighter-rouge">isolve</code> is designed to work according to <code class="highlighter-rouge">solve</code>&#8217;s results, this seems to be <em>the</em> roadblock.</p>
+  </li>
+  <li>
+    <p>No support for restricted domain.</p>
+
+    <p>Generally, the inequalties are solved in the entire real domain. However, this might not be what the user want 
+ (especially while dealing with trigonometric inequalties). Also, to maintain uniformity across all our solvers,
+ support for user-speicifed <code class="highlighter-rouge">domain</code> is a must.</p>
+  </li>
+  <li>
+    <p>Incorrect results for trigonometric inequalties</p>
+
+    <p>As Issue <a href="https://github.com/sympy/sympy/issues/9721">#9721</a>, <code class="highlighter-rouge">isolve</code> returns incorrect results for certain trigonometric inequalities.</p>
+  </li>
+</ol>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code>  <span class="n">In</span> <span class="p">[]:</span> <span class="n">isolve</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">relational</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+  <span class="n">Out</span><span class="p">[]:</span> <span class="p">(</span><span class="o">-</span><span class="n">oo</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+
+  <span class="n">In</span> <span class="p">[]:</span> <span class="n">isolve</span><span class="p">(</span><span class="n">tan</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">relational</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+  <span class="n">Out</span><span class="p">[]:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">oo</span><span class="p">)</span>
+
+</code></pre>
+</div>
+
+<h3 id="solutions"><strong>Solutions</strong></h3>
+
+<ol>
+  <li>
+    <p>Implementing <code class="highlighter-rouge">solvify</code> : &#8220;solve&#8221;-fy <code class="highlighter-rouge">solveset</code>&#8217;s solutions.<br />
+  There were two possible ways to tackle the issue of APIs:</p>
+
+    <p>a. Refactoring <code class="highlighter-rouge">isolve</code> in according with <code class="highlighter-rouge">Set</code> API.</p>
+
+    <p>b. Somehow returning <code class="highlighter-rouge">solve</code> results from <code class="highlighter-rouge">solveset</code>.</p>
+
+    <p><em>Solution</em> : <strong>b</strong></p>
+
+    <p>In order to resolve the issue of portability from <code class="highlighter-rouge">solve</code> to <code class="highlighter-rouge">solveset</code>, I implemented <code class="highlighter-rouge">solvify</code> which returns solve-like results.
+ We classify the return value based on the type of solution returned by <code class="highlighter-rouge">solveset</code>.</p>
+
+    <p>Solution    |    Output
+   &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-
+   FiniteSet   | list</p>
+
+    <table>
+      <tbody>
+        <tr>
+          <td>ImageSet,</td>
+          <td>list (if <code class="highlighter-rouge">f</code> is periodic)</td>
+        </tr>
+        <tr>
+          <td>Union</td>
+          <td>&#160;</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table>
+      <tbody>
+        <tr>
+          <td>EmptySet</td>
+          <td>empty list</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table>
+      <tbody>
+        <tr>
+          <td>Others</td>
+          <td>None</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>Adding <code class="highlighter-rouge">domain</code> support.</p>
+
+    <p>I added a <code class="highlighter-rouge">domain</code> argument to <code class="highlighter-rouge">isolve</code> whose default value is the real domain (<code class="highlighter-rouge">domain=S.Reals</code>).
+ A few limitation to the conditions of <code class="highlighter-rouge">S.Infinity</code> and <code class="highlighter-rouge">S.NegativeInfinity</code> followed.</p>
+
+    <p>Another noticable point, from the point of implementation, was to deal with singularities and discontinuities of the given inequality.
+ For this, I used the <code class="highlighter-rouge">continuous_domain</code> method to find the continuous domains of the expression within the specified domain.</p>
+
+    <p>This was a minimalistic addition with considerable returns (especially for solving periodic inequalties).</p>
+  </li>
+  <li>
+    <p>Solving trigonometric inequalities.</p>
+
+    <p>Since most of the trigonometric inequalities are periodic in nature and have infinite solutions, 
+ solving the expression in the entire real domain is a repetitive task and computationally expensive.</p>
+
+    <p>In order to simplify the problem, I intend to solve all the inequalities in a positive periodic interval (say <code class="highlighter-rouge">[0, 2*pi)</code> for <code class="highlighter-rouge">sin(x)</code>).
+ We already have a function to compute the real period of a function : <code class="highlighter-rouge">periodicity</code>.<br />
+ In case of a non-finite <code class="highlighter-rouge">domain</code> argument, I intend to use this to restrict the solutions of the problem to a periodic interval.</p>
+
+    <p>This might not seem the perfect approach but it seems reasonable to handle infinite interval sets for now.
+ We need a new <code class="highlighter-rouge">Set</code> object : <code class="highlighter-rouge">BigUnion</code> to represent infinite number of interval objects.</p>
+  </li>
+</ol>
+
+<h3 id="new-implementation"><em>New Implementation</em></h3>
+
+<p>I have opened <a href="https://github.com/sympy/sympy/pull/11458">PR#11458</a> for the same with all the implementation details.</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">In</span> <span class="p">[]:</span> <span class="n">isolve</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">S</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">relational</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[]:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="n">U</span> <span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[]:</span> <span class="n">isolve</span><span class="p">(</span><span class="n">tan</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">S</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">relational</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="n">Out</span><span class="p">[]:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h3 id="after-thoughts"><em>After thoughts</em></h3>
+
+<p>For the past couple of weeks, I haven&#8217;t been able to give much time to the project due to my college schedule.
+I try to make up for the lost time during the weekend and meet the 40 hour weekly deadline.</p>
+
+<p>With the endsem evaluation soon approaching, I expect this PR to get merged and count as a part of my project.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">August 06, 2016</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -3335,197 +3535,6 @@ I am sorry that I couldn&#8217;t work this week as I was at <em><a href="http://
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">July 04, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-f77ee2cc">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/shekharrajak.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://shekharrajak.github.io/Coding-Period-week-7/">00:00, Monday, 04 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-7/">Coding Period Week 7</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/shekharrajak.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://shekharrajak.github.io/Coding-Period-week-7/">00:00, Monday, 04 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-7/">Coding Period Week 7</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p><strong>ImageSet.put_values() :</strong></p>
-
-<p>PR <a href="https://github.com/sympy/sympy/pull/11343">#11343</a></p>
-
-<ul>
-  <li>
-    <p>After the discussion Harsh told that it is better to use like <code class="highlighter-rouge">imageset.lamda(values_for_lambda_var)</code> directly, also don&#8217;t make lambda variables public , it should be local and before doing <code class="highlighter-rouge">imageset.lamda(values_for_lambda_var)</code> this one need to check whether values are in ` base_set` or not.</p>
-  </li>
-  <li>
-    <p>You can see the previous code here : <a href="https://gist.github.com/Shekharrajak/d70a36c95eefaca5c684497e039c5632">gist</a></p>
-  </li>
-  <li>
-    <p>I updated the docs stating how to put certain values in ImageSet lambda variables.(reverted my changes and edited the ImageSet docs in the PR.)</p>
-  </li>
-</ul>
-
-<p><strong>Continue nonlinsolve :</strong></p>
-
-<p>PR <a href="https://github.com/sympy/sympy/pull/11111">#11111</a></p>
-
-<ul>
-  <li>How Intersections and Complements are handled :</li>
-</ul>
-
-<p>see these examples:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>In [ ]: intr = Intersection(FiniteSet(x), Interval(1,10))
-
-In [ ]: comp = Complement(FiniteSet(x), Interval(1,10))
-
-In [ ]: intr
-Out[ ]: [1, 10] &#8745; {x}
-
-In [ ]: comp
-Out[ ]: {x} \ [1, 10]
-
-In [ ]: type( Intersection(comp, Interval(1,11)))
-Out[ ]: sympy.sets.sets.Complement
-
-In [ ]: type(Complement(intr, Interval(1,2)))
-Out[ ]: sympy.sets.sets.Complement
-
-
-</code></pre>
-</div>
-
-<p>So first handling the Complements and then intersection will be checked in solveset soln.</p>
-
-<ul>
-  <li>
-    <p><code class="highlighter-rouge">nonlinsolve</code> can handle simple trigonometric system of equations but when complex equations
-is used then it will return <code class="highlighter-rouge">ConditionSet</code> since <code class="highlighter-rouge">solveset</code> trig solver is not smart enough right now.</p>
-  </li>
-  <li>
-    <p>Trying to break the code into the functions to make the code better.</p>
-  </li>
-</ul>
-
-<hr />
-
-<p><strong>Continue Simplified Trig soln</strong></p>
-
-<p>PR <a href="https://github.com/sympy/sympy/pull/11188">#11188</a></p>
-
-<ul>
-  <li>I was getting problem in ImageSet union when you run test. Sometimes it pass all the cases but not always.
-I found the problem (most probably because order of args in union.reduce is not always same for all the python version
-I am using FiniteSet so I hope it is good way to handle this.) Now it passes all the checks all time.</li>
-</ul>
-
-<hr />
-
-<p><strong>Meanwhile :</strong></p>
-
-<ul>
-  <li>I found that <code class="highlighter-rouge">Mod</code> is not defined for complex numbers. e.g.</li>
-</ul>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>In [1]: g = Mod(-log(3), 2*I*pi)
-
-In [2]: g
-Out[2]: Mod(-log(3), 2&#8901;&#8520;&#8901;&#960;)
-
-In [3]: simplify(g)
-Out[3]: Mod(-log(3), 2&#8901;&#8520;&#8901;&#960;)
-
-In [4]: simplify(g)
-Out[4]: Mod(-log(3), 2&#8901;&#8520;&#8901;&#960;)
-
-In [5]: g2 = Mod(-log(3), 2*pi)
-
-In [6]: simplify(g2)
-Out[6]: -log(3) + 2&#8901;&#960;
-
-In [7]: simplify(Mod(I,I))
-Out[7]: 0
-
-In [8]: simplify(Mod(2*I,I))
-Out[8]: 0
-
-In [9]: simplify(Mod(2*I,3*I))
-Out[9]: 5&#8901;&#8520;
-
-In [10]: simplify(Mod(2*I,1+3*I))
-Out[10]: Mod(2&#8901;&#8520;, 1 + 3&#8901;&#8520;)
-
-</code></pre>
-</div>
-<p>Need to implement <code class="highlighter-rouge">Mod</code> for complex number as well. There is concept og Gaussian Integers</p>
-
-<p>Some resources I found is this :
-<a href="http://math.stackexchange.com/questions/274694/modulo-complex-number">link1</a>,
-<a href="http://www.freemathhelp.com/forum/threads/76383-Modulo-of-complex-numbers">link2</a>,
-<a href="https://en.wikipedia.org/wiki/Gaussian_integer">link3</a>
-<a href="http://fermatslasttheorem.blogspot.in/2005/06/division-algorithm-for-gaussian.html">link4</a></p>
-
-<ul>
-  <li>
-    <p>One can see the issue <a href="https://github.com/sympy/sympy/issues/11391">11391</a> for detail discussion.</p>
-  </li>
-  <li>
-    <p>Tried to fix the bug of <code class="highlighter-rouge">is_zero_dimensional</code> in this PR <a href="https://github.com/sympy/sympy/pull/11371">#11371</a>.</p>
-  </li>
-</ul>
-
-<hr />
-<p><strong><em>continue..</em></strong></p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3553,86 +3562,86 @@ Out[10]: Mod(2&#8901;&#8520;, 1 + 3&#8901;&#8520;)
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>16:19, Sunday, 07 August</td>
-<td>16:34, Sunday, 07 August</td>
+<td>16:39, Sunday, 07 August</td>
+<td>16:54, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>16:19, Sunday, 07 August</td>
-<td>16:34, Sunday, 07 August</td>
+<td>16:39, Sunday, 07 August</td>
+<td>16:54, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>16:19, Sunday, 07 August</td>
-<td>16:34, Sunday, 07 August</td>
+<td>16:39, Sunday, 07 August</td>
+<td>16:54, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>16:19, Sunday, 07 August</td>
-<td>16:34, Sunday, 07 August</td>
+<td>16:39, Sunday, 07 August</td>
+<td>16:54, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>16:19, Sunday, 07 August</td>
-<td>16:34, Sunday, 07 August</td>
+<td>16:39, Sunday, 07 August</td>
+<td>16:54, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>16:19, Sunday, 07 August</td>
-<td>16:34, Sunday, 07 August</td>
+<td>16:39, Sunday, 07 August</td>
+<td>16:54, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://kshitij10496.github.io//">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>16:19, Sunday, 07 August</td>
-<td>16:34, Sunday, 07 August</td>
+<td>16:39, Sunday, 07 August</td>
+<td>16:54, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>16:19, Sunday, 07 August</td>
-<td>16:34, Sunday, 07 August</td>
+<td>16:39, Sunday, 07 August</td>
+<td>16:54, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>16:19, Sunday, 07 August</td>
-<td>16:34, Sunday, 07 August</td>
+<td>16:39, Sunday, 07 August</td>
+<td>16:54, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>16:19, Sunday, 07 August</td>
-<td>16:34, Sunday, 07 August</td>
+<td>16:39, Sunday, 07 August</td>
+<td>16:54, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>16:19, Sunday, 07 August</td>
-<td>16:34, Sunday, 07 August</td>
+<td>16:39, Sunday, 07 August</td>
+<td>16:54, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>16:19, Sunday, 07 August</td>
-<td>16:34, Sunday, 07 August</td>
+<td>16:39, Sunday, 07 August</td>
+<td>16:54, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>16:19, Sunday, 07 August</td>
-<td>16:34, Sunday, 07 August</td>
+<td>16:39, Sunday, 07 August</td>
+<td>16:54, Sunday, 07 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>16:19, Sunday, 07 August</td>
-<td>16:34, Sunday, 07 August</td>
+<td>16:39, Sunday, 07 August</td>
+<td>16:54, Sunday, 07 August</td>
 </tr>
 </table>
 
