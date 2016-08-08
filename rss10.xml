@@ -7,6 +7,37 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=854</guid>
+      <title>GSoC Week 11</title>
+      <author>Subham Tibra (shubhamtibra)</author>
+      <pubDate>Mon, 08 Aug 2016 10:55:52 GMT</pubDate>
+      <link>https://shubhamtibra.wordpress.com/2016/08/08/gsoc-week-11/</link>
+      <description>&lt;p&gt;This week I primarily worked on some bugs and added singular initial conditions to the result of &lt;code&gt;expr_to_holonomic()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Firstly I fixed a bug in &lt;code&gt;.unify()&lt;/code&gt;. There were some errors being raised in it&amp;#160;when one of the Holonomic Function had ground domain&amp;#160;&lt;code&gt;RR&lt;/code&gt;&amp;#160;or an extension of it. This now works fine.&lt;/p&gt;
+&lt;pre class="brush: python; title: ; notranslate"&gt;
+In [9]: expr_to_holonomic(1.4*x)*expr_to_holonomic(a*x, x)
+Out[9]: HolonomicFunction((-2.0) + (1.0*x)*Dx, x, 0, {2: [1.4*a]})
+
+In [10]: _9.to_expr()
+Out[10]:
+       2
+1.4&amp;#8901;a&amp;#8901;x
+&lt;/pre&gt;
+&lt;p&gt;Later I fixed a bug in converting the two types of initial condition into one another. Apparently I forgot to add the &lt;code&gt;factorial&lt;/code&gt;&amp;#160;term while converting.&lt;/p&gt;
+&lt;p&gt;After that I added singular initial conditions to the result of &lt;code&gt;expr_to_holonomic()&lt;/code&gt;&amp;#160; whenever the Indicial equation have one root. For example:&lt;/p&gt;
+&lt;pre class="brush: python; title: ; notranslate"&gt;
+In [14]: expr_to_holonomic(x*exp(x))
+Out[14]: HolonomicFunction((-x - 1) + (x)*Dx, x, 0, {1: [1]})
+
+In [15]: _.to_expr()
+Out[15]:
+   x
+x&amp;#8901;&amp;#8495;
+&lt;/pre&gt;
+&lt;p&gt;I also changed printing of the class &lt;code&gt;HolonomicFunction&lt;/code&gt; to include the initial conditions inside the call, so as to make it proper python.&lt;/p&gt;
+&lt;p&gt;Right now we are trying to find a way to include convergence conditions in the result while converting Holonomic Functions to expressions.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/854/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/854/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=854&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://kshitij10496.github.io//2016/08/07/GSoC-Week-10-11/</guid>
       <title>GSoC Week 10 &amp; 11 - The One with `solvify`</title>
       <author>Kshitij Saraogi(kshitij10496)</author>
@@ -1731,99 +1762,6 @@ Featherstone&amp;#8217;s articulated body method to the base class.&lt;/p&gt;
   #11331&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/blockquote&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://kshitij10496.github.io//2016/07/07/GSoC-Week-07/</guid>
-      <title>GSoC Week 07 - The One With Generalised Periodicity</title>
-      <author>Kshitij Saraogi(kshitij10496)</author>
-      <pubDate>Thu, 07 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://kshitij10496.github.io//2016/07/07/GSoC-Week-07/</link>
-      <description>&lt;p&gt;This week I updated my &lt;a href="https://github.com/sympy/sympy/pull/11277"&gt;PR#11277&lt;/a&gt; to find the period of a &lt;strong&gt;general function&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;h3 id="periodicity"&gt;&lt;strong&gt;&lt;em&gt;Periodicity&lt;/em&gt;&lt;/strong&gt;&lt;/h3&gt;
-
-&lt;p&gt;In the past few weeks, I dedicated a lot of my time reading about the property of periodicity of a function.
-Earlier, I had implemented a trivial(and restricted) functionality for this task.
-This motivated me to study this topic as I planned to generalise the function.&lt;/p&gt;
-
-&lt;p&gt;Here are my notes on periodicity which were the literature reference for the development of the method:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Note that &lt;code class="highlighter-rouge"&gt;2&amp;#960;&lt;/code&gt; is a period of &lt;code class="highlighter-rouge"&gt;sin(x)&lt;/code&gt;.
-But &lt;code class="highlighter-rouge"&gt;sin(x)&lt;/code&gt; has many other periods, such as &lt;code class="highlighter-rouge"&gt;4&amp;#960;&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;6&amp;#960;&lt;/code&gt;, and so on. 
-However, &lt;code class="highlighter-rouge"&gt;sin(x)&lt;/code&gt; has no (positive) period shorter than &lt;code class="highlighter-rouge"&gt;2&amp;#960;&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;blockquote&gt;
-      &lt;p&gt;If &lt;code class="highlighter-rouge"&gt;p&lt;/code&gt; is a period of &lt;code class="highlighter-rouge"&gt;f(x)&lt;/code&gt;, and &lt;code class="highlighter-rouge"&gt;H&lt;/code&gt; is any function, then &lt;code class="highlighter-rouge"&gt;p&lt;/code&gt; is a period of &lt;code class="highlighter-rouge"&gt;H(f(x))&lt;/code&gt;.&lt;/p&gt;
-    &lt;/blockquote&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;blockquote&gt;
-      &lt;p&gt;For sums and products, the general situation is complicated.&lt;/p&gt;
-    &lt;/blockquote&gt;
-
-    &lt;p&gt;Let &lt;code class="highlighter-rouge"&gt;p&lt;/code&gt; be a period of &lt;code class="highlighter-rouge"&gt;f(x)&lt;/code&gt; and let &lt;code class="highlighter-rouge"&gt;q&lt;/code&gt; be a period of &lt;code class="highlighter-rouge"&gt;g(x)&lt;/code&gt;. 
-Suppose that there are positive integers &lt;code class="highlighter-rouge"&gt;a&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;b&lt;/code&gt; such that &lt;code class="highlighter-rouge"&gt;ap=bq=r&lt;/code&gt;.&lt;br /&gt;
-Then &lt;code class="highlighter-rouge"&gt;r&lt;/code&gt; is a period of &lt;code class="highlighter-rouge"&gt;f(x)+g(x)&lt;/code&gt;, and also of &lt;code class="highlighter-rouge"&gt;f(x)g(x)&lt;/code&gt;.&lt;br /&gt;
-However, the point to note here is that &lt;code class="highlighter-rouge"&gt;r&lt;/code&gt; need not be the shortest period of &lt;code class="highlighter-rouge"&gt;f(x)+g(x)&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;f(x)g(x)&lt;/code&gt;.&lt;/p&gt;
-
-    &lt;p&gt;For example: 
-The shortest period of &lt;code class="highlighter-rouge"&gt;sin(x)&lt;/code&gt; is &lt;code class="highlighter-rouge"&gt;2&amp;#960;&lt;/code&gt;, while the shortest period of &lt;code class="highlighter-rouge"&gt;(sinx)**2&lt;/code&gt; is &lt;code class="highlighter-rouge"&gt;&amp;#960;&lt;/code&gt;.&lt;/p&gt;
-
-    &lt;p&gt;Another example: Let &lt;code class="highlighter-rouge"&gt;f(x)=sin(x)&lt;/code&gt;, and &lt;code class="highlighter-rouge"&gt;g(x)=&amp;#8722;sin(x)&lt;/code&gt;.
-Each function has smallest period &lt;code class="highlighter-rouge"&gt;2&amp;#960;&lt;/code&gt;. But their sum is the &lt;code class="highlighter-rouge"&gt;0&lt;/code&gt;-function, which has every positive number &lt;code class="highlighter-rouge"&gt;p&lt;/code&gt; as a period!&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;blockquote&gt;
-      &lt;p&gt;If &lt;code class="highlighter-rouge"&gt;p&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;q&lt;/code&gt; are periods of &lt;code class="highlighter-rouge"&gt;f(x)&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;g(x)&lt;/code&gt; respectively, then any common multiple of &lt;code class="highlighter-rouge"&gt;p&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;q&lt;/code&gt; is a period of &lt;code class="highlighter-rouge"&gt;H(f(x),g(x))&lt;/code&gt; 
-for any function &lt;code class="highlighter-rouge"&gt;H(u,v)&lt;/code&gt;, in particular when &lt;code class="highlighter-rouge"&gt;H&lt;/code&gt; is addition, multiplication or division. However, it need not be the smallest period.&lt;/p&gt;
-    &lt;/blockquote&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;blockquote&gt;
-      &lt;p&gt;The sum of two periodic functions need not be periodic.&lt;/p&gt;
-    &lt;/blockquote&gt;
-
-    &lt;p&gt;For example: Let &lt;code class="highlighter-rouge"&gt;f(x)=sin(x)+cos(2&amp;#960;x)&lt;/code&gt;. 
-The function is not periodic. &lt;br /&gt;
-The problem is that &lt;code class="highlighter-rouge"&gt;1&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;2&amp;#960;&lt;/code&gt; are incommensurable. There do not exist positive integers &lt;code class="highlighter-rouge"&gt;a&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;b&lt;/code&gt; 
-such that &lt;code class="highlighter-rouge"&gt;(a)(1)=(b)(2&amp;#960;)&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id="issues"&gt;&lt;strong&gt;&lt;em&gt;Issues&lt;/em&gt;&lt;/strong&gt;&lt;/h3&gt;
-
-&lt;p&gt;I am abstracting the details of implementation so as not to make the post even further boring.&lt;/p&gt;
-
-&lt;p&gt;During the period of development, I faced few issues and had a lot of queries to make.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;The new implementation returns a value which might not be the &lt;strong&gt;fundamental period&lt;/strong&gt; of the given function.
-The previous implementation, though limited, returned the fundamental period of the given function.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;The ability to find the LCM of irrationals.
-We will be dealing with the iconic &lt;code class="highlighter-rouge"&gt;&amp;#960;&lt;/code&gt;(and its multiples) in many of our cases(as is evident from the example above).
-Currently, we donot have the functionality to find the LCM of
-irrational numbers. A method needs to be developed to handle this issue.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Issue with automatic simplification while verifying the result.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;strong&gt;After Thoughts&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;I am looking forward to addressing all these issues in tonight&amp;#8217;s meeting.
-Apart from that, implementing this was a lot of fun.
-I got to learn about inheritance and abstraction while implementing instance methods for periodic functions.&lt;/p&gt;
-
-&lt;p&gt;Hopefully, all my effort doesn&amp;#8217;t go in vain.&lt;/p&gt;
-
-&lt;p&gt;Till next time !&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
