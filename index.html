@@ -225,6 +225,149 @@
 	</div>
 </div></div>
 <div class="day">
+<h2 class="dayform">August 15, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-f2eb3dd2">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shekharrajak.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://shekharrajak.github.io/Coding-Period-week-12/">00:00, Monday, 15 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-12/">Coding Period Week 12</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shekharrajak.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://shekharrajak.github.io/Coding-Period-week-12/">00:00, Monday, 15 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-12/">Coding Period Week 12</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<hr />
+
+<p><strong>nonlinsolve continue:</strong></p>
+
+<ul>
+  <li>
+    <p>PR : <a href="https://github.com/sympy/sympy/pull/11111">#11111</a></p>
+  </li>
+  <li>
+    <p>few things that should be improved in <code class="highlighter-rouge">nonlinsolve</code> :</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>- If system of equation contains trigonometric functions, `nonlinsolve`
+sometime fails because `solve_trig` of `solveset` is not much better and
+`nonlinsolve` have to identify what is the Intersection soln when we have
+`2*n*pi + pi/2` and `n*pi + pi/2`(means something similar cases).Right now it is returning
+one of them.
+
+- `substitution` function which solves the system of equation using substitution method.
+There should be better method to handle `imageset` (Complex solution).
+
+- Code quality of `substitution` should be improved.
+</code></pre>
+    </div>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong>Continue Simplified Trig soln</strong></p>
+
+<ul>
+  <li>
+    <p>PR <a href="https://github.com/sympy/sympy/pull/11188">#11188</a></p>
+  </li>
+  <li>
+    <p>Imageset/union is generalized and now it handle basically these three cases:</p>
+  </li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># img1 = ImageSet(Lambda(n, a*n + b), S.Integers)
+# img2 = ImageSet(Lambda(n, c*n + d), S.Integers)
+In [1]: img1 = ImageSet(Lambda(n, 4*n + 4), S.Integers)
+
+In [2]: img2 = ImageSet(Lambda(n, 4*n), S.Integers)
+# when a == c and (b - d == a) then ans is img2.
+In [3]: Union(img1, img2)
+Out[3]: {4&#8901;n | n &#8714; &#8484;}
+
+# -------------------------------------------------------------
+
+In [4]: img1 = ImageSet(Lambda(n, 4*n + 2), S.Integers)
+# when a == c and (b - d) == a/2, means value is  a/2 * n
+In [5]: Union(img1, img2)
+Out[5]: {2&#8901;n | n &#8714; &#8484;}
+
+# -------------------------------------------------------------
+
+# 5*n + 5/4 ==&gt; 5*n + 1 + 1/4
+# 5*n + 1 + 1/4 is in n + 1/4
+# check using img1.superset(img2) == true so img1 in ans
+img1 = ImageSet(Lambda(n, n + S(1)/4 ), S.Integers)
+img2 = ImageSet(Lambda(n, 5*n + S(5)/4 ), S.Integers)
+
+In [4]: Union(img1, img2)
+Out[4]: {n + 1/4 | n &#8714; &#8484;}
+
+# -------------------------------------------------------------
+
+# img1.issuperset(img2) is false so no change
+img1 = ImageSet(Lambda(n, 2*n + S(1)/4 ), S.Integers)
+img2 = ImageSet(Lambda(n, 5*n +S(5)/4), S.Integers)
+In [5]: Union(img1, img2)
+Out[5]: {2&#8901;n + 1/4 | n &#8714; &#8484;} &#8746; {5&#8901;n + 5/4 | n &#8714; &#8484;}
+
+</code></pre>
+</div>
+
+<hr />
+<p><strong><em>continue..</em></strong></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">August 12, 2016</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -873,6 +1016,174 @@ I try to make up for the lost time during the weekend and meet the 40 hour weekl
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-f42f3dd4">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shekharrajak.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://shekharrajak.github.io/Coding-Period-week-11/">00:00, Sunday, 07 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-11/">Coding Period Week 11</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shekharrajak.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://shekharrajak.github.io/Coding-Period-week-11/">00:00, Sunday, 07 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-11/">Coding Period Week 11</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<hr />
+
+<p><strong>eliminate() continue:</strong></p>
+
+<ul>
+  <li>
+    <p>PR : <a href="https://github.com/sympy/sympy/pull/11485">#11485</a></p>
+  </li>
+  <li>
+    <p>Regarding issue <a href="https://github.com/sympy/sympy/issues/2720">#2720</a>, It is something similar to <code class="highlighter-rouge">eliminate</code> present in
+<a href="http://reference.wolfram.com/mathematica/ref/Eliminate.html">wolfram</a>.</p>
+  </li>
+  <li>
+    <p>Right now it is working for real domain and not considering ImageSet, Intersection. Complement. If it find ImageSet, Intersection. Complement
+for the symbol to be eliminated, then just raises <code class="highlighter-rouge">NotImaplementedError</code>(in near future it can be implemented).</p>
+  </li>
+  <li>
+    <p>It can take <code class="highlighter-rouge">N</code> nummber of equations and <code class="highlighter-rouge">M</code> number of <code class="highlighter-rouge">symbols</code> to be eliminated. It returns <code class="highlighter-rouge">FiniteSet</code> of equations which doesn&#8217;t contains
+these <code class="highlighter-rouge">symbols</code>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong>Continue - Diophantine in Solveset :</strong></p>
+
+<p>PR <a href="https://github.com/sympy/sympy/pull/11234">11234</a></p>
+
+<ul>
+  <li>In <a href="https://github.com/sympy/sympy/pull/11234/commits/6bd9689d37647d6c28111097c433accc2127262e">commit</a> : returning
+<code class="highlighter-rouge">ConditionSet</code> when it <code class="highlighter-rouge">diophantine</code> doesn&#8217;t the diophantine equation type and not able to solve.</li>
+</ul>
+
+<hr />
+
+<p><strong>Idea for improved _solve_trig in Solveset :</strong></p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+In [1]: solveset(sin(x) + cos(y), x, S.Reals)
+Out[1]: {x | x &#8714; &#8477; &#8743; sin(x) + cos(y) = 0}
+
+In [2]: solve(sin(x) + cos(y), x)
+Out[2]: [asin(cos(y)) + &#960;, -asin(cos(y))]
+
+</code></pre>
+</div>
+
+<ul>
+  <li>
+    <p>This above examples is enough to tell that <code class="highlighter-rouge">_solve_trig</code> is not using inverse trigonometric function. We can have something, which can solve trig equations by making free the symbol in lhs and in rhs inverse trig function.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">solveset(sin(2*x) - sqrt(3)*cos(2*x), x, S.Reals)</code> for this right now <code class="highlighter-rouge">_solve_trig</code> is converting it into <code class="highlighter-rouge">exp</code> form and solving it.
+But it is can be simply solved using <code class="highlighter-rouge">sin(x + y) == sin(x)*cos(y) + cos(x)*sin(y)</code> formula.</p>
+  </li>
+  <li>
+    <p>First divide both side with <code class="highlighter-rouge">sqrt(a**2 + b**2)</code> where <code class="highlighter-rouge">a, b</code> is coeff of <code class="highlighter-rouge">sin(2*x)</code> , <code class="highlighter-rouge">cos(2*x)</code>.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">sin(2*x)/2 - (sqrt(3)/2)*cos(2*x)</code> ==&gt; <code class="highlighter-rouge">sin(2*x)*cos(pi/3) - sin(pi/3)*cos(2*x)</code> ==&gt; <code class="highlighter-rouge">sin(2*x - pi/3)</code>.</p>
+  </li>
+  <li>
+    <p>Now <code class="highlighter-rouge">sin(2*x - pi/3)</code> is solvable using <code class="highlighter-rouge">solve_decomposition</code>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong>Meanwhile :</strong></p>
+
+<ul>
+  <li>Some analysis about <code class="highlighter-rouge">Abs</code> solver :</li>
+</ul>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>
+In [1]: solveset(Abs(x) - 1,  x)
+ValueError:
+Absolute values cannot be inverted in the complex domain.
+
+In [2]: solveset(Abs(x) - (1 + I), x)
+ValueError:
+Absolute values cannot be inverted in the complex domain.
+
+In [3]: solveset(Abs(x) - y , x)
+ValueError:
+
+</code></pre>
+</div>
+<p>Absolute values cannot be inverted in the complex domain.
+- In 1st case (for complex domain) ans should be <a href="http://www.wolframalpha.com/input/?i=Abs(x)+-+(1+)+%3D0+for+x">http://www.wolframalpha.com/input/?i=Abs(x)+-+(1+)+%3D0+for+x</a></p>
+
+<ul>
+  <li>
+    <p>In 2nd case EmptySet.
+and in 3rd case (general solution when domain=S.Complexes) soln should be <a href="http://www.wolframalpha.com/input/?i=Abs(x)+-+y+%3D0+for+x">http://www.wolframalpha.com/input/?i=Abs(x)+-+y+%3D0+for+x</a></p>
+  </li>
+  <li>
+    <p>In general( 3rd case) it should print
+ConditionSet(x, -Abs(re(y)) &lt;= re(x) and re(x) &lt;= Abs(re(y)) and re(y)&gt;0, Eq(im(y), 0) , S.Complexes).</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong><em>continue..</em></strong></p>
+
+<hr />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">August 06, 2016</h2>
@@ -1418,6 +1729,128 @@ x &#8901;y
 </ul>
 
 <p>Off to work!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">July 30, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-128f66c6">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shekharrajak.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://shekharrajak.github.io/Coding-Period-week-10/">00:00, Saturday, 30 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-10/">Coding Period Week 10</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shekharrajak.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://shekharrajak.github.io/Coding-Period-week-10/">00:00, Saturday, 30 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-10/">Coding Period Week 10</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<hr />
+
+<p><strong>eliminate() continue:</strong></p>
+
+<ul>
+  <li>
+    <p>issue <a href="https://github.com/sympy/sympy/issues/2720">#2720</a> : We need some kind of eliminate function, like <a href="http://reference.wolfram.com/mathematica/ref/Eliminate.html">http://reference.wolfram.com/mathematica/ref/Eliminate.html</a>. See also <a href="http://stackoverflow.com/q/20826969/161801">http://stackoverflow.com/q/20826969/161801 </a></p>
+  </li>
+  <li>
+    <p>I am trying to use <code class="highlighter-rouge">subs</code> and <code class="highlighter-rouge">_invert</code> to get answer. May be one can use <code class="highlighter-rouge">replace</code>, <code class="highlighter-rouge">xreplace</code>, <code class="highlighter-rouge">match</code> to eliminate some kind of same sub expression.</p>
+  </li>
+  <li>
+    <p>There can be ans in <code class="highlighter-rouge">Imageset</code>, <code class="highlighter-rouge">Finiteset</code>, <code class="highlighter-rouge">Complement</code>, <code class="highlighter-rouge">Intersection</code> when we use <code class="highlighter-rouge">_invert</code>. So there should be a technique to handle it.</p>
+  </li>
+  <li>
+    <p>Still need some good idea and technique. WIP.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong>Output of solveset should be of one type:</strong></p>
+
+<ul>
+  <li>
+    <p>Amit discussed about it. Solution we see in <code class="highlighter-rouge">solveset</code> should be in one type of set. Right now we may have solution in <code class="highlighter-rouge">Imageset</code>, <code class="highlighter-rouge">Finiteset</code>, <code class="highlighter-rouge">Complement</code>, <code class="highlighter-rouge">Intersection</code> or <code class="highlighter-rouge">ConditionSet</code>. So there would be problem for user to handle these many solution type.</p>
+  </li>
+  <li>
+    <p>I think there should be something that separate <code class="highlighter-rouge">Complements</code>, <code class="highlighter-rouge">Intersections</code>,<code class="highlighter-rouge">ConditionSet</code> and main solution in <code class="highlighter-rouge">Finiteset</code>.</p>
+  </li>
+  <li>
+    <p>E.g. if solveset solution is <code class="highlighter-rouge">Intersection(Complement(FiniteSet(x), {y}), {z})</code> then
+soln : <code class="highlighter-rouge">FiniteSet(x)</code>, <code class="highlighter-rouge">x != {y}</code>, <code class="highlighter-rouge"><span class="p">{</span><span class="err">x</span><span class="p">}</span><span class="w"> </span><span class="err">intersect</span><span class="w"> </span><span class="p">{</span><span class="err">z</span><span class="p">}</span></code>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong>Continue Simplified Trig soln</strong></p>
+
+<p>PR <a href="https://github.com/sympy/sympy/pull/11188">#11188</a></p>
+
+<ul>
+  <li>
+    <p>According to the <a href="https://github.com/sympy/sympy/pull/11188#issuecomment-234789616">Harsh comments/review</a> I modified the PR. Now it seems it is
+returning more simplified solution( <a href="https://github.com/sympy/sympy/pull/11188/commits/beaac312f03819bd7221887eb2b4cbe5d49bed5e#diff-85baa04bbf4e1dfd9128782738e45424R1141">one case is here</a>) .</p>
+  </li>
+  <li>
+    <p>To understand the changes I did in the <code class="highlighter-rouge">_solve_trig</code> method, one should check <a href="https://gist.github.com/Shekharrajak/17fdcd2320f572fc9fc8674823137e20">this gist</a></p>
+  </li>
+  <li>
+    <p>To see the advantage of imageset union, One good example is in <a href="https://gist.github.com/Shekharrajak/a5efc840d9a7d3062289f2d9c5f20b16">this gist</a></p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong><em>continue</em></strong></p>
 					</div>
 				</div>
 			</div>
@@ -2498,6 +2931,302 @@ Will send a PR soon.</p>
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-9bcbd625">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shekharrajak.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://shekharrajak.github.io/Coding-Period-week-9/">00:00, Wednesday, 20 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-9/">Coding Period Week 9</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shekharrajak.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://shekharrajak.github.io/Coding-Period-week-9/">00:00, Wednesday, 20 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-9/">Coding Period Week 9</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p><strong>Some points regarding trigonometric and inverse trigonometric functions in solveset :</strong></p>
+
+<ul>
+  <li>
+    <p>There are many issues in solveset <code class="highlighter-rouge">solve_trig</code>.More inverse trigonometric formula and trigonometric identities should be defined/added or improved.
+Also <code class="highlighter-rouge">simplify</code>, <code class="highlighter-rouge">trigsimp</code> and in <code class="highlighter-rouge">solveset</code> <code class="highlighter-rouge">_invert</code> methods should be improved accordingly.</p>
+  </li>
+  <li>
+    <p>Some links, that is helpful to improve these functions.</p>
+
+    <ul>
+      <li><a href="https://en.wikipedia.org/wiki/Inverse_trigonometric_functions">https://en.wikipedia.org/wiki/Inverse_trigonometric_functions</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Proofs_of_trigonometric_identities">https://en.wikipedia.org/wiki/Proofs_of_trigonometric_identities</a></li>
+      <li><a href="https://owlcation.com/stem/List-of-Inverse-Trig-Function-Identities-Integrals-and-Derivatives">https://owlcation.com/stem/List-of-Inverse-Trig-Function-Identities-Integrals-and-Derivatives</a></li>
+    </ul>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">trigsimp</code> must be more powerful so that <code class="highlighter-rouge">solve_trig</code> get simplified eq. (which solves trig equation by converting them into its <code class="highlighter-rouge">exp</code> form).</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">solve_trig</code> solves the trig eq. using its <code class="highlighter-rouge">exp</code> form. There may be cases when that <code class="highlighter-rouge">exp</code> form is complicated and solveset fail to handle that form.
+There should be technique to convert that complicated form to simpler form(if possible) and then call the <code class="highlighter-rouge">solveset_complex</code>. That may help to improve the <code class="highlighter-rouge">solve_trig</code> method.</p>
+  </li>
+  <li>
+    <p>We can use <code class="highlighter-rouge">_osbornei</code>, <code class="highlighter-rouge">hyper_as_trig</code> methods defined in <code class="highlighter-rouge">simplify/fu.py</code> to convert hyperbolic function to trigonometric function, then we can use <code class="highlighter-rouge">trigsimp</code> (we can&#8217;t use <code class="highlighter-rouge">trigsimp</code> for hyperbolic functions).</p>
+  </li>
+  <li>
+    <p>First need to improve basic concepts and add more identities. I opened a new PR to improve <code class="highlighter-rouge">rewrite</code> for trigonometric functions , PR is <a href="https://github.com/sympy/sympy/pull/11424/">#11424</a>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong>eliminate() :</strong></p>
+
+<ul>
+  <li>
+    <p>issue <a href="https://github.com/sympy/sympy/issues/2720">#2720</a> : We need some kind of eliminate function, like <a href="http://reference.wolfram.com/mathematica/ref/Eliminate.html">http://reference.wolfram.com/mathematica/ref/Eliminate.html</a>. See also <a href="http://stackoverflow.com/q/20826969/161801">http://stackoverflow.com/q/20826969/161801 </a></p>
+  </li>
+  <li>
+    <p>It looks something related to <a href="https://github.com/sympy/sympy/pull/11111/files#diff-eec0422923e8f100745c015cd8fdd6cfR1135">substitution</a> function.
+But they are not same. Using <code class="highlighter-rouge">eliminate()</code> we will try to remove the variable(s) from the each equations(not solving the eq).</p>
+  </li>
+  <li>
+    <p>Plan : First choose eq that have min. variables and get the value of the variable, to be eliminated. Go further and <code class="highlighter-rouge">subs</code> the value to next min. variable eq., and so on.</p>
+  </li>
+  <li>
+    <p>Work in progress.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong>Meanwhile :</strong></p>
+
+<ul>
+  <li>
+    <p>I found some basic issues in <code class="highlighter-rouge">ComplexInfinity</code> and trying to solve them in this PR <a href="https://github.com/sympy/sympy/pull/11409">#11409</a>.</p>
+  </li>
+  <li>
+    <p>there may be many things to be added about <code class="highlighter-rouge">ComplexInfinity</code>, one can refer this link to implement them :
+<a href="http://reference.wolfram.com/language/ref/ComplexInfinity.html">http://reference.wolfram.com/language/ref/ComplexInfinity.html</a>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong><em>continue..</em></strong></p>
+
+<hr />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">July 18, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-353b5fec">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shekharrajak.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://shekharrajak.github.io/Coding-Period-week-8/">00:00, Monday, 18 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-8/">Coding Period Week 8</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shekharrajak.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://shekharrajak.github.io/Coding-Period-week-8/">00:00, Monday, 18 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-8/">Coding Period Week 8</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<hr />
+<p><strong>Continue - Diophantine in Solveset :</strong></p>
+
+<p>PR <a href="https://github.com/sympy/sympy/pull/11234">11234</a></p>
+
+<ul>
+  <li>
+    <p>For general Pythagorean diop_type (Diophantine eq type), it seems diophantine always returns parameterized solution so I did some changes in the PR. <a href="https://github.com/sympy/sympy/pull/11334/commits/6af46fc35db3a74dfda78b6d8e2a0f7d4ec65afe">commit</a></p>
+  </li>
+  <li>
+    <p>You can refer this <a href="https://github.com/sympy/sympy/pull/11334#issuecomment-230334645">comment</a>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong>Continue Simplified Trig soln</strong></p>
+
+<p>PR <a href="https://github.com/sympy/sympy/pull/11188">#11188</a></p>
+
+<ul>
+  <li>After some changes, the PR is ready for review.</li>
+</ul>
+
+<hr />
+
+<p><strong>Continue nonlinsolve :</strong></p>
+
+<p>PR <a href="https://github.com/sympy/sympy/pull/11111">#11111</a></p>
+
+<ul>
+  <li>
+    <p>Added some XFAIL test-cases of system of Trigonometric equations. <code class="highlighter-rouge">solveset</code> trig solver (<code class="highlighter-rouge">solve_trig</code>) is not smart enough(<code class="highlighter-rouge">solveset</code> returns <code class="highlighter-rouge">ConditionSet</code>, where soln can be simply inverse trig functions using <code class="highlighter-rouge">_invert</code> or inverse Trigonometric functions). So <code class="highlighter-rouge">solveset</code> returns <code class="highlighter-rouge">ConditionSet</code> that means <code class="highlighter-rouge">substitution</code> is not getting soln.</p>
+  </li>
+  <li>
+    <p>It is better to replace trigonometric functions or other <code class="highlighter-rouge">Function</code> with symbols</p>
+  </li>
+</ul>
+
+<p>(e.g. <code class="highlighter-rouge">sin(x)</code> &#8211;&gt; <code class="highlighter-rouge">u</code>, <code class="highlighter-rouge">sin(y)</code>&#8211;&gt; <code class="highlighter-rouge">v</code>, <code class="highlighter-rouge">f(x)</code>&#8211;&gt; <code class="highlighter-rouge">f_x</code>, <code class="highlighter-rouge">g(x)</code> &#8211;&gt; <code class="highlighter-rouge">g_x</code>)</p>
+
+<p>and then solve for the symbols. After getting solution from <code class="highlighter-rouge">nonlinsolve</code> user can invert or do <code class="highlighter-rouge">solveset</code></p>
+
+<p>(e.g. solveset(Eq(sin(x), soln_u), x, domain) to get value of <code class="highlighter-rouge">x</code>).</p>
+
+<ul>
+  <li>Ready for review.</li>
+</ul>
+
+<hr />
+
+<p><strong>Meanwhile :</strong></p>
+
+<ul>
+  <li>
+    <p>We already know that solveset need improved <code class="highlighter-rouge">invert_real</code> , <code class="highlighter-rouge">invert_complex</code> and <code class="highlighter-rouge">Imageset</code> Intersections.</p>
+  </li>
+  <li>
+    <p>previous work is in this PR <a href="https://github.com/sympy/sympy/pull/10971">10971</a>. Trying to improve them.</p>
+  </li>
+</ul>
+
+<p>Some cases is here :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># In 2, 4, 5 intersection is not needed.
+
+In [1]: img = ImageSet(Lambda(n, x/n), S.Complexes)
+
+In [2]: Intersection(img, S.Complexes)
+Out[2]:
+    &#9127;x        &#9131;
+&#8450; &#8745; &#9128;&#9472; | n &#8714; &#8450;&#9132;
+    &#9129;n        &#9133;
+
+In [3]: img = ImageSet(Lambda(n, x/n), S.Integers)
+
+In [4]: Intersection(img, S.Complexes)
+Out[4]:
+&#9127;x        &#9131;    
+&#9128;&#9472; | n &#8714; &#8484;&#9132; &#8745; &#8450;
+&#9129;n        &#9133;    
+
+In [5]: Intersection(ImageSet(Lambda(n, 2*n*I*pi), S.Integers), S.Complexes)
+Out[5]: {2&#8901;&#8520;&#8901;&#960;&#8901;n | n &#8714; &#8484;} &#8745; &#8450;
+
+# ImageSet Intersection is not implemented when inverter returns multiple values.
+# here ans should be {0, 1}
+In [6]: img1 = ImageSet(Lambda(n, n**2), S.Integers)
+
+In [7]: Intersection(img1, Interval(0,2))
+Out[7]:
+         &#9127; 2        &#9131;
+[0, 2] &#8745; &#9128;n  | n &#8714; &#8484;&#9132;
+         &#9129;          &#9133;
+
+</code></pre>
+</div>
+
+<hr />
+
+<p><strong><em>continue..</em></strong></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">July 16, 2016</h2>
@@ -2898,541 +3627,6 @@ The good thing about this week was that I could now understand the limitations t
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-3ebbee70 feed-" id="item-7ac91740">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/shubham.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Subham Tibra (shubhamtibra) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://shubhamtibra.wordpress.com/2016/07/10/gsoc-week-7/">17:19, Sunday, 10 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://shubhamtibra.wordpress.com/2016/07/10/gsoc-week-7/">GSoC Week 7</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/shubham.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Subham Tibra (shubhamtibra) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://shubhamtibra.wordpress.com/2016/07/10/gsoc-week-7/">17:19, Sunday, 10 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://shubhamtibra.wordpress.com/2016/07/10/gsoc-week-7/">GSoC Week 7</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>I started working on the support for additional symbolic parameters in the module. So I added an extra argument in the method&#160;<code>expr_to_holonomic</code> for using custom domains. This will be helpful in integrations. For instance:</p>
-<pre class="brush: python; title: ; notranslate">
-In [5]: expr_to_holonomic(sin(x*y), x=x, domain=QQ[y]).integrate(x).to_expr()
-Out[5]:
--cos(x&#8901;y) + 1
-&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
-     y
-In [15]: expr_to_holonomic(log(x*y), x=x, domain=QQ[y]).integrate((x, 1, x)).to_expr()
-Out[15]: x&#8901;log(x) + x&#8901;log(y) - x - log(y) + 1
-</pre>
-<p>Code upto here was merged at&#160;<a href="https://github.com/sympy/sympy/pull/11330">#11330</a>.</p>
-<p>After that I implemented the <code>Frobenius method</code>&#160;to support functions where the series may have negative or fractional exponents. Although there are limitations in the algorithm. First one being that we don&#8217;t have an algorithm to compute the general solution. There doesn&#8217;t seem to be a direct algorithm if roots of the <code>indicial equation</code>&#160;differ by an integer. Second one is the initial conditions. Initial conditions of the function (most of the times they won&#8217;t even exist) can&#8217;t be used if the exponents are fractional or negative.</p>
-<pre class="brush: python; title: ; notranslate">
-In [23]: expr_to_holonomic(sqrt(x**2-x)).series()
-Out[23]:
-            3/2       5/2       7/2         9/2         11/2
-        C&#8320;&#8901;x      C&#8320;&#8901;x      C&#8320;&#8901;x      5&#8901;C&#8320;&#8901;x      7&#8901;C&#8320;&#8901;x        &#9115; 6&#9118;
-C&#8320;&#8901;&#8730;x - &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; - &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; - &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; - &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; - &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; + O&#9117;x &#9120;
-           2         8         16        128         256            
-
-In [28]: expr_to_holonomic(cos(x)**2/x**2, initcond=False).series()
-Out[28]:
-         2         4                       3         5
-     C&#8322;&#8901;x    2&#8901;C&#8322;&#8901;x    C&#8321;   2&#8901;C&#8321;&#8901;x   2&#8901;C&#8321;&#8901;x    4&#8901;C&#8321;&#8901;x    C&#8320;    &#9115; 6&#9118;
-C&#8322; - &#9472;&#9472;&#9472;&#9472;&#9472; + &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; + &#9472;&#9472; - &#9472;&#9472;&#9472;&#9472;&#9472;&#9472; + &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; - &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; + &#9472;&#9472; + O&#9117;x &#9120;
-       3        45     x      3         15       315      2
-                                                         x
-</pre>
-<p>I will be working more on this and hope to add more functionality in this method.</p>
-<p>Right now I am working on an algorithm to convert a given Holonomic Function to Meijer G-function. This also doesn&#8217;t look so straightforward. Kalevi helped me with the theory and we wrote a basic that works for some cases. We hope to add more things in it.</p>
-<pre class="brush: python; title: ; notranslate">
-In [17]: hyperexpand(expr_to_holonomic(exp(x)).to_meijerg())
-Out[17]:
- x
-&#8495;
-In [19]: hyperexpand(expr_to_holonomic(log(x)).to_meijerg()).simplify()
-Out[19]: log(x)
-</pre>
-<p>These are at&#160;<a href="https://github.com/sympy/sympy/pull/11360">#11360</a>.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/604/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/604/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&#038;blog=106149936&#038;post=604&#038;subd=shubhamtibra&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">July 09, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-05db50a0 feed-" id="item-922a5e4a">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/sampad.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Sampad Saha (sampadsaha5) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://sampadblog.wordpress.com/2016/07/09/gsoc-week-7/">16:52, Saturday, 09 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://sampadblog.wordpress.com/2016/07/09/gsoc-week-7/">GSoc Week 7</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/sampad.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Sampad Saha (sampadsaha5) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://sampadblog.wordpress.com/2016/07/09/gsoc-week-7/">16:52, Saturday, 09 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://sampadblog.wordpress.com/2016/07/09/gsoc-week-7/">GSoc Week 7</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Hi there! It&#8217;s been seven weeks into the coding period&#160;and the&#160;second half has started now. I had a meeting with Jason on 3<sup>rd</sup> of July. We discussed some modifications that were needed to be done in the existing PRs. Further, we had a conversation on the beam bending module. We ended up with some good ideas regarding the&#160;implementation of beam object.</p>
-<h4><em><strong>So Far</strong></em></h4>
-<ul>
-<li>In PR&#160;&#160;<a href="https://github.com/sympy/sympy/pull/11178">PR 11178 </a>&#160;and&#160;<a href="https://github.com/sympy/sympy/pull/11237">PR 11237</a>, I have added the suggested modifications.</li>
-<li>In PR&#160;&#160;<a href="https://github.com/sympy/sympy/pull/11266">11266</a>, I have done some modifications in the DistributedLoad class. Initially, it had &#8220;start&#8221;,&#8221; end&#8221; and &#8220;value&#8221; as its attribute but Jason suggested me to add an attribute which would denote the order of the load. This attribute would help while representing a load in the&#160;form of Singularity Functions. Such as:
-<ul>
-<li>Order = 0 will denote Step Function,</li>
-<li>Order = 1 will denote Ramp Function,</li>
-<li>Order = 2 will denote Parabolic Ramp Function and</li>
-<li>so on &#8230;</li>
-</ul>
-</li>
-<li>In the same PR, I have added some more method for taking boundary conditions explicitly for different cases such as for deflection, slope and moment as inputs. I made a private attribute <em>_boundary_conditions</em> and initiated as an empty dictionary of lists with keywords&#160;&#160;deflection, slope and moment. Later on each of the methods, namely,
-<ul>
-<li>apply_boundary_conditions</li>
-<li>apply_moment_boundary_conditions</li>
-<li>apply_slope_boundary_conditions</li>
-<li>apply_deflection_boundary_conditions</li>
-</ul>
-<p>just updates that dictionary. The method <em>boundary_conditions</em> would return the dictionary itself.</li>
-</ul>
-<h4><em><strong>Next Week</strong></em></h4>
-<ul>
-<li>I will try to get&#160;&#160;<a href="https://github.com/sympy/sympy/pull/11178">PR 11178 </a>&#160;and&#160;<a href="https://github.com/sympy/sympy/pull/11237">PR 11237</a>&#160;merged.</li>
-<li>Add <em>apply_load</em> method to the Beam class.</li>
-<li>Successfully convert all the load inputs through the &#160;<em>apply_load</em> method into Singularity Functions.</li>
-<li>Write methods which would output load curve, shear curve and moment curve.</li>
-</ul>
-<p>That&#8217;s all for this week. Cheers !!</p>
-<p>Happy Coding.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/761/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/761/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&#038;blog=102728326&#038;post=761&#038;subd=sampadblog&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-19a67809 feed-" id="item-ef416d0b">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/rajithv.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Rajith Vidanaarachchi (rajithv) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://rajithsays.wordpress.com/2016/07/09/gsoc-weeks-6-7-progress/">11:50, Saturday, 09 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://rajithsays.wordpress.com/2016/07/09/gsoc-weeks-6-7-progress/">GSoC Weeks 6 &amp; 7 Progress</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/rajithv.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Rajith Vidanaarachchi (rajithv) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://rajithsays.wordpress.com/2016/07/09/gsoc-weeks-6-7-progress/">11:50, Saturday, 09 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://rajithsays.wordpress.com/2016/07/09/gsoc-weeks-6-7-progress/">GSoC Weeks 6 &amp; 7 Progress</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Week 6 was quite a rush, with many other things happening, and the work getting lagged behind. But with week 7, I was able to put much extra time into the project and get more or less up-to date with the time-line.</p>
-<p>Since, the end of week 5, the progress is as follows:</p>
-<ul>
-<li>Completed and merged Matrix CWrappers in <a href="https://github.com/symengine/symengine/pull/992" target="_blank">PR #992</a>.</li>
-<li>Completed and merged Parser CWrapper in <a href="https://github.com/symengine/symengine/pull/1029" target="_blank">PR #1029</a>.</li>
-<li>Completed and merged <a href="https://github.com/symengine/symengine/pull/1027" target="_blank">PR #1027</a> which had wrappers for various functions for Number class, needed for the tests in Ruby to function properly.</li>
-<li><a href="https://github.com/symengine/symengine.rb/pull/56" target="_blank">PR #56</a> in the Ruby Wrapper for Matrices is almost ready, with several review feedback to be incorporated.</li>
-<li><a href="https://github.com/symengine/symengine.rb/pull/60" target="_blank">PR #60</a> in the Ruby Wrapper for Parser is ready to be merged.</li>
-<li><a href="https://github.com/symengine/symengine.rb/pull/59" target="_blank">PR #59</a> contains the updates for the IRuby Notebooks, which will be used by @certik for SciPy 2016&#8217;s SymEngine talk.</li>
-<li><a href="https://github.com/symengine/symengine.rb/pull/55" target="_blank">PR #55</a> with the Ruby wrappers for evalf was finally merged after quite a time going into accmmodating floating point tests.</li>
-<li><a href="https://github.com/symengine/symengine.rb/issues/57">Issue #57</a> was closed in the Ruby Wrapper.</li>
-</ul>
-<p>In the proposal, I had promised an auxiliary feature of LaTeX friendly outputs for SymEngine Expresions, given I am on time. But considering I am barely hanging on to the time line, I decided to push this to the end of the time line.</p>
-<p>So I will immediately start working on the lambdify functions, and hopefully start exception catching in the same week. This will give me time to come back to the LaTeX friendly expressions in the last weeks.</p>
-<p>See you!</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/362/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/362/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&#038;blog=110498904&#038;post=362&#038;subd=rajithsays&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-aa06d76d feed-" id="item-60b0102d">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/srajangarg.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Srajan Garg (srajangarg) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://srajangarg.github.io//2016/07/09/Rational-Polynomials/">00:00, Saturday, 09 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/07/09/Rational-Polynomials/">Rational Polynomials</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/srajangarg.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Srajan Garg (srajangarg) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://srajangarg.github.io//2016/07/09/Rational-Polynomials/">00:00, Saturday, 09 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/07/09/Rational-Polynomials/">Rational Polynomials</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<h3 id="overview">Overview</h3>
-
-<p>This last week was divided into two parts. The first half was spent in fixing miscellaneous issue with the last PR, regarding the basic to polynomial converisons. The second half was spent in thinking of how SymEngine should store rational polynomials (polynomials with rational coefficients) and how infact should they be implemented.</p>
-
-<h3 id="leftovers-from-basic-conversions">Leftovers from Basic Conversions</h3>
-
-<p>As mentioned, the first half of my week was spent finalizing the basic to polynomial conversions PR.</p>
-
-<ul>
-  <li>
-    <p>Using <code class="highlighter-rouge">divnum</code> and <code class="highlighter-rouge">mulnum</code> methods instead of using <code class="highlighter-rouge">rcp_cast&lt;Number&gt;</code> on <code class="highlighter-rouge">mul</code> and <code class="highlighter-rouge">div</code> respectively. These made the code much more readable too.</p>
-  </li>
-  <li>
-    <p>Use <code class="highlighter-rouge">static_cast&lt;const Rational &amp;&gt;(*rat_rcp).get_den()</code> instead of <code class="highlighter-rouge">rcp_static_cast&lt;const Rational&gt;(rat_rcp)-&gt;get_den()</code>. The logic behind this is, that in the second case, another <code class="highlighter-rouge">RCP</code> is being constructed, and the <code class="highlighter-rouge">get_den</code> function is called on this new RCP. This is unecessary and can be avoided using the former approach.</p>
-  </li>
-  <li>
-    <p>At many places within the visitor pattern, I was calling the external function <code class="highlighter-rouge">basic_to_poly</code>. This was not wrong, but caused necessary overhead and recursion, which is not usually desired. Isuru suggested that I can reuse the visitor and successfully avoid the recursion. Here&#8217;s an example</p>
-  </li>
-</ul>
-
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="n">dict_type</span> <span class="nf">_basic_to_poly</span><span class="p">(</span><span class="n">basic</span><span class="p">,</span> <span class="n">gen</span><span class="p">)</span>
-<span class="p">{</span>	
-    <span class="n">BasicToPolyV</span> <span class="n">v</span><span class="p">;</span>
-    <span class="n">v</span><span class="p">.</span><span class="n">apply</span><span class="p">(</span><span class="n">basic</span><span class="p">,</span> <span class="n">gen</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="c1">// dict is the answer we will be returning
-</span><span class="kt">void</span> <span class="n">BasicToPolyV</span><span class="o">::</span><span class="n">bvisit</span><span class="p">(</span><span class="k">const</span> <span class="n">Add</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="k">const</span> <span class="o">&amp;</span><span class="n">it</span> <span class="o">:</span> <span class="n">x</span><span class="p">.</span><span class="n">dict_</span><span class="p">)</span>
-        <span class="c1">// unnecessary overhead
-</span>        <span class="n">dict</span> <span class="o">+=</span> <span class="n">_basic_to_upoly</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">gen</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<p>becomes this</p>
-
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="c1">// dict is the answer we will be returning
-</span><span class="kt">void</span> <span class="n">BasicToPolyV</span><span class="o">::</span><span class="n">bvisit</span><span class="p">(</span><span class="k">const</span> <span class="n">Add</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">)</span>
-<span class="p">{</span>	
-    <span class="n">dict_type</span> <span class="n">res</span><span class="p">;</span>
-    <span class="k">for</span> <span class="p">(</span><span class="k">auto</span> <span class="k">const</span> <span class="o">&amp;</span><span class="n">it</span> <span class="o">:</span> <span class="n">x</span><span class="p">.</span><span class="n">dict_</span><span class="p">)</span>
-        <span class="c1">// no overhead
-</span>        <span class="n">res</span> <span class="o">+=</span> <span class="n">BasicToPolyV</span><span class="o">::</span><span class="n">apply</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">gen</span><span class="p">);</span>
-    <span class="n">dict</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">res</span><span class="p">);</span>
-<span class="p">}</span>
-</code></pre>
-</div>
-
-<ul>
-  <li>There was also a <a href="https://github.com/symengine/symengine/pull/1003#discussion_r69408888">discussion</a> on how the visitor for <code class="highlighter-rouge">Pow</code> in <code class="highlighter-rouge">find_gen_pow</code> was implemented. Isuru pointed out, how it would give wrong answers in the cases he put forward. But I had thought of other cases (like <code class="highlighter-rouge">2**(2**(x+1))</code>) which would would then not work, if the code was changed. These were special type of cases where the expression could be &#8216;simplified&#8217;. There&#8217;s some discussion on the issue <a href="https://github.com/symengine/symengine/issues/1021">here</a>.</li>
-</ul>
-
-<h3 id="starting-rational-polynomials">Starting Rational Polynomials</h3>
-
-<p>I began thinking of how the polynomials with rational coefficients class should be implemented. In Flint, the <code class="highlighter-rouge">fmpq_poly</code> class is implemented as a <code class="highlighter-rouge">fmpz_poly</code> class with another just another integer acting as the common denominatior. This kind of implementation saves up on a lot of time! (think of canonicalization of coefficients, after multiplication) But this kind of implementation would require a lot of extra code be written, and we could not reuse any of the code we have already written. So, after discussion with Isuru, he suggested that I can go ahead with the trivial implementation of using a map from <code class="highlighter-rouge">uint</code> to <code class="highlighter-rouge">rational_class</code>.</p>
-
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="k">class</span> <span class="nc">URatDict</span> <span class="o">:</span> <span class="n">ODictWrapper</span><span class="o">&lt;</span><span class="n">uint</span><span class="p">,</span> <span class="n">rational_class</span><span class="o">&gt;</span>
-</code></pre>
-</div>
-
-<p>Add in some constructors and that&#8217;s it! The internal container for rational polynomials in SymEngine is ready, because of the way we had strcutured the earlier code.</p>
-
-<p>Now the question was how the end classes should be implemented (i.e. <code class="highlighter-rouge">URatPoly</code>) If you think about it, the methods of both the rational and integer polynomials will look exactly the same. <code class="highlighter-rouge">from_vec</code>, <code class="highlighter-rouge">container_from_dict</code>, <code class="highlighter-rouge">eval</code>, <code class="highlighter-rouge">compare</code> will all look the same with minor differences. The minor differences are only what type of container is being used (<code class="highlighter-rouge">URatDict</code> or <code class="highlighter-rouge">UIntDict</code>?) and what coefficient class is being used (<code class="highlighter-rouge">integer_class</code> or <code class="highlighter-rouge">rational_class</code>?) Infact, I checked this for our other polynomial types Flint and Piranha and it holds true over there too!</p>
-
-<p>So, what came to mind was that all the methods had to be reused! Thus I formed a <code class="highlighter-rouge">USymEnginePoly</code> class which acts as the &#8216;SymEngine&#8217; implementation of polynomials. You can pass it a <code class="highlighter-rouge">BaseType</code> from which it will deduce what type of polynomial would be constructed. Ideally, all you need to do now for implenting end polynomial classes is choose a implementation type (SymEngine or Piranha or Flint?) and a polynomial type (Integer or Rational?)</p>
-
-<p>Here&#8217;s some pseudo code for the class structure aimed at</p>
-
-<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="c1">// the base
-</span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Container</span><span class="o">&gt;</span>
-<span class="k">class</span> <span class="nc">UPolyBase</span> <span class="o">:</span> <span class="n">Basic</span>
-
-<span class="c1">// super class for all non-expr polys, all methods which are
-// common for all non-expr polys go here eg. degree, eval etc.
-</span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Cont</span><span class="p">,</span> <span class="k">typename</span> <span class="n">C</span><span class="o">&gt;</span>
-<span class="k">class</span> <span class="nc">UNonExprPoly</span> <span class="o">:</span> <span class="n">UPolyBase</span><span class="o">&lt;</span><span class="n">Cont</span><span class="o">&gt;</span>
-
-<span class="c1">// the specialized non-expr classes
-</span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">D</span><span class="o">&gt;</span>
-<span class="k">class</span> <span class="nc">UIntPolyBase</span> <span class="o">:</span> <span class="n">UNonExprPoly</span><span class="o">&lt;</span><span class="n">D</span><span class="p">,</span> <span class="n">integer_class</span><span class="o">&gt;</span>
-<span class="c1">// and
-</span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">D</span><span class="o">&gt;</span>
-<span class="k">class</span> <span class="nc">URatPolyBase</span> <span class="o">:</span> <span class="n">UNonExprPoly</span><span class="o">&lt;</span><span class="n">D</span><span class="p">,</span> <span class="n">rational_class</span><span class="o">&gt;</span>
-
-<span class="c1">// a specific implementation
-// similar classes like UPiranhaPoly/UFlintPoly
-</span><span class="k">template</span> <span class="o">&lt;</span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">X</span><span class="o">&gt;</span> <span class="k">class</span> <span class="nc">BaseType</span><span class="p">,</span> <span class="k">typename</span> <span class="n">D</span><span class="o">&gt;</span>
-<span class="k">class</span> <span class="nc">USymEnginePoly</span> <span class="o">:</span> <span class="n">BaseType</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&gt;</span>
-
-<span class="c1">// end classes (few examples)
-</span><span class="k">class</span> <span class="nc">UIntPoly</span> <span class="o">:</span> <span class="n">USymEnginePoly</span><span class="o">&lt;</span><span class="n">UIntDict</span><span class="p">,</span> <span class="n">UIntPolyBase</span><span class="o">&gt;</span>
-<span class="k">class</span> <span class="nc">URatPoly</span> <span class="o">:</span> <span class="n">USymEnginePoly</span><span class="o">&lt;</span><span class="n">URatDict</span><span class="p">,</span> <span class="n">URatPolyBase</span><span class="o">&gt;</span>
-<span class="k">class</span> <span class="nc">UIntPolyPir</span> <span class="o">:</span> <span class="n">UPiranhaPoly</span><span class="o">&lt;</span><span class="n">piranha</span><span class="o">::</span><span class="n">poly</span><span class="p">,</span> <span class="n">UIntPolyBase</span><span class="o">&gt;</span>
-<span class="k">class</span> <span class="nc">URatPolyFlint</span> <span class="o">:</span> <span class="n">UFlintPoly</span><span class="o">&lt;</span><span class="n">flint</span><span class="o">::</span><span class="n">poly</span><span class="p">,</span> <span class="n">URatPolyBase</span><span class="o">&gt;</span>
-</code></pre>
-</div>
-
-<p>Here&#8217;s a bonus picture!</p>
-
-<p><img alt="" src="http://srajangarg.github.io/assets/class.jpg" /></p>
-
-<p>I hope to get all the rational polynomials ready and tested in the next two to three days. The existing work can be seen in <a href="https://github.com/symengine/symengine/pull/1028">#1028</a></p>
-
-<p>Tata!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">July 08, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-6163205f feed-" id="item-c9b3fde6">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/jbm950.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">James Milam (jbm950) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://jbm950.github.io//2016/07/08/GSoC-week-7.html">00:00, Friday, 08 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/07/08/GSoC-week-7.html">GSoC Week 7</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/jbm950.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">James Milam (jbm950) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://jbm950.github.io//2016/07/08/GSoC-week-7.html">00:00, Friday, 08 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/07/08/GSoC-week-7.html">GSoC Week 7</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This week the focus was on the support code for the featherstone method.
-I finished adding examples to the docstrings of every function I made. I
-then wrote up test code for all of the new functions primarily focusing
-on expected outputs but included some expected error messages for one of
-the functions. Lastly I have coded up the functions themselves. This
-work can be seen in <a href="https://github.com/sympy/sympy/pull/11331">PR
-#11331</a>.</p>
-
-<p>I continued following the PR I reviewed last week and give suggestions
-as he worked on it. The PR is now in my opinion ready to be merged and
-is a beneficial addition to the sympy codebase.</p>
-
-<p>The last thing I did this week was have a meeting about the presentation
-that I will be aiding in on Monday. After the meeting I have spent some
-time looking over my portions of the presentation and making sure I am
-prepared to speak.</p>
-
-<h3 id="future-directions">Future Directions</h3>
-
-<p>Next week is the SciPy conference were I will be aiding in PyDy&#8217;s
-tutorial. Also I will be meeting with my mentor in person and during our
-time there I suspect we will work on a variety of things from
-Featherstone&#8217;s articulated body method to the base class.</p>
-
-<h3 id="prs-and-issues">PR&#8217;s and Issues</h3>
-
-<blockquote>
-  <ul>
-    <li>(Open) Added docstrings to ast.py <a href="https://github.com/sympy/sympy/pull/11333">PR
-  #11333</a></li>
-    <li>(Open) [WIP] Featherstones EOM support <a href="https://github.com/sympy/sympy/pull/11331">PR
-  #11331</a></li>
-  </ul>
-</blockquote>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -3461,86 +3655,86 @@ Featherstone&#8217;s articulated body method to the base class.</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>15:56, Tuesday, 16 August</td>
-<td>16:11, Tuesday, 16 August</td>
+<td>16:16, Tuesday, 16 August</td>
+<td>16:31, Tuesday, 16 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>15:56, Tuesday, 16 August</td>
-<td>16:11, Tuesday, 16 August</td>
+<td>16:16, Tuesday, 16 August</td>
+<td>16:31, Tuesday, 16 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>15:56, Tuesday, 16 August</td>
-<td>16:11, Tuesday, 16 August</td>
+<td>16:16, Tuesday, 16 August</td>
+<td>16:31, Tuesday, 16 August</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>15:56, Tuesday, 16 August</td>
-<td>16:11, Tuesday, 16 August</td>
-</tr>
-<tr class="feedsrow">
-<td>http://shekharrajak.github.io/feed.xml</td>
-<td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>15:56, Tuesday, 16 August</td>
-<td>16:11, Tuesday, 16 August</td>
+<td>16:16, Tuesday, 16 August</td>
+<td>16:31, Tuesday, 16 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>15:56, Tuesday, 16 August</td>
-<td>16:11, Tuesday, 16 August</td>
+<td>16:16, Tuesday, 16 August</td>
+<td>16:31, Tuesday, 16 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>15:56, Tuesday, 16 August</td>
-<td>16:11, Tuesday, 16 August</td>
+<td>16:16, Tuesday, 16 August</td>
+<td>16:31, Tuesday, 16 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://kshitij10496.github.io//">Kshitij Saraogi</a></td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>15:56, Tuesday, 16 August</td>
-<td>16:11, Tuesday, 16 August</td>
+<td>16:16, Tuesday, 16 August</td>
+<td>16:31, Tuesday, 16 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>15:56, Tuesday, 16 August</td>
-<td>16:11, Tuesday, 16 August</td>
+<td>16:16, Tuesday, 16 August</td>
+<td>16:31, Tuesday, 16 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>15:56, Tuesday, 16 August</td>
-<td>16:11, Tuesday, 16 August</td>
+<td>16:16, Tuesday, 16 August</td>
+<td>16:31, Tuesday, 16 August</td>
+</tr>
+<tr class="feedsrow">
+<td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
+<td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
+<td>16:16, Tuesday, 16 August</td>
+<td>16:31, Tuesday, 16 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>15:56, Tuesday, 16 August</td>
-<td>16:11, Tuesday, 16 August</td>
+<td>16:16, Tuesday, 16 August</td>
+<td>16:31, Tuesday, 16 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>15:56, Tuesday, 16 August</td>
-<td>16:11, Tuesday, 16 August</td>
+<td>16:16, Tuesday, 16 August</td>
+<td>16:31, Tuesday, 16 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>15:56, Tuesday, 16 August</td>
-<td>16:11, Tuesday, 16 August</td>
+<td>16:16, Tuesday, 16 August</td>
+<td>16:31, Tuesday, 16 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>15:56, Tuesday, 16 August</td>
-<td>16:11, Tuesday, 16 August</td>
+<td>16:16, Tuesday, 16 August</td>
+<td>16:31, Tuesday, 16 August</td>
 </tr>
 </table>
 
