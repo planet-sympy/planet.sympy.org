@@ -236,6 +236,48 @@ separate PR&amp;#8217;s I hope to possibly include in my final evaluation.&lt;/p
 &lt;/blockquote&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Eleventh-Week</guid>
+      <title>GSoC Eleventh Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Thu, 11 Aug 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Eleventh-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This week I worked on little refactoring of &lt;code class="highlighter-rouge"&gt;Fields&lt;/code&gt; module. Like moving functions implementations from &lt;code class="highlighter-rouge"&gt;.h&lt;/code&gt; file to &lt;code class="highlighter-rouge"&gt;.cpp&lt;/code&gt; file in &lt;a href="https://github.com/symengine/symengine/pull/1060"&gt;this&lt;/a&gt; PR. I added a &lt;code class="highlighter-rouge"&gt;from_uintpoly&lt;/code&gt; method which allows us to create a &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; object from &lt;code class="highlighter-rouge"&gt;UIntPoly&lt;/code&gt; object in &lt;a href="https://github.com/symengine/symengine/pull/1059/"&gt;this&lt;/a&gt; PR. After which I worked on the implementation of &lt;code class="highlighter-rouge"&gt;diff&lt;/code&gt; method for &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; in &lt;a href="https://github.com/symengine/symengine/pull/1060"&gt;this&lt;/a&gt; PR.
+&lt;br /&gt;
+Then I worked on &lt;code class="highlighter-rouge"&gt;Logic&lt;/code&gt; module. It is needed for the implementation of &lt;code class="highlighter-rouge"&gt;Intersection&lt;/code&gt; class in &lt;code class="highlighter-rouge"&gt;Sets&lt;/code&gt; module. It has the implementation for Logical And, Or and Not operations.
+&lt;br /&gt;
+Both &lt;code class="highlighter-rouge"&gt;Or&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;And&lt;/code&gt; class have a private variable named &lt;code class="highlighter-rouge"&gt;container_&lt;/code&gt; which is a set of &lt;code class="highlighter-rouge"&gt;RCP&amp;lt;const Boolean&amp;gt;&lt;/code&gt;. It stores the &lt;code class="highlighter-rouge"&gt;Boolean&lt;/code&gt; objects on which &lt;code class="highlighter-rouge"&gt;And&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Or&lt;/code&gt; operator can&amp;#8217;t be applied using the known rules.
+&lt;br /&gt;
+&lt;code class="highlighter-rouge"&gt;Not&lt;/code&gt; also has one private variable which is an &lt;code class="highlighter-rouge"&gt;RCB&amp;lt;const Boolean&amp;gt;&lt;/code&gt; object, which stores the &lt;code class="highlighter-rouge"&gt;Boolean&lt;/code&gt; object on which we were not able to apply &lt;code class="highlighter-rouge"&gt;not&lt;/code&gt; operator using the current rules.
+&lt;br /&gt;
+Then we have three functions:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;RCP&amp;lt;const Boolean&amp;gt; logical_and(const set_boolean &amp;amp;s);
+RCP&amp;lt;const Boolean&amp;gt; logical_or(const set_boolean &amp;amp;s);
+RCP&amp;lt;const Boolean&amp;gt; logical_not(const RCP&amp;lt;const Boolean&amp;gt; &amp;amp;s);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;These are used to do the respective operation on the operands supplied.
+&lt;br /&gt;
+Talking little about implementaion details:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;RCP&amp;lt;const Boolean&amp;gt; logical_and(const set_boolean &amp;amp;s)
+{
+   return and_or&amp;lt;And&amp;gt;(s, false);
+}
+
+RCP&amp;lt;const Boolean&amp;gt; logical_or(const set_boolean &amp;amp;s)
+{
+   return and_or&amp;lt;Or&amp;gt;(s, true);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And the function &lt;code class="highlighter-rouge"&gt;and_or&lt;/code&gt; do the required operations.
+&lt;br /&gt;
+After &lt;a href="https://github.com/symengine/symengine/pull/1061/"&gt;this&lt;/a&gt; PR gets merged, I would start working on &lt;code class="highlighter-rouge"&gt;Intersection&lt;/code&gt; class.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://gxyd.github.io/GSoC Week 12</guid>
       <title>GSoC Week 12</title>
       <author>Gaurav Dhingra (gxyd)</author>
@@ -708,6 +750,61 @@ best.&lt;/p&gt;
 &lt;/blockquote&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Tenth-Week</guid>
+      <title>GSoC Tenth Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Fri, 05 Aug 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Tenth-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This week, I had been working on implementaion of &lt;code class="highlighter-rouge"&gt;Union&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Contains&lt;/code&gt; in &lt;a href="https://github.com/symengine/symengine/pull/1053"&gt;this&lt;/a&gt; PR. &lt;br /&gt;
+Our &lt;code class="highlighter-rouge"&gt;Set::contains&lt;/code&gt; function has been changed from :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;virtual bool contains(const RCP&amp;lt;const Basic&amp;gt; &amp;amp;a) const = 0;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;to&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;virtual RCP&amp;lt;const Boolean&amp;gt; contains(const RCP&amp;lt;const Basic&amp;gt; &amp;amp;a) const = 0;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And these functions:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;virtual bool is_subset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const = 0;
+virtual bool is_proper_subset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const = 0;
+virtual bool is_superset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const = 0;
+virtual bool is_proper_superset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const = 0;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;have been changed to:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;bool is_subset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const
+{
+    return eq(*this-&amp;gt;set_intersection(o), *this);
+}
+bool is_proper_subset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const
+{
+    return not eq(*this, *o) and this-&amp;gt;is_subset(o);
+}
+bool is_superset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const
+{
+    return o-&amp;gt;is_subset(rcp_from_this_cast&amp;lt;const Set&amp;gt;());
+}
+bool is_proper_superset(const RCP&amp;lt;const Set&amp;gt; &amp;amp;o) const
+{
+    return not eq(*this, *o) and this-&amp;gt;is_superset(o);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;depending solely on &lt;code class="highlighter-rouge"&gt;set_intersection&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Then the &lt;code class="highlighter-rouge"&gt;SymEngine::set_union(const set_set &amp;amp;in, bool solve = true)&lt;/code&gt; has been defined which will create a &lt;code class="highlighter-rouge"&gt;Union&lt;/code&gt; object with &lt;code class="highlighter-rouge"&gt;in&lt;/code&gt; if it is not solvable, or will do union operation on all of them.
+&lt;br /&gt;
+Our &lt;code class="highlighter-rouge"&gt;Union&lt;/code&gt; class has &lt;code class="highlighter-rouge"&gt;std::set&lt;/code&gt; of &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt; to store the different Set containers which can&amp;#8217;t be unified into one single container.
+&lt;br /&gt;
+Apart from it, the &lt;code class="highlighter-rouge"&gt;set_intersection&lt;/code&gt; ans &lt;code class="highlighter-rouge"&gt;set_union&lt;/code&gt; virtual functions have been restructured to handle other &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt; types case by case.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=780</guid>
       <title>GSoC Week 10</title>
       <author>Subham Tibra (shubhamtibra)</author>
@@ -1022,6 +1119,38 @@ processing methods.&lt;/p&gt;
 &lt;/blockquote&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Ninth-Week</guid>
+      <title>GSoC Ninth Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Thu, 28 Jul 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Ninth-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;Previous week I had implemented the &lt;strong&gt;Shoup&amp;#8217;s Algorithm&lt;/strong&gt; in &lt;a href="https://github.com/symengine/symengine/pull/1045"&gt;this&lt;/a&gt; PR. During the review we came to realise that it is better to use &lt;code class="highlighter-rouge"&gt;unsigned int&lt;/code&gt; instead of &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt; because we didn&amp;#8217;t need big numbers. 
+&lt;br /&gt;&lt;br /&gt;
+Working on the same PR, I found a bug in &lt;code class="highlighter-rouge"&gt;negate&lt;/code&gt; and similar function where we were doing:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;for (auto &amp;amp;a : dict_) {
+  a *= -1;
+  a += modulo_;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here: if the &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; is &lt;code class="highlighter-rouge"&gt;[0, 0, 10]&lt;/code&gt;, it will negate to &lt;code class="highlighter-rouge"&gt;[11, 11, 1]&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;GF(11)&lt;/code&gt;. So, it was needed to add a check when the value is &lt;code class="highlighter-rouge"&gt;0&lt;/code&gt;. So, the method was changed to:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;for (auto &amp;amp;a : dict_) {
+  a *= -1;
+  if (a != 0_z)
+    a += modulo_;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;br /&gt;
+Along with it I was working on the &lt;code class="highlighter-rouge"&gt;gf_factor&lt;/code&gt; &lt;a href="https://github.com/symengine/symengine/pull/1036"&gt;PR&lt;/a&gt; and it eventually got merged. It introduced &lt;strong&gt;Zassenhaus&amp;#8217;s algorithm&lt;/strong&gt; and &lt;code class="highlighter-rouge"&gt;gf_factor()&lt;/code&gt; function. In coming days, we will have to change &lt;code class="highlighter-rouge"&gt;gf_factor&lt;/code&gt; to switch between &lt;code class="highlighter-rouge"&gt;gf_zassenhaus&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;gf_shoup&lt;/code&gt; according to the degree of polynomial.
+&lt;br /&gt;&lt;br /&gt;
+We made one more design change, we changed the factor container from &lt;code class="highlighter-rouge"&gt;std::pair&amp;lt;GaloisFieldDict, integer_class&amp;gt;&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;std::pair&amp;lt;GaloisFieldDict, unsigned&amp;gt;&lt;/code&gt; because we didn&amp;#8217;t need large numbers as power.
+&lt;br /&gt;&lt;br /&gt;
+Then I started working on change of base class of &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; class from &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;UIntPolyBase&lt;/code&gt;, this needed implementation of &lt;code class="highlighter-rouge"&gt;eval&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;multi_eval&lt;/code&gt; method, then I implemented the iterator for &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; class and the &lt;code class="highlighter-rouge"&gt;pow&lt;/code&gt; method. The &lt;a href="https://github.com/symengine/symengine/pull/1047/files"&gt;PR&lt;/a&gt; is under review.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=663</guid>
       <title>GSoC Week 8 and 9</title>
       <author>Subham Tibra (shubhamtibra)</author>
@@ -1320,6 +1449,61 @@ forward with all the work that has been put into planning the api&amp;#8217;s.&l
 &lt;/blockquote&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Eighth-Week</guid>
+      <title>GSoC Eighth Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Wed, 20 Jul 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Eighth-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;After completing the work on &lt;code class="highlighter-rouge"&gt;gf_factor&lt;/code&gt;, I moved on to implement Gathen-Shoup&amp;#8217;s factorization algorithm. Like Zassenhaus&amp;#8217;s agorithm, it is also a probabilistic algorithm.
+&lt;br /&gt;
+The paper is available &lt;a href="http://www.shoup.net/papers/frobenius.pdf"&gt;here&lt;/a&gt;.
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;strong&gt;First question: Why this algorithm ?&lt;/strong&gt;
+&lt;br /&gt;
+&amp;gt; Because, it is kind of faster than zassenhaus&amp;#8217;s algorithm.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;
+&lt;strong&gt;Second question: What is &amp;#8220;kind of&amp;#8221; here ?&lt;/strong&gt;
+&lt;br /&gt;
+&amp;gt; Well, it is faster when a specific condition satisfies.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;
+Its asymptotic runtime is &lt;code class="highlighter-rouge"&gt;O(n**2 + n log q).(log n)**2.loglog n&lt;/code&gt;, where &lt;code class="highlighter-rouge"&gt;n&lt;/code&gt; is degree of polynomial and &lt;code class="highlighter-rouge"&gt;q&lt;/code&gt; is the field characteristics.
+&lt;br /&gt;
+In &lt;a href="https://en.wikipedia.org/wiki/&amp;#213;#Mathematical_use"&gt;&amp;#8220;Soft O&amp;#8221; notation&lt;/a&gt;, it is &lt;code class="highlighter-rouge"&gt;O~(n**2 + n log q)&lt;/code&gt;. While the cantor zassenhaus&amp;#8217;s algorithm has &lt;code class="highlighter-rouge"&gt;O~(n**2 log q)&lt;/code&gt; asymptotic runtime.
+&lt;br /&gt;
+So when &lt;code class="highlighter-rouge"&gt;log q&lt;/code&gt; approaches &lt;code class="highlighter-rouge"&gt;n&lt;/code&gt;, the difference is remarkable.
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Algorithm&lt;/th&gt;
+      &lt;th style="text-align: center;"&gt;Asymptotic Runtime&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Shoup&lt;/td&gt;
+      &lt;td style="text-align: center;"&gt;&lt;code class="highlighter-rouge"&gt;O~(n**2)&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Zassenhaus&lt;/td&gt;
+      &lt;td style="text-align: center;"&gt;&lt;code class="highlighter-rouge"&gt;O~(n**3)&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;It also works in three parts, firstly square free factorization, then distinct degree and finally equal degree factorization.
+&lt;br /&gt;
+I have completed the implementation of this algorithm on &lt;a href="https://github.com/nishnik/symengine/tree/shoup_factorization"&gt;shoup_factorization&lt;/a&gt; branch.
+And also, I changed the container (which stores factors) type to &lt;code class="highlighter-rouge"&gt;set&lt;/code&gt;.&lt;br /&gt;
+Will send a PR soon.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-9</guid>
       <title>Coding Period Week 9</title>
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
@@ -1572,6 +1756,42 @@ In [ ]: for x in a:
 &lt;/div&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/841/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/841/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=841&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Seventh-Week</guid>
+      <title>GSoC Seventh Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Wed, 13 Jul 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Seventh-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;Previous week, I had started the work on Equal degree factorization &lt;a href="https://github.com/symengine/symengine/pull/1026"&gt;here&lt;/a&gt;. Here I was storing the factors in a vector and then sorting the factors. Certik pointed out that its better to use some other data structure instead of &lt;code class="highlighter-rouge"&gt;vector&lt;/code&gt;. So I have changed the container type to &lt;code class="highlighter-rouge"&gt;set&lt;/code&gt;.
+&lt;br /&gt;Then after both Distinct degree factorization and Equal degree factorization being implemented, I started to work on factoring a polynomial in finite field, this needed integrating square free factorization with these two. I worked on &lt;code class="highlighter-rouge"&gt;gf_factor()&lt;/code&gt; method. In this method we take a polynomial in a given field as input, and return all the factors and their respective powers, and polynomial&amp;#8217;s leading coefficient as output.
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;GaloisFieldDict::gf_factor() const
+{
+  integer_class lc;
+  GaloisFieldDict monic;
+  gf_monic(lc, outArg(monic));
+  if (monic.degree() &amp;lt; 1)
+      return std::make_pair(lc, factors);
+  std::vector&amp;lt;std::pair&amp;lt;GaloisFieldDict, integer_class&amp;gt;&amp;gt; sqf_list
+      = monic.gf_sqf_list();
+  for (auto a : sqf_list) {
+      auto temp = (a.first).gf_zassenhaus();
+      for (auto f : temp)
+          factors.insert({f, a.second});
+  }
+  return factors;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For a given polynomial firstly we get its monic representation and it leading coefficient. Then we find the Square free factors of the monic representation. And on each of the square free factor we run the &lt;code class="highlighter-rouge"&gt;zassenhaus&lt;/code&gt;&amp;#8217;s algorithm.
+&lt;br /&gt;
+I have been working on &lt;a href="https://github.com/nishnik/symengine/tree/gf_factor"&gt;this&lt;/a&gt; branch, will create a PR after the Equal degree factorization PR gets merged.
+&lt;br /&gt;
+Then I have started working on Shoup&amp;#8217;s algorithm for polynomial factorization, will post about it in the coming weeks.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://gxyd.github.io/GSoC Week 7</guid>
       <title>GSoC Week 7</title>
       <author>Gaurav Dhingra (gxyd)</author>
@@ -1639,265 +1859,6 @@ The good thing about this week was that I could now understand the limitations t
                     &lt;/i&gt;
                     &lt;br /&gt;
                     &lt;/ul&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shubhamtibra.wordpress.com/?p=604</guid>
-      <title>GSoC Week 7</title>
-      <author>Subham Tibra (shubhamtibra)</author>
-      <pubDate>Sun, 10 Jul 2016 17:19:17 GMT</pubDate>
-      <link>https://shubhamtibra.wordpress.com/2016/07/10/gsoc-week-7/</link>
-      <description>&lt;p&gt;I started working on the support for additional symbolic parameters in the module. So I added an extra argument in the method&amp;#160;&lt;code&gt;expr_to_holonomic&lt;/code&gt; for using custom domains. This will be helpful in integrations. For instance:&lt;/p&gt;
-&lt;pre class="brush: python; title: ; notranslate"&gt;
-In [5]: expr_to_holonomic(sin(x*y), x=x, domain=QQ[y]).integrate(x).to_expr()
-Out[5]:
--cos(x&amp;#8901;y) + 1
-&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;
-     y
-In [15]: expr_to_holonomic(log(x*y), x=x, domain=QQ[y]).integrate((x, 1, x)).to_expr()
-Out[15]: x&amp;#8901;log(x) + x&amp;#8901;log(y) - x - log(y) + 1
-&lt;/pre&gt;
-&lt;p&gt;Code upto here was merged at&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11330"&gt;#11330&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;After that I implemented the &lt;code&gt;Frobenius method&lt;/code&gt;&amp;#160;to support functions where the series may have negative or fractional exponents. Although there are limitations in the algorithm. First one being that we don&amp;#8217;t have an algorithm to compute the general solution. There doesn&amp;#8217;t seem to be a direct algorithm if roots of the &lt;code&gt;indicial equation&lt;/code&gt;&amp;#160;differ by an integer. Second one is the initial conditions. Initial conditions of the function (most of the times they won&amp;#8217;t even exist) can&amp;#8217;t be used if the exponents are fractional or negative.&lt;/p&gt;
-&lt;pre class="brush: python; title: ; notranslate"&gt;
-In [23]: expr_to_holonomic(sqrt(x**2-x)).series()
-Out[23]:
-            3/2       5/2       7/2         9/2         11/2
-        C&amp;#8320;&amp;#8901;x      C&amp;#8320;&amp;#8901;x      C&amp;#8320;&amp;#8901;x      5&amp;#8901;C&amp;#8320;&amp;#8901;x      7&amp;#8901;C&amp;#8320;&amp;#8901;x        &amp;#9115; 6&amp;#9118;
-C&amp;#8320;&amp;#8901;&amp;#8730;x - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; + O&amp;#9117;x &amp;#9120;
-           2         8         16        128         256            
-
-In [28]: expr_to_holonomic(cos(x)**2/x**2, initcond=False).series()
-Out[28]:
-         2         4                       3         5
-     C&amp;#8322;&amp;#8901;x    2&amp;#8901;C&amp;#8322;&amp;#8901;x    C&amp;#8321;   2&amp;#8901;C&amp;#8321;&amp;#8901;x   2&amp;#8901;C&amp;#8321;&amp;#8901;x    4&amp;#8901;C&amp;#8321;&amp;#8901;x    C&amp;#8320;    &amp;#9115; 6&amp;#9118;
-C&amp;#8322; - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; + &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; + &amp;#9472;&amp;#9472; - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; + &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; + &amp;#9472;&amp;#9472; + O&amp;#9117;x &amp;#9120;
-       3        45     x      3         15       315      2
-                                                         x
-&lt;/pre&gt;
-&lt;p&gt;I will be working more on this and hope to add more functionality in this method.&lt;/p&gt;
-&lt;p&gt;Right now I am working on an algorithm to convert a given Holonomic Function to Meijer G-function. This also doesn&amp;#8217;t look so straightforward. Kalevi helped me with the theory and we wrote a basic that works for some cases. We hope to add more things in it.&lt;/p&gt;
-&lt;pre class="brush: python; title: ; notranslate"&gt;
-In [17]: hyperexpand(expr_to_holonomic(exp(x)).to_meijerg())
-Out[17]:
- x
-&amp;#8495;
-In [19]: hyperexpand(expr_to_holonomic(log(x)).to_meijerg()).simplify()
-Out[19]: log(x)
-&lt;/pre&gt;
-&lt;p&gt;These are at&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11360"&gt;#11360&lt;/a&gt;.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/604/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/604/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=604&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=761</guid>
-      <title>GSoc Week 7</title>
-      <author>Sampad Saha (sampadsaha5)</author>
-      <pubDate>Sat, 09 Jul 2016 16:52:24 GMT</pubDate>
-      <link>https://sampadblog.wordpress.com/2016/07/09/gsoc-week-7/</link>
-      <description>&lt;p&gt;Hi there! It&amp;#8217;s been seven weeks into the coding period&amp;#160;and the&amp;#160;second half has started now. I had a meeting with Jason on 3&lt;sup&gt;rd&lt;/sup&gt; of July. We discussed some modifications that were needed to be done in the existing PRs. Further, we had a conversation on the beam bending module. We ended up with some good ideas regarding the&amp;#160;implementation of beam object.&lt;/p&gt;
-&lt;h4&gt;&lt;em&gt;&lt;strong&gt;So Far&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;In PR&amp;#160;&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11178"&gt;PR 11178 &lt;/a&gt;&amp;#160;and&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11237"&gt;PR 11237&lt;/a&gt;, I have added the suggested modifications.&lt;/li&gt;
-&lt;li&gt;In PR&amp;#160;&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11266"&gt;11266&lt;/a&gt;, I have done some modifications in the DistributedLoad class. Initially, it had &amp;#8220;start&amp;#8221;,&amp;#8221; end&amp;#8221; and &amp;#8220;value&amp;#8221; as its attribute but Jason suggested me to add an attribute which would denote the order of the load. This attribute would help while representing a load in the&amp;#160;form of Singularity Functions. Such as:
-&lt;ul&gt;
-&lt;li&gt;Order = 0 will denote Step Function,&lt;/li&gt;
-&lt;li&gt;Order = 1 will denote Ramp Function,&lt;/li&gt;
-&lt;li&gt;Order = 2 will denote Parabolic Ramp Function and&lt;/li&gt;
-&lt;li&gt;so on &amp;#8230;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;In the same PR, I have added some more method for taking boundary conditions explicitly for different cases such as for deflection, slope and moment as inputs. I made a private attribute &lt;em&gt;_boundary_conditions&lt;/em&gt; and initiated as an empty dictionary of lists with keywords&amp;#160;&amp;#160;deflection, slope and moment. Later on each of the methods, namely,
-&lt;ul&gt;
-&lt;li&gt;apply_boundary_conditions&lt;/li&gt;
-&lt;li&gt;apply_moment_boundary_conditions&lt;/li&gt;
-&lt;li&gt;apply_slope_boundary_conditions&lt;/li&gt;
-&lt;li&gt;apply_deflection_boundary_conditions&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;just updates that dictionary. The method &lt;em&gt;boundary_conditions&lt;/em&gt; would return the dictionary itself.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;&lt;em&gt;&lt;strong&gt;Next Week&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;I will try to get&amp;#160;&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11178"&gt;PR 11178 &lt;/a&gt;&amp;#160;and&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11237"&gt;PR 11237&lt;/a&gt;&amp;#160;merged.&lt;/li&gt;
-&lt;li&gt;Add &lt;em&gt;apply_load&lt;/em&gt; method to the Beam class.&lt;/li&gt;
-&lt;li&gt;Successfully convert all the load inputs through the &amp;#160;&lt;em&gt;apply_load&lt;/em&gt; method into Singularity Functions.&lt;/li&gt;
-&lt;li&gt;Write methods which would output load curve, shear curve and moment curve.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;That&amp;#8217;s all for this week. Cheers !!&lt;/p&gt;
-&lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/761/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/761/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=761&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=362</guid>
-      <title>GSoC Weeks 6 &amp; 7 Progress</title>
-      <author>Rajith Vidanaarachchi (rajithv)</author>
-      <pubDate>Sat, 09 Jul 2016 11:50:05 GMT</pubDate>
-      <link>https://rajithsays.wordpress.com/2016/07/09/gsoc-weeks-6-7-progress/</link>
-      <description>&lt;p&gt;Week 6 was quite a rush, with many other things happening, and the work getting lagged behind. But with week 7, I was able to put much extra time into the project and get more or less up-to date with the time-line.&lt;/p&gt;
-&lt;p&gt;Since, the end of week 5, the progress is as follows:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Completed and merged Matrix CWrappers in &lt;a href="https://github.com/symengine/symengine/pull/992" target="_blank"&gt;PR #992&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Completed and merged Parser CWrapper in &lt;a href="https://github.com/symengine/symengine/pull/1029" target="_blank"&gt;PR #1029&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Completed and merged &lt;a href="https://github.com/symengine/symengine/pull/1027" target="_blank"&gt;PR #1027&lt;/a&gt; which had wrappers for various functions for Number class, needed for the tests in Ruby to function properly.&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://github.com/symengine/symengine.rb/pull/56" target="_blank"&gt;PR #56&lt;/a&gt; in the Ruby Wrapper for Matrices is almost ready, with several review feedback to be incorporated.&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://github.com/symengine/symengine.rb/pull/60" target="_blank"&gt;PR #60&lt;/a&gt; in the Ruby Wrapper for Parser is ready to be merged.&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://github.com/symengine/symengine.rb/pull/59" target="_blank"&gt;PR #59&lt;/a&gt; contains the updates for the IRuby Notebooks, which will be used by @certik for SciPy 2016&amp;#8217;s SymEngine talk.&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://github.com/symengine/symengine.rb/pull/55" target="_blank"&gt;PR #55&lt;/a&gt; with the Ruby wrappers for evalf was finally merged after quite a time going into accmmodating floating point tests.&lt;/li&gt;
-&lt;li&gt;&lt;a href="https://github.com/symengine/symengine.rb/issues/57"&gt;Issue #57&lt;/a&gt; was closed in the Ruby Wrapper.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;In the proposal, I had promised an auxiliary feature of LaTeX friendly outputs for SymEngine Expresions, given I am on time. But considering I am barely hanging on to the time line, I decided to push this to the end of the time line.&lt;/p&gt;
-&lt;p&gt;So I will immediately start working on the lambdify functions, and hopefully start exception catching in the same week. This will give me time to come back to the LaTeX friendly expressions in the last weeks.&lt;/p&gt;
-&lt;p&gt;See you!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/362/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/362/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=362&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://srajangarg.github.io//2016/07/09/Rational-Polynomials</guid>
-      <title>Rational Polynomials</title>
-      <author>Srajan Garg (srajangarg)</author>
-      <pubDate>Sat, 09 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://srajangarg.github.io//2016/07/09/Rational-Polynomials/</link>
-      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
-
-&lt;p&gt;This last week was divided into two parts. The first half was spent in fixing miscellaneous issue with the last PR, regarding the basic to polynomial converisons. The second half was spent in thinking of how SymEngine should store rational polynomials (polynomials with rational coefficients) and how infact should they be implemented.&lt;/p&gt;
-
-&lt;h3 id="leftovers-from-basic-conversions"&gt;Leftovers from Basic Conversions&lt;/h3&gt;
-
-&lt;p&gt;As mentioned, the first half of my week was spent finalizing the basic to polynomial conversions PR.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Using &lt;code class="highlighter-rouge"&gt;divnum&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;mulnum&lt;/code&gt; methods instead of using &lt;code class="highlighter-rouge"&gt;rcp_cast&amp;lt;Number&amp;gt;&lt;/code&gt; on &lt;code class="highlighter-rouge"&gt;mul&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;div&lt;/code&gt; respectively. These made the code much more readable too.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Use &lt;code class="highlighter-rouge"&gt;static_cast&amp;lt;const Rational &amp;amp;&amp;gt;(*rat_rcp).get_den()&lt;/code&gt; instead of &lt;code class="highlighter-rouge"&gt;rcp_static_cast&amp;lt;const Rational&amp;gt;(rat_rcp)-&amp;gt;get_den()&lt;/code&gt;. The logic behind this is, that in the second case, another &lt;code class="highlighter-rouge"&gt;RCP&lt;/code&gt; is being constructed, and the &lt;code class="highlighter-rouge"&gt;get_den&lt;/code&gt; function is called on this new RCP. This is unecessary and can be avoided using the former approach.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;At many places within the visitor pattern, I was calling the external function &lt;code class="highlighter-rouge"&gt;basic_to_poly&lt;/code&gt;. This was not wrong, but caused necessary overhead and recursion, which is not usually desired. Isuru suggested that I can reuse the visitor and successfully avoid the recursion. Here&amp;#8217;s an example&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;dict_type&lt;/span&gt; &lt;span class="nf"&gt;_basic_to_poly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;basic&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;gen&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;	
-    &lt;span class="n"&gt;BasicToPolyV&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-    &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;apply&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;basic&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;gen&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-
-&lt;span class="c1"&gt;// dict is the answer we will be returning
-&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="n"&gt;BasicToPolyV&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;bvisit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Add&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;
-    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dict_&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-        &lt;span class="c1"&gt;// unnecessary overhead
-&lt;/span&gt;        &lt;span class="n"&gt;dict&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;_basic_to_upoly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;it&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;gen&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;becomes this&lt;/p&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="c1"&gt;// dict is the answer we will be returning
-&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="n"&gt;BasicToPolyV&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;bvisit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Add&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;	
-    &lt;span class="n"&gt;dict_type&lt;/span&gt; &lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dict_&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-        &lt;span class="c1"&gt;// no overhead
-&lt;/span&gt;        &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;BasicToPolyV&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;apply&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;it&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;gen&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-    &lt;span class="n"&gt;dict&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;move&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;There was also a &lt;a href="https://github.com/symengine/symengine/pull/1003#discussion_r69408888"&gt;discussion&lt;/a&gt; on how the visitor for &lt;code class="highlighter-rouge"&gt;Pow&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;find_gen_pow&lt;/code&gt; was implemented. Isuru pointed out, how it would give wrong answers in the cases he put forward. But I had thought of other cases (like &lt;code class="highlighter-rouge"&gt;2**(2**(x+1))&lt;/code&gt;) which would would then not work, if the code was changed. These were special type of cases where the expression could be &amp;#8216;simplified&amp;#8217;. There&amp;#8217;s some discussion on the issue &lt;a href="https://github.com/symengine/symengine/issues/1021"&gt;here&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id="starting-rational-polynomials"&gt;Starting Rational Polynomials&lt;/h3&gt;
-
-&lt;p&gt;I began thinking of how the polynomials with rational coefficients class should be implemented. In Flint, the &lt;code class="highlighter-rouge"&gt;fmpq_poly&lt;/code&gt; class is implemented as a &lt;code class="highlighter-rouge"&gt;fmpz_poly&lt;/code&gt; class with another just another integer acting as the common denominatior. This kind of implementation saves up on a lot of time! (think of canonicalization of coefficients, after multiplication) But this kind of implementation would require a lot of extra code be written, and we could not reuse any of the code we have already written. So, after discussion with Isuru, he suggested that I can go ahead with the trivial implementation of using a map from &lt;code class="highlighter-rouge"&gt;uint&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;rational_class&lt;/code&gt;.&lt;/p&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;URatDict&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ODictWrapper&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;uint&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;rational_class&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Add in some constructors and that&amp;#8217;s it! The internal container for rational polynomials in SymEngine is ready, because of the way we had strcutured the earlier code.&lt;/p&gt;
-
-&lt;p&gt;Now the question was how the end classes should be implemented (i.e. &lt;code class="highlighter-rouge"&gt;URatPoly&lt;/code&gt;) If you think about it, the methods of both the rational and integer polynomials will look exactly the same. &lt;code class="highlighter-rouge"&gt;from_vec&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;container_from_dict&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;eval&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;compare&lt;/code&gt; will all look the same with minor differences. The minor differences are only what type of container is being used (&lt;code class="highlighter-rouge"&gt;URatDict&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;UIntDict&lt;/code&gt;?) and what coefficient class is being used (&lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;rational_class&lt;/code&gt;?) Infact, I checked this for our other polynomial types Flint and Piranha and it holds true over there too!&lt;/p&gt;
-
-&lt;p&gt;So, what came to mind was that all the methods had to be reused! Thus I formed a &lt;code class="highlighter-rouge"&gt;USymEnginePoly&lt;/code&gt; class which acts as the &amp;#8216;SymEngine&amp;#8217; implementation of polynomials. You can pass it a &lt;code class="highlighter-rouge"&gt;BaseType&lt;/code&gt; from which it will deduce what type of polynomial would be constructed. Ideally, all you need to do now for implenting end polynomial classes is choose a implementation type (SymEngine or Piranha or Flint?) and a polynomial type (Integer or Rational?)&lt;/p&gt;
-
-&lt;p&gt;Here&amp;#8217;s some pseudo code for the class structure aimed at&lt;/p&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="c1"&gt;// the base
-&lt;/span&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Container&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UPolyBase&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Basic&lt;/span&gt;
-
-&lt;span class="c1"&gt;// super class for all non-expr polys, all methods which are
-// common for all non-expr polys go here eg. degree, eval etc.
-&lt;/span&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Cont&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UNonExprPoly&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;UPolyBase&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Cont&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-
-&lt;span class="c1"&gt;// the specialized non-expr classes
-&lt;/span&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;D&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UIntPolyBase&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;UNonExprPoly&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;D&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;integer_class&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;span class="c1"&gt;// and
-&lt;/span&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;D&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;URatPolyBase&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;UNonExprPoly&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;D&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;rational_class&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-
-&lt;span class="c1"&gt;// a specific implementation
-// similar classes like UPiranhaPoly/UFlintPoly
-&lt;/span&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;X&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;BaseType&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;D&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;USymEnginePoly&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;BaseType&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;D&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-
-&lt;span class="c1"&gt;// end classes (few examples)
-&lt;/span&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UIntPoly&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;USymEnginePoly&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;UIntDict&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;UIntPolyBase&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;URatPoly&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;USymEnginePoly&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;URatDict&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;URatPolyBase&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UIntPolyPir&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;UPiranhaPoly&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;piranha&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;poly&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;UIntPolyBase&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;URatPolyFlint&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="n"&gt;UFlintPoly&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;flint&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;poly&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;URatPolyBase&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Here&amp;#8217;s a bonus picture!&lt;/p&gt;
-
-&lt;p&gt;&lt;img alt="" src="http://srajangarg.github.io/assets/class.jpg" /&gt;&lt;/p&gt;
-
-&lt;p&gt;I hope to get all the rational polynomials ready and tested in the next two to three days. The existing work can be seen in &lt;a href="https://github.com/symengine/symengine/pull/1028"&gt;#1028&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;Tata!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://jbm950.github.io//2016/07/08/GSoC-week-7.html</guid>
-      <title>GSoC Week 7</title>
-      <author>James Milam (jbm950)</author>
-      <pubDate>Fri, 08 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://jbm950.github.io//2016/07/08/GSoC-week-7.html</link>
-      <description>&lt;p&gt;This week the focus was on the support code for the featherstone method.
-I finished adding examples to the docstrings of every function I made. I
-then wrote up test code for all of the new functions primarily focusing
-on expected outputs but included some expected error messages for one of
-the functions. Lastly I have coded up the functions themselves. This
-work can be seen in &lt;a href="https://github.com/sympy/sympy/pull/11331"&gt;PR
-#11331&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;I continued following the PR I reviewed last week and give suggestions
-as he worked on it. The PR is now in my opinion ready to be merged and
-is a beneficial addition to the sympy codebase.&lt;/p&gt;
-
-&lt;p&gt;The last thing I did this week was have a meeting about the presentation
-that I will be aiding in on Monday. After the meeting I have spent some
-time looking over my portions of the presentation and making sure I am
-prepared to speak.&lt;/p&gt;
-
-&lt;h3 id="future-directions"&gt;Future Directions&lt;/h3&gt;
-
-&lt;p&gt;Next week is the SciPy conference were I will be aiding in PyDy&amp;#8217;s
-tutorial. Also I will be meeting with my mentor in person and during our
-time there I suspect we will work on a variety of things from
-Featherstone&amp;#8217;s articulated body method to the base class.&lt;/p&gt;
-
-&lt;h3 id="prs-and-issues"&gt;PR&amp;#8217;s and Issues&lt;/h3&gt;
-
-&lt;blockquote&gt;
-  &lt;ul&gt;
-    &lt;li&gt;(Open) Added docstrings to ast.py &lt;a href="https://github.com/sympy/sympy/pull/11333"&gt;PR
-  #11333&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;(Open) [WIP] Featherstones EOM support &lt;a href="https://github.com/sympy/sympy/pull/11331"&gt;PR
-  #11331&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;</description>
     </item>
   </channel>
 </rss>
