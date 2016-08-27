@@ -936,6 +936,149 @@ x&amp;#8901;&amp;#8495;
 &lt;p&gt;Right now we are trying to find a way to include convergence conditions in the result while converting Holonomic Functions to expressions.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/854/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/854/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=854&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://kshitij10496.github.io//2016/08/07/GSoC-Week-10-11/</guid>
+      <title>GSoC Week 10 &amp; 11 - The One with `solvify`</title>
+      <author>Kshitij Saraogi(kshitij10496)</author>
+      <pubDate>Sun, 07 Aug 2016 00:00:00 GMT</pubDate>
+      <link>http://kshitij10496.github.io//2016/08/07/GSoC-Week-10-11/</link>
+      <description>&lt;p&gt;During the past couple of weeks, I worked on replacing &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; with &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; in solving inequalities.&lt;/p&gt;
+
+&lt;h3 id="issue"&gt;&lt;strong&gt;Issue&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;SymPy&amp;#8217;s univariate inequality solver, &lt;code class="highlighter-rouge"&gt;solve_univariate_inequality&lt;/code&gt; relies on &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; for reducing inequalities.&lt;/p&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt;&lt;span class="p"&gt;[]&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;isolve&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;solve_univariate_inequality&lt;/span&gt; &lt;span class="c"&gt;# for simplicity&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;As we would prefer using &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; internally, it is important to remove the dependency on &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; here.
+However, there are a lot of issues which need to be handled carefully. Here are a few of them:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;The major issue with using &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; is the &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt; output API.
+ As &lt;code class="highlighter-rouge"&gt;isolve&lt;/code&gt; is designed to work according to &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt;&amp;#8217;s results, this seems to be &lt;em&gt;the&lt;/em&gt; roadblock.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;No support for restricted domain.&lt;/p&gt;
+
+    &lt;p&gt;Generally, the inequalties are solved in the entire real domain. However, this might not be what the user want 
+ (especially while dealing with trigonometric inequalties). Also, to maintain uniformity across all our solvers,
+ support for user-speicifed &lt;code class="highlighter-rouge"&gt;domain&lt;/code&gt; is a must.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Incorrect results for trigonometric inequalties&lt;/p&gt;
+
+    &lt;p&gt;As Issue &lt;a href="https://github.com/sympy/sympy/issues/9721"&gt;#9721&lt;/a&gt;, &lt;code class="highlighter-rouge"&gt;isolve&lt;/code&gt; returns incorrect results for certain trigonometric inequalities.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;  &lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;isolve&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;relational&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;oo&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+  &lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;isolve&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tan&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;relational&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;oo&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id="solutions"&gt;&lt;strong&gt;Solutions&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Implementing &lt;code class="highlighter-rouge"&gt;solvify&lt;/code&gt; : &amp;#8220;solve&amp;#8221;-fy &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;&amp;#8217;s solutions.&lt;br /&gt;
+  There were two possible ways to tackle the issue of APIs:&lt;/p&gt;
+
+    &lt;p&gt;a. Refactoring &lt;code class="highlighter-rouge"&gt;isolve&lt;/code&gt; in according with &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt; API.&lt;/p&gt;
+
+    &lt;p&gt;b. Somehow returning &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; results from &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;.&lt;/p&gt;
+
+    &lt;p&gt;&lt;em&gt;Solution&lt;/em&gt; : &lt;strong&gt;b&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;p&gt;In order to resolve the issue of portability from &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;, I implemented &lt;code class="highlighter-rouge"&gt;solvify&lt;/code&gt; which returns solve-like results.
+ We classify the return value based on the type of solution returned by &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;.&lt;/p&gt;
+
+    &lt;p&gt;Solution    |    Output
+   &amp;#8212;&amp;#8212;&amp;#8212;&amp;#8212;&amp;#8212;&amp;#8212;&amp;#8212;&amp;#8212;&amp;#8212;&amp;#8212;&amp;#8212;&amp;#8212;&amp;#8212;-
+   FiniteSet   | list&lt;/p&gt;
+
+    &lt;table&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;ImageSet,&lt;/td&gt;
+          &lt;td&gt;list (if &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt; is periodic)&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Union&lt;/td&gt;
+          &lt;td&gt;&amp;#160;&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+
+    &lt;table&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;EmptySet&lt;/td&gt;
+          &lt;td&gt;empty list&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+
+    &lt;table&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Others&lt;/td&gt;
+          &lt;td&gt;None&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Adding &lt;code class="highlighter-rouge"&gt;domain&lt;/code&gt; support.&lt;/p&gt;
+
+    &lt;p&gt;I added a &lt;code class="highlighter-rouge"&gt;domain&lt;/code&gt; argument to &lt;code class="highlighter-rouge"&gt;isolve&lt;/code&gt; whose default value is the real domain (&lt;code class="highlighter-rouge"&gt;domain=S.Reals&lt;/code&gt;).
+ A few limitation to the conditions of &lt;code class="highlighter-rouge"&gt;S.Infinity&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;S.NegativeInfinity&lt;/code&gt; followed.&lt;/p&gt;
+
+    &lt;p&gt;Another noticable point, from the point of implementation, was to deal with singularities and discontinuities of the given inequality.
+ For this, I used the &lt;code class="highlighter-rouge"&gt;continuous_domain&lt;/code&gt; method to find the continuous domains of the expression within the specified domain.&lt;/p&gt;
+
+    &lt;p&gt;This was a minimalistic addition with considerable returns (especially for solving periodic inequalties).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Solving trigonometric inequalities.&lt;/p&gt;
+
+    &lt;p&gt;Since most of the trigonometric inequalities are periodic in nature and have infinite solutions, 
+ solving the expression in the entire real domain is a repetitive task and computationally expensive.&lt;/p&gt;
+
+    &lt;p&gt;In order to simplify the problem, I intend to solve all the inequalities in a positive periodic interval (say &lt;code class="highlighter-rouge"&gt;[0, 2*pi)&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;sin(x)&lt;/code&gt;).
+ We already have a function to compute the real period of a function : &lt;code class="highlighter-rouge"&gt;periodicity&lt;/code&gt;.&lt;br /&gt;
+ In case of a non-finite &lt;code class="highlighter-rouge"&gt;domain&lt;/code&gt; argument, I intend to use this to restrict the solutions of the problem to a periodic interval.&lt;/p&gt;
+
+    &lt;p&gt;This might not seem the perfect approach but it seems reasonable to handle infinite interval sets for now.
+ We need a new &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt; object : &lt;code class="highlighter-rouge"&gt;BigUnion&lt;/code&gt; to represent infinite number of interval objects.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id="new-implementation"&gt;&lt;em&gt;New Implementation&lt;/em&gt;&lt;/h3&gt;
+
+&lt;p&gt;I have opened &lt;a href="https://github.com/sympy/sympy/pull/11458"&gt;PR#11458&lt;/a&gt; for the same with all the implementation details.&lt;/p&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;isolve&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;relational&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="n"&gt;U&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;isolve&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tan&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;relational&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id="after-thoughts"&gt;&lt;em&gt;After thoughts&lt;/em&gt;&lt;/h3&gt;
+
+&lt;p&gt;For the past couple of weeks, I haven&amp;#8217;t been able to give much time to the project due to my college schedule.
+I try to make up for the lost time during the weekend and meet the 40 hour weekly deadline.&lt;/p&gt;
+
+&lt;p&gt;With the endsem evaluation soon approaching, I expect this PR to get merged and count as a part of my project.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-11</guid>
       <title>Coding Period Week 11</title>
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
@@ -1667,6 +1810,70 @@ irb(main):005:0&amp;gt;&lt;/pre&gt;
 &lt;p&gt;See you next week!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/416/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/416/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=416&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://kshitij10496.github.io//2016/07/24/GSoC-Week-09/</guid>
+      <title>GSoC Week 09 - The One with Inequalities</title>
+      <author>Kshitij Saraogi(kshitij10496)</author>
+      <pubDate>Sun, 24 Jul 2016 00:00:00 GMT</pubDate>
+      <link>http://kshitij10496.github.io//2016/07/24/GSoC-Week-09/</link>
+      <description>&lt;p&gt;This week I worked on solving trigonometric inequalities.&lt;/p&gt;
+
+&lt;h3 id="trigonometric-inequalities"&gt;&lt;strong&gt;Trigonometric inequalities&lt;/strong&gt;&lt;/h3&gt;
+
+&lt;p&gt;The primary univariate inequality solver - &lt;code class="highlighter-rouge"&gt;solve_univariate_inequality&lt;/code&gt;,&lt;br /&gt;
+depends upon the results of &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; in order to solve the given inequality.
+Taking a cue from &lt;a href="https://github.com/sympy/sympy/pull/10022"&gt;PR#10022&lt;/a&gt; on incorporating &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; for inequalities, I worked on developing an approach for replacing the use of &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; 
+with &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; in solving inequalities.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Idea&lt;/strong&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Convert &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt;-type output from &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;list&lt;/code&gt; objects similar to that returned by &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The most striking difference between both the APIs is the uniform &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt; output returned by &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;. 
+Hence, the prime concern while transitioning from &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; should be handling the various type of solutions.&lt;/p&gt;
+
+&lt;p&gt;Here are a few implementation ideas on the same:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;FiniteSet&lt;/strong&gt; : finite number of solutions&lt;br /&gt;
+Using the &lt;code class="highlighter-rouge"&gt;list&lt;/code&gt; constructor on these type of objects works extremely well.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;ImageSet&lt;/strong&gt; : infinite number of solutions&lt;br /&gt;
+This is generally the case with trigonometric functions as most of them are periodic in nature.
+We need to limit the number of solutions to be finite.&lt;br /&gt;
+For this, I intend to use the a periodic interval: &lt;code class="highlighter-rouge"&gt;[0, period]&lt;/code&gt; as the basis for filtering the solution set.
+This returns a simplified &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; of solutions which can be used to solve inequalities in a restricted interval.
+Following which we can generalise the output over the entire domain of the function.&lt;/p&gt;
+
+    &lt;p&gt;A major issue here is the representation of the final solution set.&lt;br /&gt;
+For example:&lt;/p&gt;
+
+    &lt;div class="language-python highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;solveset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;domain&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Reals&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="err"&gt;&amp;#9121;&lt;/span&gt;         &lt;span class="err"&gt;&amp;#960;&lt;/span&gt;           &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="err"&gt;&amp;#8901;&amp;#960;&lt;/span&gt;         &lt;span class="err"&gt;&amp;#9124;&lt;/span&gt;
+&lt;span class="err"&gt;&amp;#9122;&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="err"&gt;&amp;#9472;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="err"&gt;&amp;#9472;&amp;#9472;&amp;#9472;&lt;/span&gt;  &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="err"&gt;&amp;#8714;&lt;/span&gt; &lt;span class="err"&gt;&amp;#8484;&amp;#9125;&lt;/span&gt;
+&lt;span class="err"&gt;&amp;#9123;&lt;/span&gt;         &lt;span class="mi"&gt;2&lt;/span&gt;            &lt;span class="mi"&gt;2&lt;/span&gt;          &lt;span class="err"&gt;&amp;#9126;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+    &lt;/div&gt;
+
+    &lt;p&gt;Currently, we do not have a &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt; object for representing this.&lt;br /&gt;
+For this, we need to implement an &lt;em&gt;Indexed Union&lt;/em&gt; : &lt;code class="highlighter-rouge"&gt;Union(X(a) for a in I)&lt;/code&gt;&lt;/p&gt;
+
+    &lt;p&gt;We can symbolically represent the above solution as &lt;code class="highlighter-rouge"&gt;BigUnion(Interval(2*n*pi + pi/2, 2*n*pi + 3*pi/2), n, S.Intgers)&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;After thoughts&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Also, this week my &lt;a href="https://github.com/sympy/sympy/pull/11277"&gt;PR#11277&lt;/a&gt; on periodicity got merged finally.
+I have updated the corresponding &lt;a href="https://github.com/sympy/sympy/pull/11141"&gt;PR#11141&lt;/a&gt; which has been stalled for some time now.
+Hopefully, it will get merged soon.&lt;/p&gt;
+
+&lt;p&gt;The next week I will devote my time to the implementation part of solving inequalities.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://srajangarg.github.io//2016/07/23/Rational-Polynomials-ft-Bugs</guid>
       <title>Rational Polynomials ft. Bugs</title>
       <author>Srajan Garg (srajangarg)</author>
@@ -1837,191 +2044,6 @@ So when &lt;code class="highlighter-rouge"&gt;log q&lt;/code&gt; approaches &lt;
 I have completed the implementation of this algorithm on &lt;a href="https://github.com/nishnik/symengine/tree/shoup_factorization"&gt;shoup_factorization&lt;/a&gt; branch.
 And also, I changed the container (which stores factors) type to &lt;code class="highlighter-rouge"&gt;set&lt;/code&gt;.&lt;br /&gt;
 Will send a PR soon.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-9</guid>
-      <title>Coding Period Week 9</title>
-      <author>Shekhar Prasad Rajak (shekharrajak)</author>
-      <pubDate>Wed, 20 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://shekharrajak.github.io/Coding-Period-week-9/</link>
-      <description>&lt;p&gt;&lt;strong&gt;Some points regarding trigonometric and inverse trigonometric functions in solveset :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;There are many issues in solveset &lt;code class="highlighter-rouge"&gt;solve_trig&lt;/code&gt;.More inverse trigonometric formula and trigonometric identities should be defined/added or improved.
-Also &lt;code class="highlighter-rouge"&gt;simplify&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;trigsimp&lt;/code&gt; and in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; &lt;code class="highlighter-rouge"&gt;_invert&lt;/code&gt; methods should be improved accordingly.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Some links, that is helpful to improve these functions.&lt;/p&gt;
-
-    &lt;ul&gt;
-      &lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Inverse_trigonometric_functions"&gt;https://en.wikipedia.org/wiki/Inverse_trigonometric_functions&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Proofs_of_trigonometric_identities"&gt;https://en.wikipedia.org/wiki/Proofs_of_trigonometric_identities&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href="https://owlcation.com/stem/List-of-Inverse-Trig-Function-Identities-Integrals-and-Derivatives"&gt;https://owlcation.com/stem/List-of-Inverse-Trig-Function-Identities-Integrals-and-Derivatives&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;trigsimp&lt;/code&gt; must be more powerful so that &lt;code class="highlighter-rouge"&gt;solve_trig&lt;/code&gt; get simplified eq. (which solves trig equation by converting them into its &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; form).&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;solve_trig&lt;/code&gt; solves the trig eq. using its &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; form. There may be cases when that &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; form is complicated and solveset fail to handle that form.
-There should be technique to convert that complicated form to simpler form(if possible) and then call the &lt;code class="highlighter-rouge"&gt;solveset_complex&lt;/code&gt;. That may help to improve the &lt;code class="highlighter-rouge"&gt;solve_trig&lt;/code&gt; method.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;We can use &lt;code class="highlighter-rouge"&gt;_osbornei&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;hyper_as_trig&lt;/code&gt; methods defined in &lt;code class="highlighter-rouge"&gt;simplify/fu.py&lt;/code&gt; to convert hyperbolic function to trigonometric function, then we can use &lt;code class="highlighter-rouge"&gt;trigsimp&lt;/code&gt; (we can&amp;#8217;t use &lt;code class="highlighter-rouge"&gt;trigsimp&lt;/code&gt; for hyperbolic functions).&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;First need to improve basic concepts and add more identities. I opened a new PR to improve &lt;code class="highlighter-rouge"&gt;rewrite&lt;/code&gt; for trigonometric functions , PR is &lt;a href="https://github.com/sympy/sympy/pull/11424/"&gt;#11424&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;eliminate() :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;issue &lt;a href="https://github.com/sympy/sympy/issues/2720"&gt;#2720&lt;/a&gt; : We need some kind of eliminate function, like &lt;a href="http://reference.wolfram.com/mathematica/ref/Eliminate.html"&gt;http://reference.wolfram.com/mathematica/ref/Eliminate.html&lt;/a&gt;. See also &lt;a href="http://stackoverflow.com/q/20826969/161801"&gt;http://stackoverflow.com/q/20826969/161801 &lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;It looks something related to &lt;a href="https://github.com/sympy/sympy/pull/11111/files#diff-eec0422923e8f100745c015cd8fdd6cfR1135"&gt;substitution&lt;/a&gt; function.
-But they are not same. Using &lt;code class="highlighter-rouge"&gt;eliminate()&lt;/code&gt; we will try to remove the variable(s) from the each equations(not solving the eq).&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Plan : First choose eq that have min. variables and get the value of the variable, to be eliminated. Go further and &lt;code class="highlighter-rouge"&gt;subs&lt;/code&gt; the value to next min. variable eq., and so on.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Work in progress.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Meanwhile :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;I found some basic issues in &lt;code class="highlighter-rouge"&gt;ComplexInfinity&lt;/code&gt; and trying to solve them in this PR &lt;a href="https://github.com/sympy/sympy/pull/11409"&gt;#11409&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;there may be many things to be added about &lt;code class="highlighter-rouge"&gt;ComplexInfinity&lt;/code&gt;, one can refer this link to implement them :
-&lt;a href="http://reference.wolfram.com/language/ref/ComplexInfinity.html"&gt;http://reference.wolfram.com/language/ref/ComplexInfinity.html&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;continue..&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;hr /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-8</guid>
-      <title>Coding Period Week 8</title>
-      <author>Shekhar Prasad Rajak (shekharrajak)</author>
-      <pubDate>Mon, 18 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://shekharrajak.github.io/Coding-Period-week-8/</link>
-      <description>&lt;hr /&gt;
-&lt;p&gt;&lt;strong&gt;Continue - Diophantine in Solveset :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11234"&gt;11234&lt;/a&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;For general Pythagorean diop_type (Diophantine eq type), it seems diophantine always returns parameterized solution so I did some changes in the PR. &lt;a href="https://github.com/sympy/sympy/pull/11334/commits/6af46fc35db3a74dfda78b6d8e2a0f7d4ec65afe"&gt;commit&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;You can refer this &lt;a href="https://github.com/sympy/sympy/pull/11334#issuecomment-230334645"&gt;comment&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Continue Simplified Trig soln&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11188"&gt;#11188&lt;/a&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;After some changes, the PR is ready for review.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Continue nonlinsolve :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11111"&gt;#11111&lt;/a&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Added some XFAIL test-cases of system of Trigonometric equations. &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; trig solver (&lt;code class="highlighter-rouge"&gt;solve_trig&lt;/code&gt;) is not smart enough(&lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; returns &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt;, where soln can be simply inverse trig functions using &lt;code class="highlighter-rouge"&gt;_invert&lt;/code&gt; or inverse Trigonometric functions). So &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; returns &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; that means &lt;code class="highlighter-rouge"&gt;substitution&lt;/code&gt; is not getting soln.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;It is better to replace trigonometric functions or other &lt;code class="highlighter-rouge"&gt;Function&lt;/code&gt; with symbols&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;(e.g. &lt;code class="highlighter-rouge"&gt;sin(x)&lt;/code&gt; &amp;#8211;&amp;gt; &lt;code class="highlighter-rouge"&gt;u&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;sin(y)&lt;/code&gt;&amp;#8211;&amp;gt; &lt;code class="highlighter-rouge"&gt;v&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;f(x)&lt;/code&gt;&amp;#8211;&amp;gt; &lt;code class="highlighter-rouge"&gt;f_x&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;g(x)&lt;/code&gt; &amp;#8211;&amp;gt; &lt;code class="highlighter-rouge"&gt;g_x&lt;/code&gt;)&lt;/p&gt;
-
-&lt;p&gt;and then solve for the symbols. After getting solution from &lt;code class="highlighter-rouge"&gt;nonlinsolve&lt;/code&gt; user can invert or do &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;(e.g. solveset(Eq(sin(x), soln_u), x, domain) to get value of &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt;).&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Ready for review.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Meanwhile :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;We already know that solveset need improved &lt;code class="highlighter-rouge"&gt;invert_real&lt;/code&gt; , &lt;code class="highlighter-rouge"&gt;invert_complex&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Imageset&lt;/code&gt; Intersections.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;previous work is in this PR &lt;a href="https://github.com/sympy/sympy/pull/10971"&gt;10971&lt;/a&gt;. Trying to improve them.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Some cases is here :&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;# In 2, 4, 5 intersection is not needed.
-
-In [1]: img = ImageSet(Lambda(n, x/n), S.Complexes)
-
-In [2]: Intersection(img, S.Complexes)
-Out[2]:
-    &amp;#9127;x        &amp;#9131;
-&amp;#8450; &amp;#8745; &amp;#9128;&amp;#9472; | n &amp;#8714; &amp;#8450;&amp;#9132;
-    &amp;#9129;n        &amp;#9133;
-
-In [3]: img = ImageSet(Lambda(n, x/n), S.Integers)
-
-In [4]: Intersection(img, S.Complexes)
-Out[4]:
-&amp;#9127;x        &amp;#9131;    
-&amp;#9128;&amp;#9472; | n &amp;#8714; &amp;#8484;&amp;#9132; &amp;#8745; &amp;#8450;
-&amp;#9129;n        &amp;#9133;    
-
-In [5]: Intersection(ImageSet(Lambda(n, 2*n*I*pi), S.Integers), S.Complexes)
-Out[5]: {2&amp;#8901;&amp;#8520;&amp;#8901;&amp;#960;&amp;#8901;n | n &amp;#8714; &amp;#8484;} &amp;#8745; &amp;#8450;
-
-# ImageSet Intersection is not implemented when inverter returns multiple values.
-# here ans should be {0, 1}
-In [6]: img1 = ImageSet(Lambda(n, n**2), S.Integers)
-
-In [7]: Intersection(img1, Interval(0,2))
-Out[7]:
-         &amp;#9127; 2        &amp;#9131;
-[0, 2] &amp;#8745; &amp;#9128;n  | n &amp;#8714; &amp;#8484;&amp;#9132;
-         &amp;#9129;          &amp;#9133;
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;continue..&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
