@@ -273,51 +273,6 @@ out_f = f-&amp;gt;zz_factor_sqf();
 The PR is &lt;a href="https://github.com/symengine/symengine/pull/1066"&gt;here&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-13</guid>
-      <title>Coding Period Week 13 - Last week and conclusion</title>
-      <author>Shekhar Prasad Rajak (shekharrajak)</author>
-      <pubDate>Sat, 20 Aug 2016 00:00:00 GMT</pubDate>
-      <link>http://shekharrajak.github.io/Coding-Period-week-13/</link>
-      <description>&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Documentation nonlinsolve:&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11532"&gt;#11532&lt;/a&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Conclusion :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;So the GSoC coding period is going to end. Here I am writing what I did, my todo list and suggestions for future work.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;One can see the progress report of each week and minutes of meeting here :
-&lt;a href="http://shekharrajak.github.io/GSoC-2016-Solvers-Progress"&gt;https://github.com/sympy/sympy/wiki/GSoC-2016-Solvers-Progress&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;My all the PRs link is here : &lt;a href="https://github.com/sympy/sympy/pulls?utf8=%E2%9C%93&amp;amp;q=is%3Aopen%7Cclosed%20is%3Apr%20author%3AShekharrajak%20"&gt;sympy/pulls/shekharrajak&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;I have created a vertical timeline to show all the work in chrononical order in this link : &lt;a href="http://shekharrajak.github.io/gsoc16_final.html"&gt;timeline&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Meanwhile :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;I find one issue : &lt;a href="https://github.com/sympy/sympy/issues/11534"&gt;#11534&lt;/a&gt; in mailing list discussion. This shows that we need better
-&lt;code class="highlighter-rouge"&gt;invert&lt;/code&gt; method for inverting nested roots/powers equtions in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; .&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;and this &lt;a href="https://github.com/sympy/sympy/issues/11528"&gt;#11528&lt;/a&gt;. &lt;code class="highlighter-rouge"&gt;factor_list&lt;/code&gt; will be helpful in factoring the equation in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; and solve for it factors and union the solution(during the PR #11188 discussion with Harsh this idea came out). It will actually replace the &lt;a href="https://github.com/sympy/sympy/blob/master/sympy/solvers/solveset.py#L646"&gt;elif f.is_Mul and all(_is_finite_with_finite_vars(m, domain)&lt;/a&gt; statement in &lt;code class="highlighter-rouge"&gt;_solveset&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;factor_list&lt;/code&gt; will be used soon.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=1042</guid>
       <title>GSoC Week 12 and Wrap-up</title>
       <author>Sampad Saha (sampadsaha5)</author>
@@ -617,101 +572,6 @@ of learning and experiences possible.&lt;/p&gt;</description>
 &lt;p&gt;This is officially the last week of Google Summer of Code &amp;#8216;16. Although GSoC is over, I plan to get the above mentioned work finished within August, before any other big undertaking. It has been a wonderful journey of insight and knowledge. Thanks a lot to my mentors Isuru, Ondrej and Sumith for helping me throughout the summers, and always being there for discussions and the silly issues I bombarded them with!&lt;/p&gt;
 
 &lt;p&gt;Bye!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-12</guid>
-      <title>Coding Period Week 12</title>
-      <author>Shekhar Prasad Rajak (shekharrajak)</author>
-      <pubDate>Mon, 15 Aug 2016 00:00:00 GMT</pubDate>
-      <link>http://shekharrajak.github.io/Coding-Period-week-12/</link>
-      <description>&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;nonlinsolve continue:&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;PR : &lt;a href="https://github.com/sympy/sympy/pull/11111"&gt;#11111&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;few things that should be improved in &lt;code class="highlighter-rouge"&gt;nonlinsolve&lt;/code&gt; :&lt;/p&gt;
-
-    &lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;- If system of equation contains trigonometric functions, `nonlinsolve`
-sometime fails because `solve_trig` of `solveset` is not much better and
-`nonlinsolve` have to identify what is the Intersection soln when we have
-`2*n*pi + pi/2` and `n*pi + pi/2`(means something similar cases).Right now it is returning
-one of them.
-
-- `substitution` function which solves the system of equation using substitution method.
-There should be better method to handle `imageset` (Complex solution).
-
-- Code quality of `substitution` should be improved.
-&lt;/code&gt;&lt;/pre&gt;
-    &lt;/div&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Continue Simplified Trig soln&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11188"&gt;#11188&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Imageset/union is generalized and now it handle basically these three cases:&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;# img1 = ImageSet(Lambda(n, a*n + b), S.Integers)
-# img2 = ImageSet(Lambda(n, c*n + d), S.Integers)
-In [1]: img1 = ImageSet(Lambda(n, 4*n + 4), S.Integers)
-
-In [2]: img2 = ImageSet(Lambda(n, 4*n), S.Integers)
-# when a == c and (b - d == a) then ans is img2.
-In [3]: Union(img1, img2)
-Out[3]: {4&amp;#8901;n | n &amp;#8714; &amp;#8484;}
-
-# -------------------------------------------------------------
-
-In [4]: img1 = ImageSet(Lambda(n, 4*n + 2), S.Integers)
-# when a == c and (b - d) == a/2, means value is  a/2 * n
-In [5]: Union(img1, img2)
-Out[5]: {2&amp;#8901;n | n &amp;#8714; &amp;#8484;}
-
-# -------------------------------------------------------------
-
-# 5*n + 5/4 ==&amp;gt; 5*n + 1 + 1/4
-# 5*n + 1 + 1/4 is in n + 1/4
-# check using img1.superset(img2) == true so img1 in ans
-img1 = ImageSet(Lambda(n, n + S(1)/4 ), S.Integers)
-img2 = ImageSet(Lambda(n, 5*n + S(5)/4 ), S.Integers)
-
-In [4]: Union(img1, img2)
-Out[4]: {n + 1/4 | n &amp;#8714; &amp;#8484;}
-
-# -------------------------------------------------------------
-
-# img1.issuperset(img2) is false so no change
-img1 = ImageSet(Lambda(n, 2*n + S(1)/4 ), S.Integers)
-img2 = ImageSet(Lambda(n, 5*n +S(5)/4), S.Integers)
-In [5]: Union(img1, img2)
-Out[5]: {2&amp;#8901;n + 1/4 | n &amp;#8714; &amp;#8484;} &amp;#8746; {5&amp;#8901;n + 5/4 | n &amp;#8714; &amp;#8484;}
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Meanwhile :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;I found some more cases where &lt;code class="highlighter-rouge"&gt;factor_list&lt;/code&gt; fails and opened a PR : https://github.com/sympy/sympy/issues/11528&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;continue..&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://jbm950.github.io//2016/08/12/GSoC-week-13.html</guid>
@@ -1079,120 +939,6 @@ I try to make up for the lost time during the weekend and meet the 40 hour weekl
 &lt;p&gt;With the endsem evaluation soon approaching, I expect this PR to get merged and count as a part of my project.&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-11</guid>
-      <title>Coding Period Week 11</title>
-      <author>Shekhar Prasad Rajak (shekharrajak)</author>
-      <pubDate>Sun, 07 Aug 2016 00:00:00 GMT</pubDate>
-      <link>http://shekharrajak.github.io/Coding-Period-week-11/</link>
-      <description>&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;eliminate() continue:&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;PR : &lt;a href="https://github.com/sympy/sympy/pull/11485"&gt;#11485&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Regarding issue &lt;a href="https://github.com/sympy/sympy/issues/2720"&gt;#2720&lt;/a&gt;, It is something similar to &lt;code class="highlighter-rouge"&gt;eliminate&lt;/code&gt; present in
-&lt;a href="http://reference.wolfram.com/mathematica/ref/Eliminate.html"&gt;wolfram&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Right now it is working for real domain and not considering ImageSet, Intersection. Complement. If it find ImageSet, Intersection. Complement
-for the symbol to be eliminated, then just raises &lt;code class="highlighter-rouge"&gt;NotImaplementedError&lt;/code&gt;(in near future it can be implemented).&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;It can take &lt;code class="highlighter-rouge"&gt;N&lt;/code&gt; nummber of equations and &lt;code class="highlighter-rouge"&gt;M&lt;/code&gt; number of &lt;code class="highlighter-rouge"&gt;symbols&lt;/code&gt; to be eliminated. It returns &lt;code class="highlighter-rouge"&gt;FiniteSet&lt;/code&gt; of equations which doesn&amp;#8217;t contains
-these &lt;code class="highlighter-rouge"&gt;symbols&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Continue - Diophantine in Solveset :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11234"&gt;11234&lt;/a&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;In &lt;a href="https://github.com/sympy/sympy/pull/11234/commits/6bd9689d37647d6c28111097c433accc2127262e"&gt;commit&lt;/a&gt; : returning
-&lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; when it &lt;code class="highlighter-rouge"&gt;diophantine&lt;/code&gt; doesn&amp;#8217;t the diophantine equation type and not able to solve.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Idea for improved _solve_trig in Solveset :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;
-In [1]: solveset(sin(x) + cos(y), x, S.Reals)
-Out[1]: {x | x &amp;#8714; &amp;#8477; &amp;#8743; sin(x) + cos(y) = 0}
-
-In [2]: solve(sin(x) + cos(y), x)
-Out[2]: [asin(cos(y)) + &amp;#960;, -asin(cos(y))]
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;This above examples is enough to tell that &lt;code class="highlighter-rouge"&gt;_solve_trig&lt;/code&gt; is not using inverse trigonometric function. We can have something, which can solve trig equations by making free the symbol in lhs and in rhs inverse trig function.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;solveset(sin(2*x) - sqrt(3)*cos(2*x), x, S.Reals)&lt;/code&gt; for this right now &lt;code class="highlighter-rouge"&gt;_solve_trig&lt;/code&gt; is converting it into &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; form and solving it.
-But it is can be simply solved using &lt;code class="highlighter-rouge"&gt;sin(x + y) == sin(x)*cos(y) + cos(x)*sin(y)&lt;/code&gt; formula.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;First divide both side with &lt;code class="highlighter-rouge"&gt;sqrt(a**2 + b**2)&lt;/code&gt; where &lt;code class="highlighter-rouge"&gt;a, b&lt;/code&gt; is coeff of &lt;code class="highlighter-rouge"&gt;sin(2*x)&lt;/code&gt; , &lt;code class="highlighter-rouge"&gt;cos(2*x)&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;sin(2*x)/2 - (sqrt(3)/2)*cos(2*x)&lt;/code&gt; ==&amp;gt; &lt;code class="highlighter-rouge"&gt;sin(2*x)*cos(pi/3) - sin(pi/3)*cos(2*x)&lt;/code&gt; ==&amp;gt; &lt;code class="highlighter-rouge"&gt;sin(2*x - pi/3)&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Now &lt;code class="highlighter-rouge"&gt;sin(2*x - pi/3)&lt;/code&gt; is solvable using &lt;code class="highlighter-rouge"&gt;solve_decomposition&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Meanwhile :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Some analysis about &lt;code class="highlighter-rouge"&gt;Abs&lt;/code&gt; solver :&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;
-In [1]: solveset(Abs(x) - 1,  x)
-ValueError:
-Absolute values cannot be inverted in the complex domain.
-
-In [2]: solveset(Abs(x) - (1 + I), x)
-ValueError:
-Absolute values cannot be inverted in the complex domain.
-
-In [3]: solveset(Abs(x) - y , x)
-ValueError:
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;Absolute values cannot be inverted in the complex domain.
-- In 1st case (for complex domain) ans should be &lt;a href="http://www.wolframalpha.com/input/?i=Abs(x)+-+(1+)+%3D0+for+x"&gt;http://www.wolframalpha.com/input/?i=Abs(x)+-+(1+)+%3D0+for+x&lt;/a&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;In 2nd case EmptySet.
-and in 3rd case (general solution when domain=S.Complexes) soln should be &lt;a href="http://www.wolframalpha.com/input/?i=Abs(x)+-+y+%3D0+for+x"&gt;http://www.wolframalpha.com/input/?i=Abs(x)+-+y+%3D0+for+x&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;In general( 3rd case) it should print
-ConditionSet(x, -Abs(re(y)) &amp;lt;= re(x) and re(x) &amp;lt;= Abs(re(y)) and re(y)&amp;gt;0, Eq(im(y), 0) , S.Complexes).&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;continue..&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;hr /&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=1005</guid>
       <title>GSoC Week 11</title>
       <author>Sampad Saha (sampadsaha5)</author>
@@ -1462,71 +1208,6 @@ x &amp;#8901;y
 &lt;/ul&gt;
 
 &lt;p&gt;Off to work!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-10</guid>
-      <title>Coding Period Week 10</title>
-      <author>Shekhar Prasad Rajak (shekharrajak)</author>
-      <pubDate>Sat, 30 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://shekharrajak.github.io/Coding-Period-week-10/</link>
-      <description>&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;eliminate() continue:&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;issue &lt;a href="https://github.com/sympy/sympy/issues/2720"&gt;#2720&lt;/a&gt; : We need some kind of eliminate function, like &lt;a href="http://reference.wolfram.com/mathematica/ref/Eliminate.html"&gt;http://reference.wolfram.com/mathematica/ref/Eliminate.html&lt;/a&gt;. See also &lt;a href="http://stackoverflow.com/q/20826969/161801"&gt;http://stackoverflow.com/q/20826969/161801 &lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;I am trying to use &lt;code class="highlighter-rouge"&gt;subs&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;_invert&lt;/code&gt; to get answer. May be one can use &lt;code class="highlighter-rouge"&gt;replace&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;xreplace&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;match&lt;/code&gt; to eliminate some kind of same sub expression.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;There can be ans in &lt;code class="highlighter-rouge"&gt;Imageset&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;Finiteset&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;Complement&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;Intersection&lt;/code&gt; when we use &lt;code class="highlighter-rouge"&gt;_invert&lt;/code&gt;. So there should be a technique to handle it.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Still need some good idea and technique. WIP.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Output of solveset should be of one type:&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Amit discussed about it. Solution we see in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; should be in one type of set. Right now we may have solution in &lt;code class="highlighter-rouge"&gt;Imageset&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;Finiteset&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;Complement&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;Intersection&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt;. So there would be problem for user to handle these many solution type.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;I think there should be something that separate &lt;code class="highlighter-rouge"&gt;Complements&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;Intersections&lt;/code&gt;,&lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; and main solution in &lt;code class="highlighter-rouge"&gt;Finiteset&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;E.g. if solveset solution is &lt;code class="highlighter-rouge"&gt;Intersection(Complement(FiniteSet(x), {y}), {z})&lt;/code&gt; then
-soln : &lt;code class="highlighter-rouge"&gt;FiniteSet(x)&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;x != {y}&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="err"&gt;x&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="err"&gt;intersect&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="err"&gt;z&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Continue Simplified Trig soln&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11188"&gt;#11188&lt;/a&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;According to the &lt;a href="https://github.com/sympy/sympy/pull/11188#issuecomment-234789616"&gt;Harsh comments/review&lt;/a&gt; I modified the PR. Now it seems it is
-returning more simplified solution( &lt;a href="https://github.com/sympy/sympy/pull/11188/commits/beaac312f03819bd7221887eb2b4cbe5d49bed5e#diff-85baa04bbf4e1dfd9128782738e45424R1141"&gt;one case is here&lt;/a&gt;) .&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;To understand the changes I did in the &lt;code class="highlighter-rouge"&gt;_solve_trig&lt;/code&gt; method, one should check &lt;a href="https://gist.github.com/Shekharrajak/17fdcd2320f572fc9fc8674823137e20"&gt;this gist&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;To see the advantage of imageset union, One good example is in &lt;a href="https://gist.github.com/Shekharrajak/a5efc840d9a7d3062289f2d9c5f20b16"&gt;this gist&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;continue&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=985</guid>
@@ -2044,6 +1725,178 @@ So when &lt;code class="highlighter-rouge"&gt;log q&lt;/code&gt; approaches &lt;
 I have completed the implementation of this algorithm on &lt;a href="https://github.com/nishnik/symengine/tree/shoup_factorization"&gt;shoup_factorization&lt;/a&gt; branch.
 And also, I changed the container (which stores factors) type to &lt;code class="highlighter-rouge"&gt;set&lt;/code&gt;.&lt;br /&gt;
 Will send a PR soon.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=393</guid>
+      <title>GSoC Week 8 Progress</title>
+      <author>Rajith Vidanaarachchi (rajithv)</author>
+      <pubDate>Sat, 16 Jul 2016 16:09:06 GMT</pubDate>
+      <link>https://rajithsays.wordpress.com/2016/07/16/gsoc-week-8-progress/</link>
+      <description>&lt;p&gt;When this week started, most of the work up to week 7 were done. In the first couple of days this week, code for parsing was merged, and I started looking into wrapping lambdification of SymEngine Basic expressions.&lt;/p&gt;
+&lt;p&gt;This was a seemingly easy task, with two options ahead of me. One was to directly wrap C++&amp;#8217;s lambdify_double method, while the other was to create Ruby lambdas directly.&lt;/p&gt;
+&lt;p&gt;After considering various aspects, and with feedback from other contributors, I decided to go ahead with writing them directly in Ruby.&lt;/p&gt;
+&lt;p&gt;It is now completed, and undergoing review.&lt;/p&gt;
+&lt;p&gt;The code implemented allows lamdifying SymEngine::Basic expressions with free symbols.&lt;/p&gt;
+&lt;p&gt;i.e. let, f = x + y, where x and y are SymEngine::Symbols,&lt;/p&gt;
+&lt;p&gt;a lambda is expected, such that it can be called, f_lambda.call(3, 4) which would return 7.&lt;/p&gt;
+&lt;p&gt;For expressions with single or multiple symbols, it works as following:&lt;/p&gt;
+&lt;pre&gt;f = x + y
+f_lambda = SymEngine::lambdify(f, [x, y])&lt;/pre&gt;
+&lt;p&gt;For expressions with a single symbol, it can be used through the to_proc method, using a &amp;amp; call.&lt;/p&gt;
+&lt;pre&gt;f_diam = 2 * SymEngine::PI * r
+radii = [2, 3, 4]
+diams = radii.map(&amp;amp;f_diam)&lt;/pre&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;With another day left already, I am looking at Exception Handling, which I expect to be complicated in implementing.&lt;/p&gt;
+&lt;p&gt;See you next week!&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/393/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/393/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=393&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=841</guid>
+      <title>GSoC Week 8</title>
+      <author>Sampad Saha (sampadsaha5)</author>
+      <pubDate>Fri, 15 Jul 2016 19:47:56 GMT</pubDate>
+      <link>https://sampadblog.wordpress.com/2016/07/15/gsoc-week-8/</link>
+      <description>&lt;p&gt;Hello, guys. Welcome back.&amp;#160;It&amp;#8217;s been eight weeks into the coding period and this week I enjoyed a lot while working. I learned to build a list without using a loop, in case, it can be done&amp;#160;more concisely with a &lt;b&gt;&lt;em&gt;list comprehension&lt;/em&gt;&amp;#160;&lt;/b&gt;such as:&lt;/p&gt;
+&lt;p&gt;Instead of doing :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;In [ ]: b = []
+In [ ]: for x in a:
+       b.append(10 * x)
+ ....:
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;we can do :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;In [ ]: b = [&lt;span class="lit"&gt;10&lt;/span&gt; &lt;span class="pun"&gt;*&lt;/span&gt;&lt;span class="pln"&gt; x &lt;/span&gt;&lt;span class="kwd"&gt;for&lt;/span&gt;&lt;span class="pln"&gt; x &lt;/span&gt;&lt;span class="kwd"&gt;in&lt;/span&gt;&lt;span class="pln"&gt; a]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I came to know about stuff , like using zip for transposing a matrix and dividing a list into groups of&lt;em&gt;&lt;strong&gt;&amp;#160;&lt;/strong&gt;&lt;/em&gt;&lt;strong&gt;&lt;strong&gt;&lt;em&gt;n&lt;/em&gt; .&amp;#160;&lt;/strong&gt;&lt;/strong&gt;This week I had my weekly meeting with Jason and Sartaj on 13th of this month.&amp;#160;They were in&amp;#160;Austin, Texas attending &lt;a href="http://scipy2016.scipy.org/ehome/index.php?eventid=146062&amp;amp;tabid=332930&amp;amp;"&gt;Scipy 2016&lt;/a&gt;,&amp;#160;the 15th annual Scientific Computing with Python conference.&lt;/p&gt;
+&lt;h4&gt;&lt;em&gt;&lt;strong&gt;So Far&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11178"&gt;PR 11178 &lt;/a&gt;&amp;#160;and&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11237"&gt;PR 11237&lt;/a&gt;&amp;#160;got merged. So, now the&amp;#160;master branch is updated with a module of singularity functions which can handle almost all the mathematical operations.&lt;/li&gt;
+&lt;li&gt;I have used the Singularity Functions &amp;#160;to continue developing the beam bending module at &lt;a href="https://github.com/sympy/sympy/pull/11374"&gt;PR 11374&lt;/a&gt;. I have added the following methods:
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;&lt;strong&gt;load_as_SingularityFunction&lt;/strong&gt; &lt;/em&gt;: This is a private method which represents a PointLoad and DistributedLoad object into a Singularity Function object and stores in the load beam object attribute.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;&lt;strong&gt;load_distribution&lt;/strong&gt;&lt;/em&gt; : This is a public method which outputs a load distribution curve of a beam.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;&lt;strong&gt;shear_force :&amp;#160;&lt;/strong&gt;&lt;/em&gt;This is also a public method. It at first checks whether the moment list in boundary conditions dictionary have elements. If it has then it call the bending_moment method and then differentiate the output w.r.t to the free symbol else it just integrates the output of load_distribution method.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;&lt;strong&gt;bending_moment&lt;/strong&gt;&lt;/em&gt; : The initial part of this method is similar to the method shear_force. If the test passes then it integrates the load_distibution twice using contants of integrations and later the contants are solved else&amp;#160;it just integrates the output of shear_force method.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;&lt;strong&gt;slope&lt;/strong&gt;&lt;/em&gt; : It outputs the slope of a beam by solving the constants.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;&lt;strong&gt;deflection&lt;/strong&gt;&lt;/em&gt; : It outputs the elastic curve of the beam.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;Next Week&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Modify the Beam Module.&lt;/li&gt;
+&lt;li&gt;Add Sphinx documentations.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="entry-content"&gt;
+&lt;p&gt;That&amp;#8217;s all for this week. Cheers !!&lt;/p&gt;
+&lt;p&gt;Happy Coding.&lt;/p&gt;
+&lt;/div&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/841/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/841/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=841&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Seventh-Week</guid>
+      <title>GSoC Seventh Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Wed, 13 Jul 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Seventh-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;Previous week, I had started the work on Equal degree factorization &lt;a href="https://github.com/symengine/symengine/pull/1026"&gt;here&lt;/a&gt;. Here I was storing the factors in a vector and then sorting the factors. Certik pointed out that its better to use some other data structure instead of &lt;code class="highlighter-rouge"&gt;vector&lt;/code&gt;. So I have changed the container type to &lt;code class="highlighter-rouge"&gt;set&lt;/code&gt;.
+&lt;br /&gt;Then after both Distinct degree factorization and Equal degree factorization being implemented, I started to work on factoring a polynomial in finite field, this needed integrating square free factorization with these two. I worked on &lt;code class="highlighter-rouge"&gt;gf_factor()&lt;/code&gt; method. In this method we take a polynomial in a given field as input, and return all the factors and their respective powers, and polynomial&amp;#8217;s leading coefficient as output.
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;GaloisFieldDict::gf_factor() const
+{
+  integer_class lc;
+  GaloisFieldDict monic;
+  gf_monic(lc, outArg(monic));
+  if (monic.degree() &amp;lt; 1)
+      return std::make_pair(lc, factors);
+  std::vector&amp;lt;std::pair&amp;lt;GaloisFieldDict, integer_class&amp;gt;&amp;gt; sqf_list
+      = monic.gf_sqf_list();
+  for (auto a : sqf_list) {
+      auto temp = (a.first).gf_zassenhaus();
+      for (auto f : temp)
+          factors.insert({f, a.second});
+  }
+  return factors;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For a given polynomial firstly we get its monic representation and it leading coefficient. Then we find the Square free factors of the monic representation. And on each of the square free factor we run the &lt;code class="highlighter-rouge"&gt;zassenhaus&lt;/code&gt;&amp;#8217;s algorithm.
+&lt;br /&gt;
+I have been working on &lt;a href="https://github.com/nishnik/symengine/tree/gf_factor"&gt;this&lt;/a&gt; branch, will create a PR after the Equal degree factorization PR gets merged.
+&lt;br /&gt;
+Then I have started working on Shoup&amp;#8217;s algorithm for polynomial factorization, will post about it in the coming weeks.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://gxyd.github.io/GSoC Week 7</guid>
+      <title>GSoC Week 7</title>
+      <author>Gaurav Dhingra (gxyd)</author>
+      <pubDate>Sun, 10 Jul 2016 18:30:00 GMT</pubDate>
+      <link>https://gxyd.github.io/gsoc2016/gsoc_week_7.html</link>
+      <description>&lt;p&gt;
+Hi everyone.
+&lt;/p&gt;
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;p&gt;
+Here's what we have been doing for &lt;i&gt;7th&lt;/i&gt; week of &lt;i&gt;GSoC&lt;/i&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+Kalevi mentioned about the $LaTex$ not getting rendered on Planet Sympy website, thought it works fine on my website. Following the conversation Aaron opened issue &lt;a href="https://github.com/sympy/planet-sympy/issues/45"&gt;planet-sympy/issues/45&lt;/a&gt;, though it hasn't been fixed.
+&lt;/p&gt;
+
+&lt;p&gt;
+This week we completed PR &lt;a href="https://github.com/sympy/sympy/pull/11295"&gt;#11295&lt;/a&gt; on Reidemeister Schreier algorithm. Remember the &lt;a href="https://gitter.im/sympy/GroupTheory?at=5776b220cdab7a1f4fbebd34"&gt;blog issue&lt;/a&gt; I asked on our gitter channel. Kalevi suggested to be more on the 'descriptive' side.
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;h4&gt;What do we do this week?&lt;/h4&gt;
+Implemented the Reidemeister Schreier algorithm (shortly RS algorithm) and Titze Transformations (shortly TT) in PR #11295 . Most of the pseudo code for RS algorithm is there in the Handbook [1], perhaps majority of the time was spent working with TT. There isn't any pseudo code available for making that work, but we gathered detailed information from [1] combined with Havas Paper [2].
+
+What issues were there?
+In the both [1] and [2], there a few assumptions made, like
+
+&lt;pre&gt;
+&gt; shall assume that all relators are always cyclically reduced; that is, that
+whenever a relator is changed, it is immediately replaced by its cyclic reduction.
+&lt;/pre&gt;
+
+&lt;/p&gt;
+
+&lt;p&gt;I opened the issue &lt;a href="https://github.com/sympy/sympy/issues/11352"&gt;#11352&lt;/a&gt; regarding a typo I left in &lt;code&gt;coset_enumeration_c&lt;/code&gt;. Though I didn't expect a PR, @kritkaran94 fixed it. Perhaps a good test case which makes use of different value of &lt;code&gt;max_stack_size&lt;/code&gt; was suggested by Kalevi. One thing came back to me, "everthing is an object in Python", the fact that initially &lt;code&gt;CosetTableDefaultMaxLimit&lt;/code&gt; was a module level variable initially and we changed it to &lt;code&gt;CosetTable.CosetTableDefaultMaxLimit&lt;/code&gt;, module is an object so is a &lt;code&gt;class&lt;/code&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+&lt;h4&gt;What hasn't been done?&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;No testing for a few of techniques, for example currently no tests exist for &lt;code&gt;elimination_technique_2&lt;/code&gt;, which is a variant of the elimination procedures.
+&lt;li&gt;TT doesn't produce the best possible result.
+&lt;/ul&gt;
+&lt;/p&gt;
+
+&lt;p&gt;
+Though doing this seemed easy at first. But I didn't wanted to apply &lt;code&gt;identity_cyclic_reduction&lt;/code&gt; every change as there can be a few instance where it not necessary to do this, perhaps because of the property of &lt;i&gt;words&lt;/i&gt;.
+&lt;/p&gt;
+
+&lt;p&gt;
+The good thing about this week was that I could now understand the limitations that will remain after my GSoC project. The scope of Computational Group Theory is more than what I expected. Apart from that I will be leaving for my college this week stars from &lt;i&gt;15th&lt;/i&gt; of &lt;i&gt;July&lt;/i&gt;, perhaps I don't know how things will shift regarding time for GSoC. Let's be realistic :)
+&lt;/p&gt;
+&lt;p&gt;
+&amp;#2309;&amp;#2354;&amp;#2357;&amp;#2367;&amp;#2342;&amp;#2366;
+&lt;/p&gt;
+          &lt;h4&gt;References&lt;/h4&gt;
+                    &lt;i&gt;
+
+                    &lt;ul&gt;
+                      &lt;li&gt;1. Derek F. Holt, Bettina Eick, Bettina, Eamonn A. O'Brien, "Handbook of computational group theory", Discrete Mathematics and its Applications (Boca Raton). Chapman &amp; Hall/CRC, Boca Raton, FL, 2005. ISBN 1-5848-372-3 .&lt;/li&gt;
+
+                      &lt;li&gt;2.&lt;a href="http://staff.itee.uq.edu.au/havas/1974h.pdf"&gt; George Havas, "Reidemeister-Schreier program"&lt;/a&gt;&lt;/li&gt;
+                    &lt;/i&gt;
+                    &lt;br /&gt;
+                    &lt;/ul&gt;</description>
     </item>
   </channel>
 </rss>
