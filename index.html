@@ -1697,203 +1697,6 @@ x&#8901;&#8495;
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7730e356 feed-" id="item-b7819b39">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/kshitij10496.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Kshitij Saraogi(kshitij10496) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://kshitij10496.github.io//2016/08/07/GSoC-Week-10-11/">00:00, Sunday, 07 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://kshitij10496.github.io//2016/08/07/GSoC-Week-10-11/">GSoC Week 10 &amp; 11 - The One with `solvify`</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/kshitij10496.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Kshitij Saraogi(kshitij10496) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://kshitij10496.github.io//2016/08/07/GSoC-Week-10-11/">00:00, Sunday, 07 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://kshitij10496.github.io//2016/08/07/GSoC-Week-10-11/">GSoC Week 10 &amp; 11 - The One with `solvify`</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>During the past couple of weeks, I worked on replacing <code class="highlighter-rouge">solve</code> with <code class="highlighter-rouge">solveset</code> in solving inequalities.</p>
-
-<h3 id="issue"><strong>Issue</strong></h3>
-
-<p>SymPy&#8217;s univariate inequality solver, <code class="highlighter-rouge">solve_univariate_inequality</code> relies on <code class="highlighter-rouge">solve</code> for reducing inequalities.</p>
-
-<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">In</span><span class="p">[]</span> <span class="p">:</span> <span class="n">isolve</span> <span class="o">=</span> <span class="n">solve_univariate_inequality</span> <span class="c"># for simplicity</span>
-</code></pre>
-</div>
-
-<p>As we would prefer using <code class="highlighter-rouge">solveset</code> internally, it is important to remove the dependency on <code class="highlighter-rouge">solve</code> here.
-However, there are a lot of issues which need to be handled carefully. Here are a few of them:</p>
-
-<ol>
-  <li>
-    <p>The major issue with using <code class="highlighter-rouge">solveset</code> is the <code class="highlighter-rouge">Set</code> output API.
- As <code class="highlighter-rouge">isolve</code> is designed to work according to <code class="highlighter-rouge">solve</code>&#8217;s results, this seems to be <em>the</em> roadblock.</p>
-  </li>
-  <li>
-    <p>No support for restricted domain.</p>
-
-    <p>Generally, the inequalties are solved in the entire real domain. However, this might not be what the user want 
- (especially while dealing with trigonometric inequalties). Also, to maintain uniformity across all our solvers,
- support for user-speicifed <code class="highlighter-rouge">domain</code> is a must.</p>
-  </li>
-  <li>
-    <p>Incorrect results for trigonometric inequalties</p>
-
-    <p>As Issue <a href="https://github.com/sympy/sympy/issues/9721">#9721</a>, <code class="highlighter-rouge">isolve</code> returns incorrect results for certain trigonometric inequalities.</p>
-  </li>
-</ol>
-
-<div class="language-python highlighter-rouge"><pre class="highlight"><code>  <span class="n">In</span> <span class="p">[]:</span> <span class="n">isolve</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">relational</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-  <span class="n">Out</span><span class="p">[]:</span> <span class="p">(</span><span class="o">-</span><span class="n">oo</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
-
-  <span class="n">In</span> <span class="p">[]:</span> <span class="n">isolve</span><span class="p">(</span><span class="n">tan</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">relational</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-  <span class="n">Out</span><span class="p">[]:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">oo</span><span class="p">)</span>
-
-</code></pre>
-</div>
-
-<h3 id="solutions"><strong>Solutions</strong></h3>
-
-<ol>
-  <li>
-    <p>Implementing <code class="highlighter-rouge">solvify</code> : &#8220;solve&#8221;-fy <code class="highlighter-rouge">solveset</code>&#8217;s solutions.<br />
-  There were two possible ways to tackle the issue of APIs:</p>
-
-    <p>a. Refactoring <code class="highlighter-rouge">isolve</code> in according with <code class="highlighter-rouge">Set</code> API.</p>
-
-    <p>b. Somehow returning <code class="highlighter-rouge">solve</code> results from <code class="highlighter-rouge">solveset</code>.</p>
-
-    <p><em>Solution</em> : <strong>b</strong></p>
-
-    <p>In order to resolve the issue of portability from <code class="highlighter-rouge">solve</code> to <code class="highlighter-rouge">solveset</code>, I implemented <code class="highlighter-rouge">solvify</code> which returns solve-like results.
- We classify the return value based on the type of solution returned by <code class="highlighter-rouge">solveset</code>.</p>
-
-    <p>Solution    |    Output
-   &#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;-
-   FiniteSet   | list</p>
-
-    <table>
-      <tbody>
-        <tr>
-          <td>ImageSet,</td>
-          <td>list (if <code class="highlighter-rouge">f</code> is periodic)</td>
-        </tr>
-        <tr>
-          <td>Union</td>
-          <td>&#160;</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <table>
-      <tbody>
-        <tr>
-          <td>EmptySet</td>
-          <td>empty list</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <table>
-      <tbody>
-        <tr>
-          <td>Others</td>
-          <td>None</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-  <li>
-    <p>Adding <code class="highlighter-rouge">domain</code> support.</p>
-
-    <p>I added a <code class="highlighter-rouge">domain</code> argument to <code class="highlighter-rouge">isolve</code> whose default value is the real domain (<code class="highlighter-rouge">domain=S.Reals</code>).
- A few limitation to the conditions of <code class="highlighter-rouge">S.Infinity</code> and <code class="highlighter-rouge">S.NegativeInfinity</code> followed.</p>
-
-    <p>Another noticable point, from the point of implementation, was to deal with singularities and discontinuities of the given inequality.
- For this, I used the <code class="highlighter-rouge">continuous_domain</code> method to find the continuous domains of the expression within the specified domain.</p>
-
-    <p>This was a minimalistic addition with considerable returns (especially for solving periodic inequalties).</p>
-  </li>
-  <li>
-    <p>Solving trigonometric inequalities.</p>
-
-    <p>Since most of the trigonometric inequalities are periodic in nature and have infinite solutions, 
- solving the expression in the entire real domain is a repetitive task and computationally expensive.</p>
-
-    <p>In order to simplify the problem, I intend to solve all the inequalities in a positive periodic interval (say <code class="highlighter-rouge">[0, 2*pi)</code> for <code class="highlighter-rouge">sin(x)</code>).
- We already have a function to compute the real period of a function : <code class="highlighter-rouge">periodicity</code>.<br />
- In case of a non-finite <code class="highlighter-rouge">domain</code> argument, I intend to use this to restrict the solutions of the problem to a periodic interval.</p>
-
-    <p>This might not seem the perfect approach but it seems reasonable to handle infinite interval sets for now.
- We need a new <code class="highlighter-rouge">Set</code> object : <code class="highlighter-rouge">BigUnion</code> to represent infinite number of interval objects.</p>
-  </li>
-</ol>
-
-<h3 id="new-implementation"><em>New Implementation</em></h3>
-
-<p>I have opened <a href="https://github.com/sympy/sympy/pull/11458">PR#11458</a> for the same with all the implementation details.</p>
-
-<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">In</span> <span class="p">[]:</span> <span class="n">isolve</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">S</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">relational</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">Out</span><span class="p">[]:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="n">U</span> <span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
-
-<span class="n">In</span> <span class="p">[]:</span> <span class="n">isolve</span><span class="p">(</span><span class="n">tan</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">S</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">relational</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">Out</span><span class="p">[]:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
-</code></pre>
-</div>
-
-<h3 id="after-thoughts"><em>After thoughts</em></h3>
-
-<p>For the past couple of weeks, I haven&#8217;t been able to give much time to the project due to my college schedule.
-I try to make up for the lost time during the weekend and meet the 40 hour weekly deadline.</p>
-
-<p>With the endsem evaluation soon approaching, I expect this PR to get merged and count as a part of my project.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-f42f3dd4">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -3291,124 +3094,6 @@ irb(main):005:0&gt;</pre>
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7730e356 feed-" id="item-af2310e5">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/kshitij10496.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Kshitij Saraogi(kshitij10496) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://kshitij10496.github.io//2016/07/24/GSoC-Week-09/">00:00, Sunday, 24 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://kshitij10496.github.io//2016/07/24/GSoC-Week-09/">GSoC Week 09 - The One with Inequalities</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/kshitij10496.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Kshitij Saraogi(kshitij10496) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://kshitij10496.github.io//2016/07/24/GSoC-Week-09/">00:00, Sunday, 24 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://kshitij10496.github.io//2016/07/24/GSoC-Week-09/">GSoC Week 09 - The One with Inequalities</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This week I worked on solving trigonometric inequalities.</p>
-
-<h3 id="trigonometric-inequalities"><strong>Trigonometric inequalities</strong></h3>
-
-<p>The primary univariate inequality solver - <code class="highlighter-rouge">solve_univariate_inequality</code>,<br />
-depends upon the results of <code class="highlighter-rouge">solve</code> in order to solve the given inequality.
-Taking a cue from <a href="https://github.com/sympy/sympy/pull/10022">PR#10022</a> on incorporating <code class="highlighter-rouge">solveset</code> for inequalities, I worked on developing an approach for replacing the use of <code class="highlighter-rouge">solve</code> 
-with <code class="highlighter-rouge">solveset</code> in solving inequalities.</p>
-
-<p><strong>Idea</strong></p>
-
-<blockquote>
-  <p>Convert <code class="highlighter-rouge">Set</code>-type output from <code class="highlighter-rouge">solveset</code> to <code class="highlighter-rouge">list</code> objects similar to that returned by <code class="highlighter-rouge">solve</code>.</p>
-</blockquote>
-
-<p>The most striking difference between both the APIs is the uniform <code class="highlighter-rouge">Set</code> output returned by <code class="highlighter-rouge">solveset</code>. 
-Hence, the prime concern while transitioning from <code class="highlighter-rouge">solve</code> to <code class="highlighter-rouge">solveset</code> should be handling the various type of solutions.</p>
-
-<p>Here are a few implementation ideas on the same:</p>
-
-<ul>
-  <li>
-    <p><strong>FiniteSet</strong> : finite number of solutions<br />
-Using the <code class="highlighter-rouge">list</code> constructor on these type of objects works extremely well.</p>
-  </li>
-  <li>
-    <p><strong>ImageSet</strong> : infinite number of solutions<br />
-This is generally the case with trigonometric functions as most of them are periodic in nature.
-We need to limit the number of solutions to be finite.<br />
-For this, I intend to use the a periodic interval: <code class="highlighter-rouge">[0, period]</code> as the basis for filtering the solution set.
-This returns a simplified <code class="highlighter-rouge">FiniteSet</code> of solutions which can be used to solve inequalities in a restricted interval.
-Following which we can generalise the output over the entire domain of the function.</p>
-
-    <p>A major issue here is the representation of the final solution set.<br />
-For example:</p>
-
-    <div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="n">In</span> <span class="p">[]:</span> <span class="n">solveset</span><span class="p">(</span><span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">S</span><span class="o">.</span><span class="n">Reals</span><span class="p">)</span>
-<span class="err">&#9121;</span>         <span class="err">&#960;</span>           <span class="mi">3</span><span class="err">&#8901;&#960;</span>         <span class="err">&#9124;</span>
-<span class="err">&#9122;</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="o">*</span><span class="n">pi</span> <span class="o">+</span> <span class="err">&#9472;</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="o">*</span><span class="n">pi</span> <span class="o">+</span> <span class="err">&#9472;&#9472;&#9472;</span>  <span class="o">|</span> <span class="n">n</span> <span class="err">&#8714;</span> <span class="err">&#8484;&#9125;</span>
-<span class="err">&#9123;</span>         <span class="mi">2</span>            <span class="mi">2</span>          <span class="err">&#9126;</span>
-</code></pre>
-    </div>
-
-    <p>Currently, we do not have a <code class="highlighter-rouge">Set</code> object for representing this.<br />
-For this, we need to implement an <em>Indexed Union</em> : <code class="highlighter-rouge">Union(X(a) for a in I)</code></p>
-
-    <p>We can symbolically represent the above solution as <code class="highlighter-rouge">BigUnion(Interval(2*n*pi + pi/2, 2*n*pi + 3*pi/2), n, S.Intgers)</code>.</p>
-  </li>
-</ul>
-
-<p><strong>After thoughts</strong></p>
-
-<p>Also, this week my <a href="https://github.com/sympy/sympy/pull/11277">PR#11277</a> on periodicity got merged finally.
-I have updated the corresponding <a href="https://github.com/sympy/sympy/pull/11141">PR#11141</a> which has been stalled for some time now.
-Hopefully, it will get merged soon.</p>
-
-<p>The next week I will devote my time to the implementation part of solving inequalities.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">July 23, 2016</h2>
@@ -3806,6 +3491,302 @@ Will send a PR soon.</p>
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-9bcbd625">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shekharrajak.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://shekharrajak.github.io/Coding-Period-week-9/">00:00, Wednesday, 20 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-9/">Coding Period Week 9</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shekharrajak.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://shekharrajak.github.io/Coding-Period-week-9/">00:00, Wednesday, 20 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-9/">Coding Period Week 9</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p><strong>Some points regarding trigonometric and inverse trigonometric functions in solveset :</strong></p>
+
+<ul>
+  <li>
+    <p>There are many issues in solveset <code class="highlighter-rouge">solve_trig</code>.More inverse trigonometric formula and trigonometric identities should be defined/added or improved.
+Also <code class="highlighter-rouge">simplify</code>, <code class="highlighter-rouge">trigsimp</code> and in <code class="highlighter-rouge">solveset</code> <code class="highlighter-rouge">_invert</code> methods should be improved accordingly.</p>
+  </li>
+  <li>
+    <p>Some links, that is helpful to improve these functions.</p>
+
+    <ul>
+      <li><a href="https://en.wikipedia.org/wiki/Inverse_trigonometric_functions">https://en.wikipedia.org/wiki/Inverse_trigonometric_functions</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Proofs_of_trigonometric_identities">https://en.wikipedia.org/wiki/Proofs_of_trigonometric_identities</a></li>
+      <li><a href="https://owlcation.com/stem/List-of-Inverse-Trig-Function-Identities-Integrals-and-Derivatives">https://owlcation.com/stem/List-of-Inverse-Trig-Function-Identities-Integrals-and-Derivatives</a></li>
+    </ul>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">trigsimp</code> must be more powerful so that <code class="highlighter-rouge">solve_trig</code> get simplified eq. (which solves trig equation by converting them into its <code class="highlighter-rouge">exp</code> form).</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">solve_trig</code> solves the trig eq. using its <code class="highlighter-rouge">exp</code> form. There may be cases when that <code class="highlighter-rouge">exp</code> form is complicated and solveset fail to handle that form.
+There should be technique to convert that complicated form to simpler form(if possible) and then call the <code class="highlighter-rouge">solveset_complex</code>. That may help to improve the <code class="highlighter-rouge">solve_trig</code> method.</p>
+  </li>
+  <li>
+    <p>We can use <code class="highlighter-rouge">_osbornei</code>, <code class="highlighter-rouge">hyper_as_trig</code> methods defined in <code class="highlighter-rouge">simplify/fu.py</code> to convert hyperbolic function to trigonometric function, then we can use <code class="highlighter-rouge">trigsimp</code> (we can&#8217;t use <code class="highlighter-rouge">trigsimp</code> for hyperbolic functions).</p>
+  </li>
+  <li>
+    <p>First need to improve basic concepts and add more identities. I opened a new PR to improve <code class="highlighter-rouge">rewrite</code> for trigonometric functions , PR is <a href="https://github.com/sympy/sympy/pull/11424/">#11424</a>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong>eliminate() :</strong></p>
+
+<ul>
+  <li>
+    <p>issue <a href="https://github.com/sympy/sympy/issues/2720">#2720</a> : We need some kind of eliminate function, like <a href="http://reference.wolfram.com/mathematica/ref/Eliminate.html">http://reference.wolfram.com/mathematica/ref/Eliminate.html</a>. See also <a href="http://stackoverflow.com/q/20826969/161801">http://stackoverflow.com/q/20826969/161801 </a></p>
+  </li>
+  <li>
+    <p>It looks something related to <a href="https://github.com/sympy/sympy/pull/11111/files#diff-eec0422923e8f100745c015cd8fdd6cfR1135">substitution</a> function.
+But they are not same. Using <code class="highlighter-rouge">eliminate()</code> we will try to remove the variable(s) from the each equations(not solving the eq).</p>
+  </li>
+  <li>
+    <p>Plan : First choose eq that have min. variables and get the value of the variable, to be eliminated. Go further and <code class="highlighter-rouge">subs</code> the value to next min. variable eq., and so on.</p>
+  </li>
+  <li>
+    <p>Work in progress.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong>Meanwhile :</strong></p>
+
+<ul>
+  <li>
+    <p>I found some basic issues in <code class="highlighter-rouge">ComplexInfinity</code> and trying to solve them in this PR <a href="https://github.com/sympy/sympy/pull/11409">#11409</a>.</p>
+  </li>
+  <li>
+    <p>there may be many things to be added about <code class="highlighter-rouge">ComplexInfinity</code>, one can refer this link to implement them :
+<a href="http://reference.wolfram.com/language/ref/ComplexInfinity.html">http://reference.wolfram.com/language/ref/ComplexInfinity.html</a>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong><em>continue..</em></strong></p>
+
+<hr />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">July 18, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-353b5fec">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shekharrajak.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://shekharrajak.github.io/Coding-Period-week-8/">00:00, Monday, 18 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-8/">Coding Period Week 8</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shekharrajak.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://shekharrajak.github.io/Coding-Period-week-8/">00:00, Monday, 18 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-8/">Coding Period Week 8</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<hr />
+<p><strong>Continue - Diophantine in Solveset :</strong></p>
+
+<p>PR <a href="https://github.com/sympy/sympy/pull/11234">11234</a></p>
+
+<ul>
+  <li>
+    <p>For general Pythagorean diop_type (Diophantine eq type), it seems diophantine always returns parameterized solution so I did some changes in the PR. <a href="https://github.com/sympy/sympy/pull/11334/commits/6af46fc35db3a74dfda78b6d8e2a0f7d4ec65afe">commit</a></p>
+  </li>
+  <li>
+    <p>You can refer this <a href="https://github.com/sympy/sympy/pull/11334#issuecomment-230334645">comment</a>.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p><strong>Continue Simplified Trig soln</strong></p>
+
+<p>PR <a href="https://github.com/sympy/sympy/pull/11188">#11188</a></p>
+
+<ul>
+  <li>After some changes, the PR is ready for review.</li>
+</ul>
+
+<hr />
+
+<p><strong>Continue nonlinsolve :</strong></p>
+
+<p>PR <a href="https://github.com/sympy/sympy/pull/11111">#11111</a></p>
+
+<ul>
+  <li>
+    <p>Added some XFAIL test-cases of system of Trigonometric equations. <code class="highlighter-rouge">solveset</code> trig solver (<code class="highlighter-rouge">solve_trig</code>) is not smart enough(<code class="highlighter-rouge">solveset</code> returns <code class="highlighter-rouge">ConditionSet</code>, where soln can be simply inverse trig functions using <code class="highlighter-rouge">_invert</code> or inverse Trigonometric functions). So <code class="highlighter-rouge">solveset</code> returns <code class="highlighter-rouge">ConditionSet</code> that means <code class="highlighter-rouge">substitution</code> is not getting soln.</p>
+  </li>
+  <li>
+    <p>It is better to replace trigonometric functions or other <code class="highlighter-rouge">Function</code> with symbols</p>
+  </li>
+</ul>
+
+<p>(e.g. <code class="highlighter-rouge">sin(x)</code> &#8211;&gt; <code class="highlighter-rouge">u</code>, <code class="highlighter-rouge">sin(y)</code>&#8211;&gt; <code class="highlighter-rouge">v</code>, <code class="highlighter-rouge">f(x)</code>&#8211;&gt; <code class="highlighter-rouge">f_x</code>, <code class="highlighter-rouge">g(x)</code> &#8211;&gt; <code class="highlighter-rouge">g_x</code>)</p>
+
+<p>and then solve for the symbols. After getting solution from <code class="highlighter-rouge">nonlinsolve</code> user can invert or do <code class="highlighter-rouge">solveset</code></p>
+
+<p>(e.g. solveset(Eq(sin(x), soln_u), x, domain) to get value of <code class="highlighter-rouge">x</code>).</p>
+
+<ul>
+  <li>Ready for review.</li>
+</ul>
+
+<hr />
+
+<p><strong>Meanwhile :</strong></p>
+
+<ul>
+  <li>
+    <p>We already know that solveset need improved <code class="highlighter-rouge">invert_real</code> , <code class="highlighter-rouge">invert_complex</code> and <code class="highlighter-rouge">Imageset</code> Intersections.</p>
+  </li>
+  <li>
+    <p>previous work is in this PR <a href="https://github.com/sympy/sympy/pull/10971">10971</a>. Trying to improve them.</p>
+  </li>
+</ul>
+
+<p>Some cases is here :</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code># In 2, 4, 5 intersection is not needed.
+
+In [1]: img = ImageSet(Lambda(n, x/n), S.Complexes)
+
+In [2]: Intersection(img, S.Complexes)
+Out[2]:
+    &#9127;x        &#9131;
+&#8450; &#8745; &#9128;&#9472; | n &#8714; &#8450;&#9132;
+    &#9129;n        &#9133;
+
+In [3]: img = ImageSet(Lambda(n, x/n), S.Integers)
+
+In [4]: Intersection(img, S.Complexes)
+Out[4]:
+&#9127;x        &#9131;    
+&#9128;&#9472; | n &#8714; &#8484;&#9132; &#8745; &#8450;
+&#9129;n        &#9133;    
+
+In [5]: Intersection(ImageSet(Lambda(n, 2*n*I*pi), S.Integers), S.Complexes)
+Out[5]: {2&#8901;&#8520;&#8901;&#960;&#8901;n | n &#8714; &#8484;} &#8745; &#8450;
+
+# ImageSet Intersection is not implemented when inverter returns multiple values.
+# here ans should be {0, 1}
+In [6]: img1 = ImageSet(Lambda(n, n**2), S.Integers)
+
+In [7]: Intersection(img1, Interval(0,2))
+Out[7]:
+         &#9127; 2        &#9131;
+[0, 2] &#8745; &#9128;n  | n &#8714; &#8484;&#9132;
+         &#9129;          &#9133;
+
+</code></pre>
+</div>
+
+<hr />
+
+<p><strong><em>continue..</em></strong></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -3834,86 +3815,86 @@ Will send a PR soon.</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://asmeurer.github.io/blog/rss.xml">XML</a></td>
-<td>23:56, Sunday, 28 August</td>
-<td>00:11, Monday, 29 August</td>
+<td>00:17, Monday, 29 August</td>
+<td>00:32, Monday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>23:56, Sunday, 28 August</td>
-<td>00:11, Monday, 29 August</td>
+<td>00:17, Monday, 29 August</td>
+<td>00:32, Monday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>23:56, Sunday, 28 August</td>
-<td>00:11, Monday, 29 August</td>
+<td>00:17, Monday, 29 August</td>
+<td>00:32, Monday, 29 August</td>
+</tr>
+<tr class="feedsrow">
+<td>http://kshitij10496.github.io/feed.xml</td>
+<td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
+<td>00:17, Monday, 29 August</td>
+<td>00:32, Monday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>23:56, Sunday, 28 August</td>
-<td>00:11, Monday, 29 August</td>
+<td>00:17, Monday, 29 August</td>
+<td>00:32, Monday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>23:56, Sunday, 28 August</td>
-<td>00:11, Monday, 29 August</td>
+<td>00:17, Monday, 29 August</td>
+<td>00:32, Monday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>23:56, Sunday, 28 August</td>
-<td>00:11, Monday, 29 August</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="http://kshitij10496.github.io//">Kshitij Saraogi</a></td>
-<td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>23:56, Sunday, 28 August</td>
-<td>00:11, Monday, 29 August</td>
+<td>00:17, Monday, 29 August</td>
+<td>00:32, Monday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>23:56, Sunday, 28 August</td>
-<td>00:11, Monday, 29 August</td>
+<td>00:17, Monday, 29 August</td>
+<td>00:32, Monday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>23:56, Sunday, 28 August</td>
-<td>00:11, Monday, 29 August</td>
+<td>00:17, Monday, 29 August</td>
+<td>00:32, Monday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io/feed.xml">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>23:56, Sunday, 28 August</td>
-<td>00:11, Monday, 29 August</td>
+<td>00:17, Monday, 29 August</td>
+<td>00:32, Monday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>23:56, Sunday, 28 August</td>
-<td>00:11, Monday, 29 August</td>
+<td>00:17, Monday, 29 August</td>
+<td>00:32, Monday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>23:56, Sunday, 28 August</td>
-<td>00:11, Monday, 29 August</td>
+<td>00:17, Monday, 29 August</td>
+<td>00:32, Monday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>23:56, Sunday, 28 August</td>
-<td>00:11, Monday, 29 August</td>
+<td>00:17, Monday, 29 August</td>
+<td>00:32, Monday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>23:56, Sunday, 28 August</td>
-<td>00:11, Monday, 29 August</td>
+<td>00:17, Monday, 29 August</td>
+<td>00:32, Monday, 29 August</td>
 </tr>
 </table>
 
