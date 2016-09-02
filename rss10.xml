@@ -7,6 +7,38 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Thirteenth-Week</guid>
+      <title>GSoC Thirteenth Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Fri, 02 Sep 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Thirteenth-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This week I worked on the &lt;a href="https://github.com/symengine/symengine/pull/1066"&gt;PR&lt;/a&gt; of factoring square free polynomials.
+Adding many changes for size in base. Like changing this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;auto l = std::ceil(std::log(2 * B + 1) / std::log(mp_get_ui(fsqf.first)));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;to&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-C++"&gt;if (mp_fits_slong_p(B)) {
+    temp = 2 * B + 1;
+    l = std::ceil(std::log(mp_get_d(temp))
+                  / std::log(mp_get_ui(fsqf.first)));
+} else {
+    auto b_d = mp_get_d(mp_abs(b));
+    l = std::ceil(
+        (1 + std::log2(n + 1) / 2.0 + n + log2_d_A + std::log2(b_d))
+        / (std::log2(mp_get_ui(fsqf.first))));
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This prevented over-flow.
+And a lot of implementation changes were incorporated in &lt;code class="highlighter-rouge"&gt;gf_gcdex&lt;/code&gt; also.&lt;/p&gt;
+
+&lt;p&gt;I also wrote documentation on &lt;code class="highlighter-rouge"&gt;Fields&lt;/code&gt; module &lt;a href="https://github.com/symengine/symengine/wiki/Fields-in-SymEngine"&gt;here&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://gxyd.github.io/GSoC GSoC 2016 Project with SymPy(wrap up): Computational Group Theory</guid>
       <title>GSoC 2016 Project with SymPy(wrap up): Computational Group Theory</title>
       <author>Gaurav Dhingra (gxyd)</author>
@@ -1989,61 +2021,6 @@ forward with all the work that has been put into planning the api&amp;#8217;s.&l
   #353&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/blockquote&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Eighth-Week</guid>
-      <title>GSoC Eighth Week</title>
-      <author>Nishant Nikhil (nishnik)</author>
-      <pubDate>Wed, 20 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://nishnik.github.io/GSoC-Eighth-Week/</link>
-      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
-
-&lt;p&gt;After completing the work on &lt;code class="highlighter-rouge"&gt;gf_factor&lt;/code&gt;, I moved on to implement Gathen-Shoup&amp;#8217;s factorization algorithm. Like Zassenhaus&amp;#8217;s agorithm, it is also a probabilistic algorithm.
-&lt;br /&gt;
-The paper is available &lt;a href="http://www.shoup.net/papers/frobenius.pdf"&gt;here&lt;/a&gt;.
-&lt;br /&gt;
-&lt;br /&gt;
-&lt;strong&gt;First question: Why this algorithm ?&lt;/strong&gt;
-&lt;br /&gt;
-&amp;gt; Because, it is kind of faster than zassenhaus&amp;#8217;s algorithm.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;
-&lt;strong&gt;Second question: What is &amp;#8220;kind of&amp;#8221; here ?&lt;/strong&gt;
-&lt;br /&gt;
-&amp;gt; Well, it is faster when a specific condition satisfies.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;
-Its asymptotic runtime is &lt;code class="highlighter-rouge"&gt;O(n**2 + n log q).(log n)**2.loglog n&lt;/code&gt;, where &lt;code class="highlighter-rouge"&gt;n&lt;/code&gt; is degree of polynomial and &lt;code class="highlighter-rouge"&gt;q&lt;/code&gt; is the field characteristics.
-&lt;br /&gt;
-In &lt;a href="https://en.wikipedia.org/wiki/&amp;#213;#Mathematical_use"&gt;&amp;#8220;Soft O&amp;#8221; notation&lt;/a&gt;, it is &lt;code class="highlighter-rouge"&gt;O~(n**2 + n log q)&lt;/code&gt;. While the cantor zassenhaus&amp;#8217;s algorithm has &lt;code class="highlighter-rouge"&gt;O~(n**2 log q)&lt;/code&gt; asymptotic runtime.
-&lt;br /&gt;
-So when &lt;code class="highlighter-rouge"&gt;log q&lt;/code&gt; approaches &lt;code class="highlighter-rouge"&gt;n&lt;/code&gt;, the difference is remarkable.
-&lt;br /&gt;&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;Algorithm&lt;/th&gt;
-      &lt;th style="text-align: center;"&gt;Asymptotic Runtime&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Shoup&lt;/td&gt;
-      &lt;td style="text-align: center;"&gt;&lt;code class="highlighter-rouge"&gt;O~(n**2)&lt;/code&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Zassenhaus&lt;/td&gt;
-      &lt;td style="text-align: center;"&gt;&lt;code class="highlighter-rouge"&gt;O~(n**3)&lt;/code&gt;&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;It also works in three parts, firstly square free factorization, then distinct degree and finally equal degree factorization.
-&lt;br /&gt;
-I have completed the implementation of this algorithm on &lt;a href="https://github.com/nishnik/symengine/tree/shoup_factorization"&gt;shoup_factorization&lt;/a&gt; branch.
-And also, I changed the container (which stores factors) type to &lt;code class="highlighter-rouge"&gt;set&lt;/code&gt;.&lt;br /&gt;
-Will send a PR soon.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
