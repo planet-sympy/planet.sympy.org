@@ -1662,6 +1662,142 @@ of learning and experiences possible.</p>
 	</div>
 </div></div>
 <div class="day">
+<h2 class="dayform">August 16, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-a91a71ba">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/srajangarg.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Srajan Garg (srajangarg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://srajangarg.github.io//2016/08/16/Containers-for-MPoly/">00:00, Tuesday, 16 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/08/16/Containers-for-MPoly/">Containers for Multivariate Polynomials</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/srajangarg.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Srajan Garg (srajangarg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://srajangarg.github.io//2016/08/16/Containers-for-MPoly/">00:00, Tuesday, 16 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/08/16/Containers-for-MPoly/">Containers for Multivariate Polynomials</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<h3 id="overview">Overview</h3>
+
+<p>After the last blog post, I started working on the &#8220;fixing up the remainder of rational polynomials&#8221;. This also included adding support for basic to rational polynomial conversions. The current work is in <a href="https://github.com/symengine/symengine/pull/1055">#1055</a> which has not been merged in yet.</p>
+
+<p>Another thing I started working on was conversions from SymEngine symbolics to multivariate polynomials. The way the current conversions work, led me to change the overall structure of multivariate polynomials.</p>
+
+<h3 id="restructuring-multivariate-polynomials">Restructuring Multivariate Polynomials</h3>
+
+<p>The current working of basic conversions is that it constructs the &#8220;internal container&#8221; of the polynomial as it parses the expression. These containers have operators overloaded and they can easily be manipulated by the functions. Handling multivariate polynomials using this approach would be impossible with the current structure of the code. There were no &#8220;containers&#8221; per se in the previous implementation.</p>
+
+<p>I thought it would be better if we can implement a container based polynomial structure for multivariate polynomials too. Fortunately, the way the SymEngine polynomials work, an approach similar to the univariate case of containers worked. The container is a wrapper around a map from vector to a value (the coefficient)</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Vec</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Value</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Wrapper</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">UDictWrapper</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="k">using</span> <span class="n">Dict</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">Vec</span><span class="p">,</span> <span class="n">Value</span><span class="p">,</span> <span class="n">vec_hash</span><span class="o">&lt;</span><span class="n">Vec</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+    <span class="n">Dict</span> <span class="n">dict_</span><span class="p">;</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">vec_size</span><span class="p">;</span>
+
+    <span class="p">...</span>
+</code></pre>
+</div>
+<p>The polynomial class uses this as a container, along with information about the generators and their ordering. Apart from holding the map, this class has various constructors, and all the operators overloaded for it. It also has helper functions, which help translate the current keys to another specific order/ arrangement. The container assumes that the all operations done to it are with other &#8220;adjusted&#8221; containers. Currently, the job of adjusting/aligning th container has been delegated to functions like <code class="highlighter-rouge">add_mpoly</code> etc.</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Poly</span><span class="o">&gt;</span>
+<span class="n">RCP</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">Poly</span><span class="o">&gt;</span> <span class="n">add_mpoly</span><span class="p">(</span><span class="k">const</span> <span class="n">Poly</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">Poly</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">typename</span> <span class="n">Poly</span><span class="o">::</span><span class="n">container_type</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">;</span>
+    <span class="n">set_basic</span> <span class="n">s</span> <span class="o">=</span> <span class="n">get_translated_container</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+    <span class="n">x</span> <span class="o">+=</span> <span class="n">y</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">Poly</span><span class="o">::</span><span class="n">from_container</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>and</p>
+
+<div class="language-c++ highlighter-rouge"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Poly</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Container</span><span class="o">&gt;</span>
+<span class="n">set_basic</span> <span class="n">get_translated_container</span><span class="p">(</span><span class="n">Container</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">,</span> <span class="n">Container</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">,</span> 
+                                   <span class="k">const</span> <span class="n">Poly</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="n">Poly</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">vec_uint</span> <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">;</span>
+    <span class="n">set_basic</span> <span class="n">s</span><span class="p">;</span>
+
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">sz</span> <span class="o">=</span> <span class="n">reconcile</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">vars_</span><span class="p">,</span> <span class="n">b</span><span class="p">.</span><span class="n">vars_</span><span class="p">);</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">poly_</span><span class="p">.</span><span class="n">translate</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">sz</span><span class="p">);</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">b</span><span class="p">.</span><span class="n">poly_</span><span class="p">.</span><span class="n">translate</span><span class="p">(</span><span class="n">v2</span><span class="p">,</span> <span class="n">sz</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="n">s</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+</div>
+
+<p>Basically, both the containers get the ordering of generators in the &#8220;new&#8221; polynomial which will soon be constructed, and adjust the ordering of the vectors inside their maps accordingly. Thus consistency is maintained. All the work done is in <a href="https://github.com/symengine/symengine/pull/1049">#1049</a> and this has been merged in.</p>
+
+<h3 id="remaining-work">Remaining work</h3>
+
+<ul>
+  <li>
+    <p>After getting this restructure done, I started work on the basic to multivariate conversions, though I have not been able to cover it completely. The idea for these conversions remains the same and should be easy to implement.</p>
+  </li>
+  <li>
+    <p>I also could not spend time to integrate wrappers to Piranha polynomials which can be used as multivariate polynomials within SymEngine</p>
+  </li>
+</ul>
+
+<h3 id="wrapping-up-gsoc">Wrapping up GSoC</h3>
+
+<p>This is officially the last week of Google Summer of Code &#8216;16. Although GSoC is over, I plan to get the above mentioned work finished within August, before any other big undertaking. It has been a wonderful journey of insight and knowledge. Thanks a lot to my mentors Isuru, Ondrej and Sumith for helping me throughout the summers, and always being there for discussions and the silly issues I bombarded them with!</p>
+
+<p>Bye!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">August 15, 2016</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -2891,6 +3027,99 @@ x &#8901;y
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-4f15c42a">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/srajangarg.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Srajan Garg (srajangarg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://srajangarg.github.io//2016/08/01/Multivariate-Polynomails/">00:00, Monday, 01 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/08/01/Multivariate-Polynomails/">Multivariate Polynomials</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/srajangarg.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Srajan Garg (srajangarg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://srajangarg.github.io//2016/08/01/Multivariate-Polynomails/">00:00, Monday, 01 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/08/01/Multivariate-Polynomails/">Multivariate Polynomials</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<h3 id="overview">Overview</h3>
+
+<p>After college has started, work has been slower than usual. Last week I finally wound up Rational Polynomials in <a href="https://github.com/symengine/symengine/pull/1028">#1028</a>. Some minor changes still remain in some parts of the code. Most of the changes left are mainly related to code duplication, and will be fixed by writing their templated versions.</p>
+
+<h3 id="multivariate-polynomials">Multivariate Polynomials</h3>
+
+<p>I started off by reading and understanding how the multivariate class is implemented currently in SymEngine. It was developed by the UC Davis team as a part of their course project. The basic idea is pretty simple. It still is a sparse representation and maps from a vector (representing the powers of each generator in the monomial) to the non-zero coefficient multiplied to it. We use an unordered map instead of the ordered map used in the univariate counterpart. The choice does make some sense, as deciding order between two monomials is subjective and does not make sense (for eg. which is larger <code class="highlighter-rouge">x**2*y</code> or <code class="highlighter-rouge">x*y**2</code>) Even if we define a custom ordering, there are no real benefits I could think of that it would provide.</p>
+
+<p>On a side note, it kind of makes me think why we have stuck to the ordered map implementation for our univariate polynomials. The places it offers benefits are <code class="highlighter-rouge">eval</code> and <code class="highlighter-rouge">mul</code> (in some ways) I worked with ordered maps, as that was the implementation the initial polynomial class was built on. I&#8217;m also wondering if it is healthy to use two different implementations for both the polynomial types, univariate and multivariate. This needs to be discussed.</p>
+
+<p>Right now, I&#8217;m basically refactoring most of the code written in the multivariate class, so that it matches the API more or less from the univariate case. Some functions have been re-written and some unnecessary storage within the polynomials have been removed. Initially, I thought I will stick with the same container based approach I used in the univariate case. This proves to be non trivial for the multivariate case. So, after some discussion with Isuru, we decided to stick with different implementations for SymEngine polynomials and Piranha polynomials, as combining code was not easy. The current work is in <a href="https://github.com/symengine/symengine/pull/1049">#1049</a></p>
+
+<h3 id="future-work">Future Work</h3>
+
+<p>A lot is on my plate right now. Some of the work I plan to finish by the end of the next two weeks are</p>
+
+<ul>
+  <li>
+    <p>Finish up the refactoring of multivariate polynomials, and make their interaction with univariate polynomials as seamless as possible</p>
+  </li>
+  <li>
+    <p>Introduce wrappers for piranha polynomials to be used as multivariate polynomials within SymEngine</p>
+  </li>
+  <li>
+    <p>Fix up the remainder of rational polynomials, and template code wherever possible to remove code duplicates</p>
+  </li>
+  <li>
+    <p>Write conversions from <code class="highlighter-rouge">Basic</code> to multivariate polynomials, which will finish up one part of the coercion framework as proposed by Isuru</p>
+  </li>
+</ul>
+
+<p>Off to work!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">July 30, 2016</h2>
@@ -3575,6 +3804,108 @@ irb(main):005:0&gt;</pre>
 	</div>
 </div></div>
 <div class="day">
+<h2 class="dayform">July 23, 2016</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-aa06d76d feed-" id="item-4fa2aa45">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/srajangarg.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Srajan Garg (srajangarg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://srajangarg.github.io//2016/07/23/Rational-Polynomials-ft-Bugs/">00:00, Saturday, 23 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/07/23/Rational-Polynomials-ft-Bugs/">Rational Polynomials ft. Bugs</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/srajangarg.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Srajan Garg (srajangarg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://srajangarg.github.io//2016/07/23/Rational-Polynomials-ft-Bugs/">00:00, Saturday, 23 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://srajangarg.github.io//2016/07/23/Rational-Polynomials-ft-Bugs/">Rational Polynomials ft. Bugs</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<h3 id="overview">Overview</h3>
+
+<p>Sorry I haven&#8217;t been able to report my work for about two weeks now. Things have become slower mainly due to the fact that my university has resumed and along with it a heavily packed timetable and assignments in the first week don&#8217;t help. I also caught a bad fever the past week which really hindered my progress, but it&#8217;s dying down and I will resume my work with full vigor eventually.</p>
+
+<p>The work I did do has been summarized below.</p>
+
+<h3 id="bug-fixes">Bug Fixes</h3>
+
+<p>While writing the code for the rational polynomials, as mentioned in the last blogpost, I encountered various bugs. Some of them caused other bugs to be exposed, which took a lot of time for me to debug.</p>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">pow(Poly, uint)</code> was throwing a segmentation fault. After digging in and wasting more than four hours on unrelated checks I figured out that the <code class="highlighter-rouge">eq</code> inside the polynomial class was incorrect. Without checking whether the other parameter was a <code class="highlighter-rouge">Poly</code> or not, I was <code class="highlighter-rouge">static_cast</code>ing it which posed a problem.</p>
+  </li>
+  <li>
+    <p>The happiness was shortlived, as the bug persisted. On further inspection I found that the polynomial was being treated as a number! This was because <code class="highlighter-rouge">is_a_Number</code> relied on typecodes, and the polynomial types were defined before the <code class="highlighter-rouge">NUMBERWRAPPER</code> class, which deemed them numbers. The fix for this was simple, just move the polynomial type code definitions after the numbers.</p>
+  </li>
+  <li>
+    <p>The <code class="highlighter-rouge">pow</code> tests pass, but what&#8217;s this? All the <code class="highlighter-rouge">MSVC</code> builds on appveyor fail. They all fail a <code class="highlighter-rouge">coeff</code> test. Wow, I had not changed any code related to <code class="highlighter-rouge">coeff</code> at all, how does it affect that specific test and only on the <code class="highlighter-rouge">MSVC</code> compiler? This kept me wondering and looking at the source for a day. Finally, I had to login to the VM of appveyor running the tests. I was not familiar with windows development environment at all, which was the reason I failed a couple of times before I gave up debugging. The next morning I woke up determined to fix this Windows bug, I set the break points in Visual Studio and started the code execution. I found it! It was a bug in the <code class="highlighter-rouge">CoeffVisitor</code> itself. The code for the <code class="highlighter-rouge">coeff</code> function was incomplete. Why wasn&#8217;t this bug being captured before? Probably because the previous change (in the typecodes) caused a reordering in  a map, which no other compiler was doing. Do read up <a href="https://github.com/symengine/symengine/pull/1033#issuecomment-232973025">here</a> for more details.</p>
+  </li>
+  <li>
+    <p>An appveyor build was failing for unknown reason, which had to be shifted to allowed failures</p>
+  </li>
+</ul>
+
+<p>This was basically the components of <a href="https://github.com/symengine/symengine/pull/1033">#1033</a>. Less quantity of changes, but really important none the less.</p>
+
+<h3 id="rational-polynomials">Rational Polynomials</h3>
+
+<p>The work with rational polynomials continues. I had underestimated the amount of work required, and I also feel that I should have broken down rational polynomials into three parts each, just like integer polynomials. Right now, the work continues in <a href="https://github.com/symengine/symengine/pull/1028">#1028</a>, but it&#8217;s soon going to become huge with all varieties of changes.</p>
+
+<h3 id="miscellaneous">Miscellaneous</h3>
+
+<p>I finally benchmarked <a href="https://github.com/sakra/cotire">cotire</a> to see how much speedup it was providing to SymEngine builds. <a href="https://github.com/symengine/symengine/issues/1023">Here</a> is the short summary of the speedups obtained, and the work to include it is in <a href="https://github.com/symengine/symengine/pull/1041">#1041</a>.</p>
+
+<p>Also a small bug was present in our flint and gmp rational number wrappers. We were not canonicalizing on construction from two integers. It was fixed in <a href="https://github.com/symengine/symengine/pull/1031">#1031</a>.</p>
+
+<p>Laters!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 22, 2016</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -3757,414 +4088,6 @@ forward with all the work that has been put into planning the api&#8217;s.</p>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">July 20, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-89ae9fcb feed-" id="item-91c5c11f">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/nishnik.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Nishant Nikhil (nishnik) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://nishnik.github.io/GSoC-Eighth-Week/">00:00, Wednesday, 20 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Eighth-Week/">GSoC Eighth Week</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/nishnik.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Nishant Nikhil (nishnik) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://nishnik.github.io/GSoC-Eighth-Week/">00:00, Wednesday, 20 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Eighth-Week/">GSoC Eighth Week</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p><img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /></p>
-
-<p>After completing the work on <code class="highlighter-rouge">gf_factor</code>, I moved on to implement Gathen-Shoup&#8217;s factorization algorithm. Like Zassenhaus&#8217;s agorithm, it is also a probabilistic algorithm.
-<br />
-The paper is available <a href="http://www.shoup.net/papers/frobenius.pdf">here</a>.
-<br />
-<br />
-<strong>First question: Why this algorithm ?</strong>
-<br />
-&gt; Because, it is kind of faster than zassenhaus&#8217;s algorithm.</p>
-
-<p><br />
-<strong>Second question: What is &#8220;kind of&#8221; here ?</strong>
-<br />
-&gt; Well, it is faster when a specific condition satisfies.</p>
-
-<p><br />
-Its asymptotic runtime is <code class="highlighter-rouge">O(n**2 + n log q).(log n)**2.loglog n</code>, where <code class="highlighter-rouge">n</code> is degree of polynomial and <code class="highlighter-rouge">q</code> is the field characteristics.
-<br />
-In <a href="https://en.wikipedia.org/wiki/&#213;#Mathematical_use">&#8220;Soft O&#8221; notation</a>, it is <code class="highlighter-rouge">O~(n**2 + n log q)</code>. While the cantor zassenhaus&#8217;s algorithm has <code class="highlighter-rouge">O~(n**2 log q)</code> asymptotic runtime.
-<br />
-So when <code class="highlighter-rouge">log q</code> approaches <code class="highlighter-rouge">n</code>, the difference is remarkable.
-<br /></p>
-
-<table>
-  <thead>
-    <tr>
-      <th>Algorithm</th>
-      <th style="text-align: center;">Asymptotic Runtime</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Shoup</td>
-      <td style="text-align: center;"><code class="highlighter-rouge">O~(n**2)</code></td>
-    </tr>
-    <tr>
-      <td>Zassenhaus</td>
-      <td style="text-align: center;"><code class="highlighter-rouge">O~(n**3)</code></td>
-    </tr>
-  </tbody>
-</table>
-
-<p>It also works in three parts, firstly square free factorization, then distinct degree and finally equal degree factorization.
-<br />
-I have completed the implementation of this algorithm on <a href="https://github.com/nishnik/symengine/tree/shoup_factorization">shoup_factorization</a> branch.
-And also, I changed the container (which stores factors) type to <code class="highlighter-rouge">set</code>.<br />
-Will send a PR soon.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-9bcbd625">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/shekharrajak.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://shekharrajak.github.io/Coding-Period-week-9/">00:00, Wednesday, 20 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-9/">Coding Period Week 9</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/shekharrajak.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://shekharrajak.github.io/Coding-Period-week-9/">00:00, Wednesday, 20 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-9/">Coding Period Week 9</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p><strong>Some points regarding trigonometric and inverse trigonometric functions in solveset :</strong></p>
-
-<ul>
-  <li>
-    <p>There are many issues in solveset <code class="highlighter-rouge">solve_trig</code>.More inverse trigonometric formula and trigonometric identities should be defined/added or improved.
-Also <code class="highlighter-rouge">simplify</code>, <code class="highlighter-rouge">trigsimp</code> and in <code class="highlighter-rouge">solveset</code> <code class="highlighter-rouge">_invert</code> methods should be improved accordingly.</p>
-  </li>
-  <li>
-    <p>Some links, that is helpful to improve these functions.</p>
-
-    <ul>
-      <li><a href="https://en.wikipedia.org/wiki/Inverse_trigonometric_functions">https://en.wikipedia.org/wiki/Inverse_trigonometric_functions</a></li>
-      <li><a href="https://en.wikipedia.org/wiki/Proofs_of_trigonometric_identities">https://en.wikipedia.org/wiki/Proofs_of_trigonometric_identities</a></li>
-      <li><a href="https://owlcation.com/stem/List-of-Inverse-Trig-Function-Identities-Integrals-and-Derivatives">https://owlcation.com/stem/List-of-Inverse-Trig-Function-Identities-Integrals-and-Derivatives</a></li>
-    </ul>
-  </li>
-  <li>
-    <p><code class="highlighter-rouge">trigsimp</code> must be more powerful so that <code class="highlighter-rouge">solve_trig</code> get simplified eq. (which solves trig equation by converting them into its <code class="highlighter-rouge">exp</code> form).</p>
-  </li>
-  <li>
-    <p><code class="highlighter-rouge">solve_trig</code> solves the trig eq. using its <code class="highlighter-rouge">exp</code> form. There may be cases when that <code class="highlighter-rouge">exp</code> form is complicated and solveset fail to handle that form.
-There should be technique to convert that complicated form to simpler form(if possible) and then call the <code class="highlighter-rouge">solveset_complex</code>. That may help to improve the <code class="highlighter-rouge">solve_trig</code> method.</p>
-  </li>
-  <li>
-    <p>We can use <code class="highlighter-rouge">_osbornei</code>, <code class="highlighter-rouge">hyper_as_trig</code> methods defined in <code class="highlighter-rouge">simplify/fu.py</code> to convert hyperbolic function to trigonometric function, then we can use <code class="highlighter-rouge">trigsimp</code> (we can&#8217;t use <code class="highlighter-rouge">trigsimp</code> for hyperbolic functions).</p>
-  </li>
-  <li>
-    <p>First need to improve basic concepts and add more identities. I opened a new PR to improve <code class="highlighter-rouge">rewrite</code> for trigonometric functions , PR is <a href="https://github.com/sympy/sympy/pull/11424/">#11424</a>.</p>
-  </li>
-</ul>
-
-<hr />
-
-<p><strong>eliminate() :</strong></p>
-
-<ul>
-  <li>
-    <p>issue <a href="https://github.com/sympy/sympy/issues/2720">#2720</a> : We need some kind of eliminate function, like <a href="http://reference.wolfram.com/mathematica/ref/Eliminate.html">http://reference.wolfram.com/mathematica/ref/Eliminate.html</a>. See also <a href="http://stackoverflow.com/q/20826969/161801">http://stackoverflow.com/q/20826969/161801 </a></p>
-  </li>
-  <li>
-    <p>It looks something related to <a href="https://github.com/sympy/sympy/pull/11111/files#diff-eec0422923e8f100745c015cd8fdd6cfR1135">substitution</a> function.
-But they are not same. Using <code class="highlighter-rouge">eliminate()</code> we will try to remove the variable(s) from the each equations(not solving the eq).</p>
-  </li>
-  <li>
-    <p>Plan : First choose eq that have min. variables and get the value of the variable, to be eliminated. Go further and <code class="highlighter-rouge">subs</code> the value to next min. variable eq., and so on.</p>
-  </li>
-  <li>
-    <p>Work in progress.</p>
-  </li>
-</ul>
-
-<hr />
-
-<p><strong>Meanwhile :</strong></p>
-
-<ul>
-  <li>
-    <p>I found some basic issues in <code class="highlighter-rouge">ComplexInfinity</code> and trying to solve them in this PR <a href="https://github.com/sympy/sympy/pull/11409">#11409</a>.</p>
-  </li>
-  <li>
-    <p>there may be many things to be added about <code class="highlighter-rouge">ComplexInfinity</code>, one can refer this link to implement them :
-<a href="http://reference.wolfram.com/language/ref/ComplexInfinity.html">http://reference.wolfram.com/language/ref/ComplexInfinity.html</a>.</p>
-  </li>
-</ul>
-
-<hr />
-
-<p><strong><em>continue..</em></strong></p>
-
-<hr />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">July 18, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7cbb8e7e feed-" id="item-353b5fec">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/shekharrajak.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://shekharrajak.github.io/Coding-Period-week-8/">00:00, Monday, 18 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-8/">Coding Period Week 8</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/shekharrajak.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Shekhar Prasad Rajak (shekharrajak) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://shekharrajak.github.io/Coding-Period-week-8/">00:00, Monday, 18 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://shekharrajak.github.io/Coding-Period-week-8/">Coding Period Week 8</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<hr />
-<p><strong>Continue - Diophantine in Solveset :</strong></p>
-
-<p>PR <a href="https://github.com/sympy/sympy/pull/11234">11234</a></p>
-
-<ul>
-  <li>
-    <p>For general Pythagorean diop_type (Diophantine eq type), it seems diophantine always returns parameterized solution so I did some changes in the PR. <a href="https://github.com/sympy/sympy/pull/11334/commits/6af46fc35db3a74dfda78b6d8e2a0f7d4ec65afe">commit</a></p>
-  </li>
-  <li>
-    <p>You can refer this <a href="https://github.com/sympy/sympy/pull/11334#issuecomment-230334645">comment</a>.</p>
-  </li>
-</ul>
-
-<hr />
-
-<p><strong>Continue Simplified Trig soln</strong></p>
-
-<p>PR <a href="https://github.com/sympy/sympy/pull/11188">#11188</a></p>
-
-<ul>
-  <li>After some changes, the PR is ready for review.</li>
-</ul>
-
-<hr />
-
-<p><strong>Continue nonlinsolve :</strong></p>
-
-<p>PR <a href="https://github.com/sympy/sympy/pull/11111">#11111</a></p>
-
-<ul>
-  <li>
-    <p>Added some XFAIL test-cases of system of Trigonometric equations. <code class="highlighter-rouge">solveset</code> trig solver (<code class="highlighter-rouge">solve_trig</code>) is not smart enough(<code class="highlighter-rouge">solveset</code> returns <code class="highlighter-rouge">ConditionSet</code>, where soln can be simply inverse trig functions using <code class="highlighter-rouge">_invert</code> or inverse Trigonometric functions). So <code class="highlighter-rouge">solveset</code> returns <code class="highlighter-rouge">ConditionSet</code> that means <code class="highlighter-rouge">substitution</code> is not getting soln.</p>
-  </li>
-  <li>
-    <p>It is better to replace trigonometric functions or other <code class="highlighter-rouge">Function</code> with symbols</p>
-  </li>
-</ul>
-
-<p>(e.g. <code class="highlighter-rouge">sin(x)</code> &#8211;&gt; <code class="highlighter-rouge">u</code>, <code class="highlighter-rouge">sin(y)</code>&#8211;&gt; <code class="highlighter-rouge">v</code>, <code class="highlighter-rouge">f(x)</code>&#8211;&gt; <code class="highlighter-rouge">f_x</code>, <code class="highlighter-rouge">g(x)</code> &#8211;&gt; <code class="highlighter-rouge">g_x</code>)</p>
-
-<p>and then solve for the symbols. After getting solution from <code class="highlighter-rouge">nonlinsolve</code> user can invert or do <code class="highlighter-rouge">solveset</code></p>
-
-<p>(e.g. solveset(Eq(sin(x), soln_u), x, domain) to get value of <code class="highlighter-rouge">x</code>).</p>
-
-<ul>
-  <li>Ready for review.</li>
-</ul>
-
-<hr />
-
-<p><strong>Meanwhile :</strong></p>
-
-<ul>
-  <li>
-    <p>We already know that solveset need improved <code class="highlighter-rouge">invert_real</code> , <code class="highlighter-rouge">invert_complex</code> and <code class="highlighter-rouge">Imageset</code> Intersections.</p>
-  </li>
-  <li>
-    <p>previous work is in this PR <a href="https://github.com/sympy/sympy/pull/10971">10971</a>. Trying to improve them.</p>
-  </li>
-</ul>
-
-<p>Some cases is here :</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code># In 2, 4, 5 intersection is not needed.
-
-In [1]: img = ImageSet(Lambda(n, x/n), S.Complexes)
-
-In [2]: Intersection(img, S.Complexes)
-Out[2]:
-    &#9127;x        &#9131;
-&#8450; &#8745; &#9128;&#9472; | n &#8714; &#8450;&#9132;
-    &#9129;n        &#9133;
-
-In [3]: img = ImageSet(Lambda(n, x/n), S.Integers)
-
-In [4]: Intersection(img, S.Complexes)
-Out[4]:
-&#9127;x        &#9131;    
-&#9128;&#9472; | n &#8714; &#8484;&#9132; &#8745; &#8450;
-&#9129;n        &#9133;    
-
-In [5]: Intersection(ImageSet(Lambda(n, 2*n*I*pi), S.Integers), S.Complexes)
-Out[5]: {2&#8901;&#8520;&#8901;&#960;&#8901;n | n &#8714; &#8484;} &#8745; &#8450;
-
-# ImageSet Intersection is not implemented when inverter returns multiple values.
-# here ans should be {0, 1}
-In [6]: img1 = ImageSet(Lambda(n, n**2), S.Integers)
-
-In [7]: Intersection(img1, Interval(0,2))
-Out[7]:
-         &#9127; 2        &#9131;
-[0, 2] &#8745; &#9128;n  | n &#8714; &#8484;&#9132;
-         &#9129;          &#9133;
-
-</code></pre>
-</div>
-
-<hr />
-
-<p><strong><em>continue..</em></strong></p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -4192,86 +4115,86 @@ Out[7]:
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>13:42, Sunday, 19 March</td>
-<td>13:57, Sunday, 19 March</td>
+<td>14:01, Sunday, 19 March</td>
+<td>14:16, Sunday, 19 March</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>13:42, Sunday, 19 March</td>
-<td>13:57, Sunday, 19 March</td>
+<td>14:01, Sunday, 19 March</td>
+<td>14:16, Sunday, 19 March</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>13:42, Sunday, 19 March</td>
-<td>13:57, Sunday, 19 March</td>
+<td>14:01, Sunday, 19 March</td>
+<td>14:16, Sunday, 19 March</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>13:42, Sunday, 19 March</td>
-<td>13:57, Sunday, 19 March</td>
+<td>14:01, Sunday, 19 March</td>
+<td>14:16, Sunday, 19 March</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>13:42, Sunday, 19 March</td>
-<td>13:57, Sunday, 19 March</td>
-</tr>
-<tr class="feedsrow">
-<td>http://srajangarg.github.io/feed.xml</td>
-<td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>13:42, Sunday, 19 March</td>
-<td>13:57, Sunday, 19 March</td>
+<td>14:01, Sunday, 19 March</td>
+<td>14:16, Sunday, 19 March</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>13:42, Sunday, 19 March</td>
-<td>13:57, Sunday, 19 March</td>
+<td>14:01, Sunday, 19 March</td>
+<td>14:16, Sunday, 19 March</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>13:42, Sunday, 19 March</td>
-<td>13:57, Sunday, 19 March</td>
+<td>14:01, Sunday, 19 March</td>
+<td>14:16, Sunday, 19 March</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>13:42, Sunday, 19 March</td>
-<td>13:57, Sunday, 19 March</td>
+<td>14:01, Sunday, 19 March</td>
+<td>14:16, Sunday, 19 March</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>13:42, Sunday, 19 March</td>
-<td>13:57, Sunday, 19 March</td>
+<td>14:01, Sunday, 19 March</td>
+<td>14:16, Sunday, 19 March</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>13:42, Sunday, 19 March</td>
-<td>13:57, Sunday, 19 March</td>
+<td>14:01, Sunday, 19 March</td>
+<td>14:16, Sunday, 19 March</td>
+</tr>
+<tr class="feedsrow">
+<td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
+<td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
+<td>14:01, Sunday, 19 March</td>
+<td>14:16, Sunday, 19 March</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>13:42, Sunday, 19 March</td>
-<td>13:57, Sunday, 19 March</td>
+<td>14:01, Sunday, 19 March</td>
+<td>14:16, Sunday, 19 March</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>13:42, Sunday, 19 March</td>
-<td>13:57, Sunday, 19 March</td>
+<td>14:01, Sunday, 19 March</td>
+<td>14:16, Sunday, 19 March</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>13:42, Sunday, 19 March</td>
-<td>13:57, Sunday, 19 March</td>
+<td>14:01, Sunday, 19 March</td>
+<td>14:16, Sunday, 19 March</td>
 </tr>
 </table>
 
