@@ -1076,85 +1076,6 @@ to apply again. I would like to thank those who chose me and made this summer
 of learning and experiences possible.&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://srajangarg.github.io//2016/08/16/Containers-for-MPoly</guid>
-      <title>Containers for Multivariate Polynomials</title>
-      <author>Srajan Garg (srajangarg)</author>
-      <pubDate>Tue, 16 Aug 2016 00:00:00 GMT</pubDate>
-      <link>http://srajangarg.github.io//2016/08/16/Containers-for-MPoly/</link>
-      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
-
-&lt;p&gt;After the last blog post, I started working on the &amp;#8220;fixing up the remainder of rational polynomials&amp;#8221;. This also included adding support for basic to rational polynomial conversions. The current work is in &lt;a href="https://github.com/symengine/symengine/pull/1055"&gt;#1055&lt;/a&gt; which has not been merged in yet.&lt;/p&gt;
-
-&lt;p&gt;Another thing I started working on was conversions from SymEngine symbolics to multivariate polynomials. The way the current conversions work, led me to change the overall structure of multivariate polynomials.&lt;/p&gt;
-
-&lt;h3 id="restructuring-multivariate-polynomials"&gt;Restructuring Multivariate Polynomials&lt;/h3&gt;
-
-&lt;p&gt;The current working of basic conversions is that it constructs the &amp;#8220;internal container&amp;#8221; of the polynomial as it parses the expression. These containers have operators overloaded and they can easily be manipulated by the functions. Handling multivariate polynomials using this approach would be impossible with the current structure of the code. There were no &amp;#8220;containers&amp;#8221; per se in the previous implementation.&lt;/p&gt;
-
-&lt;p&gt;I thought it would be better if we can implement a container based polynomial structure for multivariate polynomials too. Fortunately, the way the SymEngine polynomials work, an approach similar to the univariate case of containers worked. The container is a wrapper around a map from vector to a value (the coefficient)&lt;/p&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Vec&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Wrapper&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UDictWrapper&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;
-&lt;span class="k"&gt;public&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
-    &lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="n"&gt;Dict&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;unordered_map&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Vec&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vec_hash&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Vec&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-    &lt;span class="n"&gt;Dict&lt;/span&gt; &lt;span class="n"&gt;dict_&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-    &lt;span class="kt"&gt;unsigned&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;vec_size&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-
-    &lt;span class="p"&gt;...&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;The polynomial class uses this as a container, along with information about the generators and their ordering. Apart from holding the map, this class has various constructors, and all the operators overloaded for it. It also has helper functions, which help translate the current keys to another specific order/ arrangement. The container assumes that the all operations done to it are with other &amp;#8220;adjusted&amp;#8221; containers. Currently, the job of adjusting/aligning th container has been delegated to functions like &lt;code class="highlighter-rouge"&gt;add_mpoly&lt;/code&gt; etc.&lt;/p&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;span class="n"&gt;RCP&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;add_mpoly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;
-    &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;container_type&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-    &lt;span class="n"&gt;set_basic&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;get_translated_container&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-    &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;from_container&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;move&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;and&lt;/p&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Container&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;span class="n"&gt;set_basic&lt;/span&gt; &lt;span class="n"&gt;get_translated_container&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Container&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Container&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; 
-                                   &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;
-    &lt;span class="n"&gt;vec_uint&lt;/span&gt; &lt;span class="n"&gt;v1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-    &lt;span class="n"&gt;set_basic&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-
-    &lt;span class="kt"&gt;unsigned&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;sz&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;reconcile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;v1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;vars_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;vars_&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-    &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;poly_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;translate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;v1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sz&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-    &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;poly_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;translate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;v2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sz&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Basically, both the containers get the ordering of generators in the &amp;#8220;new&amp;#8221; polynomial which will soon be constructed, and adjust the ordering of the vectors inside their maps accordingly. Thus consistency is maintained. All the work done is in &lt;a href="https://github.com/symengine/symengine/pull/1049"&gt;#1049&lt;/a&gt; and this has been merged in.&lt;/p&gt;
-
-&lt;h3 id="remaining-work"&gt;Remaining work&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;After getting this restructure done, I started work on the basic to multivariate conversions, though I have not been able to cover it completely. The idea for these conversions remains the same and should be easy to implement.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;I also could not spend time to integrate wrappers to Piranha polynomials which can be used as multivariate polynomials within SymEngine&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id="wrapping-up-gsoc"&gt;Wrapping up GSoC&lt;/h3&gt;
-
-&lt;p&gt;This is officially the last week of Google Summer of Code &amp;#8216;16. Although GSoC is over, I plan to get the above mentioned work finished within August, before any other big undertaking. It has been a wonderful journey of insight and knowledge. Thanks a lot to my mentors Isuru, Ondrej and Sumith for helping me throughout the summers, and always being there for discussions and the silly issues I bombarded them with!&lt;/p&gt;
-
-&lt;p&gt;Bye!&lt;/p&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-12</guid>
       <title>Coding Period Week 12</title>
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
@@ -1819,45 +1740,6 @@ x &amp;#8901;y
 &amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/780/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/780/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=780&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://srajangarg.github.io//2016/08/01/Multivariate-Polynomails</guid>
-      <title>Multivariate Polynomials</title>
-      <author>Srajan Garg (srajangarg)</author>
-      <pubDate>Mon, 01 Aug 2016 00:00:00 GMT</pubDate>
-      <link>http://srajangarg.github.io//2016/08/01/Multivariate-Polynomails/</link>
-      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
-
-&lt;p&gt;After college has started, work has been slower than usual. Last week I finally wound up Rational Polynomials in &lt;a href="https://github.com/symengine/symengine/pull/1028"&gt;#1028&lt;/a&gt;. Some minor changes still remain in some parts of the code. Most of the changes left are mainly related to code duplication, and will be fixed by writing their templated versions.&lt;/p&gt;
-
-&lt;h3 id="multivariate-polynomials"&gt;Multivariate Polynomials&lt;/h3&gt;
-
-&lt;p&gt;I started off by reading and understanding how the multivariate class is implemented currently in SymEngine. It was developed by the UC Davis team as a part of their course project. The basic idea is pretty simple. It still is a sparse representation and maps from a vector (representing the powers of each generator in the monomial) to the non-zero coefficient multiplied to it. We use an unordered map instead of the ordered map used in the univariate counterpart. The choice does make some sense, as deciding order between two monomials is subjective and does not make sense (for eg. which is larger &lt;code class="highlighter-rouge"&gt;x**2*y&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;x*y**2&lt;/code&gt;) Even if we define a custom ordering, there are no real benefits I could think of that it would provide.&lt;/p&gt;
-
-&lt;p&gt;On a side note, it kind of makes me think why we have stuck to the ordered map implementation for our univariate polynomials. The places it offers benefits are &lt;code class="highlighter-rouge"&gt;eval&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;mul&lt;/code&gt; (in some ways) I worked with ordered maps, as that was the implementation the initial polynomial class was built on. I&amp;#8217;m also wondering if it is healthy to use two different implementations for both the polynomial types, univariate and multivariate. This needs to be discussed.&lt;/p&gt;
-
-&lt;p&gt;Right now, I&amp;#8217;m basically refactoring most of the code written in the multivariate class, so that it matches the API more or less from the univariate case. Some functions have been re-written and some unnecessary storage within the polynomials have been removed. Initially, I thought I will stick with the same container based approach I used in the univariate case. This proves to be non trivial for the multivariate case. So, after some discussion with Isuru, we decided to stick with different implementations for SymEngine polynomials and Piranha polynomials, as combining code was not easy. The current work is in &lt;a href="https://github.com/symengine/symengine/pull/1049"&gt;#1049&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id="future-work"&gt;Future Work&lt;/h3&gt;
-
-&lt;p&gt;A lot is on my plate right now. Some of the work I plan to finish by the end of the next two weeks are&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Finish up the refactoring of multivariate polynomials, and make their interaction with univariate polynomials as seamless as possible&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Introduce wrappers for piranha polynomials to be used as multivariate polynomials within SymEngine&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Fix up the remainder of rational polynomials, and template code wherever possible to remove code duplicates&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Write conversions from &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt; to multivariate polynomials, which will finish up one part of the coercion framework as proposed by Isuru&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Off to work!&lt;/p&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-10</guid>
       <title>Coding Period Week 10</title>
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
@@ -2204,51 +2086,6 @@ irb(main):005:0&amp;gt;&lt;/pre&gt;
 &lt;p&gt;See you next week!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/416/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/416/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=416&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://srajangarg.github.io//2016/07/23/Rational-Polynomials-ft-Bugs</guid>
-      <title>Rational Polynomials ft. Bugs</title>
-      <author>Srajan Garg (srajangarg)</author>
-      <pubDate>Sat, 23 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://srajangarg.github.io//2016/07/23/Rational-Polynomials-ft-Bugs/</link>
-      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
-
-&lt;p&gt;Sorry I haven&amp;#8217;t been able to report my work for about two weeks now. Things have become slower mainly due to the fact that my university has resumed and along with it a heavily packed timetable and assignments in the first week don&amp;#8217;t help. I also caught a bad fever the past week which really hindered my progress, but it&amp;#8217;s dying down and I will resume my work with full vigor eventually.&lt;/p&gt;
-
-&lt;p&gt;The work I did do has been summarized below.&lt;/p&gt;
-
-&lt;h3 id="bug-fixes"&gt;Bug Fixes&lt;/h3&gt;
-
-&lt;p&gt;While writing the code for the rational polynomials, as mentioned in the last blogpost, I encountered various bugs. Some of them caused other bugs to be exposed, which took a lot of time for me to debug.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;pow(Poly, uint)&lt;/code&gt; was throwing a segmentation fault. After digging in and wasting more than four hours on unrelated checks I figured out that the &lt;code class="highlighter-rouge"&gt;eq&lt;/code&gt; inside the polynomial class was incorrect. Without checking whether the other parameter was a &lt;code class="highlighter-rouge"&gt;Poly&lt;/code&gt; or not, I was &lt;code class="highlighter-rouge"&gt;static_cast&lt;/code&gt;ing it which posed a problem.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;The happiness was shortlived, as the bug persisted. On further inspection I found that the polynomial was being treated as a number! This was because &lt;code class="highlighter-rouge"&gt;is_a_Number&lt;/code&gt; relied on typecodes, and the polynomial types were defined before the &lt;code class="highlighter-rouge"&gt;NUMBERWRAPPER&lt;/code&gt; class, which deemed them numbers. The fix for this was simple, just move the polynomial type code definitions after the numbers.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;The &lt;code class="highlighter-rouge"&gt;pow&lt;/code&gt; tests pass, but what&amp;#8217;s this? All the &lt;code class="highlighter-rouge"&gt;MSVC&lt;/code&gt; builds on appveyor fail. They all fail a &lt;code class="highlighter-rouge"&gt;coeff&lt;/code&gt; test. Wow, I had not changed any code related to &lt;code class="highlighter-rouge"&gt;coeff&lt;/code&gt; at all, how does it affect that specific test and only on the &lt;code class="highlighter-rouge"&gt;MSVC&lt;/code&gt; compiler? This kept me wondering and looking at the source for a day. Finally, I had to login to the VM of appveyor running the tests. I was not familiar with windows development environment at all, which was the reason I failed a couple of times before I gave up debugging. The next morning I woke up determined to fix this Windows bug, I set the break points in Visual Studio and started the code execution. I found it! It was a bug in the &lt;code class="highlighter-rouge"&gt;CoeffVisitor&lt;/code&gt; itself. The code for the &lt;code class="highlighter-rouge"&gt;coeff&lt;/code&gt; function was incomplete. Why wasn&amp;#8217;t this bug being captured before? Probably because the previous change (in the typecodes) caused a reordering in  a map, which no other compiler was doing. Do read up &lt;a href="https://github.com/symengine/symengine/pull/1033#issuecomment-232973025"&gt;here&lt;/a&gt; for more details.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;An appveyor build was failing for unknown reason, which had to be shifted to allowed failures&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;This was basically the components of &lt;a href="https://github.com/symengine/symengine/pull/1033"&gt;#1033&lt;/a&gt;. Less quantity of changes, but really important none the less.&lt;/p&gt;
-
-&lt;h3 id="rational-polynomials"&gt;Rational Polynomials&lt;/h3&gt;
-
-&lt;p&gt;The work with rational polynomials continues. I had underestimated the amount of work required, and I also feel that I should have broken down rational polynomials into three parts each, just like integer polynomials. Right now, the work continues in &lt;a href="https://github.com/symengine/symengine/pull/1028"&gt;#1028&lt;/a&gt;, but it&amp;#8217;s soon going to become huge with all varieties of changes.&lt;/p&gt;
-
-&lt;h3 id="miscellaneous"&gt;Miscellaneous&lt;/h3&gt;
-
-&lt;p&gt;I finally benchmarked &lt;a href="https://github.com/sakra/cotire"&gt;cotire&lt;/a&gt; to see how much speedup it was providing to SymEngine builds. &lt;a href="https://github.com/symengine/symengine/issues/1023"&gt;Here&lt;/a&gt; is the short summary of the speedups obtained, and the work to include it is in &lt;a href="https://github.com/symengine/symengine/pull/1041"&gt;#1041&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Also a small bug was present in our flint and gmp rational number wrappers. We were not canonicalizing on construction from two integers. It was fixed in &lt;a href="https://github.com/symengine/symengine/pull/1031"&gt;#1031&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Laters!&lt;/p&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=942</guid>
       <title>GSoC Week 9</title>
       <author>Sampad Saha (sampadsaha5)</author>
@@ -2319,6 +2156,246 @@ forward with all the work that has been put into planning the api&amp;#8217;s.&l
   #353&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/blockquote&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Eighth-Week</guid>
+      <title>GSoC Eighth Week</title>
+      <author>Nishant Nikhil (nishnik)</author>
+      <pubDate>Wed, 20 Jul 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Eighth-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
+
+&lt;p&gt;After completing the work on &lt;code class="highlighter-rouge"&gt;gf_factor&lt;/code&gt;, I moved on to implement Gathen-Shoup&amp;#8217;s factorization algorithm. Like Zassenhaus&amp;#8217;s agorithm, it is also a probabilistic algorithm.
+&lt;br /&gt;
+The paper is available &lt;a href="http://www.shoup.net/papers/frobenius.pdf"&gt;here&lt;/a&gt;.
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;strong&gt;First question: Why this algorithm ?&lt;/strong&gt;
+&lt;br /&gt;
+&amp;gt; Because, it is kind of faster than zassenhaus&amp;#8217;s algorithm.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;
+&lt;strong&gt;Second question: What is &amp;#8220;kind of&amp;#8221; here ?&lt;/strong&gt;
+&lt;br /&gt;
+&amp;gt; Well, it is faster when a specific condition satisfies.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;
+Its asymptotic runtime is &lt;code class="highlighter-rouge"&gt;O(n**2 + n log q).(log n)**2.loglog n&lt;/code&gt;, where &lt;code class="highlighter-rouge"&gt;n&lt;/code&gt; is degree of polynomial and &lt;code class="highlighter-rouge"&gt;q&lt;/code&gt; is the field characteristics.
+&lt;br /&gt;
+In &lt;a href="https://en.wikipedia.org/wiki/&amp;#213;#Mathematical_use"&gt;&amp;#8220;Soft O&amp;#8221; notation&lt;/a&gt;, it is &lt;code class="highlighter-rouge"&gt;O~(n**2 + n log q)&lt;/code&gt;. While the cantor zassenhaus&amp;#8217;s algorithm has &lt;code class="highlighter-rouge"&gt;O~(n**2 log q)&lt;/code&gt; asymptotic runtime.
+&lt;br /&gt;
+So when &lt;code class="highlighter-rouge"&gt;log q&lt;/code&gt; approaches &lt;code class="highlighter-rouge"&gt;n&lt;/code&gt;, the difference is remarkable.
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Algorithm&lt;/th&gt;
+      &lt;th style="text-align: center;"&gt;Asymptotic Runtime&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Shoup&lt;/td&gt;
+      &lt;td style="text-align: center;"&gt;&lt;code class="highlighter-rouge"&gt;O~(n**2)&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Zassenhaus&lt;/td&gt;
+      &lt;td style="text-align: center;"&gt;&lt;code class="highlighter-rouge"&gt;O~(n**3)&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;It also works in three parts, firstly square free factorization, then distinct degree and finally equal degree factorization.
+&lt;br /&gt;
+I have completed the implementation of this algorithm on &lt;a href="https://github.com/nishnik/symengine/tree/shoup_factorization"&gt;shoup_factorization&lt;/a&gt; branch.
+And also, I changed the container (which stores factors) type to &lt;code class="highlighter-rouge"&gt;set&lt;/code&gt;.&lt;br /&gt;
+Will send a PR soon.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-9</guid>
+      <title>Coding Period Week 9</title>
+      <author>Shekhar Prasad Rajak (shekharrajak)</author>
+      <pubDate>Wed, 20 Jul 2016 00:00:00 GMT</pubDate>
+      <link>http://shekharrajak.github.io/Coding-Period-week-9/</link>
+      <description>&lt;p&gt;&lt;strong&gt;Some points regarding trigonometric and inverse trigonometric functions in solveset :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;There are many issues in solveset &lt;code class="highlighter-rouge"&gt;solve_trig&lt;/code&gt;.More inverse trigonometric formula and trigonometric identities should be defined/added or improved.
+Also &lt;code class="highlighter-rouge"&gt;simplify&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;trigsimp&lt;/code&gt; and in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; &lt;code class="highlighter-rouge"&gt;_invert&lt;/code&gt; methods should be improved accordingly.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Some links, that is helpful to improve these functions.&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Inverse_trigonometric_functions"&gt;https://en.wikipedia.org/wiki/Inverse_trigonometric_functions&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="https://en.wikipedia.org/wiki/Proofs_of_trigonometric_identities"&gt;https://en.wikipedia.org/wiki/Proofs_of_trigonometric_identities&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="https://owlcation.com/stem/List-of-Inverse-Trig-Function-Identities-Integrals-and-Derivatives"&gt;https://owlcation.com/stem/List-of-Inverse-Trig-Function-Identities-Integrals-and-Derivatives&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;trigsimp&lt;/code&gt; must be more powerful so that &lt;code class="highlighter-rouge"&gt;solve_trig&lt;/code&gt; get simplified eq. (which solves trig equation by converting them into its &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; form).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;solve_trig&lt;/code&gt; solves the trig eq. using its &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; form. There may be cases when that &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; form is complicated and solveset fail to handle that form.
+There should be technique to convert that complicated form to simpler form(if possible) and then call the &lt;code class="highlighter-rouge"&gt;solveset_complex&lt;/code&gt;. That may help to improve the &lt;code class="highlighter-rouge"&gt;solve_trig&lt;/code&gt; method.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;We can use &lt;code class="highlighter-rouge"&gt;_osbornei&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;hyper_as_trig&lt;/code&gt; methods defined in &lt;code class="highlighter-rouge"&gt;simplify/fu.py&lt;/code&gt; to convert hyperbolic function to trigonometric function, then we can use &lt;code class="highlighter-rouge"&gt;trigsimp&lt;/code&gt; (we can&amp;#8217;t use &lt;code class="highlighter-rouge"&gt;trigsimp&lt;/code&gt; for hyperbolic functions).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;First need to improve basic concepts and add more identities. I opened a new PR to improve &lt;code class="highlighter-rouge"&gt;rewrite&lt;/code&gt; for trigonometric functions , PR is &lt;a href="https://github.com/sympy/sympy/pull/11424/"&gt;#11424&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;eliminate() :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;issue &lt;a href="https://github.com/sympy/sympy/issues/2720"&gt;#2720&lt;/a&gt; : We need some kind of eliminate function, like &lt;a href="http://reference.wolfram.com/mathematica/ref/Eliminate.html"&gt;http://reference.wolfram.com/mathematica/ref/Eliminate.html&lt;/a&gt;. See also &lt;a href="http://stackoverflow.com/q/20826969/161801"&gt;http://stackoverflow.com/q/20826969/161801 &lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;It looks something related to &lt;a href="https://github.com/sympy/sympy/pull/11111/files#diff-eec0422923e8f100745c015cd8fdd6cfR1135"&gt;substitution&lt;/a&gt; function.
+But they are not same. Using &lt;code class="highlighter-rouge"&gt;eliminate()&lt;/code&gt; we will try to remove the variable(s) from the each equations(not solving the eq).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Plan : First choose eq that have min. variables and get the value of the variable, to be eliminated. Go further and &lt;code class="highlighter-rouge"&gt;subs&lt;/code&gt; the value to next min. variable eq., and so on.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Work in progress.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;Meanwhile :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;I found some basic issues in &lt;code class="highlighter-rouge"&gt;ComplexInfinity&lt;/code&gt; and trying to solve them in this PR &lt;a href="https://github.com/sympy/sympy/pull/11409"&gt;#11409&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;there may be many things to be added about &lt;code class="highlighter-rouge"&gt;ComplexInfinity&lt;/code&gt;, one can refer this link to implement them :
+&lt;a href="http://reference.wolfram.com/language/ref/ComplexInfinity.html"&gt;http://reference.wolfram.com/language/ref/ComplexInfinity.html&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;continue..&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-8</guid>
+      <title>Coding Period Week 8</title>
+      <author>Shekhar Prasad Rajak (shekharrajak)</author>
+      <pubDate>Mon, 18 Jul 2016 00:00:00 GMT</pubDate>
+      <link>http://shekharrajak.github.io/Coding-Period-week-8/</link>
+      <description>&lt;hr /&gt;
+&lt;p&gt;&lt;strong&gt;Continue - Diophantine in Solveset :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11234"&gt;11234&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;For general Pythagorean diop_type (Diophantine eq type), it seems diophantine always returns parameterized solution so I did some changes in the PR. &lt;a href="https://github.com/sympy/sympy/pull/11334/commits/6af46fc35db3a74dfda78b6d8e2a0f7d4ec65afe"&gt;commit&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;You can refer this &lt;a href="https://github.com/sympy/sympy/pull/11334#issuecomment-230334645"&gt;comment&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;Continue Simplified Trig soln&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11188"&gt;#11188&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;After some changes, the PR is ready for review.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;Continue nonlinsolve :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11111"&gt;#11111&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Added some XFAIL test-cases of system of Trigonometric equations. &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; trig solver (&lt;code class="highlighter-rouge"&gt;solve_trig&lt;/code&gt;) is not smart enough(&lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; returns &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt;, where soln can be simply inverse trig functions using &lt;code class="highlighter-rouge"&gt;_invert&lt;/code&gt; or inverse Trigonometric functions). So &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; returns &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; that means &lt;code class="highlighter-rouge"&gt;substitution&lt;/code&gt; is not getting soln.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;It is better to replace trigonometric functions or other &lt;code class="highlighter-rouge"&gt;Function&lt;/code&gt; with symbols&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;(e.g. &lt;code class="highlighter-rouge"&gt;sin(x)&lt;/code&gt; &amp;#8211;&amp;gt; &lt;code class="highlighter-rouge"&gt;u&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;sin(y)&lt;/code&gt;&amp;#8211;&amp;gt; &lt;code class="highlighter-rouge"&gt;v&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;f(x)&lt;/code&gt;&amp;#8211;&amp;gt; &lt;code class="highlighter-rouge"&gt;f_x&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;g(x)&lt;/code&gt; &amp;#8211;&amp;gt; &lt;code class="highlighter-rouge"&gt;g_x&lt;/code&gt;)&lt;/p&gt;
+
+&lt;p&gt;and then solve for the symbols. After getting solution from &lt;code class="highlighter-rouge"&gt;nonlinsolve&lt;/code&gt; user can invert or do &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;(e.g. solveset(Eq(sin(x), soln_u), x, domain) to get value of &lt;code class="highlighter-rouge"&gt;x&lt;/code&gt;).&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Ready for review.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;Meanwhile :&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;We already know that solveset need improved &lt;code class="highlighter-rouge"&gt;invert_real&lt;/code&gt; , &lt;code class="highlighter-rouge"&gt;invert_complex&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Imageset&lt;/code&gt; Intersections.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;previous work is in this PR &lt;a href="https://github.com/sympy/sympy/pull/10971"&gt;10971&lt;/a&gt;. Trying to improve them.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Some cases is here :&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;# In 2, 4, 5 intersection is not needed.
+
+In [1]: img = ImageSet(Lambda(n, x/n), S.Complexes)
+
+In [2]: Intersection(img, S.Complexes)
+Out[2]:
+    &amp;#9127;x        &amp;#9131;
+&amp;#8450; &amp;#8745; &amp;#9128;&amp;#9472; | n &amp;#8714; &amp;#8450;&amp;#9132;
+    &amp;#9129;n        &amp;#9133;
+
+In [3]: img = ImageSet(Lambda(n, x/n), S.Integers)
+
+In [4]: Intersection(img, S.Complexes)
+Out[4]:
+&amp;#9127;x        &amp;#9131;    
+&amp;#9128;&amp;#9472; | n &amp;#8714; &amp;#8484;&amp;#9132; &amp;#8745; &amp;#8450;
+&amp;#9129;n        &amp;#9133;    
+
+In [5]: Intersection(ImageSet(Lambda(n, 2*n*I*pi), S.Integers), S.Complexes)
+Out[5]: {2&amp;#8901;&amp;#8520;&amp;#8901;&amp;#960;&amp;#8901;n | n &amp;#8714; &amp;#8484;} &amp;#8745; &amp;#8450;
+
+# ImageSet Intersection is not implemented when inverter returns multiple values.
+# here ans should be {0, 1}
+In [6]: img1 = ImageSet(Lambda(n, n**2), S.Integers)
+
+In [7]: Intersection(img1, Interval(0,2))
+Out[7]:
+         &amp;#9127; 2        &amp;#9131;
+[0, 2] &amp;#8745; &amp;#9128;n  | n &amp;#8714; &amp;#8484;&amp;#9132;
+         &amp;#9129;          &amp;#9133;
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;continue..&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
