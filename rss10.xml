@@ -1123,85 +1123,6 @@ to apply again. I would like to thank those who chose me and made this summer
 of learning and experiences possible.&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://srajangarg.github.io//2016/08/16/Containers-for-MPoly</guid>
-      <author>Srajan Garg (srajangarg)</author>
-      <title>Srajan Garg (srajangarg): Containers for Multivariate Polynomials</title>
-      <pubDate>Tue, 16 Aug 2016 00:00:00 GMT</pubDate>
-      <link>http://srajangarg.github.io//2016/08/16/Containers-for-MPoly/</link>
-      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
-
-&lt;p&gt;After the last blog post, I started working on the &amp;#8220;fixing up the remainder of rational polynomials&amp;#8221;. This also included adding support for basic to rational polynomial conversions. The current work is in &lt;a href="https://github.com/symengine/symengine/pull/1055"&gt;#1055&lt;/a&gt; which has not been merged in yet.&lt;/p&gt;
-
-&lt;p&gt;Another thing I started working on was conversions from SymEngine symbolics to multivariate polynomials. The way the current conversions work, led me to change the overall structure of multivariate polynomials.&lt;/p&gt;
-
-&lt;h3 id="restructuring-multivariate-polynomials"&gt;Restructuring Multivariate Polynomials&lt;/h3&gt;
-
-&lt;p&gt;The current working of basic conversions is that it constructs the &amp;#8220;internal container&amp;#8221; of the polynomial as it parses the expression. These containers have operators overloaded and they can easily be manipulated by the functions. Handling multivariate polynomials using this approach would be impossible with the current structure of the code. There were no &amp;#8220;containers&amp;#8221; per se in the previous implementation.&lt;/p&gt;
-
-&lt;p&gt;I thought it would be better if we can implement a container based polynomial structure for multivariate polynomials too. Fortunately, the way the SymEngine polynomials work, an approach similar to the univariate case of containers worked. The container is a wrapper around a map from vector to a value (the coefficient)&lt;/p&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Vec&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Wrapper&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;UDictWrapper&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;
-&lt;span class="k"&gt;public&lt;/span&gt;&lt;span class="o"&gt;:&lt;/span&gt;
-    &lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="n"&gt;Dict&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;unordered_map&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Vec&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Value&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vec_hash&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Vec&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-    &lt;span class="n"&gt;Dict&lt;/span&gt; &lt;span class="n"&gt;dict_&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-    &lt;span class="kt"&gt;unsigned&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;vec_size&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-
-    &lt;span class="p"&gt;...&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;The polynomial class uses this as a container, along with information about the generators and their ordering. Apart from holding the map, this class has various constructors, and all the operators overloaded for it. It also has helper functions, which help translate the current keys to another specific order/ arrangement. The container assumes that the all operations done to it are with other &amp;#8220;adjusted&amp;#8221; containers. Currently, the job of adjusting/aligning th container has been delegated to functions like &lt;code class="highlighter-rouge"&gt;add_mpoly&lt;/code&gt; etc.&lt;/p&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;span class="n"&gt;RCP&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;add_mpoly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;
-    &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;container_type&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-    &lt;span class="n"&gt;set_basic&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;get_translated_container&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-    &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+=&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;from_container&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;move&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;and&lt;/p&gt;
-
-&lt;div class="language-c++ highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;Container&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-&lt;span class="n"&gt;set_basic&lt;/span&gt; &lt;span class="n"&gt;get_translated_container&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Container&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Container&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; 
-                                   &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;Poly&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;
-    &lt;span class="n"&gt;vec_uint&lt;/span&gt; &lt;span class="n"&gt;v1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-    &lt;span class="n"&gt;set_basic&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-
-    &lt;span class="kt"&gt;unsigned&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;sz&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;reconcile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;v1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;vars_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;vars_&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-    &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;poly_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;translate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;v1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sz&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-    &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;poly_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;translate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;v2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sz&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Basically, both the containers get the ordering of generators in the &amp;#8220;new&amp;#8221; polynomial which will soon be constructed, and adjust the ordering of the vectors inside their maps accordingly. Thus consistency is maintained. All the work done is in &lt;a href="https://github.com/symengine/symengine/pull/1049"&gt;#1049&lt;/a&gt; and this has been merged in.&lt;/p&gt;
-
-&lt;h3 id="remaining-work"&gt;Remaining work&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;After getting this restructure done, I started work on the basic to multivariate conversions, though I have not been able to cover it completely. The idea for these conversions remains the same and should be easy to implement.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;I also could not spend time to integrate wrappers to Piranha polynomials which can be used as multivariate polynomials within SymEngine&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id="wrapping-up-gsoc"&gt;Wrapping up GSoC&lt;/h3&gt;
-
-&lt;p&gt;This is officially the last week of Google Summer of Code &amp;#8216;16. Although GSoC is over, I plan to get the above mentioned work finished within August, before any other big undertaking. It has been a wonderful journey of insight and knowledge. Thanks a lot to my mentors Isuru, Ondrej and Sumith for helping me throughout the summers, and always being there for discussions and the silly issues I bombarded them with!&lt;/p&gt;
-
-&lt;p&gt;Bye!&lt;/p&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-12</guid>
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
       <title>Shekhar Prasad Rajak (shekharrajak): Coding Period Week 12</title>
@@ -1866,45 +1787,6 @@ x &amp;#8901;y
 &amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/780/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/780/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=780&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://srajangarg.github.io//2016/08/01/Multivariate-Polynomails</guid>
-      <author>Srajan Garg (srajangarg)</author>
-      <title>Srajan Garg (srajangarg): Multivariate Polynomials</title>
-      <pubDate>Mon, 01 Aug 2016 00:00:00 GMT</pubDate>
-      <link>http://srajangarg.github.io//2016/08/01/Multivariate-Polynomails/</link>
-      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
-
-&lt;p&gt;After college has started, work has been slower than usual. Last week I finally wound up Rational Polynomials in &lt;a href="https://github.com/symengine/symengine/pull/1028"&gt;#1028&lt;/a&gt;. Some minor changes still remain in some parts of the code. Most of the changes left are mainly related to code duplication, and will be fixed by writing their templated versions.&lt;/p&gt;
-
-&lt;h3 id="multivariate-polynomials"&gt;Multivariate Polynomials&lt;/h3&gt;
-
-&lt;p&gt;I started off by reading and understanding how the multivariate class is implemented currently in SymEngine. It was developed by the UC Davis team as a part of their course project. The basic idea is pretty simple. It still is a sparse representation and maps from a vector (representing the powers of each generator in the monomial) to the non-zero coefficient multiplied to it. We use an unordered map instead of the ordered map used in the univariate counterpart. The choice does make some sense, as deciding order between two monomials is subjective and does not make sense (for eg. which is larger &lt;code class="highlighter-rouge"&gt;x**2*y&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;x*y**2&lt;/code&gt;) Even if we define a custom ordering, there are no real benefits I could think of that it would provide.&lt;/p&gt;
-
-&lt;p&gt;On a side note, it kind of makes me think why we have stuck to the ordered map implementation for our univariate polynomials. The places it offers benefits are &lt;code class="highlighter-rouge"&gt;eval&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;mul&lt;/code&gt; (in some ways) I worked with ordered maps, as that was the implementation the initial polynomial class was built on. I&amp;#8217;m also wondering if it is healthy to use two different implementations for both the polynomial types, univariate and multivariate. This needs to be discussed.&lt;/p&gt;
-
-&lt;p&gt;Right now, I&amp;#8217;m basically refactoring most of the code written in the multivariate class, so that it matches the API more or less from the univariate case. Some functions have been re-written and some unnecessary storage within the polynomials have been removed. Initially, I thought I will stick with the same container based approach I used in the univariate case. This proves to be non trivial for the multivariate case. So, after some discussion with Isuru, we decided to stick with different implementations for SymEngine polynomials and Piranha polynomials, as combining code was not easy. The current work is in &lt;a href="https://github.com/symengine/symengine/pull/1049"&gt;#1049&lt;/a&gt;&lt;/p&gt;
-
-&lt;h3 id="future-work"&gt;Future Work&lt;/h3&gt;
-
-&lt;p&gt;A lot is on my plate right now. Some of the work I plan to finish by the end of the next two weeks are&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Finish up the refactoring of multivariate polynomials, and make their interaction with univariate polynomials as seamless as possible&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Introduce wrappers for piranha polynomials to be used as multivariate polynomials within SymEngine&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Fix up the remainder of rational polynomials, and template code wherever possible to remove code duplicates&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Write conversions from &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt; to multivariate polynomials, which will finish up one part of the coercion framework as proposed by Isuru&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Off to work!&lt;/p&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">http://shekharrajak.github.io/Coding-Period-week-10</guid>
       <author>Shekhar Prasad Rajak (shekharrajak)</author>
       <title>Shekhar Prasad Rajak (shekharrajak): Coding Period Week 10</title>
@@ -2251,49 +2133,131 @@ irb(main):005:0&amp;gt;&lt;/pre&gt;
 &lt;p&gt;See you next week!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/416/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/416/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=416&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://srajangarg.github.io//2016/07/23/Rational-Polynomials-ft-Bugs</guid>
-      <author>Srajan Garg (srajangarg)</author>
-      <title>Srajan Garg (srajangarg): Rational Polynomials ft. Bugs</title>
-      <pubDate>Sat, 23 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://srajangarg.github.io//2016/07/23/Rational-Polynomials-ft-Bugs/</link>
-      <description>&lt;h3 id="overview"&gt;Overview&lt;/h3&gt;
-
-&lt;p&gt;Sorry I haven&amp;#8217;t been able to report my work for about two weeks now. Things have become slower mainly due to the fact that my university has resumed and along with it a heavily packed timetable and assignments in the first week don&amp;#8217;t help. I also caught a bad fever the past week which really hindered my progress, but it&amp;#8217;s dying down and I will resume my work with full vigor eventually.&lt;/p&gt;
-
-&lt;p&gt;The work I did do has been summarized below.&lt;/p&gt;
-
-&lt;h3 id="bug-fixes"&gt;Bug Fixes&lt;/h3&gt;
-
-&lt;p&gt;While writing the code for the rational polynomials, as mentioned in the last blogpost, I encountered various bugs. Some of them caused other bugs to be exposed, which took a lot of time for me to debug.&lt;/p&gt;
-
+      <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=942</guid>
+      <author>Sampad Saha (sampadsaha5)</author>
+      <title>Sampad Saha (sampadsaha5): GSoC Week 9</title>
+      <pubDate>Fri, 22 Jul 2016 19:48:05 GMT</pubDate>
+      <link>https://sampadblog.wordpress.com/2016/07/22/gsoc-week-9/</link>
+      <description>&lt;p&gt;Hello, guys. Welcome back.&amp;#160;It&amp;#8217;s been nine weeks into the coding period. I had a meeting with Jason on 17&lt;sup&gt;th&amp;#160;&lt;/sup&gt; of this month. He was attending the code sprints at Scipy and I am very glad to meet other Sympy developers.&lt;/p&gt;
+&lt;h4&gt;&lt;em&gt;&lt;strong&gt;So Far&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
 &lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;pow(Poly, uint)&lt;/code&gt; was throwing a segmentation fault. After digging in and wasting more than four hours on unrelated checks I figured out that the &lt;code class="highlighter-rouge"&gt;eq&lt;/code&gt; inside the polynomial class was incorrect. Without checking whether the other parameter was a &lt;code class="highlighter-rouge"&gt;Poly&lt;/code&gt; or not, I was &lt;code class="highlighter-rouge"&gt;static_cast&lt;/code&gt;ing it which posed a problem.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;The happiness was shortlived, as the bug persisted. On further inspection I found that the polynomial was being treated as a number! This was because &lt;code class="highlighter-rouge"&gt;is_a_Number&lt;/code&gt; relied on typecodes, and the polynomial types were defined before the &lt;code class="highlighter-rouge"&gt;NUMBERWRAPPER&lt;/code&gt; class, which deemed them numbers. The fix for this was simple, just move the polynomial type code definitions after the numbers.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;The &lt;code class="highlighter-rouge"&gt;pow&lt;/code&gt; tests pass, but what&amp;#8217;s this? All the &lt;code class="highlighter-rouge"&gt;MSVC&lt;/code&gt; builds on appveyor fail. They all fail a &lt;code class="highlighter-rouge"&gt;coeff&lt;/code&gt; test. Wow, I had not changed any code related to &lt;code class="highlighter-rouge"&gt;coeff&lt;/code&gt; at all, how does it affect that specific test and only on the &lt;code class="highlighter-rouge"&gt;MSVC&lt;/code&gt; compiler? This kept me wondering and looking at the source for a day. Finally, I had to login to the VM of appveyor running the tests. I was not familiar with windows development environment at all, which was the reason I failed a couple of times before I gave up debugging. The next morning I woke up determined to fix this Windows bug, I set the break points in Visual Studio and started the code execution. I found it! It was a bug in the &lt;code class="highlighter-rouge"&gt;CoeffVisitor&lt;/code&gt; itself. The code for the &lt;code class="highlighter-rouge"&gt;coeff&lt;/code&gt; function was incomplete. Why wasn&amp;#8217;t this bug being captured before? Probably because the previous change (in the typecodes) caused a reordering in  a map, which no other compiler was doing. Do read up &lt;a href="https://github.com/symengine/symengine/pull/1033#issuecomment-232973025"&gt;here&lt;/a&gt; for more details.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;An appveyor build was failing for unknown reason, which had to be shifted to allowed failures&lt;/p&gt;
-  &lt;/li&gt;
+&lt;li&gt;I have closed the PR&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11266"&gt;11266&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;In PR&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/11374"&gt;11374&lt;/a&gt;, I have removed the use of mechanics Point.&lt;/li&gt;
+&lt;li&gt;I have made boundary_conditions as property and the inputs are no longer as **kwargs. Each of the inputs namely moment, slope and deflection are initiated as an empty list. But I have some doubts regarding the behaviour of this method. I feel that this should be used only in the case when a full new set of boundary conditions are given as input. Since to input dynamically, there exists some methods already which would handle each of the cases explicitly. Those methods appends the new inputs whereas this method would delete the existing boundary conditions and apply the newer one. This way the property of being mutable would remain.&lt;/li&gt;
+&lt;li&gt;Replaced the solve function by linsolve. Since solve is going to be depreciated in the mear future.&lt;/li&gt;
+&lt;li&gt;I have added the docstrings for slope and deflection method as well as for the beam class.&lt;/li&gt;
+&lt;li&gt;In deflection method, I have added a new case where if there is no slope boundary condition but there is deflection boundary conditions, it would give operate.&lt;/li&gt;
 &lt;/ul&gt;
+&lt;h4&gt;&lt;em&gt;&lt;strong&gt;Next Week&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;I will be working on adding a documentation file for this beam bending problem module exclusively.&lt;/li&gt;
+&lt;li&gt;Add some more test for checking the corner cases.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;That&amp;#8217;s all for this week. Cheers !!&lt;/p&gt;
+&lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/942/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/942/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=942&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://jbm950.github.io//2016/07/22/GSoC-week-8-9.html</guid>
+      <author>James Milam (jbm950)</author>
+      <title>James Milam (jbm950): GSoC Week 8 &amp; 9</title>
+      <pubDate>Fri, 22 Jul 2016 00:00:00 GMT</pubDate>
+      <link>http://jbm950.github.io//2016/07/22/GSoC-week-8-9.html</link>
+      <description>&lt;p&gt;Last week I did not end up writing a blog post and so I am combining that
+week&amp;#8217;s post with this week. Last week I attended the SciPy 2016 conference and
+was able to meet my mentor, and many other contributers to SymPy, in person. I
+was also able to help out with the Pydy tutorial.  During this time at the
+conference (and this current week) I was able to flesh out the remaining
+details on the different portions of the project. I have updated &lt;a href="https://github.com/pydy/pydy/pull/353"&gt;PR
+#353&lt;/a&gt; to reflect the api decisions for
+SymbolicSystem (previously eombase.EOM).&lt;/p&gt;
 
-&lt;p&gt;This was basically the components of &lt;a href="https://github.com/symengine/symengine/pull/1033"&gt;#1033&lt;/a&gt;. Less quantity of changes, but really important none the less.&lt;/p&gt;
+&lt;p&gt;In line with trying to put the finishing touches on implementation details
+before diving in to code, Jason and I met with someone who has actually
+implemented the algorithm in the past to help us with details surrounding
+Featherstone&amp;#8217;s method. He also pointed me to a different description of the
+same algorithm that may be easier to implement.&lt;/p&gt;
 
-&lt;h3 id="rational-polynomials"&gt;Rational Polynomials&lt;/h3&gt;
+&lt;p&gt;This week I also worked on rewriting the docstrings in
+physics/mechanics/body.py because I found the docstrings currently there to be
+somewhat confusing. I also did a review on one of Jason&amp;#8217;s PR&amp;#8217;s where he reduces
+the amount of work that *method.rhs() has to do when inverting the mass matrix
+by pulling out the kinematical information before the inversion takes place.&lt;/p&gt;
 
-&lt;p&gt;The work with rational polynomials continues. I had underestimated the amount of work required, and I also feel that I should have broken down rational polynomials into three parts each, just like integer polynomials. Right now, the work continues in &lt;a href="https://github.com/symengine/symengine/pull/1028"&gt;#1028&lt;/a&gt;, but it&amp;#8217;s soon going to become huge with all varieties of changes.&lt;/p&gt;
+&lt;h3 id="future-directions"&gt;Future Directions&lt;/h3&gt;
 
-&lt;h3 id="miscellaneous"&gt;Miscellaneous&lt;/h3&gt;
+&lt;p&gt;With the work these past two weeks being focused on implementing the different
+parts of the projects, I will start implementing these various parts next week.
+I will first work on finishing off the SymbolicSystem object and then move
+towards implementing the OrderNMethod. This work should be very straight
+forward with all the work that has been put into planning the api&amp;#8217;s.&lt;/p&gt;
 
-&lt;p&gt;I finally benchmarked &lt;a href="https://github.com/sakra/cotire"&gt;cotire&lt;/a&gt; to see how much speedup it was providing to SymEngine builds. &lt;a href="https://github.com/symengine/symengine/issues/1023"&gt;Here&lt;/a&gt; is the short summary of the speedups obtained, and the work to include it is in &lt;a href="https://github.com/symengine/symengine/pull/1041"&gt;#1041&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id="prs-and-issues"&gt;PR&amp;#8217;s and Issues&lt;/h3&gt;
 
-&lt;p&gt;Also a small bug was present in our flint and gmp rational number wrappers. We were not canonicalizing on construction from two integers. It was fixed in &lt;a href="https://github.com/symengine/symengine/pull/1031"&gt;#1031&lt;/a&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;(Merged) Speeds up the linear system solve in KanesMethod.rhs() &lt;a href="https://github.com/sympy/sympy/pull/10965"&gt;PR
+  #10965&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Open) Docstring cleanup of physics/mechanics/body.py &lt;a href="https://github.com/sympy/sympy/pull/11416"&gt;PR
+  #11416&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;(Open) [WIP] Created a basis on which to discuss EOM class &lt;a href="https://github.com/pydy/pydy/pull/353"&gt;PR
+  #353&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Eighth-Week</guid>
+      <author>Nishant Nikhil (nishnik)</author>
+      <title>Nishant Nikhil (nishnik): GSoC Eighth Week</title>
+      <pubDate>Wed, 20 Jul 2016 00:00:00 GMT</pubDate>
+      <link>http://nishnik.github.io/GSoC-Eighth-Week/</link>
+      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
 
-&lt;p&gt;Laters!&lt;/p&gt;</description>
+&lt;p&gt;After completing the work on &lt;code class="highlighter-rouge"&gt;gf_factor&lt;/code&gt;, I moved on to implement Gathen-Shoup&amp;#8217;s factorization algorithm. Like Zassenhaus&amp;#8217;s agorithm, it is also a probabilistic algorithm.
+&lt;br /&gt;
+The paper is available &lt;a href="http://www.shoup.net/papers/frobenius.pdf"&gt;here&lt;/a&gt;.
+&lt;br /&gt;
+&lt;br /&gt;
+&lt;strong&gt;First question: Why this algorithm ?&lt;/strong&gt;
+&lt;br /&gt;
+&amp;gt; Because, it is kind of faster than zassenhaus&amp;#8217;s algorithm.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;
+&lt;strong&gt;Second question: What is &amp;#8220;kind of&amp;#8221; here ?&lt;/strong&gt;
+&lt;br /&gt;
+&amp;gt; Well, it is faster when a specific condition satisfies.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;
+Its asymptotic runtime is &lt;code class="highlighter-rouge"&gt;O(n**2 + n log q).(log n)**2.loglog n&lt;/code&gt;, where &lt;code class="highlighter-rouge"&gt;n&lt;/code&gt; is degree of polynomial and &lt;code class="highlighter-rouge"&gt;q&lt;/code&gt; is the field characteristics.
+&lt;br /&gt;
+In &lt;a href="https://en.wikipedia.org/wiki/&amp;#213;#Mathematical_use"&gt;&amp;#8220;Soft O&amp;#8221; notation&lt;/a&gt;, it is &lt;code class="highlighter-rouge"&gt;O~(n**2 + n log q)&lt;/code&gt;. While the cantor zassenhaus&amp;#8217;s algorithm has &lt;code class="highlighter-rouge"&gt;O~(n**2 log q)&lt;/code&gt; asymptotic runtime.
+&lt;br /&gt;
+So when &lt;code class="highlighter-rouge"&gt;log q&lt;/code&gt; approaches &lt;code class="highlighter-rouge"&gt;n&lt;/code&gt;, the difference is remarkable.
+&lt;br /&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Algorithm&lt;/th&gt;
+      &lt;th style="text-align: center;"&gt;Asymptotic Runtime&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Shoup&lt;/td&gt;
+      &lt;td style="text-align: center;"&gt;&lt;code class="highlighter-rouge"&gt;O~(n**2)&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Zassenhaus&lt;/td&gt;
+      &lt;td style="text-align: center;"&gt;&lt;code class="highlighter-rouge"&gt;O~(n**3)&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;It also works in three parts, firstly square free factorization, then distinct degree and finally equal degree factorization.
+&lt;br /&gt;
+I have completed the implementation of this algorithm on &lt;a href="https://github.com/nishnik/symengine/tree/shoup_factorization"&gt;shoup_factorization&lt;/a&gt; branch.
+And also, I changed the container (which stores factors) type to &lt;code class="highlighter-rouge"&gt;set&lt;/code&gt;.&lt;br /&gt;
+Will send a PR soon.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
