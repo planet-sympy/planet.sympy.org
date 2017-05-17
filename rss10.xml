@@ -55,6 +55,14 @@ Here is a gist of the work I undertook till now:&lt;/p&gt;
 &lt;p&gt;Catch you later!&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://valglad.github.io/2017/05/12/plan</guid>
+      <author>Valeriia Gladkova (valglad)</author>
+      <title>Valeriia Gladkova (valglad): The plan</title>
+      <pubDate>Fri, 12 May 2017 00:00:00 GMT</pubDate>
+      <link>http://valglad.github.io/2017/05/12/plan/</link>
+      <description>&lt;p&gt;This blog will follow the progress of my GSoC 2017 project for SymPy. My primary goal is to implement group homomorphisms and set it up in such a way that certain finite presentation groups (implemented as an FpGroup class in SymPy) could be considered as permutation groups via an isomorphism. That would be good because SymPy already has many group-theoretic algorithms implemented for perm groups. To get this to work, I will also need to implement rewriting systems for FpGroups. You can see my application for details.</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://shikharj.github.io//2017/05/04/Google-Summer-of-Code-with-SymPy</guid>
       <author>Shikhar Jaiswal (ShikharJ)</author>
       <title>Shikhar Jaiswal (ShikharJ): Google Summer of Code with SymPy</title>
@@ -2248,55 +2256,6 @@ In [7]: _6.to_expr()
 Out[7]: &amp;#8730;x&amp;#8901;(1 + &amp;#8730;2)
 &lt;/pre&gt;
 &lt;p&gt;I plan to continue my work on this PR and add more support for this initial condition.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/shubhamtibra.wordpress.com/663/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/shubhamtibra.wordpress.com/663/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=shubhamtibra.wordpress.com&amp;#038;blog=106149936&amp;#038;post=663&amp;#038;subd=shubhamtibra&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://rajithsays.wordpress.com/?p=416</guid>
-      <author>Rajith Vidanaarachchi (rajithv)</author>
-      <title>Rajith Vidanaarachchi (rajithv): GSoC Week 9 Progress</title>
-      <pubDate>Sun, 24 Jul 2016 18:26:27 GMT</pubDate>
-      <link>https://rajithsays.wordpress.com/2016/07/24/gsoc-week-9-progress/</link>
-      <description>&lt;p&gt;In the &lt;a href="https://rajithsays.wordpress.com/2016/07/16/gsoc-week-8-progress/"&gt;last blog post&lt;/a&gt; I reported that lambdify function was fully wrapped. Yes, that&amp;#8217;s what I thought at the time! But it did indeed dragged on quite a bit, requiring many changes, which were very educative for me in terms of how Ruby looks at user experience. Several changes were done, including structural changes on calling lambdify, and for supporting older Ruby versions. The really interesting and long discussions on this can be viewed in the &lt;a href="https://github.com/symengine/symengine.rb/pull/61" target="_blank"&gt;PR 61&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Apart from that, simultaneously I started reading and exchanging ideas on exception handling. It was agreed that in the C wrappers, an error code to be returned, which can be accessed from the Ruby wrapper, which in turn can raise a Ruby exception. The preliminary model can be seen in &lt;a href="https://github.com/symengine/symengine/pull/1044" target="_blank"&gt;PR 1044&lt;/a&gt; in SymEngine and &lt;a href="https://github.com/symengine/symengine.rb/pull/64" target="_blank"&gt;PR 64&lt;/a&gt; in SymEngine Ruby wrapper.&lt;/p&gt;
-&lt;p&gt;Right now any exception is caught and sent to the Ruby Wrapper with an error code of -1, which raises a generic Runtime Error in Ruby. Although not very informative, this is helpful in prevention of crashing the Ruby runtime.&lt;/p&gt;
-&lt;p&gt;To illustrate, when the following code (a division by zero) is run before and after is shown.&lt;/p&gt;
-&lt;p&gt;Before:&lt;/p&gt;
-&lt;pre&gt;irb(main):001:0&amp;gt; require 'symengine'
-=&amp;gt; true
-irb(main):002:0&amp;gt; x = SymEngine(1)
-=&amp;gt; #&amp;lt;SymEngine::Integer(1)&amp;gt;
-irb(main):003:0&amp;gt; y = SymEngine(0)
-=&amp;gt; #&amp;lt;SymEngine::Integer(0)&amp;gt;
-irb(main):004:0&amp;gt; x/y
-terminate called after throwing an instance of 'Teuchos::NullReferenceError'
-&amp;#160; what():&amp;#160; /home/rajith/Development/symengine/symengine/utilities/teuchos/Teuchos_RCPNode.cpp:720:
-
-Throw number = 1
-
-Throw test that evaluated to true: true
-
-Teuchos::RCP&amp;lt;SymEngine::Basic const&amp;gt; : You can not call operator-&amp;gt;() or operator*() if getRawPtr()==0!
-
-Abort caught. Printing stacktrace:
-
-Traceback (most recent call last):
-
-Done.
-[2]&amp;#160;&amp;#160;&amp;#160; 590 abort (core dumped)&amp;#160; irb&lt;/pre&gt;
-&lt;p&gt;After:&lt;/p&gt;
-&lt;pre&gt;irb(main):001:0&amp;gt; require 'symengine'
-=&amp;gt; true
-irb(main):002:0&amp;gt; x = SymEngine(1)
-=&amp;gt; #&amp;lt;SymEngine::Integer(1)&amp;gt;
-irb(main):003:0&amp;gt; y = SymEngine(0)
-=&amp;gt; #&amp;lt;SymEngine::Integer(0)&amp;gt;
-irb(main):004:0&amp;gt; x/y
-RuntimeError: Runtime Error
-&amp;#160;&amp;#160; &amp;#160;from (irb):4:in `/'
-&amp;#160;&amp;#160; &amp;#160;from (irb):4
-&amp;#160;&amp;#160; &amp;#160;from /usr/bin/irb:11:in `&amp;lt;main&amp;gt;'
-irb(main):005:0&amp;gt;&lt;/pre&gt;
-&lt;p&gt;This is a good improvement overall, but as it&amp;#8217;s nicer to have a more descriptive error shown to the user, that part will be the continuation of exception handling during the 10th week.&lt;/p&gt;
-&lt;p&gt;See you next week!&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/rajithsays.wordpress.com/416/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/rajithsays.wordpress.com/416/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=rajithsays.wordpress.com&amp;#038;blog=110498904&amp;#038;post=416&amp;#038;subd=rajithsays&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>
