@@ -7,6 +7,31 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/05/25/Community-Bonding-Period</guid>
+      <author>Ranjith Kumar (ranjithkumar007)</author>
+      <title>Ranjith Kumar (ranjithkumar007): Community Bonding Period</title>
+      <pubDate>Thu, 25 May 2017 00:00:00 GMT</pubDate>
+      <link>http://ranjithkumar007.github.io/2017/05/25/Community-Bonding-Period/</link>
+      <description>&lt;p&gt;I am selected for GSoC&amp;#8217;17 with SymPy. I have been alotted &lt;a href="https://github.com/sumith1896"&gt;Sumith Kulal&lt;/a&gt;, &lt;a href="https://github.com/srajangarg"&gt;Srajan Garg&lt;/a&gt;, &lt;a href="https://github.com/shivamvats"&gt;Shivam Vats&lt;/a&gt;, &lt;a href="https://github.com/nishnik"&gt;Nishant Nikhil&lt;/a&gt; and &lt;a href="https://github.com/aktech"&gt;Amit Kumar&lt;/a&gt; as my official mentors. My &lt;a href="https://ranjithkumar007.github.io/docs.google.com/document/d/1yCicYJ0hfS8APcXIqoBOacx8n2HnjfSfR7q4OshLGYI/"&gt;Project&lt;/a&gt; is to implement Solvers for SymEngine.&lt;/p&gt;
+
+&lt;p&gt;Time-line as mentioned in the proposal upto First Evaluations:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Week-1 : Flint wrappers for factorisation.&lt;/li&gt;
+  &lt;li&gt;Week-2 and 3: Improve Sets Module.&lt;/li&gt;
+  &lt;li&gt;Week-4: Implement lower degree polynomial solvers and helper function for cyclotomic polynomials.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;After my summer vacation ends, progress of the project might get slow; So, I will try to be ahead of the proposed timeline by atleast one week.&lt;/p&gt;
+
+&lt;p&gt;During the Community Bonding period, I went through the &lt;a href="http://www.flintlib.org/flint-2.5.pdf"&gt;documentation&lt;/a&gt; of FLINT library, precisely the required functions for wrapping factorisation of polynomials. The Major Problem I came across is the lack of &lt;a href="https://github.com/wbhart/flint2/blob/trunk/fmpz_poly_factor.h#L86"&gt;fmpz_poly_factor()&lt;/a&gt; function in FLINT&amp;#8217;s latest release 2.5.2. Going by the Suggestion made by &lt;a href="https://github.com/isuruf"&gt;isuruf&lt;/a&gt;, I updated Travis to use the development branch of FLINT along with its latest release. This work is done in &lt;a href="https://github.com/symengine/symengine/pull/1275"&gt;#1275&lt;/a&gt;. This &lt;a href="https://github.com/symengine/symengine/pull/1274"&gt;#1274&lt;/a&gt; PR wraps up the FLINT factorisation. Before 31st May, I will try to get this &lt;a href="https://github.com/symengine/symengine/pull/1274"&gt;PR&lt;/a&gt; merged in.&lt;/p&gt;
+
+&lt;p&gt;Apart from the this, I worked on this &lt;a href="https://github.com/symengine/symengine/pull/1258"&gt;PR&lt;/a&gt; to implement JuliaStrPrinter for nan and infs.&lt;/p&gt;
+
+&lt;p&gt;After Coding period starts(from 31st May), I will start working on Improving Sets module.&lt;/p&gt;
+
+&lt;p&gt;See you soon .&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://shikharj.github.io//2017/05/16/Community-Bonding-Progress-Report</guid>
       <author>Shikhar Jaiswal (ShikharJ)</author>
       <title>Shikhar Jaiswal (ShikharJ): Community Bonding - Progress Report</title>
@@ -2184,38 +2209,6 @@ processing methods.&lt;/p&gt;
   #11440&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/blockquote&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Ninth-Week</guid>
-      <author>Nishant Nikhil (nishnik)</author>
-      <title>Nishant Nikhil (nishnik): GSoC Ninth Week</title>
-      <pubDate>Thu, 28 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://nishnik.github.io/GSoC-Ninth-Week/</link>
-      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
-
-&lt;p&gt;Previous week I had implemented the &lt;strong&gt;Shoup&amp;#8217;s Algorithm&lt;/strong&gt; in &lt;a href="https://github.com/symengine/symengine/pull/1045"&gt;this&lt;/a&gt; PR. During the review we came to realise that it is better to use &lt;code class="highlighter-rouge"&gt;unsigned int&lt;/code&gt; instead of &lt;code class="highlighter-rouge"&gt;integer_class&lt;/code&gt; because we didn&amp;#8217;t need big numbers. 
-&lt;br /&gt;&lt;br /&gt;
-Working on the same PR, I found a bug in &lt;code class="highlighter-rouge"&gt;negate&lt;/code&gt; and similar function where we were doing:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class="language-C++"&gt;for (auto &amp;amp;a : dict_) {
-  a *= -1;
-  a += modulo_;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Here: if the &lt;code class="highlighter-rouge"&gt;dict_&lt;/code&gt; is &lt;code class="highlighter-rouge"&gt;[0, 0, 10]&lt;/code&gt;, it will negate to &lt;code class="highlighter-rouge"&gt;[11, 11, 1]&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;GF(11)&lt;/code&gt;. So, it was needed to add a check when the value is &lt;code class="highlighter-rouge"&gt;0&lt;/code&gt;. So, the method was changed to:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class="language-C++"&gt;for (auto &amp;amp;a : dict_) {
-  a *= -1;
-  if (a != 0_z)
-    a += modulo_;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;br /&gt;
-Along with it I was working on the &lt;code class="highlighter-rouge"&gt;gf_factor&lt;/code&gt; &lt;a href="https://github.com/symengine/symengine/pull/1036"&gt;PR&lt;/a&gt; and it eventually got merged. It introduced &lt;strong&gt;Zassenhaus&amp;#8217;s algorithm&lt;/strong&gt; and &lt;code class="highlighter-rouge"&gt;gf_factor()&lt;/code&gt; function. In coming days, we will have to change &lt;code class="highlighter-rouge"&gt;gf_factor&lt;/code&gt; to switch between &lt;code class="highlighter-rouge"&gt;gf_zassenhaus&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;gf_shoup&lt;/code&gt; according to the degree of polynomial.
-&lt;br /&gt;&lt;br /&gt;
-We made one more design change, we changed the factor container from &lt;code class="highlighter-rouge"&gt;std::pair&amp;lt;GaloisFieldDict, integer_class&amp;gt;&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;std::pair&amp;lt;GaloisFieldDict, unsigned&amp;gt;&lt;/code&gt; because we didn&amp;#8217;t need large numbers as power.
-&lt;br /&gt;&lt;br /&gt;
-Then I started working on change of base class of &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; class from &lt;code class="highlighter-rouge"&gt;UPolyBase&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;UIntPolyBase&lt;/code&gt;, this needed implementation of &lt;code class="highlighter-rouge"&gt;eval&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;multi_eval&lt;/code&gt; method, then I implemented the iterator for &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; class and the &lt;code class="highlighter-rouge"&gt;pow&lt;/code&gt; method. The &lt;a href="https://github.com/symengine/symengine/pull/1047/files"&gt;PR&lt;/a&gt; is under review.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
