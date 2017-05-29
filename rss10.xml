@@ -7,6 +7,25 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://shikharj.github.io//2017/05/30/Community-Bonding-End-Report</guid>
+      <author>Shikhar Jaiswal (ShikharJ)</author>
+      <title>Shikhar Jaiswal (ShikharJ): Community Bonding - End Report</title>
+      <pubDate>Tue, 30 May 2017 00:00:00 GMT</pubDate>
+      <link>https://shikharj.github.io//2017/05/30/Community-Bonding-End-Report/</link>
+      <description>&lt;p&gt;Greetings!&lt;/p&gt;
+
+&lt;p&gt;The Community Bonding period is officially closed and its time for the official coding period to begin. I had a great time reaching out to other fellow GSoCers in the community as well as conversing with my mentors over the project plans.&lt;/p&gt;
+
+&lt;h3 id="the-tasks"&gt;The Tasks&lt;/h3&gt;
+&lt;p&gt;Last week, I had mentioned that I&amp;#8217;d be working on porting over &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;Parsing&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Physics&lt;/code&gt; modules. However, as pointed out by &lt;a href="https://ShikharJ.github.io/github.com/isuruf"&gt;Isuru&lt;/a&gt;, there was no real gain in working on &lt;code class="highlighter-rouge"&gt;Parsing&lt;/code&gt;, as we already had a parser in &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt;. Hence, my focus shifted on &lt;code class="highlighter-rouge"&gt;Physics&lt;/code&gt; and its sub-modules. As such, I&amp;#8217;ve pushed in two PRs, covering &lt;code class="highlighter-rouge"&gt;ContinuumMechanics&lt;/code&gt;(&lt;a href="https://github.com/sympy/sympy/pull/12660"&gt;#12660&lt;/a&gt;) and &lt;code class="highlighter-rouge"&gt;Hep&lt;/code&gt;(&lt;a href="https://github.com/sympy/sympy/pull/12655"&gt;#12655&lt;/a&gt;) sub-modules to keep a track of the work. I&amp;#8217;ve also been able to weed out most of the compatibility issues in the standalone files of &lt;code class="highlighter-rouge"&gt;Physics&lt;/code&gt; module.&lt;/p&gt;
+
+&lt;p&gt;Though I had planned on finishing these tasks within the Community Bonding period itself, I realised that the &lt;code class="highlighter-rouge"&gt;Quantum&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Optics&lt;/code&gt; sub-modules require a bit more work than what I had originally planned for the time. Nevertheless, I started off implementing &lt;code class="highlighter-rouge"&gt;Relationals&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt;, which was a task originally planned for the first week of the coding period. The PR(&lt;a href="https://github.com/symengine/symengine/pull/1276"&gt;#1276&lt;/a&gt;) is currently under review, and would be ready to merge within a day or two. The time gained thus will be devoted to the previously mentioned work, apart from what was originally planned in my proposal.&lt;/p&gt;
+
+&lt;p&gt;Besides, I also sent a PR(&lt;a href="https://github.com/symengine/symengine/pull/1277"&gt;#1277&lt;/a&gt;) fixing some minor grammatical errors which I stumbled upon in the codebase.&lt;/p&gt;
+
+&lt;p&gt;See you next week! Goodbye!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://valglad.github.io/2017/05/29/start</guid>
       <author>Valeriia Gladkova (valglad)</author>
       <title>Valeriia Gladkova (valglad): The start</title>
@@ -2093,71 +2112,6 @@ returning more simplified solution( &lt;a href="https://github.com/sympy/sympy/p
 &lt;hr /&gt;
 
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;continue&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=985</guid>
-      <author>Sampad Saha (sampadsaha5)</author>
-      <title>Sampad Saha (sampadsaha5): GSoC Week 10</title>
-      <pubDate>Fri, 29 Jul 2016 11:20:44 GMT</pubDate>
-      <link>https://sampadblog.wordpress.com/2016/07/29/gsoc-week-10/</link>
-      <description>&lt;p&gt;Hello, guys. Welcome back.&amp;#160;It&amp;#8217;s been ten weeks into the coding period. I had a meeting with Jason on 25th of this month. We discussed many new changed on the API that I had implemented before this week. Now, the beam bending module is almost ready to solve beam bending problems.&lt;/p&gt;
-&lt;p&gt;Let us see how to solve a beam bending problem using this module.&lt;/p&gt;
-&lt;p&gt;Problem Statement :&lt;/p&gt;
-&lt;p&gt;&lt;img alt="Loaded beam.svg" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Loaded_beam.svg/650px-Loaded_beam.svg.png" /&gt;&lt;/p&gt;
-&lt;p&gt;The deflection is restricted at the end of the beam.&lt;/p&gt;
-&lt;p&gt;Solution :&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.physics.continuum_mechanics.beam import Beam
-
-&amp;gt;&amp;gt;&amp;gt; from sympy import Symbol, Piecewise
- 
-&amp;gt;&amp;gt;&amp;gt; x = Symbol('x')
-
-&amp;gt;&amp;gt;&amp;gt; E = Symbol('E')
-
-&amp;gt;&amp;gt;&amp;gt; I = Symbol('I')
-
-&amp;gt;&amp;gt;&amp;gt; b = Beam(4, E, I)
-
-&amp;gt;&amp;gt;&amp;gt; b.apply_load(value=-9, start=4, order=-1)
-
-&amp;gt;&amp;gt;&amp;gt; b.apply_load(value=-3, start=0, order=-1)
-
-&amp;gt;&amp;gt;&amp;gt; b.apply_load(order=0, start=2, value=6)
-
-&amp;gt;&amp;gt;&amp;gt; b.bc_deflection = [(4, 0)]
-
-&amp;gt;&amp;gt;&amp;gt; b.boundary_conditions
- {'deflection': [(4, 0)], 'moment': [], 'slope': []}
-
-&amp;gt;&amp;gt;&amp;gt; b.load
- -3*SingularityFunction(x, 0, -1) + 6*SingularityFunction(x, 2, 0) - 9*SingularityFunction(x, 4, -1)
-
-&amp;gt;&amp;gt;&amp;gt; b.shear_force()
- -3*SingularityFunction(x, 0, 0) + 6*SingularityFunction(x, 2, 1) - 9*SingularityFunction(x, 4, 0)
-
-&amp;gt;&amp;gt;&amp;gt; b.bending_moment()
- 3*SingularityFunction(x, 0, 1) - 3*SingularityFunction(x, 2, 2) + 9*SingularityFunction(x, 4, 1)
-
-&amp;gt;&amp;gt;&amp;gt; b.slope()
- (3*SingularityFunction(x, 0, 2)/2 - SingularityFunction(x, 2, 3) + 9*SingularityFunction(x, 4, 2)/2 - 7)/(E*I)
-
-&amp;gt;&amp;gt;&amp;gt; b.deflection()
- (-7*x + SingularityFunction(x, 0, 3)/2 - SingularityFunction(x, 2, 4)/4 + 3*SingularityFunction(x, 4, 3)/2)/(E*I)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;If the user wants to represent the deflection in the piecewise form, then:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; b.deflection().rewrite(Piecewise)
- (-7*x + Piecewise((x**3, x &amp;gt; 0), (0, True))/2
- + 3*Piecewise(((x - 4)**3, x - 4 &amp;gt; 0), (0, True))/2
- - Piecewise(((x - 2)**4, x - 2 &amp;gt; 0), (0, True))/4)/(E*I)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;
-&lt;h4&gt;&lt;em&gt;&lt;strong&gt;Next week&amp;#160;&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;Add the end argument in the apply_load method.&lt;/li&gt;
-&lt;li&gt;Add Sphinx documentations.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;That&amp;#8217;s all for this week. Cheers !!&lt;/p&gt;
-&lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/985/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/985/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=985&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>
