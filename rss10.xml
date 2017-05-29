@@ -7,6 +7,22 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://valglad.github.io/2017/05/29/start</guid>
+      <author>Valeriia Gladkova (valglad)</author>
+      <title>Valeriia Gladkova (valglad): The start</title>
+      <pubDate>Mon, 29 May 2017 00:00:00 GMT</pubDate>
+      <link>http://valglad.github.io/2017/05/29/start/</link>
+      <description>&lt;p&gt;GSoC officially starts tomorrow but I&amp;#8217;ve already begun working on my project because of exams later in June. So far everything is going according to plan. I&amp;#8217;ve implemented the &lt;code class="highlighter-rouge"&gt;subgroup()&lt;/code&gt; method for &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;s and &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s as well as &lt;code class="highlighter-rouge"&gt;is_subgroup()&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s. That was straight-forward except this one moment where I wanted to avoid creating a new instance of &lt;code class="highlighter-rouge"&gt;FreeGroup&lt;/code&gt; and rewriting the relators returned by &lt;code class="highlighter-rouge"&gt;reidemeister_presentation()&lt;/code&gt; in terms of this new instance because it seemed inelegant. I spend quite a while trying to come up with a better way and even started thinking of reimplementing the &lt;code class="highlighter-rouge"&gt;FreeGroup&lt;/code&gt; class but after a discussion with one of my mentors on SymPy&amp;#8217;s &lt;a href="https://gitter.im/sympy/GroupTheory"&gt;Group Theory channel&lt;/a&gt; decided to create a new instance after all. It shouldn&amp;#8217;t affect the performance too much anyway and reimplementing a whole class would be quite extreme.&lt;/p&gt;
+
+&lt;p&gt;Then I looked into improving the techniques for simplifying the presentation of subgroups. I hadn&amp;#8217;t been sure about whether there would be much to do but actually I found that the code had quite a few redundant bits and there were some more serious potential problems with it, like a loop that deleted elements of the list over which it iterated. I ended up rewriting it to be more readable and making sure the list of relators is traversed properly. Additionally, the &lt;code class="highlighter-rouge"&gt;reidemeister_presentation()&lt;/code&gt; code used to apply the simplification techniques 20 times in a for loop which in some cases would be excessive and in others not enough - I replaced it with a while loop so that the representaion is simplified until no further improvement is achieved.&lt;/p&gt;
+
+&lt;p&gt;While I was at it, I found myself modifying some of the &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt; methods either to extend their functionality or because I noticed that their implementation would lead to bugs in some special cases. I also added a couple of new methods for manipulation of group words. Intuitively, &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt; words are just symbolic expressions on non-commutative (in the general case) symbols that only admit integer powers. But their implementation in SymPy is different from the regular symbolic expressions which are instances of the &lt;code class="highlighter-rouge"&gt;Expr&lt;/code&gt; class. As a result, the &lt;code class="highlighter-rouge"&gt;Expr&lt;/code&gt; methods, e.g. &lt;code class="highlighter-rouge"&gt;subs()&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;simplify()&lt;/code&gt; can&amp;#8217;t be used with them directly (though of course, theoretically, one could build an equivalent symbolic expression out of a &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt;, apply the desired &lt;code class="highlighter-rouge"&gt;Expr&lt;/code&gt; method, make sure no fractional powers appear and go back) so equivalent methods have to be written separately. I have extended the group word substitution to probably all (or at least most) cases one might need. Simplification, on the other hand, is still missing. That said, the &lt;code class="highlighter-rouge"&gt;simplify()&lt;/code&gt; method of the &lt;code class="highlighter-rouge"&gt;Exrp&lt;/code&gt; class doesn&amp;#8217;t currently do much in terms of simplification of non-commutative expressions so it couldn&amp;#8217;t be used anyway (perhaps, some other method would be appropriate but I&amp;#8217;m not sure which). However, unlike instances of &lt;code class="highlighter-rouge"&gt;Expr&lt;/code&gt;, group elements only involve one binary operation so the problem is somewhat easier (conceptually). The only real simplification one can make is finding powers of subwords and collecting them into one thing. Say, if we have the word &lt;code class="highlighter-rouge"&gt;x*y*x*y*x*y&lt;/code&gt;, a simpler way to write it would be &lt;code class="highlighter-rouge"&gt;(x*y)**3&lt;/code&gt; and it would be good to have that done automatically. I might work on implementing that sort of thing somewhere along the way because then simplifications for &lt;code class="highlighter-rouge"&gt;reidemeister_presentation()&lt;/code&gt; can be improved even further, and the output relators will be more readable. Plus it&amp;#8217;s just a nice feature to have, though at present I&amp;#8217;m not sure about how exactly I would go about that efficiently and how to best store the simplification so that it doesn&amp;#8217;t need to be done again.&lt;/p&gt;
+
+&lt;p&gt;The PRs I&amp;#8217;ve sent so far are &lt;a href="https://github.com/sympy/sympy/pull/12658"&gt;here&lt;/a&gt; and &lt;a href="https://github.com/sympy/sympy/pull/12681"&gt;here&lt;/a&gt; and are currently still being reviewed.&lt;/p&gt;
+
+&lt;p&gt;The next thing I&amp;#8217;m going to work on are a couple of methods that could be used to determine if a given &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; is infinite. The one I plan to do first is considering the abelianisation of the group, writing the relators in the form of an integer matrix and essentially finding its Smith Normal form. This will probably occupy me for the next week.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/05/25/Community-Bonding-Period</guid>
       <author>Ranjith Kumar (ranjithkumar007)</author>
       <title>Ranjith Kumar (ranjithkumar007): Community Bonding Period</title>
@@ -2142,73 +2158,6 @@ returning more simplified solution( &lt;a href="https://github.com/sympy/sympy/p
 &lt;/ul&gt;
 &lt;p&gt;That&amp;#8217;s all for this week. Cheers !!&lt;/p&gt;
 &lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/985/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/985/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=985&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://jbm950.github.io//2016/07/29/GSoC-week-11.html</guid>
-      <author>James Milam (jbm950)</author>
-      <title>James Milam (jbm950): GSoC Week 11</title>
-      <pubDate>Fri, 29 Jul 2016 00:00:00 GMT</pubDate>
-      <link>http://jbm950.github.io//2016/07/29/GSoC-week-11.html</link>
-      <description>&lt;p&gt;Somehow I think I was off by a week. I think last week&amp;#8217;s blog post covers week
-9 and 10 and this week&amp;#8217;s covers week 11. This week I created a full draft for
-all components of the &lt;code class="highlighter-rouge"&gt;SymbolicSystem&lt;/code&gt; class that will take the place of a
-equations of motion generator &amp;#8220;base class&amp;#8221; that was discussed in my project
-proposal. I began by creating all of the docstrings for the class followed by
-the test code. With the documentation and test code written it was a simple
-matter to finish off the code for the class itself. Lastly I added
-documentation to two places in sympy, one place contains the autogenerated
-documentation from the docstrings and the other place I adapted an example from
-pydy to show how to use the new class.&lt;/p&gt;
-
-&lt;p&gt;After working on &lt;code class="highlighter-rouge"&gt;SymbolicSystem&lt;/code&gt; I decided to try to finish off an old PR of
-mine regarding the init_printing code that Jason and I had discussed at Scipy.
-The idea was to build separate dictionaries to pass to the different printers
-in ipython based on the parameters that the specific printers take. The idea
-was to find this information using inspect.getargs(). The problem arose when
-trying to implement this solution because each separate printer has an expr
-argument and a **settings argument and the different possible paramters are
-processed internally by the printer. This means that there would not be an
-elegant way to build dictionaries for each printer.&lt;/p&gt;
-
-&lt;p&gt;The next thing I worked on this week was looking into Jain&amp;#8217;s version of the
-order(N) method as suggested last week. When I started looking over his book,
-however, I found that uses a rather different set of notion than Featherstone
-and had some additional terms. I have decided to move forward with
-Featherstone&amp;#8217;s method due to the summer coming to an end and I am already
-familiar with his version of the method. To that end I reread the first part of
-chapter 7 in Featherstone&amp;#8217;s book where he discusses the articulated body
-method.&lt;/p&gt;
-
-&lt;p&gt;I reviewed two PR&amp;#8217;s this week. This work was rather quick as they were simply
-documentation additions. I verified the method docstrings matched what the
-mehtod actually does and that the modual docstring included the different
-functions present in the file. Determining that they were correct I gave the +1
-to merge and they have both since been merged.&lt;/p&gt;
-
-&lt;h3 id="future-directions"&gt;Future Directions&lt;/h3&gt;
-
-&lt;p&gt;The plan for next week is to focus entirely on the order(N) articulated body
-method of forming the equations of motion. I plan on writing the three passes
-for the method as if I have all of the information and methods I need in order
-to make it work. I expect this to be the best way to determine what additional
-code I will need in addition to finding my weak points in how well I understand
-the method. Once I have a skeleton of the of how the algorithm is supposed to
-work I will stop working directly on the algorithm itself and start working on
-the peripheral code such as the joints and body code or spatial vector
-processing methods.&lt;/p&gt;
-
-&lt;h3 id="prs-and-issues"&gt;PR&amp;#8217;s and Issues&lt;/h3&gt;
-
-&lt;blockquote&gt;
-  &lt;ul&gt;
-    &lt;li&gt;(Open) [WIP] Added system.py to physics/mechanics &lt;a href="https://github.com/sympy/sympy/pull/11431"&gt;PR
-  #11431&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;(Merged) Added docstrings to delta and mid property methods &lt;a href="https://github.com/sympy/sympy/pull/11432"&gt;PR
-  #11432&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;(Merged) Added top-level docstring for singularities.py &lt;a href="https://github.com/sympy/sympy/pull/11440"&gt;PR
-  #11440&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;</description>
     </item>
   </channel>
 </rss>

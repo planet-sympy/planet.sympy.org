@@ -89,6 +89,79 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">May 29, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-29fba86e feed-" id="item-fe407b7d">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/valglad.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Valeriia Gladkova (valglad) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://valglad.github.io/2017/05/29/start/">00:00, Monday, 29 May UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://valglad.github.io/2017/05/29/start/">Valeriia Gladkova (valglad): The start</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/valglad.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Valeriia Gladkova (valglad) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://valglad.github.io/2017/05/29/start/">00:00, Monday, 29 May UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://valglad.github.io/2017/05/29/start/">The start</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>GSoC officially starts tomorrow but I&#8217;ve already begun working on my project because of exams later in June. So far everything is going according to plan. I&#8217;ve implemented the <code class="highlighter-rouge">subgroup()</code> method for <code class="highlighter-rouge">PermutationGroup</code>s and <code class="highlighter-rouge">FpGroup</code>s as well as <code class="highlighter-rouge">is_subgroup()</code> for <code class="highlighter-rouge">FpGroup</code>s. That was straight-forward except this one moment where I wanted to avoid creating a new instance of <code class="highlighter-rouge">FreeGroup</code> and rewriting the relators returned by <code class="highlighter-rouge">reidemeister_presentation()</code> in terms of this new instance because it seemed inelegant. I spend quite a while trying to come up with a better way and even started thinking of reimplementing the <code class="highlighter-rouge">FreeGroup</code> class but after a discussion with one of my mentors on SymPy&#8217;s <a href="https://gitter.im/sympy/GroupTheory">Group Theory channel</a> decided to create a new instance after all. It shouldn&#8217;t affect the performance too much anyway and reimplementing a whole class would be quite extreme.</p>
+
+<p>Then I looked into improving the techniques for simplifying the presentation of subgroups. I hadn&#8217;t been sure about whether there would be much to do but actually I found that the code had quite a few redundant bits and there were some more serious potential problems with it, like a loop that deleted elements of the list over which it iterated. I ended up rewriting it to be more readable and making sure the list of relators is traversed properly. Additionally, the <code class="highlighter-rouge">reidemeister_presentation()</code> code used to apply the simplification techniques 20 times in a for loop which in some cases would be excessive and in others not enough - I replaced it with a while loop so that the representaion is simplified until no further improvement is achieved.</p>
+
+<p>While I was at it, I found myself modifying some of the <code class="highlighter-rouge">FreeGroupElement</code> methods either to extend their functionality or because I noticed that their implementation would lead to bugs in some special cases. I also added a couple of new methods for manipulation of group words. Intuitively, <code class="highlighter-rouge">FreeGroupElement</code> words are just symbolic expressions on non-commutative (in the general case) symbols that only admit integer powers. But their implementation in SymPy is different from the regular symbolic expressions which are instances of the <code class="highlighter-rouge">Expr</code> class. As a result, the <code class="highlighter-rouge">Expr</code> methods, e.g. <code class="highlighter-rouge">subs()</code> or <code class="highlighter-rouge">simplify()</code> can&#8217;t be used with them directly (though of course, theoretically, one could build an equivalent symbolic expression out of a <code class="highlighter-rouge">FreeGroupElement</code>, apply the desired <code class="highlighter-rouge">Expr</code> method, make sure no fractional powers appear and go back) so equivalent methods have to be written separately. I have extended the group word substitution to probably all (or at least most) cases one might need. Simplification, on the other hand, is still missing. That said, the <code class="highlighter-rouge">simplify()</code> method of the <code class="highlighter-rouge">Exrp</code> class doesn&#8217;t currently do much in terms of simplification of non-commutative expressions so it couldn&#8217;t be used anyway (perhaps, some other method would be appropriate but I&#8217;m not sure which). However, unlike instances of <code class="highlighter-rouge">Expr</code>, group elements only involve one binary operation so the problem is somewhat easier (conceptually). The only real simplification one can make is finding powers of subwords and collecting them into one thing. Say, if we have the word <code class="highlighter-rouge">x*y*x*y*x*y</code>, a simpler way to write it would be <code class="highlighter-rouge">(x*y)**3</code> and it would be good to have that done automatically. I might work on implementing that sort of thing somewhere along the way because then simplifications for <code class="highlighter-rouge">reidemeister_presentation()</code> can be improved even further, and the output relators will be more readable. Plus it&#8217;s just a nice feature to have, though at present I&#8217;m not sure about how exactly I would go about that efficiently and how to best store the simplification so that it doesn&#8217;t need to be done again.</p>
+
+<p>The PRs I&#8217;ve sent so far are <a href="https://github.com/sympy/sympy/pull/12658">here</a> and <a href="https://github.com/sympy/sympy/pull/12681">here</a> and are currently still being reviewed.</p>
+
+<p>The next thing I&#8217;m going to work on are a couple of methods that could be used to determine if a given <code class="highlighter-rouge">FpGroup</code> is infinite. The one I plan to do first is considering the abelianisation of the group, writing the relators in the form of an integer matrix and essentially finding its Smith Normal form. This will probably occupy me for the next week.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">May 25, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -3862,127 +3935,6 @@ returning more simplified solution( <a href="https://github.com/sympy/sympy/pull
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-6163205f feed-" id="item-3dd533da">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/jbm950.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">James Milam (jbm950) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://jbm950.github.io//2016/07/29/GSoC-week-11.html">00:00, Friday, 29 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/07/29/GSoC-week-11.html">James Milam (jbm950): GSoC Week 11</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/jbm950.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">James Milam (jbm950) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://jbm950.github.io//2016/07/29/GSoC-week-11.html">00:00, Friday, 29 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/07/29/GSoC-week-11.html">GSoC Week 11</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Somehow I think I was off by a week. I think last week&#8217;s blog post covers week
-9 and 10 and this week&#8217;s covers week 11. This week I created a full draft for
-all components of the <code class="highlighter-rouge">SymbolicSystem</code> class that will take the place of a
-equations of motion generator &#8220;base class&#8221; that was discussed in my project
-proposal. I began by creating all of the docstrings for the class followed by
-the test code. With the documentation and test code written it was a simple
-matter to finish off the code for the class itself. Lastly I added
-documentation to two places in sympy, one place contains the autogenerated
-documentation from the docstrings and the other place I adapted an example from
-pydy to show how to use the new class.</p>
-
-<p>After working on <code class="highlighter-rouge">SymbolicSystem</code> I decided to try to finish off an old PR of
-mine regarding the init_printing code that Jason and I had discussed at Scipy.
-The idea was to build separate dictionaries to pass to the different printers
-in ipython based on the parameters that the specific printers take. The idea
-was to find this information using inspect.getargs(). The problem arose when
-trying to implement this solution because each separate printer has an expr
-argument and a **settings argument and the different possible paramters are
-processed internally by the printer. This means that there would not be an
-elegant way to build dictionaries for each printer.</p>
-
-<p>The next thing I worked on this week was looking into Jain&#8217;s version of the
-order(N) method as suggested last week. When I started looking over his book,
-however, I found that uses a rather different set of notion than Featherstone
-and had some additional terms. I have decided to move forward with
-Featherstone&#8217;s method due to the summer coming to an end and I am already
-familiar with his version of the method. To that end I reread the first part of
-chapter 7 in Featherstone&#8217;s book where he discusses the articulated body
-method.</p>
-
-<p>I reviewed two PR&#8217;s this week. This work was rather quick as they were simply
-documentation additions. I verified the method docstrings matched what the
-mehtod actually does and that the modual docstring included the different
-functions present in the file. Determining that they were correct I gave the +1
-to merge and they have both since been merged.</p>
-
-<h3 id="future-directions">Future Directions</h3>
-
-<p>The plan for next week is to focus entirely on the order(N) articulated body
-method of forming the equations of motion. I plan on writing the three passes
-for the method as if I have all of the information and methods I need in order
-to make it work. I expect this to be the best way to determine what additional
-code I will need in addition to finding my weak points in how well I understand
-the method. Once I have a skeleton of the of how the algorithm is supposed to
-work I will stop working directly on the algorithm itself and start working on
-the peripheral code such as the joints and body code or spatial vector
-processing methods.</p>
-
-<h3 id="prs-and-issues">PR&#8217;s and Issues</h3>
-
-<blockquote>
-  <ul>
-    <li>(Open) [WIP] Added system.py to physics/mechanics <a href="https://github.com/sympy/sympy/pull/11431">PR
-  #11431</a></li>
-    <li>(Merged) Added docstrings to delta and mid property methods <a href="https://github.com/sympy/sympy/pull/11432">PR
-  #11432</a></li>
-    <li>(Merged) Added top-level docstring for singularities.py <a href="https://github.com/sympy/sympy/pull/11440">PR
-  #11440</a></li>
-  </ul>
-</blockquote>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -4011,104 +3963,104 @@ processing methods.</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io">Gaurav Dhingra</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/feeds/atom.xml">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>17:21, Monday, 29 May</td>
-<td>17:36, Monday, 29 May</td>
+<td>17:40, Monday, 29 May</td>
+<td>17:55, Monday, 29 May</td>
 </tr>
 </table>
 
