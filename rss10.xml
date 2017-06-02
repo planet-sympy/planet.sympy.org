@@ -7,6 +7,44 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/06/02/Coding-period-starts</guid>
+      <author>Arihant Parsoya (parsoyaarihant)</author>
+      <title>Arihant Parsoya (parsoyaarihant): Coding period starts</title>
+      <pubDate>Fri, 02 Jun 2017 06:30:00 GMT</pubDate>
+      <link>https://parsoyaarihant.github.io/blog/gsoc/2017/06/02/Coding-period-starts.html</link>
+      <description>&lt;p&gt;Community bonding period is completed and coding period started on 31st May.&lt;/p&gt;
+
+&lt;p&gt;Our original plan was to rewrite the pattern matcher for SymPy and generate decision tree for Rubi rules from &lt;code class="highlighter-rouge"&gt;Downvalues[]&lt;/code&gt; &lt;a href="https://raw.githubusercontent.com/Upabjojr/RUBI_integration_rules/master/RUBI_DownValues_FullForm.txt"&gt;generated&lt;/a&gt; by Francesco.&lt;/p&gt;
+
+&lt;p&gt;Aaron gave us a link to &lt;a href="https://arxiv.org/pdf/1705.00907.pdf"&gt;this&lt;/a&gt; paper by Manuel Krebber. Pattern matching algorithms discussed in the paper are implemented in &lt;a href="https://github.com/HPAC/matchpy"&gt;MatchPy&lt;/a&gt; library.&lt;/p&gt;
+
+&lt;h4 id="matchpy"&gt;MatchPy&lt;/h4&gt;
+
+&lt;p&gt;MatchPy uses &lt;code class="highlighter-rouge"&gt;discrimination net&lt;/code&gt;&amp;#8217;s to do many-to-one matching(i.e. matching one subject to multiple patterns). MatchPy generates its own discrimination net as we add patterns to its &lt;code class="highlighter-rouge"&gt;ManyToOneReplacer&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Discrimination nets can be more efficient than a decision tree hence we decided to use MatchPy as the pattern matcher for Rubi. I wrote basic matching programs which implements few Rubi rules MatchPy.&lt;/p&gt;
+
+&lt;p&gt;I found the following issues with MatchPy:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;MatchPy cannot be directly added to SymPy because it is written in Python3.6(whereas SymPy supports Python2 also).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;It lacked mathematical operations on its &lt;code class="highlighter-rouge"&gt;Symbols&lt;/code&gt; due to which it becomes difficult to implement Rubi constrains. A workaround this issue is to &lt;code class="highlighter-rouge"&gt;sympify&lt;/code&gt; the expression and do calculations in SymPy.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;MatchPy uses external libraries such as &lt;code class="highlighter-rouge"&gt;Multiset&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;enum&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;typing&lt;/code&gt;. SymPy does not encourage using external libraries in its code. Those modules need to be reimplemented into SymPy if we are going to directly import MatchPy code into SymPy.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Re-implementing MatchPy algorithms in SymPy can be very challenging and time consuming task as I am not very familiar with the algorithms used in MatchPy.&lt;/p&gt;
+
+&lt;p&gt;I used &lt;code class="highlighter-rouge"&gt;3to2&lt;/code&gt; to convert MatchPy code to Python2 syntax. Majority tests are passing in Python2 Syntax. I am currently trying to get the code working in Python2.&lt;/p&gt;
+
+&lt;p&gt;In coming week I will import MatchPy code to SymPy directly. If there are some setbacks in this approach, I will reimplement MatchPy algorithms in SymPy.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://nesar2017.wordpress.com/?p=44</guid>
       <author>Abdullah Javed Nesar (Abdullahjavednesar)</author>
       <title>Abdullah Javed Nesar (Abdullahjavednesar): Week 1</title>
@@ -3691,48 +3729,6 @@ separate PR&amp;#8217;s I hope to possibly include in my final evaluation.&lt;/p
 #10356&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/blockquote&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Eleventh-Week</guid>
-      <author>Nishant Nikhil (nishnik)</author>
-      <title>Nishant Nikhil (nishnik): GSoC Eleventh Week</title>
-      <pubDate>Thu, 11 Aug 2016 00:00:00 GMT</pubDate>
-      <link>http://nishnik.github.io/GSoC-Eleventh-Week/</link>
-      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
-
-&lt;p&gt;This week I worked on little refactoring of &lt;code class="highlighter-rouge"&gt;Fields&lt;/code&gt; module. Like moving functions implementations from &lt;code class="highlighter-rouge"&gt;.h&lt;/code&gt; file to &lt;code class="highlighter-rouge"&gt;.cpp&lt;/code&gt; file in &lt;a href="https://github.com/symengine/symengine/pull/1060"&gt;this&lt;/a&gt; PR. I added a &lt;code class="highlighter-rouge"&gt;from_uintpoly&lt;/code&gt; method which allows us to create a &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; object from &lt;code class="highlighter-rouge"&gt;UIntPoly&lt;/code&gt; object in &lt;a href="https://github.com/symengine/symengine/pull/1059/"&gt;this&lt;/a&gt; PR. After which I worked on the implementation of &lt;code class="highlighter-rouge"&gt;diff&lt;/code&gt; method for &lt;code class="highlighter-rouge"&gt;GaloisField&lt;/code&gt; in &lt;a href="https://github.com/symengine/symengine/pull/1060"&gt;this&lt;/a&gt; PR.
-&lt;br /&gt;
-Then I worked on &lt;code class="highlighter-rouge"&gt;Logic&lt;/code&gt; module. It is needed for the implementation of &lt;code class="highlighter-rouge"&gt;Intersection&lt;/code&gt; class in &lt;code class="highlighter-rouge"&gt;Sets&lt;/code&gt; module. It has the implementation for Logical And, Or and Not operations.
-&lt;br /&gt;
-Both &lt;code class="highlighter-rouge"&gt;Or&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;And&lt;/code&gt; class have a private variable named &lt;code class="highlighter-rouge"&gt;container_&lt;/code&gt; which is a set of &lt;code class="highlighter-rouge"&gt;RCP&amp;lt;const Boolean&amp;gt;&lt;/code&gt;. It stores the &lt;code class="highlighter-rouge"&gt;Boolean&lt;/code&gt; objects on which &lt;code class="highlighter-rouge"&gt;And&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Or&lt;/code&gt; operator can&amp;#8217;t be applied using the known rules.
-&lt;br /&gt;
-&lt;code class="highlighter-rouge"&gt;Not&lt;/code&gt; also has one private variable which is an &lt;code class="highlighter-rouge"&gt;RCB&amp;lt;const Boolean&amp;gt;&lt;/code&gt; object, which stores the &lt;code class="highlighter-rouge"&gt;Boolean&lt;/code&gt; object on which we were not able to apply &lt;code class="highlighter-rouge"&gt;not&lt;/code&gt; operator using the current rules.
-&lt;br /&gt;
-Then we have three functions:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class="language-C++"&gt;RCP&amp;lt;const Boolean&amp;gt; logical_and(const set_boolean &amp;amp;s);
-RCP&amp;lt;const Boolean&amp;gt; logical_or(const set_boolean &amp;amp;s);
-RCP&amp;lt;const Boolean&amp;gt; logical_not(const RCP&amp;lt;const Boolean&amp;gt; &amp;amp;s);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;These are used to do the respective operation on the operands supplied.
-&lt;br /&gt;
-Talking little about implementaion details:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class="language-C++"&gt;RCP&amp;lt;const Boolean&amp;gt; logical_and(const set_boolean &amp;amp;s)
-{
-   return and_or&amp;lt;And&amp;gt;(s, false);
-}
-
-RCP&amp;lt;const Boolean&amp;gt; logical_or(const set_boolean &amp;amp;s)
-{
-   return and_or&amp;lt;Or&amp;gt;(s, true);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;And the function &lt;code class="highlighter-rouge"&gt;and_or&lt;/code&gt; do the required operations.
-&lt;br /&gt;
-After &lt;a href="https://github.com/symengine/symengine/pull/1061/"&gt;this&lt;/a&gt; PR gets merged, I would start working on &lt;code class="highlighter-rouge"&gt;Intersection&lt;/code&gt; class.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
