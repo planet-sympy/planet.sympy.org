@@ -93,7 +93,7 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-3b0ec3aa feed-" id="item-8d5a1df1">
+		    <div class="box" class="item feed-3b0ec3aa feed-" id="item-ebdfa537">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -151,44 +151,22 @@
 Scalability would refer to implementing in a way which works reasonably fast for large input data. It would also mean designing the functions in a use case independent way so that they could be re-used for the 3-Polytopes. The simplest example would be the <span style="color: #3366ff;"><a href="https://github.com/ArifAhmed1995/sympy/blob/daa69f291fb0cd5b7ba0e26ed81aa9be05b46150/sympy/integrals/intpoly.py#L374" rel="noopener noreferrer" target="_blank">norm</a> <span style="color: #000000;">function. It works for both 2D and 3D points. </span></span></span><br />
 <span style="color: #000000;">Currently, some parts of the implementation are hacky and depend upon denoting the axes by specific symbols namely</span> <span style="color: #993366;"><strong>x</strong></span> <span style="color: #000000;">and</span> <span style="color: #993366;"><strong>y<span style="color: #000000;">. </span></strong><span style="color: #000000;">That would be the main focus for the beginning of Week 2. Let&#8217;s take a look at the methods implemented and their respective shortcomings. </span><span style="color: #000000;">The methods currently implemented are :</span></span></p>
 <p><span style="color: #000000;">1. <span style="color: #003366;">polytope_integrate</span> :&#160;This is the main function which calls integration_reduction which<br />
-further calls almost everything else. Mathematically, this function<br />
-is the first application of the Generalized Stokes Theorem.<br />
-Integration over the 2-Polytope surface is related to integration<br />
-over it&#8217;s facets (lines in this use case).<br />
-Nothing much to change here.</span></p>
+further calls almost everything else. Mathematically, this function is the first application of the Generalized Stokes Theorem. Integration over the 2-Polytope surface is related to integration over it&#8217;s facets (lines in this use case). Nothing much to change here.</span></p>
 <p><span style="color: #000000;">2.<span style="color: #000080;"> integration_reduction</span> : This one is the second application of the Stokes Theorem.<br />
-Integration over facets (lines) is related to evaluation of the<br />
-function at the vertices. The implementation can be made<br />
-more robust by avoiding accessing the values of the<br />
-best_origin by the index and instead accessing it by key.<br />
-One workaround would be to assign the Symbol &#8216;<span style="color: #993300;">x</span>&#8216; to the<br />
-independent variable and &#8216;<span style="color: #993300;">y</span>&#8216; to the dependent one. In the<br />
-code, all dictionary accesses will be done with these symbols.<br />
-This offers scalability as well. An extra Symbol &#8216;<span style="color: #993300;">z</span>&#8216; will suffice<br />
-to denote the third axis variable for the 3D use case.<br />
+Integration over facets (lines) is related to evaluation of the function at the vertices. The implementation can be made more robust by avoiding accessing the values of the best_origin by the index and instead accessing it by key. One workaround would be to assign the Symbol &#8216;<span style="color: #993300;">x</span>&#8216; to the independent variable and &#8216;<span style="color: #993300;">y</span>&#8216; to the dependent one. In the<br />
+code, all dictionary accesses will be done with these symbols. This offers scalability as well. An extra Symbol &#8216;<span style="color: #993300;">z</span>&#8216; will suffice to denote the third axis variable for the 3D use case.<br />
 </span></p>
-<p><span style="color: #000000;">3. <span style="color: #000080;">hyperplane_parameters</span> :&#160; This function returns the values of the hyperplane params<br />
-of which the facets are a part of. I can&#8217;t see improvements<br />
-to be made with respect to the 2D use case, but that may<br />
-change with the new API.</span></p>
+<p><span style="color: #000000;">3. <span style="color: #000080;">hyperplane_parameters</span> :&#160; This function returns the values of the hyperplane parameters of which the facets are a part of. I can&#8217;t see improvements to be made with respect to the 2D use case, but that may change with the new API.</span></p>
 <p><span style="color: #000000;">4. <span style="color: #000080;">best_origin</span> : This function returns a point on the line for which the vector inner<br />
-product between the divergence of the homogeneous polynomial and<br />
-that point yields a polynomial of least degree.</span><br />
-<span style="color: #000000;">This function is very much dependent on the naming scheme of the axes<br />
-but this issue can be circumvented by </span><span style="color: #000000;">assigning symbols as explained<br />
-above.</span></p>
+product between the divergence of the homogeneous polynomial and that point yields a polynomial of least degree.</span> <span style="color: #000000;">This function is very much dependent on the naming scheme of the axes but this issue can be circumvented by </span><span style="color: #000000;">assigning symbols as explained above.</span></p>
 <p><span style="color: #000000;">5. <span style="color: #000080;">decompose</span> : This function works perfectly for all test data. However, I&#8217;ll see if it can<br />
-be made faster. Will be important for scaling upto polynomials<br />
-containing large number of terms.</span></p>
+be made faster. Will be important for scaling up-to polynomials containing large number of terms.</span></p>
 <p><span style="color: #000000;">6. <span style="color: #000080;">norm</span> : This is a really simple function. The only reason to change it&#8217;s code would be<br />
 adding support for different representations of points.</span></p>
 <p><span style="color: #000000;">7. <span style="color: #000080;">intersection, is_vertex</span> : Both of these methods are simple to write and don&#8217;t require<br />
-any further changes for the 2D case (at least as far as I can<br />
-see).</span></p>
+any further changes for the 2D case (at least as far as I can see).</span></p>
 <p><span style="color: #000000;">9. <span style="color: #000080;">plot_polytope, plot_polynomial</span> : These are simple plotting functions to help visualize<br />
-the polytope and polynomial respectively. If extra<br />
-features for the plots are required then suitable<br />
-changes to code will have to be made.<br />
+the polytope and polynomial respectively. If extra features for the plots are required then suitable changes to code can be made.<br />
 </span></p>
 <p><span style="color: #000000;">After I get all the tests for the 2D prototype to pass, I&#8217;ll write a Jupyter notebook and add it to the examples/notebooks folder of SymPy. As recommended by Ondrej, it should contain examples along with some plots and description of whatever basic API exists now.<br />
 The main focus for Week 2 should be : </span><br />
@@ -5534,128 +5512,128 @@ Out[5]: {2&#8901;n + 1/4 | n &#8714; &#8484;} &#8746; {5&#8901;n + 5/4 | n &#871
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>00:41, Saturday, 03 June</td>
-<td>00:56, Saturday, 03 June</td>
+<td>01:01, Saturday, 03 June</td>
+<td>01:16, Saturday, 03 June</td>
 </tr>
 </table>
 
