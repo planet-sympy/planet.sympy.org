@@ -89,6 +89,120 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">June 03, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-3b0ec3aa feed-" id="item-8d5a1df1">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/arifahmed.jpeg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://arif7blog.wordpress.com/2017/06/03/week-1-reportmay-24-june-2-the-2d-prototype/">00:39, Saturday, 03 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/06/03/week-1-reportmay-24-june-2-the-2d-prototype/">Arif Ahmed (ArifAhmed1995): Week 1 Report(May 24 &#8211; June 2) : The 2D prototype</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/arifahmed.jpeg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://arif7blog.wordpress.com/2017/06/03/week-1-reportmay-24-june-2-the-2d-prototype/">00:39, Saturday, 03 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/06/03/week-1-reportmay-24-june-2-the-2d-prototype/">Week 1 Report(May 24 &#8211; June 2) : The 2D prototype</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p><span style="color: #000000;">As per the timeline, I spent the week writing a prototype for the 2D use case.</span> <a href="https://github.com/sympy/sympy/pull/12673/files" rel="noopener noreferrer" target="_blank">Here</a> <span style="color: #000000;">is the current status of the implementation.</span></p>
+<p><span style="color: #000000;">At the time of writing this blog post, the prototype mostly works but fails for one of the test cases. I haven&#8217;t used a debugger on it yet but will get around to fixing it today. The main agenda for the next week should be to improve this prototype and make it more robust and scalable. </span><span style="color: #000000;">Making it robust would mean that the implementation need not require a naming convention for the axes and can handle more boundary cases.<br />
+Scalability would refer to implementing in a way which works reasonably fast for large input data. It would also mean designing the functions in a use case independent way so that they could be re-used for the 3-Polytopes. The simplest example would be the <span style="color: #3366ff;"><a href="https://github.com/ArifAhmed1995/sympy/blob/daa69f291fb0cd5b7ba0e26ed81aa9be05b46150/sympy/integrals/intpoly.py#L374" rel="noopener noreferrer" target="_blank">norm</a> <span style="color: #000000;">function. It works for both 2D and 3D points. </span></span></span><br />
+<span style="color: #000000;">Currently, some parts of the implementation are hacky and depend upon denoting the axes by specific symbols namely</span> <span style="color: #993366;"><strong>x</strong></span> <span style="color: #000000;">and</span> <span style="color: #993366;"><strong>y<span style="color: #000000;">. </span></strong><span style="color: #000000;">That would be the main focus for the beginning of Week 2. Let&#8217;s take a look at the methods implemented and their respective shortcomings. </span><span style="color: #000000;">The methods currently implemented are :</span></span></p>
+<p><span style="color: #000000;">1. <span style="color: #003366;">polytope_integrate</span> :&#160;This is the main function which calls integration_reduction which<br />
+further calls almost everything else. Mathematically, this function<br />
+is the first application of the Generalized Stokes Theorem.<br />
+Integration over the 2-Polytope surface is related to integration<br />
+over it&#8217;s facets (lines in this use case).<br />
+Nothing much to change here.</span></p>
+<p><span style="color: #000000;">2.<span style="color: #000080;"> integration_reduction</span> : This one is the second application of the Stokes Theorem.<br />
+Integration over facets (lines) is related to evaluation of the<br />
+function at the vertices. The implementation can be made<br />
+more robust by avoiding accessing the values of the<br />
+best_origin by the index and instead accessing it by key.<br />
+One workaround would be to assign the Symbol &#8216;<span style="color: #993300;">x</span>&#8216; to the<br />
+independent variable and &#8216;<span style="color: #993300;">y</span>&#8216; to the dependent one. In the<br />
+code, all dictionary accesses will be done with these symbols.<br />
+This offers scalability as well. An extra Symbol &#8216;<span style="color: #993300;">z</span>&#8216; will suffice<br />
+to denote the third axis variable for the 3D use case.<br />
+</span></p>
+<p><span style="color: #000000;">3. <span style="color: #000080;">hyperplane_parameters</span> :&#160; This function returns the values of the hyperplane params<br />
+of which the facets are a part of. I can&#8217;t see improvements<br />
+to be made with respect to the 2D use case, but that may<br />
+change with the new API.</span></p>
+<p><span style="color: #000000;">4. <span style="color: #000080;">best_origin</span> : This function returns a point on the line for which the vector inner<br />
+product between the divergence of the homogeneous polynomial and<br />
+that point yields a polynomial of least degree.</span><br />
+<span style="color: #000000;">This function is very much dependent on the naming scheme of the axes<br />
+but this issue can be circumvented by </span><span style="color: #000000;">assigning symbols as explained<br />
+above.</span></p>
+<p><span style="color: #000000;">5. <span style="color: #000080;">decompose</span> : This function works perfectly for all test data. However, I&#8217;ll see if it can<br />
+be made faster. Will be important for scaling upto polynomials<br />
+containing large number of terms.</span></p>
+<p><span style="color: #000000;">6. <span style="color: #000080;">norm</span> : This is a really simple function. The only reason to change it&#8217;s code would be<br />
+adding support for different representations of points.</span></p>
+<p><span style="color: #000000;">7. <span style="color: #000080;">intersection, is_vertex</span> : Both of these methods are simple to write and don&#8217;t require<br />
+any further changes for the 2D case (at least as far as I can<br />
+see).</span></p>
+<p><span style="color: #000000;">9. <span style="color: #000080;">plot_polytope, plot_polynomial</span> : These are simple plotting functions to help visualize<br />
+the polytope and polynomial respectively. If extra<br />
+features for the plots are required then suitable<br />
+changes to code will have to be made.<br />
+</span></p>
+<p><span style="color: #000000;">After I get all the tests for the 2D prototype to pass, I&#8217;ll write a Jupyter notebook and add it to the examples/notebooks folder of SymPy. As recommended by Ondrej, it should contain examples along with some plots and description of whatever basic API exists now.<br />
+The main focus for Week 2 should be : </span><br />
+1 &gt; Get the prototype to pass all test cases (should be completed really soon).<br />
+2 &gt; Make the notebook and discuss a better API for the 2D use case.<br />
+3 &gt; Implement the final 2D API and write any tests for it.<br />
+3 &gt; Discuss how to extend to the 3D use case (Implementation and API).</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/62/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/62/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&#038;blog=126429718&#038;post=62&#038;subd=arif7blog&#038;ref=&#038;feed=1" width="1" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">June 02, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -5393,127 +5507,6 @@ Out[5]: {2&#8901;n + 1/4 | n &#8714; &#8484;} &#8746; {5&#8901;n + 5/4 | n &#871
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">August 12, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-6163205f feed-" id="item-2607faf6">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/jbm950.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">James Milam (jbm950) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://jbm950.github.io//2016/08/12/GSoC-week-13.html">00:00, Friday, 12 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/08/12/GSoC-week-13.html">James Milam (jbm950): GSoC Week 13</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/jbm950.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">James Milam (jbm950) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://jbm950.github.io//2016/08/12/GSoC-week-13.html">00:00, Friday, 12 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://jbm950.github.io//2016/08/12/GSoC-week-13.html">GSoC Week 13</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This week I spent a lot of time working on FeatherstonesMethod and its
-component parts. I started off by moving a bunch of spatial vector functions
-from another PR I have to the featherstone PR and used some of those functions
-to calculate the spatial inertia of Body objects. The next thing I worked on
-was completely rewriting the internals of the joint code. The joints now
-consist of 4 reference frames and points (one set at each of the bodys mass
-centers and one set per body at the joint location).</p>
-
-<p>After this I ran some basic code that used these new features and kept making
-changes until the code was able to run without producing errors. I used this
-same method of work with FeatherstonesMethod and now it too is able to run
-without producing errors. Now that the code runs it was time to make sure that
-the output is correct which is a lot more involved than the previous step of
-work. To begin I solved for the spatial inertia by hand and used this
-calculation to create test code for Body.spatial_inertia. As expected the code
-initially was completely incorrect but it now passes the test. I have since
-been working on the tests for the joint code. Since this code is completely new
-to the sympy repository it takes a lot more planning than the body test did.
-Also I need to solve the kinematics by hand for the joints so that I have a
-base for the test code. This is where I am currently located in the process.</p>
-
-<p>Also this week I addressed review comments on SymbolicSystem and have moved
-that PR closer to being able to merge. One of the current hang ups is trying to
-force Sphinx to autodocument the __init__ method. I think the best solution
-currently is to move the relevant code back to the main docstring for the class
-and not worry about trying to document the __init__ method.</p>
-
-<p>While working on rewriting the joint code I came across a bug in frame.py and
-have created a docstring with a fix to this along with a test to make sure the
-fix works.</p>
-
-<p>Lastly I reviewed a PR that adds a docstring to a method that did not yet have
-a docstring. The PR had some information in it that was incorrect and after
-some research I was able to make some suggestions for its implementation.</p>
-
-<h3 id="future-directions">Future Directions</h3>
-
-<p>Next week is the last full week of GSoC and my main priority is getting the
-final evaluation information correctly finished so that the work can be
-processed correctly. My next goal is to make sure SymbolicSystem gets merged
-into SymPy. This is not entirely in my hands, however, as I will be having to
-wait for feedback and so while waiting I will be pulling off different parts of
-FeatherstonesMethod for separate PR&#8217;s at the recomendation of my advisor. These
-separate PR&#8217;s I hope to possibly include in my final evaluation.</p>
-
-<h3 id="prs-and-issues">PR&#8217;s and Issues</h3>
-
-<blockquote>
-  <ul>
-    <li>(Open) [WIP] Added system.py to physics/mechanics <a href="https://github.com/sympy/sympy/pull/11431">PR
-  #11431</a></li>
-    <li>(Open) [WIP] FeatherstonesMethod <a href="https://github.com/sympy/sympy/pull/11415">PR
-  #11415</a></li>
-    <li>(Open) Added docstring to jordan_cell method <a href="https://github.com/sympy/sympy/pull/10356">PR
-#10356</a></li>
-  </ul>
-</blockquote>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -5541,128 +5534,128 @@ separate PR&#8217;s I hope to possibly include in my final evaluation.</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>00:21, Saturday, 03 June</td>
-<td>00:36, Saturday, 03 June</td>
+<td>00:41, Saturday, 03 June</td>
+<td>00:56, Saturday, 03 June</td>
 </tr>
 </table>
 
