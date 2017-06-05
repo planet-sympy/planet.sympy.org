@@ -38,6 +38,25 @@
 &lt;p&gt;&lt;strong&gt;Adi&amp;#243;s&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://valglad.github.io/2017/06/05/smith</guid>
+      <author>Valeriia Gladkova (valglad)</author>
+      <title>Valeriia Gladkova (valglad): The Smith Normal Form</title>
+      <pubDate>Mon, 05 Jun 2017 00:00:00 GMT</pubDate>
+      <link>http://valglad.github.io/2017/06/05/smith/</link>
+      <description>&lt;p&gt;Last week I was working on implementing the Smith Normal Form for matrices over principal ideal domains. I&amp;#8217;m still making corrections as the &lt;a href="https://github.com/sympy/sympy/pull/12705"&gt;PR&lt;/a&gt; is being reviewed. I used the standard algorithm: use invertable (in the ring) row and column operations to make the matrix diagonal and make sure the diagonal entries have the property that an entry divides all of the entries that come after it (this is described in more detail on &lt;a href="https://en.wikipedia.org/wiki/Smith_normal_form#Algorithm"&gt;wikipedia&lt;/a&gt; for example). I ran into trouble when trying to determine the domain of the matrix entries if the user hadn&amp;#8217;t explicitly specified one. Matrices in SymPy don&amp;#8217;t have a &lt;code class="highlighter-rouge"&gt;.domain&lt;/code&gt; attribute or anything similar, and can contain objects of different types. So, if I did attempt to find some suitable principal ideal domain over which to consider all of them, the only way would be to try a few of the ones that are currently implemented until something fits, and that would have to be extended every time a new domain is implemented and generally sounds tedious to do. I&amp;#8217;ve asked on the &lt;a href="https://gitter.im/sympy/GroupTheory"&gt;Group Theory channel&lt;/a&gt; if there was a better way and that started a discussion about changing the &lt;code class="highlighter-rouge"&gt;Matrix&lt;/code&gt; class to have a &lt;code class="highlighter-rouge"&gt;.domain&lt;/code&gt; or a &lt;code class="highlighter-rouge"&gt;.ring&lt;/code&gt; attribute and have the entries checked at construction. In fact, this has been brought up by other people before as well. Unfortunately, adding this attribute would require going over the matrix methods implemented so far and making sure they don&amp;#8217;t assume anything that might not hold for general rings (especially non-commutative ones: like the determinant in its traditional form wouldn&amp;#8217;t even make sense; however, it turns out there are several generalisations of determinants to non-commutative rings like &lt;a href="https://en.wikipedia.org/wiki/Quasideterminant"&gt;quasideterminants&lt;/a&gt; and &lt;a href="https://en.wikipedia.org/wiki/Dieudonn%C3%A9_determinant"&gt;Dieudonn&amp;#233; determinant&lt;/a&gt;). And this would probably take quite a while and is not directly related to my project. So in the end we decided to have the function work only for matrices for which a &lt;code class="highlighter-rouge"&gt;.ring&lt;/code&gt; attribute has been added manually by the user. For example,&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.polys.solvers import RawMatrix as Matrix
+&amp;gt;&amp;gt;&amp;gt; from sympy.polys.domains import ZZ
+&amp;gt;&amp;gt;&amp;gt; m = Matrix([0,1,3],[2,4,1])
+&amp;gt;&amp;gt;&amp;gt; setattr(m, "ring", ZZ)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;Hopefully, at some point in the future matrices will have this attribute by default.&lt;/p&gt;
+
+&lt;p&gt;The Smith Normal Form was necessary to analyse the structure of the abelianisation of a group: abelian groups are modules over integers which is a PID and so the Smith Normal form is applicable if the relators of the abelianisation are written in the form of a matrix. If 0 is one of the abelian invariants (the diagonal entries of the Smith Normal form), then the abelianisation is infinite and so must be the whole group. I&amp;#8217;ve added this test to the &lt;code class="highlighter-rouge"&gt;.order()&lt;/code&gt; method for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s and now it is able to terminate with the answer &lt;code class="highlighter-rouge"&gt;oo&lt;/code&gt; (infinity) for certain groups for which it wouldn&amp;#8217;t terminate previously. I hope to extend this further with another way to evaluate the order: trying to find a finite index cyclic subgroup (this can be achieved by generating a random word in the group and considering the coset table corresponging to it), and obtain the order of the group by multiplying the index with the order of the cyclic subgroup. The latter could be infinite, in which case the whole group is. Of course, this might not always terminate, but it will terminate in more cases than coset enumeration applied directly to the whole group. This is also what&amp;#8217;s done in &lt;a href="https://www.gap-system.org"&gt;GAP&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I have begun working on it but this week is the last before my exams, and I feel that I should spend more time revising. For this reason, I probably wouldn&amp;#8217;t be able to send a PR with this new test by the end of the week. However, it would most likely be ready by the end of the next one, and considering that the only other thing I planned to do until the first evaluation period was to write (the main parts of) the &lt;code class="highlighter-rouge"&gt;GroupHomomorphism&lt;/code&gt; class assuming that the things it depends on (e.g. rewriting systems) are already implemented, I believe I am going to stay on schedule.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://bjodah.github.io/blog/posts/gsoc-week1.html</guid>
       <author>Bj&#xF6;rn Dahlgren (bjodah)</author>
       <title>Bj&#xF6;rn Dahlgren (bjodah): A summer of code and mathematics</title>
@@ -3466,182 +3485,6 @@ on them.&lt;/p&gt;
 &lt;p&gt;I have enjoyed my GSoC experience and if I were eligible I would not hesitate
 to apply again. I would like to thank those who chose me and made this summer
 of learning and experiences possible.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://gxyd.github.io/blogs/Gsoc2016-project</guid>
-      <author>Gaurav Dhingra (gxyd)</author>
-      <title>Gaurav Dhingra (gxyd): GSoC 2016 wrap-up</title>
-      <pubDate>Fri, 19 Aug 2016 00:00:00 GMT</pubDate>
-      <link>https://gxyd.github.io/blogs/Gsoc2016-project/</link>
-      <description>&lt;p&gt;GSoC 2016 Project with SymPy(&lt;em&gt;wrap up&lt;/em&gt;): Computational Group Theory
-Hi, I&amp;#8217;m Gaurav Dhingra (&lt;a href="https://github.com/gxyd"&gt;@gxyd&lt;/a&gt;) and this post is a report of my work for SymPy under &lt;a href="https://summerofcode.withgoogle.com"&gt;Google Summer of Code 2016&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;This is also intended to be a description of my work for submission to &lt;b&gt;GSoC&amp;#8217;s Final Evaluation&lt;/b&gt;.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;h2 id="work-product-submission"&gt;Work Product Submission&lt;/h2&gt;
-  &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/commits/master?author=gxyd"&gt;commits in GSoC 2016 product submission: Gaurav Dhingra&lt;/a&gt;.
-&lt;a href="https://github.com/gxyd/sympy/wiki/GSoC-2016-Application-Gaurav-Dhingra:-Group-Theory"&gt;GSoC proposal&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;h2 id="pull-requests"&gt;Pull Requests&lt;/h2&gt;
-&lt;/blockquote&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/10350"&gt;#10350 FreeGroup implementation in SymPy&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/11140"&gt;#11140 FpGroup implementation in SymPy&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/11231"&gt;#11231 Low Index Subgroups algorithm implementation in SymPy&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/11295"&gt;#11295 Reidemeister Schreier algorithm implementation in SymPy&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/11460"&gt;#11460 Add documentation for FpGroup file and fix separate bug&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/11361"&gt;#11361 &lt;em&gt;Modified Todd Coxeter&lt;/em&gt; algorithm implementation in SymPy&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;blockquote&gt;
-  &lt;h2 id="bugs-reported"&gt;Bugs reported&lt;/h2&gt;
-  &lt;p&gt;[closed]&lt;/p&gt;
-  &lt;ul&gt;
-    &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/issues/11449"&gt;#11449 &lt;em&gt;TypeError&lt;/em&gt; on compressing a Coset Table generated by coset table method&lt;/a&gt;.&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;h2 id="brief-information"&gt;Brief Information&lt;/h2&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;strong&gt;Project&lt;/strong&gt;: &lt;a href="https://summerofcode.withgoogle.com/projects/#5798586428162048"&gt;Group Theory&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Blog&lt;/strong&gt;: &lt;a href="https://gxyd.github.io/gsoc.html"&gt;https://gxyd.github.io/gsoc.html&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;My Website&lt;/strong&gt;: https://gxyd.github.io&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;e-mail&lt;/strong&gt;: gauravdhingra.gxyd[at]gmail.com, igauravdhingra[at]protonmail.com&lt;/p&gt;
-
-&lt;p&gt;I am a pre-final year undergraduate student of Applied Mathematics at IIT Roorkee.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;h2 id="before-gsoc"&gt;Before GSoC&lt;/h2&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I heard about the GSoC program and about SymPy org. since of one of my college mate, Prasoon Shukla (he also participated in GSoC with SymPy). I was quite amazed by how mathematics and computer science could intersect and help in solving math problems.&lt;/p&gt;
-
-&lt;p&gt;I have been contributing to SymPy from May last year. In the beginning I tended often to work on issues that were more often related to my then on-going courses in my college. In December I completed a basic course on Group Theory, so I thought of choosing to work on Group Theory and I saw quite a few things in CGT were missing from SymPy and those functionalities were already there in GAP and Magma. So I asked them from Kalevi, regarding things that could be taken up for a gsoc project. So finally with some discussions with him and Aaron, I was sure by December end that I was going to work on implementing Finitely Presented Group in SymPy. I looked upto the last GSoC project on CGT by Alexandar Makelov, for reference material that could be used for the implementation and it turned out that the book by Derek Holt, Handbook of Computational Group Theory (will mention as shortly &lt;em&gt;the Handbook&lt;/em&gt;).&lt;/p&gt;
-
-&lt;p&gt;Though I already started working on &lt;a href="https://github.com/sympy/sympy/pull/10350"&gt;PR #10350&lt;/a&gt; for implementation of free groups in beginning January though I started working on the proposal from February beginning.&lt;/p&gt;
-
-&lt;p&gt;So what I should do? Since I was quite sure of the project. Well at that moment I thought, since I am a mathematics major, choosing this project would also help me. So I reached out to Kalevi, said to him what I was thinking to do, what could be good for the project. So we worked upon making a good gsoc proposal.&lt;/p&gt;
-
-&lt;p&gt;Here is my &lt;a href="https://github.com/gxyd/sympy/wiki/GSoC-2016-Application-Gaurav-Dhingra:-Group-Theory"&gt;GSoC proposal&lt;/a&gt;. Now that the summer is over and I&amp;#8217;ve tackled a lot more with computational group theory, it seems that the main points in my GSoC proposal were:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Implementation of different algebraic structures monoid, free monoid, free group, semi group, free semi group, magma, etc.&lt;/li&gt;
-  &lt;li&gt;Rewriting System for reducing the elements of finitely presented groups.&lt;/li&gt;
-  &lt;li&gt;The Todd-Coxeter algorithm for coset enumeration, used to find the index of a subgroup of a finitely presented group.&lt;/li&gt;
-  &lt;li&gt;Reidemeister Schreier algorithm.&lt;/li&gt;
-  &lt;li&gt;Implementation of main &lt;code class="highlighter-rouge"&gt;Group&lt;/code&gt; class.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Well, I submitted my proposal and needed to wait until April 22 to the result, and then&amp;#8230;&lt;/p&gt;
-
-&lt;p&gt;&lt;img height="200" src="https://gxyd.github.io/../images/gsoc_selection.png" width="650" /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;I was selected _/_&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;I got lucky to have Kalevi Suominen like mentor too. Aaron Meurer, the project leader of SymPy was to be co-mentor, and I felt honored to be alloted my preferred mentors.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;h2 id="during-gsoc"&gt;During GSoC&lt;/h2&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;A more detailed account of my progress can be found on my blog &lt;a href="https://gxyd.gitub.io/gsoc.html"&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;We started working on 7th May, we first started with working on completing the Free Group &lt;a href="https://github.com/sympy/sympy/pull/10350"&gt;PR#10350&lt;/a&gt; and we discussed things on our channel &lt;a href="https://gitter.im/sympy/GroupTheory"&gt;sympy/GroupTheory&lt;/a&gt;. We had some discussion on whether &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt; should be a &lt;em&gt;super-class&lt;/em&gt; of &lt;code class="highlighter-rouge"&gt;FreeGroup&lt;/code&gt; or not. In the end we decied not to derive &lt;code class="highlighter-rouge"&gt;FreeGroup&lt;/code&gt; from &lt;code class="highlighter-rouge"&gt;Basic&lt;/code&gt;. Its basic methods had already been written, most of them inspired from GAP software.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;For the first point in my proposal (i.e implementation of algebraic structures), we didn&amp;#8217;t started with them (infact we never worked on them). We then moved onto the Coset Enumeration which covered 5 weeks of work in my timeline, but we didn&amp;#8217;t spend that much time, atleast on the first go at that moment, that did took alomost 3 weeks including the implementation of two strategies of enumeration &lt;em&gt;Felsch&lt;/em&gt; and &lt;em&gt;HLT&lt;/em&gt;. It was the very heart of our GSoC project. There were quite a few bugs that were there in algorithm, especially the bug #11449, to which the Kalevi found the solution.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;For the second point we never reached it, there wasn&amp;#8217;t sufficient time for that. Then we decided to rather implement the &lt;em&gt;Low Index Subgroups&lt;/em&gt; algortithm. It was quite fun to implement the algorithm, since it gave some good insight into CGT. More on this on &lt;a href="https://gxyd.github.io/gsoc_week_5.html"&gt;blog for week 5&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;From here I had passed my mid-term evaluations. Then we started with work on &lt;em&gt;Reidemeister Schreier&lt;/em&gt; algorithm. The algorithm was mainly implemeted using the &lt;a href="http://staff.itee.uq.edu.au/havas/1974h.pdf"&gt;Havas paper&lt;/a&gt;, though the current implementation in SymPy doesn&amp;#8217;t produce the best simplifed presentation. No good pseudocode is available for the algorithm, the major difficulty being the &lt;em&gt;sequence&lt;/em&gt; of applying the operation. More on this on &lt;a href="https://gxyd.github.io/gsoc_week_6.html"&gt;blog for week 6&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;After we thought that the result returned by Reidemeister Schreier algorithm we moved onto &lt;em&gt;modified todd coxeter&lt;/em&gt; algorithm. The main difficulty in it was defining the $\tau$ which can be read on the our channel for comments by Kalevi, I belive it can help in solving that problem.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;As to the fifth point (i.e making &lt;code class="highlighter-rouge"&gt;Group&lt;/code&gt; class), we never worked upon it. Also the topic of &lt;em&gt;Presenation of Finite Groups&lt;/em&gt; , could not get much attention, since of my busy college schedule.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;blockquote&gt;
-  &lt;h3 id="commitscode-written-during-gsoc"&gt;Commits/Code written during GSoC&lt;/h3&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Since I have commited quite a few commits un-related to my project. So I decided to &lt;em&gt;cherry-pick&lt;/em&gt; the commits made for my GSoC project. So the combined commits makes the things quite clear. &lt;a href="https://github.com/gxyd/sympy/pull/6"&gt;PR for GSoC 2016 product submission: Gaurav Dhingra&lt;/a&gt;.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;h3 id="most-annoying-issue"&gt;Most annoying issue&lt;/h3&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;a href="https://github.com/sympy/sympy/issues/11449"&gt;issue #11449&lt;/a&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;h2 id="after-gsoc"&gt;After GSoC&lt;/h2&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;There is still much to be done regarding the finitely presented groups. As during the program my efforts were directed mainly towards getting the fundamental algorithms for finitely presented groups in, the overall structure of the module hasn&amp;#8217;t received much attention.&lt;/p&gt;
-
-&lt;p&gt;The algorithms are in, but the methods in sympy/combinatorics/fp_groups.py are not that much user-friendly. The code organization is not terrible, I think. Some suggestions (both for me and anyone else interested) for future work are:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Cosets in permutation groups&lt;/strong&gt;: [verbatim-copy of Kalevi&amp;#8217;s mail - &lt;em&gt;&amp;#8220;next thing to do&amp;#8221;&lt;/em&gt;] Finding cosets in permutation groups is more challenging to implement since there seems to be no ready-made pseudocode. However, there is a description of the procedure with an example in section 4.6.7. It can be based on the existing implementation of the &lt;em&gt;Screier-Sims algorithm&lt;/em&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Finitely generated abelian groups&lt;/strong&gt;: [verbatim-copy of Kalevi&amp;#8217;s mail - &lt;em&gt;&amp;#8220;next thing to do&amp;#8221;&lt;/em&gt;] There is useful pseudocode in chapter 9 of the book by Holt that should make it fairly easy to implement the basic methods of abelian groups. We should probably try to base the implementation on the code in &lt;code class="highlighter-rouge"&gt;polys.agca&lt;/code&gt; as abelian groups are the same as Z-modules. It is all essentially about linear algebra over the integers.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Complete modified Todd Coxeter algorithm&lt;/strong&gt;: &lt;a href="https://github.com/sympy/sympy/pull/11361"&gt;PR #11361&lt;/a&gt; One bug is currently there in the algorithm, which can be fixed since we have to make assignments to $\tau$. Also currently no tests have been added, which can be added.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Rewriting System&lt;/strong&gt;: This can be a good candidate for a major work, I included this topic in my proposal though was left untouched. Perhaps &lt;em&gt;GAP&lt;/em&gt; could be first seen in this regard. Like always.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Groups folder&lt;/strong&gt;: After a few of the above mentioned things have been done, I believe it could be a good time to make a folder named &lt;code class="highlighter-rouge"&gt;groups&lt;/code&gt;, since finitely presented groups should not be a part of combinatorics module which would contain the all algebraic structures including the permutation groups.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Non-associative algebra&lt;/strong&gt;: (Perhaps I got the spelling of &lt;em&gt;associative&lt;/em&gt; this time right!) Albert CAS could be used to understand the workings related to non-associative algebra, it contains quite good functionalities.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;blockquote&gt;
-  &lt;h2 id="things-i-did-rightwrong"&gt;Things I did right/wrong&lt;/h2&gt;
-&lt;/blockquote&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;I often lagged in writing blogs.&lt;/li&gt;
-  &lt;li&gt;I worked more than expected hours before 15 July (before college started) but much less in the last one month of GSoC because of a little busy schedule.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;blockquote&gt;
-  &lt;h2 id="conclusion"&gt;Conclusion&lt;/h2&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I had say that I did about 70% of the work I promised to do in my proposal, considering that I also did two non-included task of Low Index subgroups algorithm and Modified Todd Coxeter algorithm, so I can say I swapped my work. It is good enough, and I hope to get back to extending the things that I have started. There&amp;#8217;s still some revision to be made, some code to be clean up. And I&amp;#8217;m doing that.&lt;/p&gt;
-
-&lt;p&gt;I don&amp;#8217;t really know if I&amp;#8217;ll pass final evaluations by Google, but, regardless, I&amp;#8217;m really glad for all the coding and development experience I got during these weeks. I&amp;#8217;ll probably use for personal projects, may be in Dissertation in last year, and try to contribute more to SymPy.&lt;/p&gt;
-
-&lt;p&gt;I appreciate the help of my mentor &lt;a href="https://github.com/jksuom"&gt;Kalevi Suominen&lt;/a&gt; who was always there for any query that I had regarding Group Theory in project, and I appreciate his ability to reply back within 1 hour for any message I left any time of day and every day of the week including weekend (I call it 1-hour rule). I think he was a wonderful mentor and I learnt a lot from him, and my co-mentor &lt;a href="https://github.com/asmeurer"&gt;Aaron Meurer&lt;/a&gt;, the current project leader of SymPy, and the entire SymPy community for helping me out and reviewing my work!&lt;/p&gt;
-
-&lt;p&gt;Also thank you &lt;font color="#4885ed"&gt;G&lt;/font&gt;&lt;font color="#db3236"&gt;o&lt;/font&gt;&lt;font color="#f4c20d"&gt;o&lt;/font&gt;&lt;font color="#4885ed"&gt;g&lt;/font&gt;&lt;font color="#3cba54"&gt;l&lt;/font&gt;&lt;font color="#db3236"&gt;e&lt;/font&gt;.&lt;/p&gt;
-
-&lt;p&gt;&amp;#2309;&amp;#2354;&amp;#2357;&amp;#2367;&amp;#2342;&amp;#2366; !&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
