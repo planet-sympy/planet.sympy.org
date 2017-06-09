@@ -89,6 +89,103 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">June 09, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-debb4ede feed-" id="item-87bc0a81">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/09/Week1-Report.html">06:30, Friday, 09 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/09/Week1-Report.html">Arihant Parsoya (parsoyaarihant): GSoC Week1 Report</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/09/Week1-Report.html">06:30, Friday, 09 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/09/Week1-Report.html">GSoC Week1 Report</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Francesco was skeptical if MatchPy could support all Rubi rules. Hence we (I and Abdullah) are trying to implement first set of rules (Algebraic) into MatchPy as soon as possible. Major things involved in accomplishing this are:</p>
+
+<ul>
+  <li><strong>[Completed]</strong> Complete writing parser for Rubi rules form <code class="highlighter-rouge">DownValues[]</code> generated from Mathematica.</li>
+  <li><strong>[Partially Completed]</strong> Complete basic framework for MatchPy to support Rubi rules.</li>
+  <li><strong>[Completed]</strong> Parse Rubi tests.</li>
+  <li><strong>[Incomplete]</strong> Add utility functions for Rubi into SymPy syntax.</li>
+</ul>
+
+<h4 id="generation-of-new-patterns-from-optional-arguments">Generation of new patterns from Optional Arguments</h4>
+<p>Mathematica supports <a href="https://reference.wolfram.com/language/tutorial/OptionalAndDefaultArguments.html">optional arguments</a> for Wild symbols. Some common functions (such as <code class="highlighter-rouge">Mul</code>, <code class="highlighter-rouge">Add</code>, and <code class="highlighter-rouge">Pow</code>) of Mathematica have built&#8208;in default values for their arguments.</p>
+
+<p>MatchPy does not support optional arguments to its <code class="highlighter-rouge">Wildcards</code>. So, Manuel Krebber suggested to add two more rules for each optional argument that exist in the pattern. For example:</p>
+<pre><code class="language-Mathematica">Int[x_^m_.,x_Symbol] :=
+  x^(m+1)/(m+1) /;
+FreeQ[m,x] &amp;&amp; NonzeroQ[m+1]
+</code></pre>
+<p>In the above rule, the default value of <code class="highlighter-rouge">m_</code> is <code class="highlighter-rouge">1</code>. So I implemented these rules in MatchPy:</p>
+<pre><code class="language-Mathematica">Int[x_^m_.,x_Symbol] :=
+  x^(m+1)/(m+1) /;
+FreeQ[m,x] &amp;&amp; NonzeroQ[m+1]
+
+(* substituting m = 1*)
+Int[x_,x_Symbol] :=
+  x^(2)/(2) /;
+FreeQ[2,x] &amp;&amp; NonzeroQ[2]
+</code></pre>
+<p>I have used <a href="https://stackoverflow.com/questions/18035595/powersets-in-python-using-itertools">powerset</a> to generate all combinations of default values to generate patterns. Code for parser can be found <a href="https://github.com/parsoyaarihant/Rubi-Parse">here</a>.</p>
+
+<h4 id="utility-functions">Utility functions</h4>
+<p>There are many utility functions for Rubi written in Mathematica. We are currently focusing on implementing the functions which are being used in Algebraic rules. As soon we we complete our implementation (hopefully by this weekend), we can start running the test suit for Rubi.</p>
+
+<p>I will work on implementing utility functions along with Abdullah in coming days. I will keep testing the module as we implement utility functions and add more rules into our matcher.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">June 08, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -5042,90 +5139,6 @@ The PR is <a href="https://github.com/symengine/symengine/pull/1066">here</a>.</
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">August 19, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-05db50a0 feed-" id="item-5f000cd0">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/sampad.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Sampad Saha (sampadsaha5) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://sampadblog.wordpress.com/2016/08/19/gsoc-week-12-and-wrap-up/">18:49, Friday, 19 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://sampadblog.wordpress.com/2016/08/19/gsoc-week-12-and-wrap-up/">Sampad Saha (sampadsaha5): GSoC Week 12 and Wrap-up</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/sampad.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Sampad Saha (sampadsaha5) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://sampadblog.wordpress.com/2016/08/19/gsoc-week-12-and-wrap-up/">18:49, Friday, 19 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://sampadblog.wordpress.com/2016/08/19/gsoc-week-12-and-wrap-up/">GSoC Week 12 and Wrap-up</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Hello all! This is officially the last week for Google Summer of Code 2016. The submission and final evaluation has already started. Last week I was busy with fixing bugs and preparing documentation for the beam module.</p>
-<h4><em><strong>The things that I have implemented till now</strong></em></h4>
-<ul>
-<li>DiracDelta can be represented in piecewise form.</li>
-<li>DiracDelta and Heaviside have a detailed docstring.</li>
-<li>DiracDelta can be pretty printed using &#948;(x).</li>
-<li>Singularity Function module which can perform all sort of mathematical operations on discontinuity functions.</li>
-<li>Beam module which can solve 2D beam bending problems.</li>
-</ul>
-<h4><em><strong>Future Plans</strong></em></h4>
-<p>Jason has came up with some new ideas for beam module:</p>
-<ul>
-<li>Plot the shear, bending, slope and deflection diagrams..</li>
-<li>Compute the strain and stress at any location in the beam.</li>
-<li>Improve the beam module for more complicated loads.</li>
-</ul>
-<p>I have planed for a long term association with SymPy, I am taking the full responsibilty of my code and I will try to contribute as much as I can. I will help the new developers with the Sympy code paradigms and the development workflow.</p>
-<p>I have been able to meet all the target that I had mentioned in my <a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Application-Sampad-Kumar-Saha:-Singularity-Functions">proposal</a>&#160;and all of my pull requests have got merged except PR <a href="https://github.com/sympy/sympy/pull/11494">11494</a>.&#160;It was great working with Sympy. Jason, Sartaj, Aaron, Kalevi, Isuru and all other sympy members have helped me a lot. Many of the times, I used to get stuck with some implementation, testing or with the Travis CI build but, for everytime they have always tried to help me fix them. My mentors have always appreciated and motivated me. I got to learn many new thing about the software development workflow. Thank you Sympy for making this summer an awesome journey of learning and coding.</p>
-<p>That&#8217;s all folks.</p>
-<p>Happy Coding.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/1042/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/1042/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&#038;blog=102728326&#038;post=1042&#038;subd=sampadblog&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -5153,128 +5166,128 @@ The PR is <a href="https://github.com/symengine/symengine/pull/1066">here</a>.</
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>18:22, Friday, 09 June</td>
-<td>18:37, Friday, 09 June</td>
+<td>18:41, Friday, 09 June</td>
+<td>18:56, Friday, 09 June</td>
 </tr>
 </table>
 

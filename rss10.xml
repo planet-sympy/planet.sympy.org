@@ -7,6 +7,46 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/06/09/Week1-Report</guid>
+      <author>Arihant Parsoya (parsoyaarihant)</author>
+      <title>Arihant Parsoya (parsoyaarihant): GSoC Week1 Report</title>
+      <pubDate>Fri, 09 Jun 2017 06:30:00 GMT</pubDate>
+      <link>https://parsoyaarihant.github.io/blog/gsoc/2017/06/09/Week1-Report.html</link>
+      <description>&lt;p&gt;Francesco was skeptical if MatchPy could support all Rubi rules. Hence we (I and Abdullah) are trying to implement first set of rules (Algebraic) into MatchPy as soon as possible. Major things involved in accomplishing this are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;[Completed]&lt;/strong&gt; Complete writing parser for Rubi rules form &lt;code class="highlighter-rouge"&gt;DownValues[]&lt;/code&gt; generated from Mathematica.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;[Partially Completed]&lt;/strong&gt; Complete basic framework for MatchPy to support Rubi rules.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;[Completed]&lt;/strong&gt; Parse Rubi tests.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;[Incomplete]&lt;/strong&gt; Add utility functions for Rubi into SymPy syntax.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id="generation-of-new-patterns-from-optional-arguments"&gt;Generation of new patterns from Optional Arguments&lt;/h4&gt;
+&lt;p&gt;Mathematica supports &lt;a href="https://reference.wolfram.com/language/tutorial/OptionalAndDefaultArguments.html"&gt;optional arguments&lt;/a&gt; for Wild symbols. Some common functions (such as &lt;code class="highlighter-rouge"&gt;Mul&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;Add&lt;/code&gt;, and &lt;code class="highlighter-rouge"&gt;Pow&lt;/code&gt;) of Mathematica have built&amp;#8208;in default values for their arguments.&lt;/p&gt;
+
+&lt;p&gt;MatchPy does not support optional arguments to its &lt;code class="highlighter-rouge"&gt;Wildcards&lt;/code&gt;. So, Manuel Krebber suggested to add two more rules for each optional argument that exist in the pattern. For example:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-Mathematica"&gt;Int[x_^m_.,x_Symbol] :=
+  x^(m+1)/(m+1) /;
+FreeQ[m,x] &amp;amp;&amp;amp; NonzeroQ[m+1]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the above rule, the default value of &lt;code class="highlighter-rouge"&gt;m_&lt;/code&gt; is &lt;code class="highlighter-rouge"&gt;1&lt;/code&gt;. So I implemented these rules in MatchPy:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-Mathematica"&gt;Int[x_^m_.,x_Symbol] :=
+  x^(m+1)/(m+1) /;
+FreeQ[m,x] &amp;amp;&amp;amp; NonzeroQ[m+1]
+
+(* substituting m = 1*)
+Int[x_,x_Symbol] :=
+  x^(2)/(2) /;
+FreeQ[2,x] &amp;amp;&amp;amp; NonzeroQ[2]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I have used &lt;a href="https://stackoverflow.com/questions/18035595/powersets-in-python-using-itertools"&gt;powerset&lt;/a&gt; to generate all combinations of default values to generate patterns. Code for parser can be found &lt;a href="https://github.com/parsoyaarihant/Rubi-Parse"&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h4 id="utility-functions"&gt;Utility functions&lt;/h4&gt;
+&lt;p&gt;There are many utility functions for Rubi written in Mathematica. We are currently focusing on implementing the functions which are being used in Algebraic rules. As soon we we complete our implementation (hopefully by this weekend), we can start running the test suit for Rubi.&lt;/p&gt;
+
+&lt;p&gt;I will work on implementing utility functions along with Abdullah in coming days. I will keep testing the module as we implement utility functions and add more rules into our matcher.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://nesar2017.wordpress.com/?p=49</guid>
       <author>Abdullah Javed Nesar (Abdullahjavednesar)</author>
       <title>Abdullah Javed Nesar (Abdullahjavednesar): Week 2 Begins</title>
@@ -3321,33 +3361,6 @@ The PR is &lt;a href="https://github.com/symengine/symengine/pull/1066"&gt;here&
     &lt;p&gt;and this &lt;a href="https://github.com/sympy/sympy/issues/11528"&gt;#11528&lt;/a&gt;. &lt;code class="highlighter-rouge"&gt;factor_list&lt;/code&gt; will be helpful in factoring the equation in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; and solve for it factors and union the solution(during the PR #11188 discussion with Harsh this idea came out). It will actually replace the &lt;a href="https://github.com/sympy/sympy/blob/master/sympy/solvers/solveset.py#L646"&gt;elif f.is_Mul and all(_is_finite_with_finite_vars(m, domain)&lt;/a&gt; statement in &lt;code class="highlighter-rouge"&gt;_solveset&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;factor_list&lt;/code&gt; will be used soon.&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ul&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://sampadblog.wordpress.com/?p=1042</guid>
-      <author>Sampad Saha (sampadsaha5)</author>
-      <title>Sampad Saha (sampadsaha5): GSoC Week 12 and Wrap-up</title>
-      <pubDate>Fri, 19 Aug 2016 18:49:39 GMT</pubDate>
-      <link>https://sampadblog.wordpress.com/2016/08/19/gsoc-week-12-and-wrap-up/</link>
-      <description>&lt;p&gt;Hello all! This is officially the last week for Google Summer of Code 2016. The submission and final evaluation has already started. Last week I was busy with fixing bugs and preparing documentation for the beam module.&lt;/p&gt;
-&lt;h4&gt;&lt;em&gt;&lt;strong&gt;The things that I have implemented till now&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;DiracDelta can be represented in piecewise form.&lt;/li&gt;
-&lt;li&gt;DiracDelta and Heaviside have a detailed docstring.&lt;/li&gt;
-&lt;li&gt;DiracDelta can be pretty printed using &amp;#948;(x).&lt;/li&gt;
-&lt;li&gt;Singularity Function module which can perform all sort of mathematical operations on discontinuity functions.&lt;/li&gt;
-&lt;li&gt;Beam module which can solve 2D beam bending problems.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4&gt;&lt;em&gt;&lt;strong&gt;Future Plans&lt;/strong&gt;&lt;/em&gt;&lt;/h4&gt;
-&lt;p&gt;Jason has came up with some new ideas for beam module:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Plot the shear, bending, slope and deflection diagrams..&lt;/li&gt;
-&lt;li&gt;Compute the strain and stress at any location in the beam.&lt;/li&gt;
-&lt;li&gt;Improve the beam module for more complicated loads.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;I have planed for a long term association with SymPy, I am taking the full responsibilty of my code and I will try to contribute as much as I can. I will help the new developers with the Sympy code paradigms and the development workflow.&lt;/p&gt;
-&lt;p&gt;I have been able to meet all the target that I had mentioned in my &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Application-Sampad-Kumar-Saha:-Singularity-Functions"&gt;proposal&lt;/a&gt;&amp;#160;and all of my pull requests have got merged except PR &lt;a href="https://github.com/sympy/sympy/pull/11494"&gt;11494&lt;/a&gt;.&amp;#160;It was great working with Sympy. Jason, Sartaj, Aaron, Kalevi, Isuru and all other sympy members have helped me a lot. Many of the times, I used to get stuck with some implementation, testing or with the Travis CI build but, for everytime they have always tried to help me fix them. My mentors have always appreciated and motivated me. I got to learn many new thing about the software development workflow. Thank you Sympy for making this summer an awesome journey of learning and coding.&lt;/p&gt;
-&lt;p&gt;That&amp;#8217;s all folks.&lt;/p&gt;
-&lt;p&gt;Happy Coding.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/sampadblog.wordpress.com/1042/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/sampadblog.wordpress.com/1042/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=sampadblog.wordpress.com&amp;#038;blog=102728326&amp;#038;post=1042&amp;#038;subd=sampadblog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>
