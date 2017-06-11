@@ -93,7 +93,7 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-3b0ec3aa feed-" id="item-2cb102b3">
+		    <div class="box" class="item feed-3b0ec3aa feed-" id="item-1167850f">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -152,17 +152,17 @@
 <p><span style="text-decoration: underline;"><strong>Clockwise Sort</strong></span><br />
 I wanted to overcome some of the method-wise limitations. So, the first improvement I did was to implement a clockwise sorting algorithm for the points of the input polygon.<br />
 Come to think of it, for the 3D use case the points belonging to a particular facet will have to be sorted anti-clockwise for the algorithm to work. Therefore, it would be better to include an extra argument &#8220;<span style="color: #00ff00;"><span style="color: #808000;">orient</span></span>&#8221; with default value 1 (clockwise sort) and -1 when anti-clockwise sort.</p>
-<p>First I tried to think of it myself, and naturally the first thing that came to my mind was sorting the points depending on their <img alt="&#92;arctan { &#92;theta }" class="latex" src="https://s0.wp.com/latex.php?latex=%5Carctan+%7B+%5Ctheta+%7D&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="&#92;arctan { &#92;theta }" /> value where <img alt="&#92;theta" class="latex" src="https://s0.wp.com/latex.php?latex=%5Ctheta&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="&#92;theta" /> is the angle that the line from that point to an arbitrary reference point (center) makes with the x-axis (more correctly, the independent variable axis). But obviously this is not efficient, because calculating the&#160;<img alt="&#92;arctan { &#92;theta }" class="latex" src="https://s0.wp.com/latex.php?latex=%5Carctan+%7B+%5Ctheta+%7D&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="&#92;arctan { &#92;theta }" /> value is expensive.</p>
-<p>Then I came across <span style="color: #00ccff;"><a href="https://stackoverflow.com/a/6989383" rel="noopener" target="_blank"><span style="color: #00ccff;">this answer</span></a></span> on StackOverflow. It was a much better technique because it did not use&#160;<img alt="&#92;arctan { &#92;theta }" class="latex" src="https://s0.wp.com/latex.php?latex=%5Carctan+%7B+%5Ctheta+%7D&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="&#92;arctan { &#92;theta }" /> , no division operations and no distance computing using square root (as pointed out in the comments). Let us understand the reasoning.</p>
-<p>Firstly, I&#8217;m sure we all know that the distance of a point <img alt="({ x }_{ 1 },{ y }_{ 1 })" class="latex" src="https://s0.wp.com/latex.php?latex=%28%7B+x+%7D_%7B+1+%7D%2C%7B+y+%7D_%7B+1+%7D%29&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="({ x }_{ 1 },{ y }_{ 1 })" /> from the line <img alt="(ax+by+c=0)" class="latex" src="https://s0.wp.com/latex.php?latex=%28ax%2Bby%2Bc%3D0%29&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="(ax+by+c=0)" /> is <img alt="(&#92;frac { a{ x }_{ 1 }+b{ y }_{ 1 }+c }{ &#92;sqrt { { a }^{ 2 }+{ b }^{ 2 } } })" class="latex" src="https://s0.wp.com/latex.php?latex=%28%5Cfrac+%7B+a%7B+x+%7D_%7B+1+%7D%2Bb%7B+y+%7D_%7B+1+%7D%2Bc+%7D%7B+%5Csqrt+%7B+%7B+a+%7D%5E%7B+2+%7D%2B%7B+b+%7D%5E%7B+2+%7D+%7D+%7D%29&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="(&#92;frac { a{ x }_{ 1 }+b{ y }_{ 1 }+c }{ &#92;sqrt { { a }^{ 2 }+{ b }^{ 2 } } })" />. Now, for clockwise sorting we need to decide the left or right orientation of a point given the other point and a constant reference(in this case, the center). Therefore, it is required to define a custom compare function.</p>
-<p>Given three points : <img alt="a, b, center" class="latex" src="https://s0.wp.com/latex.php?latex=a%2C+b%2C+center&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="a, b, center" />, consider the line made by points&#160;<img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="b" /> and <img alt="center" class="latex" src="https://s0.wp.com/latex.php?latex=center&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="center" />. The point <img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="a" /> will be on the left if numerator of of above formula is negative and right if positive. The cases where we need not consider this formula is when we are sure of :</p>
-<p>Case 1 &gt; The center lies in between <img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="a" /> and <img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="b" />(Firstly check this by comparing x-coordinates).</p>
+<p>First I tried to think of it myself, and naturally the first thing that came to my mind was sorting the points depending on their <img alt="&#92;arctan { &#92;theta }" class="latex" src="https://s0.wp.com/latex.php?latex=%5Carctan+%7B+%5Ctheta+%7D&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="&#92;arctan { &#92;theta }" /> value where <img alt="&#92;theta" class="latex" src="https://s0.wp.com/latex.php?latex=%5Ctheta&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="&#92;theta" /> is the angle that the line from that point to an arbitrary reference point (center) makes with the x-axis (more correctly, the independent variable axis). But obviously this is not efficient, because calculating the&#160;<img alt="&#92;arctan { &#92;theta }" class="latex" src="https://s0.wp.com/latex.php?latex=%5Carctan+%7B+%5Ctheta+%7D&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="&#92;arctan { &#92;theta }" /> value is expensive.</p>
+<p>Then I came across <span style="color: #00ccff;"><a href="https://stackoverflow.com/a/6989383" rel="noopener" target="_blank"><span style="color: #00ccff;">this answer</span></a></span> on StackOverflow. It was a much better technique because it did not use&#160;<img alt="&#92;arctan { &#92;theta }" class="latex" src="https://s0.wp.com/latex.php?latex=%5Carctan+%7B+%5Ctheta+%7D&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="&#92;arctan { &#92;theta }" /> , no division operations and no distance computing using square root (as pointed out in the comments). Let us understand the reasoning.</p>
+<p>Firstly, I&#8217;m sure we all know that the distance of a point <img alt="({ x }_{ 1 },{ y }_{ 1 })" class="latex" src="https://s0.wp.com/latex.php?latex=%28%7B+x+%7D_%7B+1+%7D%2C%7B+y+%7D_%7B+1+%7D%29&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="({ x }_{ 1 },{ y }_{ 1 })" /> from the line <img alt="(ax+by+c=0)" class="latex" src="https://s0.wp.com/latex.php?latex=%28ax%2Bby%2Bc%3D0%29&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="(ax+by+c=0)" /> is <img alt="(&#92;frac { a{ x }_{ 1 }+b{ y }_{ 1 }+c }{ &#92;sqrt { { a }^{ 2 }+{ b }^{ 2 } } })" class="latex" src="https://s0.wp.com/latex.php?latex=%28%5Cfrac+%7B+a%7B+x+%7D_%7B+1+%7D%2Bb%7B+y+%7D_%7B+1+%7D%2Bc+%7D%7B+%5Csqrt+%7B+%7B+a+%7D%5E%7B+2+%7D%2B%7B+b+%7D%5E%7B+2+%7D+%7D+%7D%29&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="(&#92;frac { a{ x }_{ 1 }+b{ y }_{ 1 }+c }{ &#92;sqrt { { a }^{ 2 }+{ b }^{ 2 } } })" />. Now, for clockwise sorting we need to decide the left or right orientation of a point given the other point and a constant reference(in this case, the center). Therefore, it is required to define a custom compare function.</p>
+<p>Given three points : <img alt="a, b, center" class="latex" src="https://s0.wp.com/latex.php?latex=a%2C+b%2C+center&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="a, b, center" />, consider the line made by points&#160;<img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="b" /> and <img alt="center" class="latex" src="https://s0.wp.com/latex.php?latex=center&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="center" />. The point <img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="a" /> will be on the left if numerator of of above formula is negative and right if positive. The cases where we need not consider this formula is when we are sure of :</p>
+<p>Case 1 &gt; The center lies in between <img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="a" /> and <img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="b" />(Firstly check this by comparing x-coordinates).</p>
 <p>Case 2 &gt; If all the points are on a line parallel to y-axis :<br />
 Sub-Case 1 &gt; If any point is above center, that point is &#8220;lesser&#8221; than other one.<br />
 Sub-Case 2 &gt; If both below center, the point closer to center is &#8220;lesser&#8221; than<br />
 other one.</p>
 <p>Case 3 &gt; This is when Case 1, 2 and the standard check fails.<br />
-This can only happen if <img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="a" />, <img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="b" /> and&#160;<img alt="center" class="latex" src="https://s0.wp.com/latex.php?latex=center&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="center" /> are all collinear points and <img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="a" />, <img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&#038;bg=ffffff&#038;fg=444444&#038;s=2" title="b" /> both lie on the same side of the line with respect to center. Then, the one farthest&#160; from center is &#8220;lesser&#8221; than the other one.</p>
+This can only happen if <img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="a" />, <img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="b" /> and&#160;<img alt="center" class="latex" src="https://s0.wp.com/latex.php?latex=center&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="center" /> are all collinear points and <img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="a" />, <img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&#038;bg=ffffff&#038;fg=444444&#038;s=-1" title="b" /> both lie on the same side of the line with respect to center. Then, the one farthest&#160; from center is &#8220;lesser&#8221; than the other one.</p>
 <p>Ondrej and Prof.Sukumar have looked at the notebook but will discuss in detail further and then inform me about the final 2D API.</p>
 <p>Till then, I&#8217;ll work on the existing limitations.</p>
 <p>&nbsp;</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/247/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/247/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&#038;blog=126429718&#038;post=247&#038;subd=arif7blog&#038;ref=&#038;feed=1" width="1" />
@@ -5151,128 +5151,128 @@ The PR is <a href="https://github.com/symengine/symengine/pull/1066">here</a>.</
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>10:41, Sunday, 11 June</td>
-<td>10:56, Sunday, 11 June</td>
+<td>11:02, Sunday, 11 June</td>
+<td>11:17, Sunday, 11 June</td>
 </tr>
 </table>
 
