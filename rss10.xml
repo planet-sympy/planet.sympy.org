@@ -7,6 +7,33 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=247</guid>
+      <author>Arif Ahmed (ArifAhmed1995)</author>
+      <title>Arif Ahmed (ArifAhmed1995): Week 2 Report(June 3 &#x2013; June 10) : Working Prototype, Improving functionality.</title>
+      <pubDate>Sun, 11 Jun 2017 10:16:52 GMT</pubDate>
+      <link>https://arif7blog.wordpress.com/2017/06/11/week-2-reportjune-3-june-10-working-prototype-improving-functionality/</link>
+      <description>&lt;p&gt;The 2D use case works perfectly although there are limitations. The current API and method-wise limitations are discussed &lt;a href="https://github.com/ArifAhmed1995/sympy/blob/857463fac558702def0af27d08a1afa01a14aff0/IntegrationOverPolytopes.ipynb" rel="noopener" target="_blank"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;That lone failing test was caused due to typecasting a Python set object to a list. Sets in Python do not support indexing, so when they are coerced to list, indexing of the resulting object is arbitrary. Therefore, I had to change to an axes list of [x, y].&lt;/p&gt;
+&lt;p&gt;Some other coding improvements were suggested by Gaurav Dhingra (another GSoC student). One can view them as comments to the &lt;a href="https://github.com/sympy/sympy/pull/12673" rel="noopener" target="_blank"&gt;pull request&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;span style="text-decoration: underline;"&gt;&lt;strong&gt;Clockwise Sort&lt;/strong&gt;&lt;/span&gt;&lt;br /&gt;
+I wanted to overcome some of the method-wise limitations. So, the first improvement I did was to implement a clockwise sorting algorithm for the points of the input polygon.&lt;br /&gt;
+Come to think of it, for the 3D use case the points belonging to a particular facet will have to be sorted anti-clockwise for the algorithm to work. Therefore, it would be better to include an extra argument &amp;#8220;&lt;span style="color: #00ff00;"&gt;&lt;span style="color: #808000;"&gt;orient&lt;/span&gt;&lt;/span&gt;&amp;#8221; with default value 1 (clockwise sort) and -1 when anti-clockwise sort.&lt;/p&gt;
+&lt;p&gt;First I tried to think of it myself, and naturally the first thing that came to my mind was sorting the points depending on their &lt;img alt="&amp;#92;arctan { &amp;#92;theta }" class="latex" src="https://s0.wp.com/latex.php?latex=%5Carctan+%7B+%5Ctheta+%7D&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="&amp;#92;arctan { &amp;#92;theta }" /&gt; value where &lt;img alt="&amp;#92;theta" class="latex" src="https://s0.wp.com/latex.php?latex=%5Ctheta&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="&amp;#92;theta" /&gt; is the angle that the line from that point to an arbitrary reference point (center) makes with the x-axis (more correctly, the independent variable axis). But obviously this is not efficient, because calculating the&amp;#160;&lt;img alt="&amp;#92;arctan { &amp;#92;theta }" class="latex" src="https://s0.wp.com/latex.php?latex=%5Carctan+%7B+%5Ctheta+%7D&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="&amp;#92;arctan { &amp;#92;theta }" /&gt; value is expensive.&lt;/p&gt;
+&lt;p&gt;Then I came across &lt;span style="color: #00ccff;"&gt;&lt;a href="https://stackoverflow.com/a/6989383" rel="noopener" target="_blank"&gt;&lt;span style="color: #00ccff;"&gt;this answer&lt;/span&gt;&lt;/a&gt;&lt;/span&gt; on StackOverflow. It was a much better technique because it did not use&amp;#160;&lt;img alt="&amp;#92;arctan { &amp;#92;theta }" class="latex" src="https://s0.wp.com/latex.php?latex=%5Carctan+%7B+%5Ctheta+%7D&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="&amp;#92;arctan { &amp;#92;theta }" /&gt; , no division operations and no distance computing using square root (as pointed out in the comments). Let us understand the reasoning.&lt;/p&gt;
+&lt;p&gt;Firstly, I&amp;#8217;m sure we all know that the distance of a point &lt;img alt="({ x }_{ 1 },{ y }_{ 1 })" class="latex" src="https://s0.wp.com/latex.php?latex=%28%7B+x+%7D_%7B+1+%7D%2C%7B+y+%7D_%7B+1+%7D%29&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="({ x }_{ 1 },{ y }_{ 1 })" /&gt; from the line &lt;img alt="(ax+by+c=0)" class="latex" src="https://s0.wp.com/latex.php?latex=%28ax%2Bby%2Bc%3D0%29&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="(ax+by+c=0)" /&gt; is &lt;img alt="(&amp;#92;frac { a{ x }_{ 1 }+b{ y }_{ 1 }+c }{ &amp;#92;sqrt { { a }^{ 2 }+{ b }^{ 2 } } })" class="latex" src="https://s0.wp.com/latex.php?latex=%28%5Cfrac+%7B+a%7B+x+%7D_%7B+1+%7D%2Bb%7B+y+%7D_%7B+1+%7D%2Bc+%7D%7B+%5Csqrt+%7B+%7B+a+%7D%5E%7B+2+%7D%2B%7B+b+%7D%5E%7B+2+%7D+%7D+%7D%29&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="(&amp;#92;frac { a{ x }_{ 1 }+b{ y }_{ 1 }+c }{ &amp;#92;sqrt { { a }^{ 2 }+{ b }^{ 2 } } })" /&gt;. Now, for clockwise sorting we need to decide the left or right orientation of a point given the other point and a constant reference(in this case, the center). Therefore, it is required to define a custom compare function.&lt;/p&gt;
+&lt;p&gt;Given three points : &lt;img alt="a, b, center" class="latex" src="https://s0.wp.com/latex.php?latex=a%2C+b%2C+center&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="a, b, center" /&gt;, consider the line made by points&amp;#160;&lt;img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="b" /&gt; and &lt;img alt="center" class="latex" src="https://s0.wp.com/latex.php?latex=center&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="center" /&gt;. The point &lt;img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="a" /&gt; will be on the left if numerator of of above formula is negative and right if positive. The cases where we need not consider this formula is when we are sure of :&lt;/p&gt;
+&lt;p&gt;Case 1 &amp;gt; The center lies in between &lt;img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="a" /&gt; and &lt;img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="b" /&gt;(Firstly check this by comparing x-coordinates).&lt;/p&gt;
+&lt;p&gt;Case 2 &amp;gt; If all the points are on a line parallel to y-axis :&lt;br /&gt;
+Sub-Case 1 &amp;gt; If any point is above center, that point is &amp;#8220;lesser&amp;#8221; than other one.&lt;br /&gt;
+Sub-Case 2 &amp;gt; If both below center, the point closer to center is &amp;#8220;lesser&amp;#8221; than&lt;br /&gt;
+other one.&lt;/p&gt;
+&lt;p&gt;Case 3 &amp;gt; This is when Case 1, 2 and the standard check fails.&lt;br /&gt;
+This can only happen if &lt;img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="a" /&gt;, &lt;img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="b" /&gt; and&amp;#160;&lt;img alt="center" class="latex" src="https://s0.wp.com/latex.php?latex=center&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="center" /&gt; are all collinear points and &lt;img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="a" /&gt;, &lt;img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=2" title="b" /&gt; both lie on the same side of the line with respect to center. Then, the one farthest&amp;#160; from center is &amp;#8220;lesser&amp;#8221; than the other one.&lt;/p&gt;
+&lt;p&gt;Ondrej and Prof.Sukumar have looked at the notebook but will discuss in detail further and then inform me about the final 2D API.&lt;/p&gt;
+&lt;p&gt;Till then, I&amp;#8217;ll work on the existing limitations.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/247/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/247/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=247&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/06/09/Week1-Report</guid>
       <author>Arihant Parsoya (parsoyaarihant)</author>
       <title>Arihant Parsoya (parsoyaarihant): GSoC Week1 Report</title>
@@ -3316,51 +3343,6 @@ out_f = f-&amp;gt;zz_factor_sqf();
 
 &lt;p&gt;After this I need to implement the algorithm for square free factorization and the trial division for finding the power of factor in the polynomial, this way we will be able to factor the polynomials.
 The PR is &lt;a href="https://github.com/symengine/symengine/pull/1066"&gt;here&lt;/a&gt;.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shekharrajak.github.io/blog/GSoC-2016/Coding-Period-week-13</guid>
-      <author>Shekhar Prasad Rajak (shekharrajak)</author>
-      <title>Shekhar Prasad Rajak (shekharrajak): Coding Period Week 13 - Last week and conclusion</title>
-      <pubDate>Sat, 20 Aug 2016 00:00:00 GMT</pubDate>
-      <link>http://shekharrajak.github.io/blog/GSoC-2016/Coding-Period-week-13</link>
-      <description>&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Documentation nonlinsolve:&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/11532"&gt;#11532&lt;/a&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Conclusion :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;So the GSoC coding period is going to end. Here I am writing what I did, my todo list and suggestions for future work.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;One can see the progress report of each week and minutes of meeting here :
-&lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2016-Solvers-Progress"&gt;GSoC-2016-Solvers-Progress&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;My all the PRs link is here : &lt;a href="https://github.com/sympy/sympy/pulls?utf8=%E2%9C%93&amp;amp;q=is%3Aopen%7Cclosed%20is%3Apr%20author%3AShekharrajak%20"&gt;sympy/pulls/shekharrajak&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;I have created a vertical timeline to show all the work in chrononical order in this link : &lt;a href="http://shekharrajak.github.io/gsoc16_final.html"&gt;timeline&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Meanwhile :&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;I find one issue : &lt;a href="https://github.com/sympy/sympy/issues/11534"&gt;#11534&lt;/a&gt; in mailing list discussion. This shows that we need better
-&lt;code class="highlighter-rouge"&gt;invert&lt;/code&gt; method for inverting nested roots/powers equtions in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; .&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;and this &lt;a href="https://github.com/sympy/sympy/issues/11528"&gt;#11528&lt;/a&gt;. &lt;code class="highlighter-rouge"&gt;factor_list&lt;/code&gt; will be helpful in factoring the equation in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; and solve for it factors and union the solution(during the PR #11188 discussion with Harsh this idea came out). It will actually replace the &lt;a href="https://github.com/sympy/sympy/blob/master/sympy/solvers/solveset.py#L646"&gt;elif f.is_Mul and all(_is_finite_with_finite_vars(m, domain)&lt;/a&gt; statement in &lt;code class="highlighter-rouge"&gt;_solveset&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;factor_list&lt;/code&gt; will be used soon.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;</description>
     </item>
   </channel>
 </rss>
