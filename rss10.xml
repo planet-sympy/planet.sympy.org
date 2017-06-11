@@ -7,6 +7,123 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://bjodah.github.io/blog/posts/gsoc-week2.html</guid>
+      <author>Bj&#xF6;rn Dahlgren (bjodah)</author>
+      <title>Bj&#xF6;rn Dahlgren (bjodah): Status update week 2 GSoC</title>
+      <pubDate>Sun, 11 Jun 2017 21:37:00 GMT</pubDate>
+      <link>http://bjodah.github.io/blog/posts/gsoc-week2.html</link>
+      <description>&lt;div&gt;&lt;p&gt;I have spent the second week of Google Summer of Code on essentially two things:&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;Continued work on type awareness in the code printers (&lt;tt class="docutils literal"&gt;CCodePrinter&lt;/tt&gt; and
+&lt;tt class="docutils literal"&gt;FCodePrinter&lt;/tt&gt;). The work is ongoing in &lt;a class="reference external" href="https://github.com/sympy/sympy/pull/12693"&gt;gh-12693&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Writing tutorial &lt;a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial"&gt;code&lt;/a&gt; on code-generation in the form of jupyter notebooks for the
+upcoming SciPy 2017 &lt;a class="reference external" href="https://scipy2017.scipy.org/ehome/220975/493418/"&gt;conference&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="section" id="precision-aware-code-printers"&gt;
+&lt;h2&gt;Precision aware code printers&lt;/h2&gt;
+&lt;p&gt;After my weekly mentor meeting, we decided to take another approach to
+how we are going to represent &lt;tt class="docutils literal"&gt;Variable&lt;/tt&gt; instances in the
+&lt;tt class="docutils literal"&gt;.codegen.ast&lt;/tt&gt; module. Previously I had proposed to use quite a
+number of arguments (stored in &lt;tt class="docutils literal"&gt;.args&lt;/tt&gt; since it inherits
+&lt;tt class="docutils literal"&gt;Basic&lt;/tt&gt;). Aaron suggested we might want to represent that underlying
+information differently. After some discussion we came to the
+conclusion that we could introduce a &lt;tt class="docutils literal"&gt;Attribute&lt;/tt&gt; class (inhereting
+from &lt;tt class="docutils literal"&gt;Symbol&lt;/tt&gt;) to describe things such as value const-ness, and
+pointer const-ness (those two are available as &lt;tt class="docutils literal"&gt;value_const&lt;/tt&gt; and
+&lt;tt class="docutils literal"&gt;pointer_const&lt;/tt&gt;). Attributes will be stored in a &lt;tt class="docutils literal"&gt;FiniteSet&lt;/tt&gt;
+(essentially SymPy version of &lt;tt class="docutils literal"&gt;set&lt;/tt&gt;) and the instances we provide as
+"pre-made" in the &lt;tt class="docutils literal"&gt;.codegen.ast&lt;/tt&gt; module will be supported by the
+printers by default. Here is some example code showing what the
+current proposed API looks like (for C99):&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+&amp;gt;&amp;gt;&amp;gt; u = symbols('u', real=True)
+&amp;gt;&amp;gt;&amp;gt; ptr = Pointer.deduced(u, {pointer_const, restrict})
+&amp;gt;&amp;gt;&amp;gt; ccode(Declaration(ptr))
+'double * const restrict u;'
+&lt;/pre&gt;
+&lt;p&gt;and for Fortran:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+&amp;gt;&amp;gt;&amp;gt; vx = Variable(Symbol('x'), {value_const}, float32)
+&amp;gt;&amp;gt;&amp;gt; fcode(Declaration(vx, 42))
+'real(4), parameter :: x = 42'
+&lt;/pre&gt;
+&lt;p&gt;The C code printer can now also print code using different math functions depending
+on the targeted precision (functions guaranteed to be present in the C99 stanard):&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+&amp;gt;&amp;gt;&amp;gt; ccode(x**3.7, standard='c99', precision=float32)
+'powf(x, 3.7F)'
+&amp;gt;&amp;gt;&amp;gt; ccode(exp(x/2), standard='c99', precision=float80)
+'expl((1.0L/2.0L)*x)'
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div class="section" id="tutorial-material-for-code-generation"&gt;
+&lt;h2&gt;Tutorial material for code generation&lt;/h2&gt;
+&lt;p&gt;Aaron, Jason and I have been discussing what examples to use for the
+tutorial on code generation with SymPy. Right now we are aiming to use
+quite a few examples from chemistry actually, and more specifically
+&lt;a class="reference external" href="https://en.wikipedia.org/wiki/Chemical_kinetics"&gt;chemical kinetics&lt;/a&gt;. This is the
+precise application which got me started using SymPy for
+code-generation, so it lies close to my heart (I do extensive modeling
+of chemical kinetics in my PhD studies).&lt;/p&gt;
+&lt;p&gt;Working on the tutorial material has already been really helpful for
+getting insight in development needs for the exisiting classes and
+functions used for code-generation. I was hoping to use &lt;tt class="docutils literal"&gt;autowrap&lt;/tt&gt;
+from the &lt;tt class="docutils literal"&gt;.utilities&lt;/tt&gt; module. Unfortunately I found that it was not
+flexible enough to be useful for integration of systems of ODEs (where
+we need to evaluate a vector-valued function taking a vector as
+input). I did attempt to subclass the &lt;tt class="docutils literal"&gt;CodeWrapper&lt;/tt&gt; class to allow
+me to do this. But personally I found those classes to be quite hard to
+extend (much unlike the printers which I've often found to be
+intuitive).&lt;/p&gt;
+&lt;p&gt;My current plan for the chemical kinetics case is to first solve it
+using &lt;tt class="docutils literal"&gt;sympy.lambdify&lt;/tt&gt;.  That allows for quick prototyping, and
+unless one has very high demands with respect to performance, it is
+usually good enough.&lt;/p&gt;
+&lt;p&gt;The next step is to generate a native callback (it was here I was
+hoping to use &lt;tt class="docutils literal"&gt;autowrap&lt;/tt&gt; with the Cython backend). The current
+approach is to write the expressions as Cython code using a template.
+Cython conveniently follows Python syntax, and hence the string
+printer can be used for the code generation. Doing this speeds up the
+integration considerably. At this point the bottleneck is going back and
+forth through the Python layer.&lt;/p&gt;
+&lt;p&gt;So in order to speed up the integration further, we need to bypass
+Python during integration (and let the solver call the user
+provided callbacks without going through the interpreter). I did
+this by providing a C-code template which relies on &lt;tt class="docutils literal"&gt;CVode&lt;/tt&gt; from the
+&lt;a class="reference external" href="https://computation.llnl.gov/projects/sundials"&gt;Sundials&lt;/a&gt; suite of
+non-linear solvers. It is a well established solver and is already
+available for Linux, Mac &amp;amp; Windows under conda from the
+&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;conda-forge&lt;/span&gt;&lt;/tt&gt; channel. I then provide a thin Cython wrapper, calling
+into the C-function, which:&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;sets up the CVode solver&lt;/li&gt;
+&lt;li&gt;runs the integration&lt;/li&gt;
+&lt;li&gt;records some statistics&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Using native code does come at a cost. One of the strengths of Python
+is that it is cross-platform. It (usually) does not matter if your
+Python application runs on Linux, OSX or Windows (or any other
+supported operating system). However, since we are doing
+code-generation, we are relying on compilers provided by the
+respective platform. Since we want to support both Python 2 &amp;amp; Python 3
+on said three platforms, there are quite a few combinations to cover.
+That meant quite a few surprises (I now know for example that MS
+Visual C++ 2008 does not support C99), but thanks to the kind &lt;a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial/issues/2#issuecomment-307538308"&gt;help&lt;/a&gt; of
+&lt;a class="reference external" href="https://github.com/isuruf"&gt;Isuru Fernando&lt;/a&gt; I think I will manage to
+have all platform/version combinations working during next week.&lt;/p&gt;
+&lt;p&gt;Also planned for next week:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Use &lt;tt class="docutils literal"&gt;numba&lt;/tt&gt; together with &lt;tt class="docutils literal"&gt;lambdify&lt;/tt&gt;&lt;/li&gt;
+&lt;li&gt;Use &lt;tt class="docutils literal"&gt;Lambdify&lt;/tt&gt; from &lt;a class="reference external" href="https://github.com/symengine"&gt;SymEngine&lt;/a&gt;
+(preferably with the LLVM backend).&lt;/li&gt;
+&lt;li&gt;Make the notebooks more tutorial like (right now they are more of a
+show-case).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;and of course: continued work on the code printers. That's all for now
+feel free to get in touch with any feedback or questions.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=247</guid>
       <author>Arif Ahmed (ArifAhmed1995)</author>
       <title>Arif Ahmed (ArifAhmed1995): Week 2 Report(June 3 &#x2013; June 10) : Working Prototype, Improving functionality.</title>
@@ -3312,38 +3429,6 @@ Adding many changes for size in base. Like changing this:&lt;/p&gt;
 And a lot of implementation changes were incorporated in &lt;code class="highlighter-rouge"&gt;gf_gcdex&lt;/code&gt; also.&lt;/p&gt;
 
 &lt;p&gt;I also wrote documentation on &lt;code class="highlighter-rouge"&gt;Fields&lt;/code&gt; module &lt;a href="https://github.com/symengine/symengine/wiki/Fields-in-SymEngine"&gt;here&lt;/a&gt;.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Twelfth-Week</guid>
-      <author>Nishant Nikhil (nishnik)</author>
-      <title>Nishant Nikhil (nishnik): GSoC Twelfth Week</title>
-      <pubDate>Sat, 20 Aug 2016 00:00:00 GMT</pubDate>
-      <link>http://nishnik.github.io/GSoC-Twelfth-Week/</link>
-      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
-
-&lt;p&gt;This week I started work on polynomial factorization in &lt;code class="highlighter-rouge"&gt;Z&lt;/code&gt;.
-I implemented the zassenhaus&amp;#8217;s algorithm, which factors a primitive square-free polynomial.&lt;br /&gt;
-The basic idea behind factoring a polynomial in &lt;code class="highlighter-rouge"&gt;Z&lt;/code&gt; is first to make it square free using &lt;code class="highlighter-rouge"&gt;Yun's&lt;/code&gt; algorithm or something similar and then choosing a prime number &lt;code class="highlighter-rouge"&gt;p&lt;/code&gt;, such that the polynomial mod &lt;code class="highlighter-rouge"&gt;p&lt;/code&gt; is square free, and &lt;code class="highlighter-rouge"&gt;p&lt;/code&gt; doesn&amp;#8217;t divide its leading coefficient.
-After that it is reduced to factoring polynomial in finite field. Which has already been implemented, then we lift all the factors from the finite field to &lt;code class="highlighter-rouge"&gt;Z&lt;/code&gt; using hensel lifting.
-&lt;br /&gt;
-The number of time Hensel Lifting has to be done is found using the &lt;a href="http://www.csd.uwo.ca/~moreno//CS424/Lectures/ResultantGcd.html/node5.html"&gt;Mignotte&amp;#8217;s bound&lt;/a&gt;.
-&lt;br /&gt;
-This wall required implementation of extended euclidean GCD in the finite fields.
-So, after the implementation of factorization of square free algorithms, we were able to perform:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class="language-C++"&gt;f = UIntPoly::from_vec(x, {1_z, 0_z, -9_z});
-// f = -9x**2 + 1
-out = f-&amp;gt;zz_zassenhaus();
-// out is a set of RCP&amp;lt;const UIntPoly&amp;gt;
-// out = {-3x + 1, -3x - 1}
-out_f = f-&amp;gt;zz_factor_sqf();
-// out_f is a pair&amp;lt;integer_class, std::set&amp;lt;RCP&amp;lt;const UIntPoly&amp;gt;&amp;gt;
-// out_.f.first = 1
-// out_f. second = {3x + 1, 3x - 1}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;After this I need to implement the algorithm for square free factorization and the trial division for finding the power of factor in the polynomial, this way we will be able to factor the polynomials.
-The PR is &lt;a href="https://github.com/symengine/symengine/pull/1066"&gt;here&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

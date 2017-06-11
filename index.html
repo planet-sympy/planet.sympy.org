@@ -93,6 +93,177 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-4db58090 feed-" id="item-026e8976">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/bjodah.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://bjodah.github.io/blog/posts/gsoc-week2.html">21:37, Sunday, 11 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-week2.html">Bj&#246;rn Dahlgren (bjodah): Status update week 2 GSoC</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/bjodah.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://bjodah.github.io/blog/posts/gsoc-week2.html">21:37, Sunday, 11 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-week2.html">Status update week 2 GSoC</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<div><p>I have spent the second week of Google Summer of Code on essentially two things:</p>
+<ol class="arabic simple">
+<li>Continued work on type awareness in the code printers (<tt class="docutils literal">CCodePrinter</tt> and
+<tt class="docutils literal">FCodePrinter</tt>). The work is ongoing in <a class="reference external" href="https://github.com/sympy/sympy/pull/12693">gh-12693</a>.</li>
+<li>Writing tutorial <a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial">code</a> on code-generation in the form of jupyter notebooks for the
+upcoming SciPy 2017 <a class="reference external" href="https://scipy2017.scipy.org/ehome/220975/493418/">conference</a>.</li>
+</ol>
+<div class="section" id="precision-aware-code-printers">
+<h2>Precision aware code printers</h2>
+<p>After my weekly mentor meeting, we decided to take another approach to
+how we are going to represent <tt class="docutils literal">Variable</tt> instances in the
+<tt class="docutils literal">.codegen.ast</tt> module. Previously I had proposed to use quite a
+number of arguments (stored in <tt class="docutils literal">.args</tt> since it inherits
+<tt class="docutils literal">Basic</tt>). Aaron suggested we might want to represent that underlying
+information differently. After some discussion we came to the
+conclusion that we could introduce a <tt class="docutils literal">Attribute</tt> class (inhereting
+from <tt class="docutils literal">Symbol</tt>) to describe things such as value const-ness, and
+pointer const-ness (those two are available as <tt class="docutils literal">value_const</tt> and
+<tt class="docutils literal">pointer_const</tt>). Attributes will be stored in a <tt class="docutils literal">FiniteSet</tt>
+(essentially SymPy version of <tt class="docutils literal">set</tt>) and the instances we provide as
+"pre-made" in the <tt class="docutils literal">.codegen.ast</tt> module will be supported by the
+printers by default. Here is some example code showing what the
+current proposed API looks like (for C99):</p>
+<pre class="literal-block">
+&gt;&gt;&gt; u = symbols('u', real=True)
+&gt;&gt;&gt; ptr = Pointer.deduced(u, {pointer_const, restrict})
+&gt;&gt;&gt; ccode(Declaration(ptr))
+'double * const restrict u;'
+</pre>
+<p>and for Fortran:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; vx = Variable(Symbol('x'), {value_const}, float32)
+&gt;&gt;&gt; fcode(Declaration(vx, 42))
+'real(4), parameter :: x = 42'
+</pre>
+<p>The C code printer can now also print code using different math functions depending
+on the targeted precision (functions guaranteed to be present in the C99 stanard):</p>
+<pre class="literal-block">
+&gt;&gt;&gt; ccode(x**3.7, standard='c99', precision=float32)
+'powf(x, 3.7F)'
+&gt;&gt;&gt; ccode(exp(x/2), standard='c99', precision=float80)
+'expl((1.0L/2.0L)*x)'
+</pre>
+</div>
+<div class="section" id="tutorial-material-for-code-generation">
+<h2>Tutorial material for code generation</h2>
+<p>Aaron, Jason and I have been discussing what examples to use for the
+tutorial on code generation with SymPy. Right now we are aiming to use
+quite a few examples from chemistry actually, and more specifically
+<a class="reference external" href="https://en.wikipedia.org/wiki/Chemical_kinetics">chemical kinetics</a>. This is the
+precise application which got me started using SymPy for
+code-generation, so it lies close to my heart (I do extensive modeling
+of chemical kinetics in my PhD studies).</p>
+<p>Working on the tutorial material has already been really helpful for
+getting insight in development needs for the exisiting classes and
+functions used for code-generation. I was hoping to use <tt class="docutils literal">autowrap</tt>
+from the <tt class="docutils literal">.utilities</tt> module. Unfortunately I found that it was not
+flexible enough to be useful for integration of systems of ODEs (where
+we need to evaluate a vector-valued function taking a vector as
+input). I did attempt to subclass the <tt class="docutils literal">CodeWrapper</tt> class to allow
+me to do this. But personally I found those classes to be quite hard to
+extend (much unlike the printers which I've often found to be
+intuitive).</p>
+<p>My current plan for the chemical kinetics case is to first solve it
+using <tt class="docutils literal">sympy.lambdify</tt>.  That allows for quick prototyping, and
+unless one has very high demands with respect to performance, it is
+usually good enough.</p>
+<p>The next step is to generate a native callback (it was here I was
+hoping to use <tt class="docutils literal">autowrap</tt> with the Cython backend). The current
+approach is to write the expressions as Cython code using a template.
+Cython conveniently follows Python syntax, and hence the string
+printer can be used for the code generation. Doing this speeds up the
+integration considerably. At this point the bottleneck is going back and
+forth through the Python layer.</p>
+<p>So in order to speed up the integration further, we need to bypass
+Python during integration (and let the solver call the user
+provided callbacks without going through the interpreter). I did
+this by providing a C-code template which relies on <tt class="docutils literal">CVode</tt> from the
+<a class="reference external" href="https://computation.llnl.gov/projects/sundials">Sundials</a> suite of
+non-linear solvers. It is a well established solver and is already
+available for Linux, Mac &amp; Windows under conda from the
+<tt class="docutils literal"><span class="pre">conda-forge</span></tt> channel. I then provide a thin Cython wrapper, calling
+into the C-function, which:</p>
+<ol class="arabic simple">
+<li>sets up the CVode solver</li>
+<li>runs the integration</li>
+<li>records some statistics</li>
+</ol>
+<p>Using native code does come at a cost. One of the strengths of Python
+is that it is cross-platform. It (usually) does not matter if your
+Python application runs on Linux, OSX or Windows (or any other
+supported operating system). However, since we are doing
+code-generation, we are relying on compilers provided by the
+respective platform. Since we want to support both Python 2 &amp; Python 3
+on said three platforms, there are quite a few combinations to cover.
+That meant quite a few surprises (I now know for example that MS
+Visual C++ 2008 does not support C99), but thanks to the kind <a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial/issues/2#issuecomment-307538308">help</a> of
+<a class="reference external" href="https://github.com/isuruf">Isuru Fernando</a> I think I will manage to
+have all platform/version combinations working during next week.</p>
+<p>Also planned for next week:</p>
+<ul class="simple">
+<li>Use <tt class="docutils literal">numba</tt> together with <tt class="docutils literal">lambdify</tt></li>
+<li>Use <tt class="docutils literal">Lambdify</tt> from <a class="reference external" href="https://github.com/symengine">SymEngine</a>
+(preferably with the LLVM backend).</li>
+<li>Make the notebooks more tutorial like (right now they are more of a
+show-case).</li>
+</ul>
+<p>and of course: continued work on the code printers. That's all for now
+feel free to get in touch with any feedback or questions.</p>
+</div></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-3b0ec3aa feed-" id="item-cfe19c5a">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -5036,95 +5207,6 @@ And a lot of implementation changes were incorporated in <code class="highlighte
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">August 20, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-89ae9fcb feed-" id="item-58f48a64">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/nishnik.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Nishant Nikhil (nishnik) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://nishnik.github.io/GSoC-Twelfth-Week/">00:00, Saturday, 20 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Twelfth-Week/">Nishant Nikhil (nishnik): GSoC Twelfth Week</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/nishnik.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Nishant Nikhil (nishnik) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://nishnik.github.io/GSoC-Twelfth-Week/">00:00, Saturday, 20 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://nishnik.github.io/GSoC-Twelfth-Week/">GSoC Twelfth Week</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p><img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /></p>
-
-<p>This week I started work on polynomial factorization in <code class="highlighter-rouge">Z</code>.
-I implemented the zassenhaus&#8217;s algorithm, which factors a primitive square-free polynomial.<br />
-The basic idea behind factoring a polynomial in <code class="highlighter-rouge">Z</code> is first to make it square free using <code class="highlighter-rouge">Yun's</code> algorithm or something similar and then choosing a prime number <code class="highlighter-rouge">p</code>, such that the polynomial mod <code class="highlighter-rouge">p</code> is square free, and <code class="highlighter-rouge">p</code> doesn&#8217;t divide its leading coefficient.
-After that it is reduced to factoring polynomial in finite field. Which has already been implemented, then we lift all the factors from the finite field to <code class="highlighter-rouge">Z</code> using hensel lifting.
-<br />
-The number of time Hensel Lifting has to be done is found using the <a href="http://www.csd.uwo.ca/~moreno//CS424/Lectures/ResultantGcd.html/node5.html">Mignotte&#8217;s bound</a>.
-<br />
-This wall required implementation of extended euclidean GCD in the finite fields.
-So, after the implementation of factorization of square free algorithms, we were able to perform:</p>
-
-<pre><code class="language-C++">f = UIntPoly::from_vec(x, {1_z, 0_z, -9_z});
-// f = -9x**2 + 1
-out = f-&gt;zz_zassenhaus();
-// out is a set of RCP&lt;const UIntPoly&gt;
-// out = {-3x + 1, -3x - 1}
-out_f = f-&gt;zz_factor_sqf();
-// out_f is a pair&lt;integer_class, std::set&lt;RCP&lt;const UIntPoly&gt;&gt;
-// out_.f.first = 1
-// out_f. second = {3x + 1, 3x - 1}
-</code></pre>
-
-<p>After this I need to implement the algorithm for square free factorization and the trial division for finding the power of factor in the polynomial, this way we will be able to factor the polynomials.
-The PR is <a href="https://github.com/symengine/symengine/pull/1066">here</a>.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -5152,128 +5234,128 @@ The PR is <a href="https://github.com/symengine/symengine/pull/1066">here</a>.</
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>21:41, Sunday, 11 June</td>
-<td>21:56, Sunday, 11 June</td>
+<td>22:00, Sunday, 11 June</td>
+<td>22:15, Sunday, 11 June</td>
 </tr>
 </table>
 
