@@ -7,6 +7,40 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/06/13/Improve Sets Module Part II</guid>
+      <author>Ranjith Kumar (ranjithkumar007)</author>
+      <title>Ranjith Kumar (ranjithkumar007): Improve Sets Module Part II</title>
+      <pubDate>Tue, 13 Jun 2017 00:00:00 GMT</pubDate>
+      <link>http://ranjithkumar007.github.io/2017/06/13/Improve-Sets-Module-Part-II/</link>
+      <description>&lt;p&gt;Last week&amp;#8217;s PR &lt;a href="https://github.com/symengine/symengine/pull/1281"&gt;#1281&lt;/a&gt; on &lt;code class="highlighter-rouge"&gt;Complement&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;set_intersection&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;set_complement&lt;/code&gt; got merged in. This week, I implemented &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt;. This work is done in &lt;a href="https://github.com/symengine/symengine/pull/1291"&gt;#1291&lt;/a&gt; for &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; and &lt;a href="https://github.com/symengine/symengine/pull/1293"&gt;#1293&lt;/a&gt; for &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; :
+It is useful to represent unsolved equations or a partially solved equation.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;class ConditionSet : public Set
+{
+private:
+    vec_sym syms_;
+    RCP&amp;lt;const Boolean&amp;gt; condition_;
+...
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;Earlier, I used another data member for storing the base set. Thanks to &lt;a href="https://github.com/isuruf"&gt;isuruf&lt;/a&gt;, I was able to merge it within &lt;code class="highlighter-rouge"&gt;condition_&lt;/code&gt;. 
+For implementing &lt;code class="highlighter-rouge"&gt;contains&lt;/code&gt; method for &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt;, I added Subs Visitor for &lt;code class="highlighter-rouge"&gt;Contains&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;And&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; :
+It is a Set representation of a mathematical function defined on symbols over some set.
+For example, &lt;code class="highlighter-rouge"&gt;x**2 for all x in [0,2]&lt;/code&gt; is represented as &lt;code class="highlighter-rouge"&gt;imageset({x},x**2,[0,2])&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;When is ImageSet useful ?
+Say, I need to solve a trignometric equation &lt;code class="highlighter-rouge"&gt;sin(x) = 1&lt;/code&gt;. Solution is &lt;code class="highlighter-rouge"&gt;2*n*pi+pi/2, n belongs to [0,oo)&lt;/code&gt;. for such solutions imageset is a useful representation to have.&lt;/p&gt;
+
+&lt;p&gt;I will try to get these two PRs merged in ASAP.
+Next week, I will be working on implementing solvers for lower degree(&amp;lt;=4) polynomials.&lt;/p&gt;
+
+&lt;p&gt;See you next time. Bye for now !&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://shikharj.github.io//2017/06/12/GSoC-Progress-Week-2</guid>
       <author>Shikhar Jaiswal (ShikharJ)</author>
       <title>Shikhar Jaiswal (ShikharJ): GSoC Progress - Week 2</title>
@@ -3164,264 +3198,6 @@ their &lt;a href="https://en.wikipedia.org/wiki/Apple_USB_Mouse"&gt;hockey puck 
 actually hopeful that they can fix these issues, and implement a feature that
 makes real headway into helping me solve one of my biggest problems on GitHub
 right now, the reviewing of pull requests.&lt;/p&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://asmeurer.github.io/blog/posts/tuples/</guid>
-      <author>Aaron Meurer (asmeurer)</author>
-      <title>Aaron Meurer (asmeurer): Tuples</title>
-      <pubDate>Thu, 22 Sep 2016 02:33:14 GMT</pubDate>
-      <link>https://asmeurer.github.io/blog/posts/tuples/</link>
-      <description>&lt;div&gt;&lt;p&gt;Today, David Beazley made some tweets:&lt;/p&gt;
-&lt;blockquote class="twitter-tweet"&gt;&lt;p dir="ltr" lang="en"&gt;At the bookstore. I'll admit I judge Python books by their tuple description. "Read only list?"  Back on the shelf.  Nope.&lt;/p&gt;&amp;#8212; David Beazley (@dabeaz) &lt;a href="https://twitter.com/dabeaz/status/778634205395845120"&gt;September 21, 2016&lt;/a&gt;&lt;/blockquote&gt;
-
-
-
-&lt;blockquote class="twitter-tweet"&gt;&lt;p dir="ltr" lang="en"&gt;Usually there's a sentence nearby "sometimes you need a read only list." No. No, I haven't. Not in 20 years. Not even once. Sorry.&lt;/p&gt;&amp;#8212; David Beazley (@dabeaz) &lt;a href="https://twitter.com/dabeaz/status/778635637457088512"&gt;September 21, 2016&lt;/a&gt;&lt;/blockquote&gt;
-
-
-
-&lt;blockquote class="twitter-tweet"&gt;&lt;p dir="ltr" lang="en"&gt;My main objection is that "read only list" is a lazy description lacking thought. A red flag for every other topic that might be covered.&lt;/p&gt;&amp;#8212; David Beazley (@dabeaz) &lt;a href="https://twitter.com/dabeaz/status/778639979052498944"&gt;September 21, 2016&lt;/a&gt;&lt;/blockquote&gt;
-
-
-
-&lt;p&gt;There are quite a few good responses to these tweets, both from David and from
-others (and from yours truly). I recommend reading the the thread (click on
-the &lt;a href="https://twitter.com/dabeaz/status/778634205395845120"&gt;first tweet&lt;/a&gt; above).&lt;/p&gt;
-&lt;p&gt;Now to start off, I want to say that I respect the hell out of David Beazley.
-The guy literally &lt;a href="http://www.dabeaz.com/cookbook.html"&gt;wrote the book&lt;/a&gt; on
-Python, and he knows way more about Python than I ever will. He's also one of
-the most entertaining Python people you can
-&lt;a href="https://twitter.com/dabeaz"&gt;follow on Twitter&lt;/a&gt;. But hey, that doesn't mean I
-can't disagree sometimes.&lt;/p&gt;
-&lt;h2&gt;List vs. Tuple. Fight!&lt;/h2&gt;
-&lt;p&gt;As you probably know, there are two "array" datatypes in Python, &lt;code&gt;list&lt;/code&gt; and
-&lt;code&gt;tuple&lt;/code&gt;.&lt;sup id="fnref:list"&gt;&lt;a class="footnote-ref" href="https://asmeurer.github.io/blog/posts/tuples/#fn:list" rel="footnote"&gt;1&lt;/a&gt;&lt;/sup&gt; The primary difference between the two is that lists are &lt;em&gt;mutable&lt;/em&gt;,
-that is you can change their entries and length after they are created, with
-methods like &lt;code&gt;.append&lt;/code&gt; or &lt;code&gt;+=&lt;/code&gt;. Tuples, on the other hand, are &lt;em&gt;immutable&lt;/em&gt;.
-Once you create one, you cannot change it. This makes the implementation
-simpler (and hence faster, although don't let anyone tell you you should use a
-tuple just because it's faster). This, as
-&lt;a href="http://nedbatchelder.com/blog/201608/lists_vs_tuples.html"&gt;Ned Batchelder&lt;/a&gt;
-points out, is the only technical difference between the two.&lt;/p&gt;
-&lt;p&gt;The the idea that particularly bugs me here is that tuples are primarily
-useful as "record" datatypes.&lt;/p&gt;
-&lt;blockquote class="twitter-tweet"&gt;&lt;p dir="ltr" lang="en"&gt;&lt;a href="https://twitter.com/AllenDowney"&gt;@AllenDowney&lt;/a&gt; Better than "read-only-list." ;-).   Mainly looking for the tuple-as-record description. That's often what's missing.&lt;/p&gt;&amp;#8212; David Beazley (@dabeaz) &lt;a href="https://twitter.com/dabeaz/status/778685294593716224"&gt;September 21, 2016&lt;/a&gt;&lt;/blockquote&gt;
-
-
-
-&lt;p&gt;Tuples are awesome for records. This is both by design&amp;#8212;since they have a
-fixed shape, the positions in a tuple can be "fixed" values, and by convention&amp;#8212;if a
-Python programmer sees parentheses instead of square brackets, he is more
-likely to see the object as "record-like". The &lt;code&gt;namedtuple&lt;/code&gt; object in the standard library
-takes the record idea further by letting you actually name the fields:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;collections&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;namedtuple&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;person&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;namedtuple&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'Person'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;'name, age'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;person&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'Aaron'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;26&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;Person&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;'Aaron'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;age&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;26&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;p&gt;But is that really the &lt;em&gt;only&lt;/em&gt; place you'd want to use a tuple over a list?&lt;/p&gt;
-&lt;p&gt;Consider five other places you might encounter a tuple in Python, courtesy of
-Allen Downey:&lt;/p&gt;
-&lt;blockquote class="twitter-tweet"&gt;&lt;p dir="ltr" lang="en"&gt;&lt;a href="https://twitter.com/dabeaz"&gt;@dabeaz&lt;/a&gt; (1) tuple assignment (2) multiple return values (3) *args (4) output from zip, enumerate, etc (5) key in dictionary&lt;/p&gt;&amp;#8212; Allen Downey (@AllenDowney) &lt;a href="https://twitter.com/AllenDowney/status/778691102094176257"&gt;September 21, 2016&lt;/a&gt;&lt;/blockquote&gt;
-
-
-
-&lt;p&gt;In code these look like:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Multiple assignments:&lt;/strong&gt;&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&amp;gt;&amp;gt;&amp;gt; (a, b) = 1, 2
-&lt;/pre&gt;
-
-
-&lt;p&gt;(yes, the parentheses are optional here, as they are in many places where a
-tuple can be used, but this is still a tuple, or at least it looks like one ;)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Multiple return values:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;For example,
-&lt;a href="https://docs.python.org/3/library/os.html#os.walk"&gt;&lt;code&gt;os.walk&lt;/code&gt;&lt;/a&gt;. This is
-for the most part a special case of using tuples as records.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;&lt;code&gt;*args&lt;/code&gt;:&lt;/strong&gt;&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&amp;gt;&amp;gt;&amp;gt; def f(*args):
-...     print(type(args), args)
-...
-&amp;gt;&amp;gt;&amp;gt; f(1, 2, 3)
-&amp;lt;class 'tuple'&amp;gt; (1, 2, 3)
-&lt;/pre&gt;
-
-
-&lt;p&gt;Arbitrary positional function arguments are always stored as a &lt;code&gt;tuple&lt;/code&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Return value from builtins &lt;code&gt;zip&lt;/code&gt;, &lt;code&gt;enumerate&lt;/code&gt;, etc.:&lt;/strong&gt;&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&amp;gt;&amp;gt;&amp;gt; for i in zip(range(3), 'abc'):
-...     print(i)
-...
-(0, 'a')
-(1, 'b')
-(2, 'c')
-&amp;gt;&amp;gt;&amp;gt; for i in enumerate('abc'):
-...     print(i)
-...
-(0, 'a')
-(1, 'b')
-(2, 'c')
-&lt;/pre&gt;
-
-
-&lt;p&gt;This also applies to the combinatoric generators in
-&lt;a href="https://docs.python.org/3.6/library/itertools.html"&gt;itertools&lt;/a&gt; (like
-&lt;code&gt;product&lt;/code&gt;, &lt;code&gt;combinations&lt;/code&gt;, etc.)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Dictionary keys:&lt;/strong&gt;&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&amp;gt;&amp;gt;&amp;gt; {
-...     (0, 0): '.',
-...     (0, 1): ' ',
-...     (1, 0): '.',
-...     (1, 1): ' ',
-... }
-{(0, 1): ' ', (1, 0): '.', (0, 0): '.', (1, 1): ' '}
-&lt;/pre&gt;
-
-
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;This last one I find to be very important. You could arguably use a list for
-the first four of Allen Downey's points&lt;sup id="fnref:assign"&gt;&lt;a class="footnote-ref" href="https://asmeurer.github.io/blog/posts/tuples/#fn:assign" rel="footnote"&gt;2&lt;/a&gt;&lt;/sup&gt; (or Python could have, if it wanted to). But it
-is
-&lt;a href="https://asmeurer.github.io/blog/posts/what-happens-when-you-mess-with-hashing-in-python/"&gt;impossible&lt;/a&gt;
-to meaningfully hash a mutable data structure in Python, and hashability is a
-requirement for dictionary keys.&lt;/p&gt;
-&lt;p&gt;However, be careful. Not all tuples are hashable. Tuples can contain
-anything, but only tuples of immutable values are hashable. Consider&lt;sup id="fnref:TypeError"&gt;&lt;a class="footnote-ref" href="https://asmeurer.github.io/blog/posts/tuples/#fn:TypeError" rel="footnote"&gt;4&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;
-&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;p&gt;Such tuples are not hashable, and cannot be used as dictionary keys.&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;hash&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;Traceback&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;most&lt;/span&gt; &lt;span class="n"&gt;recent&lt;/span&gt; &lt;span class="n"&gt;call&lt;/span&gt; &lt;span class="n"&gt;last&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s"&gt;"&amp;lt;ipython-input-39-36822ba665ca&amp;gt;"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;module&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-    &lt;span class="nb"&gt;hash&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="ne"&gt;TypeError&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;unhashable&lt;/span&gt; &lt;span class="nb"&gt;type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;'list'&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;h2&gt;Why is &lt;code&gt;list&lt;/code&gt; the Default?&lt;/h2&gt;
-&lt;p&gt;My second gripe here is this notion that your default ordered collection
-object in Python should be &lt;code&gt;list&lt;/code&gt;. &lt;code&gt;tuples&lt;/code&gt; are only to be used as "records",
-or if you suspect &lt;em&gt;might&lt;/em&gt; want to use it as a dictionary key. First off, you
-never know when you'll want something to be hashable. Both dictionary keys and
-&lt;code&gt;sets&lt;/code&gt; require hashability. Suppose you want to de-duplicate a collection of
-sequences. If you represent the sequences with &lt;code&gt;list&lt;/code&gt;, you'll either have to
-write a custom loop that checks for duplicates, or manually convert them to
-&lt;code&gt;tuple&lt;/code&gt; and throw them in a &lt;code&gt;set&lt;/code&gt;. If you start with &lt;code&gt;tuple&lt;/code&gt;, you don't have
-to worry about it (again, assuming the entries of the tuples are all hashable
-as well).&lt;/p&gt;
-&lt;p&gt;Consider another usage of tuples, which I consider to be
-important, namely tree structures. Say you wanted a simple representation of a
-Python syntax tree. You might represent &lt;code&gt;1 - 2*(-3 + 4)&lt;/code&gt; as&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'-'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'*'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'+'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'-'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;p&gt;This isn't really a record. The meaning of the entries in the tuples is
-determined by the first value of the tuple, not position. In this example, the length
-of the tuple also signifies meaning (binary vs. unary &lt;code&gt;-&lt;/code&gt;).&lt;/p&gt;
-&lt;p&gt;If this looks familiar to you, it's because this is how the language Lisp
-represents all programs. This is a common pattern.
-&lt;a href="http://dask.pydata.org/en/latest/graphs.html"&gt;Dask graphs&lt;/a&gt; use tuples and
-dictionaries to represent computations.
-&lt;a href="http://docs.sympy.org/latest/tutorial/manipulation.html"&gt;SymPy expression trees&lt;/a&gt;
-use tuples and Python classes to represent symbolic mathematical expressions.&lt;/p&gt;
-&lt;p&gt;But why use tuples over lists here? Suppose you had an object like the one
-above, but using lists: &lt;code&gt;['-', 1, ['*', 2, ['+', ['-', 3], 4]]]&lt;/code&gt;. If you
-discover you need to use this as a dictionary key, or want to put it in a
-&lt;code&gt;set&lt;/code&gt;, you would need to convert this to a hashable object. To do this you
-need to write a function that recursively converts each &lt;code&gt;list&lt;/code&gt; to a &lt;code&gt;tuple&lt;/code&gt;.
-See how long it takes you to write that function correctly.&lt;/p&gt;
-&lt;h2&gt;Mutability is Bad&lt;/h2&gt;
-&lt;p&gt;More to the point, however, mutability is bad. I counted 12 distinct methods
-on &lt;code&gt;list&lt;/code&gt; that mutate it (how many can you remember off the top of your
-head?&lt;sup id="fnref:mutate"&gt;&lt;a class="footnote-ref" href="https://asmeurer.github.io/blog/posts/tuples/#fn:mutate" rel="footnote"&gt;3&lt;/a&gt;&lt;/sup&gt;). &lt;em&gt;Any&lt;/em&gt; function that gets access to a list can mutate it,
-using any one of these methods. All it takes is for someone to forget that
-&lt;code&gt;+=&lt;/code&gt; mutates a list (and that they should copy it first) for code completely
-distant from the origin definition to cause issues. The hardest bug I ever
-debugged had a three character
-&lt;a href="https://github.com/inducer/pudb/commit/b979fc5909c8d731eb907fc25f4e97904fb7cbbd"&gt;fix&lt;/a&gt;,
-adding &lt;code&gt;[:]&lt;/code&gt; to copy a global list that I was (accidentally) mutating. It took
-me a several hour airplane ride and some deep dark magic that I'll leave for
-another blog post to discover the source of my problems (the problems I was
-having appeared to be quite distant from the actual source).&lt;/p&gt;
-&lt;h2&gt;A Better "Default"&lt;/h2&gt;
-&lt;p&gt;I propose that Python code in general would be vastly improved if people used
-&lt;code&gt;tuple&lt;/code&gt; as the default ordered collection, and only switched to &lt;code&gt;list&lt;/code&gt; if
-mutation was necessary (it's less necessary than you think; you can always
-copy a tuple instead of mutating it). I agree with David Beazley that you
-don't "sometimes need a read only list". Rather, you "sometimes need a
-writable tuple".&lt;/p&gt;
-&lt;p&gt;This makes more sense than defaulting to &lt;code&gt;list&lt;/code&gt;, and only switching to &lt;code&gt;tuple&lt;/code&gt;
-when hashability is needed, or when some weird "rule of thumb" applies that
-says that you should use &lt;code&gt;tuple&lt;/code&gt; if you have a "record". Maybe there's a good
-reason that &lt;code&gt;*args&lt;/code&gt; and almost all builtin and standard library functions
-return tuples instead of lists. It's harder to accidentally break someone
-else's code, or have someone else accidentally break your code, when your data
-structures are immutable.&lt;/p&gt;
-&lt;h2&gt;Footnotes&lt;/h2&gt;
-&lt;div class="footnote"&gt;
-&lt;hr /&gt;
-&lt;ol&gt;
-&lt;li id="fn:list"&gt;
-&lt;p&gt;I want to avoid saying "a tuple is an immutable list", since "list"
-can be interpreted in two ways, as an English word meaning "ordered
-collection" (in
-which case, the statement is true), or as the Python type &lt;code&gt;list&lt;/code&gt; (in which
-case, the statement is false&amp;#8212;&lt;code&gt;tuple&lt;/code&gt; is not a subclass of &lt;code&gt;list&lt;/code&gt;).&amp;#160;&lt;a class="footnote-backref" href="https://asmeurer.github.io/blog/posts/tuples/#fnref:list" rev="footnote" title="Jump back to footnote 1 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li id="fn:assign"&gt;
-&lt;p&gt;Yes,&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&amp;gt;&amp;gt;&amp;gt; [a, b] = 1, 2
-&lt;/pre&gt;
-
-
-&lt;p&gt;works.&amp;#160;&lt;a class="footnote-backref" href="https://asmeurer.github.io/blog/posts/tuples/#fnref:assign" rev="footnote" title="Jump back to footnote 2 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li id="fn:mutate"&gt;
-&lt;p&gt;&lt;/p&gt;&lt;div id="spoiler" style="display: none;"&gt;
-&lt;code&gt;__delitem__&lt;/code&gt;, &lt;code&gt;__iadd__&lt;/code&gt;, &lt;code&gt;__imul__&lt;/code&gt;, &lt;code&gt;__setitem__&lt;/code&gt;, &lt;code&gt;append&lt;/code&gt;, &lt;code&gt;clear&lt;/code&gt;, &lt;code&gt;extend&lt;/code&gt;, &lt;code&gt;insert&lt;/code&gt;,
-&lt;code&gt;pop&lt;/code&gt;, &lt;code&gt;remove&lt;/code&gt;, &lt;code&gt;reverse&lt;/code&gt;, and &lt;code&gt;sort&lt;/code&gt;.
-&lt;/div&gt;
-&lt;button title="Click to show/hide content" type="button"&gt;Show/hide answer&lt;/button&gt;&amp;#160;&lt;a class="footnote-backref" href="https://asmeurer.github.io/blog/posts/tuples/#fnref:mutate" rev="footnote" title="Jump back to footnote 3 in the text"&gt;&amp;#8617;&lt;/a&gt;
-&lt;/li&gt;
-&lt;li id="fn:TypeError"&gt;
-&lt;p&gt;One of the tweets from the conversation:&lt;/p&gt;
-&lt;p&gt;&lt;/p&gt;&lt;blockquote class="twitter-tweet"&gt;&lt;p dir="ltr" lang="en"&gt;&lt;a href="https://twitter.com/asmeurer"&gt;@asmeurer&lt;/a&gt; &lt;a href="https://twitter.com/AllenDowney"&gt;@AllenDowney&lt;/a&gt; As yes:&lt;br /&gt;&lt;br /&gt;t = (1,2, [3, 4])&lt;br /&gt;t[2] += [5,6]&lt;br /&gt;&lt;br /&gt;;-)&lt;/p&gt;&amp;#8212; David Beazley (@dabeaz) &lt;a href="https://twitter.com/dabeaz/status/778697399975813120"&gt;September 21, 2016&lt;/a&gt;&lt;/blockquote&gt; 
-&lt;p&gt;This is similar to this example. But
-it turns out this one doesn't work:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&amp;gt;&amp;gt;&amp;gt; t = (1,2, [3, 4])
-&amp;gt;&amp;gt;&amp;gt; t[2] += [5,6]
-Traceback (most recent call last):
-  File "&amp;lt;stdin&amp;gt;", line 1, in &amp;lt;module&amp;gt;
-TypeError: 'tuple' object does not support item assignment
-&lt;/pre&gt;
-
-
-&lt;p&gt;I have no idea why. It seems to me that it should work. &lt;code&gt;t[2]&lt;/code&gt; is a list
-and &lt;code&gt;list&lt;/code&gt; has &lt;code&gt;__iadd__&lt;/code&gt; defined. It seems that Python gets kind of weird
-about things on the left-hand side of an assignment. &lt;strong&gt;EDIT:
-&lt;a href="http://stackoverflow.com/a/29747466/161801"&gt;Here's&lt;/a&gt; why.&lt;/strong&gt;&amp;#160;&lt;a class="footnote-backref" href="https://asmeurer.github.io/blog/posts/tuples/#fnref:TypeError" rev="footnote" title="Jump back to footnote 4 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;&lt;/div&gt;</description>
     </item>
   </channel>
 </rss>
