@@ -7,6 +7,74 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/06/16/GSoC17-Week2-Report</guid>
+      <author>Arihant Parsoya (parsoyaarihant)</author>
+      <title>Arihant Parsoya (parsoyaarihant): GSoC17 Week 2 Report</title>
+      <pubDate>Fri, 16 Jun 2017 06:30:00 GMT</pubDate>
+      <link>https://parsoyaarihant.github.io/blog/gsoc/2017/06/16/GSoC17-Week2-Report.html</link>
+      <description>&lt;p&gt;Our plan was to implement all Algebraic rules and complete the Rubi test suit for algebraic integration. However, there was a setback in our work because of a &lt;a href="https://github.com/HPAC/matchpy/issues/9"&gt;bug&lt;/a&gt; I found in &lt;code class="highlighter-rouge"&gt;ManyToOneReplacer&lt;/code&gt; of MatchPy. This bug prevents matching of expressions having many nested commutative expressions. Hence, we were not able to match all expressions in the test suit. &lt;a href="https://github.com/wheerd"&gt;Manuel Krebber&lt;/a&gt; have helped us a lot in adding features and giving suggestions to make MatchPy work for Rubi. He have fixed the bug today. I will resume my testing of algebraic rules asap.&lt;/p&gt;
+
+&lt;h3 id="utility-functions"&gt;Utility functions&lt;/h3&gt;
+
+&lt;p&gt;Previously, our strategy was to implement only those functions which were used by algebraic rules. However, we found that those functions have dependencies on many other functions. So, we decided to implement the functions from the beginning itself, to avoid problems in the long run.&lt;/p&gt;
+
+&lt;p&gt;Mathematica has functionality of implementing function arguments as patterns:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-Mathematica"&gt;SqrtNumberQ[m_^n_] :=
+  IntegerQ[n] &amp;amp;&amp;amp; SqrtNumberQ[m] || IntegerQ[n-1/2] &amp;amp;&amp;amp; RationalQ[m]
+
+
+SqrtNumberQ[u_*v_] :=
+  SqrtNumberQ[u] &amp;amp;&amp;amp; SqrtNumberQ[v]
+
+
+SqrtNumberQ[u_] :=
+  RationalQ[u] || u===I
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In the above code &lt;code class="highlighter-rouge"&gt;SqrtNumberQ&lt;/code&gt; is defined multiple times for different function arguments. To implement these functions in Python, Francesco suggested that we test the type of argument using conditionals:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-Python"&gt;def SqrtNumberQ(expr):
+    # SqrtNumberQ[u] returns True if u^2 is a rational number; else it returns False.
+    if expr.is_Pow:
+        m = expr.base
+        n = expr.exp
+        return IntegerQ(n) &amp;amp; SqrtNumberQ(m) | IntegerQ(n-1/2) &amp;amp; RationalQ(m)
+    elif expr.is_Mul:
+        return all(SqrtNumberQ(i) for i in expr.args)
+    else:
+        return RationalQ(expr) or expr == I
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There was some problem while implementing &lt;code class="highlighter-rouge"&gt;Catch&lt;/code&gt; since SymPy doesn&amp;#8217;t currently has &lt;code class="highlighter-rouge"&gt;Throw&lt;/code&gt; object:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-Mathematica"&gt;MapAnd[f_,lst_] :=
+  Catch[Scan[Function[If[f[#],Null,Throw[False]]],lst];True]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I used the following code to implement &lt;code class="highlighter-rouge"&gt;ManAnd&lt;/code&gt; in Python:&lt;/p&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;MapAnd&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="c"&gt;# MapAnd[f,l] applies f to the elements of list l until False is returned; else returns True&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+                &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+                &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h2 id="todo"&gt;TODO&lt;/h2&gt;
+
+&lt;p&gt;I and Abdullah have implemented ~40 utility functions so far. There are around ~40 more functions which needs to be implemented in order to support all algebraic rules. We should be able to complete those functions by tomorrow.&lt;/p&gt;
+
+&lt;p&gt;I will also resume adding tests to Rubi test suit for algebraic functions.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://gxyd.github.io/blogs/Gsoc2017-week-2</guid>
       <author>Gaurav Dhingra (gxyd)</author>
       <title>Gaurav Dhingra (gxyd): GSoC Week 2</title>
@@ -2977,22 +3045,6 @@ catastrophic cancellation may occur which induce major loss in precision (&lt;a 
 &lt;/div&gt;
     &lt;/div&gt;
   &lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://gxyd.github.io/blogs/Gsoc2016-summary</guid>
-      <author>Gaurav Dhingra (gxyd)</author>
-      <title>Gaurav Dhingra (gxyd): GSoC 2016 Summary</title>
-      <pubDate>Wed, 30 Nov 2016 00:00:00 GMT</pubDate>
-      <link>https://gxyd.github.io/blogs/Gsoc2016-summary/</link>
-      <description>&lt;p&gt;Below is the summary:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href="https://github.com/gxyd"&gt;Gaurav Dhingra&lt;/a&gt; - &lt;a href="https://summerofcode.withgoogle.com/archive/2016/projects/6593494743252992/"&gt;Computational Group Theory in SymPy&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;This project aimed to implement free groups, finitely presented groups and various algorithms like &lt;a href="https://en.wikipedia.org/wiki/Coset_enumeration"&gt;Coset Enumeration&lt;/a&gt; using Todd Coxeter method, Low index subgroup and Reidemeister schreier.
-Computation of order, index and other properties of the finitely presented
-groups is now present. The functionality is added in the combinatorics module
-of SymPy. He laid the groundwork for further addition of other algorithms
-and integrate it with the permutation groups.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

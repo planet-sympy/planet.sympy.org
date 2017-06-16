@@ -89,6 +89,131 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">June 16, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-debb4ede feed-" id="item-a2fe16f1">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/16/GSoC17-Week2-Report.html">06:30, Friday, 16 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/16/GSoC17-Week2-Report.html">Arihant Parsoya (parsoyaarihant): GSoC17 Week 2 Report</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/16/GSoC17-Week2-Report.html">06:30, Friday, 16 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/16/GSoC17-Week2-Report.html">GSoC17 Week 2 Report</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Our plan was to implement all Algebraic rules and complete the Rubi test suit for algebraic integration. However, there was a setback in our work because of a <a href="https://github.com/HPAC/matchpy/issues/9">bug</a> I found in <code class="highlighter-rouge">ManyToOneReplacer</code> of MatchPy. This bug prevents matching of expressions having many nested commutative expressions. Hence, we were not able to match all expressions in the test suit. <a href="https://github.com/wheerd">Manuel Krebber</a> have helped us a lot in adding features and giving suggestions to make MatchPy work for Rubi. He have fixed the bug today. I will resume my testing of algebraic rules asap.</p>
+
+<h3 id="utility-functions">Utility functions</h3>
+
+<p>Previously, our strategy was to implement only those functions which were used by algebraic rules. However, we found that those functions have dependencies on many other functions. So, we decided to implement the functions from the beginning itself, to avoid problems in the long run.</p>
+
+<p>Mathematica has functionality of implementing function arguments as patterns:</p>
+<pre><code class="language-Mathematica">SqrtNumberQ[m_^n_] :=
+  IntegerQ[n] &amp;&amp; SqrtNumberQ[m] || IntegerQ[n-1/2] &amp;&amp; RationalQ[m]
+
+
+SqrtNumberQ[u_*v_] :=
+  SqrtNumberQ[u] &amp;&amp; SqrtNumberQ[v]
+
+
+SqrtNumberQ[u_] :=
+  RationalQ[u] || u===I
+</code></pre>
+
+<p>In the above code <code class="highlighter-rouge">SqrtNumberQ</code> is defined multiple times for different function arguments. To implement these functions in Python, Francesco suggested that we test the type of argument using conditionals:</p>
+
+<pre><code class="language-Python">def SqrtNumberQ(expr):
+    # SqrtNumberQ[u] returns True if u^2 is a rational number; else it returns False.
+    if expr.is_Pow:
+        m = expr.base
+        n = expr.exp
+        return IntegerQ(n) &amp; SqrtNumberQ(m) | IntegerQ(n-1/2) &amp; RationalQ(m)
+    elif expr.is_Mul:
+        return all(SqrtNumberQ(i) for i in expr.args)
+    else:
+        return RationalQ(expr) or expr == I
+</code></pre>
+
+<p>There was some problem while implementing <code class="highlighter-rouge">Catch</code> since SymPy doesn&#8217;t currently has <code class="highlighter-rouge">Throw</code> object:</p>
+
+<pre><code class="language-Mathematica">MapAnd[f_,lst_] :=
+  Catch[Scan[Function[If[f[#],Null,Throw[False]]],lst];True]
+</code></pre>
+
+<p>I used the following code to implement <code class="highlighter-rouge">ManAnd</code> in Python:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">MapAnd</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="c"># MapAnd[f,l] applies f to the elements of list l until False is returned; else returns True</span>
+    <span class="k">if</span> <span class="n">x</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">True</span>
+</code></pre>
+</div>
+
+<h2 id="todo">TODO</h2>
+
+<p>I and Abdullah have implemented ~40 utility functions so far. There are around ~40 more functions which needs to be implemented in order to support all algebraic rules. We should be able to complete those functions by tomorrow.</p>
+
+<p>I will also resume adding tests to Rubi test suit for algebraic functions.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">June 14, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -4698,79 +4823,6 @@ catastrophic cancellation may occur which induce major loss in precision (<a hre
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">November 30, 2016</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-5a972359 feed-" id="item-519ebca3">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/gxyd.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Gaurav Dhingra (gxyd) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://gxyd.github.io/blogs/Gsoc2016-summary/">00:00, Wednesday, 30 November UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2016-summary/">Gaurav Dhingra (gxyd): GSoC 2016 Summary</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/gxyd.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Gaurav Dhingra (gxyd) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://gxyd.github.io/blogs/Gsoc2016-summary/">00:00, Wednesday, 30 November UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2016-summary/">GSoC 2016 Summary</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Below is the summary:</p>
-
-<p><a href="https://github.com/gxyd">Gaurav Dhingra</a> - <a href="https://summerofcode.withgoogle.com/archive/2016/projects/6593494743252992/">Computational Group Theory in SymPy</a></p>
-
-<p>This project aimed to implement free groups, finitely presented groups and various algorithms like <a href="https://en.wikipedia.org/wiki/Coset_enumeration">Coset Enumeration</a> using Todd Coxeter method, Low index subgroup and Reidemeister schreier.
-Computation of order, index and other properties of the finitely presented
-groups is now present. The functionality is added in the combinatorics module
-of SymPy. He laid the groundwork for further addition of other algorithms
-and integrate it with the permutation groups.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -4798,134 +4850,134 @@ and integrate it with the permutation groups.</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td>https://szymag.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>08:41, Friday, 16 June</td>
-<td>08:56, Friday, 16 June</td>
+<td>09:00, Friday, 16 June</td>
+<td>09:15, Friday, 16 June</td>
 </tr>
 </table>
 
