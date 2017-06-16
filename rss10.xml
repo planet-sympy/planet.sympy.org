@@ -295,6 +295,34 @@ feel free to get in touch with any feedback or questions.&lt;/p&gt;
 &lt;/div&gt;&lt;/div&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=247</guid>
+      <author>Arif Ahmed (ArifAhmed1995)</author>
+      <title>Arif Ahmed (ArifAhmed1995): Week 2 Report(June 3 &#x2013; June 10) : Working Prototype, Improving functionality.</title>
+      <pubDate>Sun, 11 Jun 2017 10:16:52 GMT</pubDate>
+      <link>https://arif7blog.wordpress.com/2017/06/11/week-2-reportjune-3-june-10-working-prototype-improving-functionality/</link>
+      <description>&lt;p&gt;Note : If you&amp;#8217;re viewing this on Planet SymPy and Latex looks weird, go to the &lt;a href="https://arif7blog.wordpress.com/" rel="noopener" target="_blank"&gt;&lt;span style="color: #00ff00;"&gt;WordPress site&lt;/span&gt;&lt;/a&gt; instead.&lt;/p&gt;
+&lt;p&gt;The 2D use case works perfectly although there are limitations. The current API and method-wise limitations are discussed &lt;a href="https://github.com/ArifAhmed1995/sympy/blob/857463fac558702def0af27d08a1afa01a14aff0/IntegrationOverPolytopes.ipynb" rel="noopener" target="_blank"&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;That lone failing test was caused due to typecasting a Python set object to a list. Sets in Python do not support indexing, so when they are coerced to list, indexing of the resulting object is arbitrary. Therefore, I had to change to an axes list of [x, y].&lt;/p&gt;
+&lt;p&gt;Some other coding improvements were suggested by Gaurav Dhingra (another GSoC student). One can view them as comments to the &lt;span style="color: #00ccff;"&gt;&lt;a href="https://github.com/sympy/sympy/pull/12673" rel="noopener" target="_blank"&gt;pull request&lt;/a&gt;&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;span style="text-decoration: underline;"&gt;&lt;strong&gt;Clockwise Sort&lt;/strong&gt;&lt;/span&gt;&lt;br /&gt;
+I wanted to overcome some of the method-wise limitations. So, the first improvement I did was to implement a clockwise sorting algorithm for the points of the input polygon.&lt;br /&gt;
+Come to think of it, for the 3D use case the points belonging to a particular facet will have to be sorted anti-clockwise for the algorithm to work. Therefore, it would be better to include an extra argument &amp;#8220;&lt;span style="color: #00ff00;"&gt;&lt;span style="color: #808000;"&gt;orient&lt;/span&gt;&lt;/span&gt;&amp;#8221; with default value 1 (clockwise sort) and -1 when anti-clockwise sort.&lt;/p&gt;
+&lt;p&gt;First I tried to think of it myself, and naturally the first thing that came to my mind was sorting the points depending on their &lt;img alt="&amp;#92;arctan { &amp;#92;theta }" class="latex" src="https://s0.wp.com/latex.php?latex=%5Carctan+%7B+%5Ctheta+%7D&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="&amp;#92;arctan { &amp;#92;theta }" /&gt; value where &lt;img alt="&amp;#92;theta" class="latex" src="https://s0.wp.com/latex.php?latex=%5Ctheta&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="&amp;#92;theta" /&gt; is the angle that the line from that point to an arbitrary reference point (center) makes with the x-axis (more correctly, the independent variable axis). But obviously this is not efficient, because calculating the&amp;#160;&lt;img alt="&amp;#92;arctan { &amp;#92;theta }" class="latex" src="https://s0.wp.com/latex.php?latex=%5Carctan+%7B+%5Ctheta+%7D&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="&amp;#92;arctan { &amp;#92;theta }" /&gt; value is expensive.&lt;/p&gt;
+&lt;p&gt;Then I came across &lt;span style="color: #00ccff;"&gt;&lt;a href="https://stackoverflow.com/a/6989383" rel="noopener" target="_blank"&gt;&lt;span style="color: #00ccff;"&gt;this answer&lt;/span&gt;&lt;/a&gt;&lt;/span&gt; on StackOverflow. It was a much better technique because it did not use&amp;#160;&lt;img alt="&amp;#92;arctan { &amp;#92;theta }" class="latex" src="https://s0.wp.com/latex.php?latex=%5Carctan+%7B+%5Ctheta+%7D&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="&amp;#92;arctan { &amp;#92;theta }" /&gt; , no division operations and no distance computing using square root (as pointed out in the comments). Let us understand the reasoning.&lt;/p&gt;
+&lt;p&gt;Firstly, I&amp;#8217;m sure we all know that the distance of a point &lt;img alt="({ x }_{ 1 },{ y }_{ 1 })" class="latex" src="https://s0.wp.com/latex.php?latex=%28%7B+x+%7D_%7B+1+%7D%2C%7B+y+%7D_%7B+1+%7D%29&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="({ x }_{ 1 },{ y }_{ 1 })" /&gt; from the line &lt;img alt="(ax+by+c=0)" class="latex" src="https://s0.wp.com/latex.php?latex=%28ax%2Bby%2Bc%3D0%29&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="(ax+by+c=0)" /&gt; is &lt;img alt="(&amp;#92;frac { a{ x }_{ 1 }+b{ y }_{ 1 }+c }{ &amp;#92;sqrt { { a }^{ 2 }+{ b }^{ 2 } } })" class="latex" src="https://s0.wp.com/latex.php?latex=%28%5Cfrac+%7B+a%7B+x+%7D_%7B+1+%7D%2Bb%7B+y+%7D_%7B+1+%7D%2Bc+%7D%7B+%5Csqrt+%7B+%7B+a+%7D%5E%7B+2+%7D%2B%7B+b+%7D%5E%7B+2+%7D+%7D+%7D%29&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="(&amp;#92;frac { a{ x }_{ 1 }+b{ y }_{ 1 }+c }{ &amp;#92;sqrt { { a }^{ 2 }+{ b }^{ 2 } } })" /&gt;. Now, for clockwise sorting we need to decide the left or right orientation of a point given the other point and a constant reference(in this case, the center). Therefore, it is required to define a custom compare function.&lt;/p&gt;
+&lt;p&gt;Given three points : &lt;img alt="a, b, center" class="latex" src="https://s0.wp.com/latex.php?latex=a%2C+b%2C+center&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="a, b, center" /&gt;, consider the line made by points&amp;#160;&lt;img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="b" /&gt; and &lt;img alt="center" class="latex" src="https://s0.wp.com/latex.php?latex=center&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="center" /&gt;. The point &lt;img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="a" /&gt; will be on the left if numerator of of above formula is negative and right if positive. The cases where we need not consider this formula is when we are sure of :&lt;/p&gt;
+&lt;p&gt;Case 1 &amp;gt; The center lies in between &lt;img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="a" /&gt; and &lt;img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="b" /&gt;(Firstly check this by comparing x-coordinates).&lt;/p&gt;
+&lt;p&gt;Case 2 &amp;gt; If all the points are on a line parallel to y-axis :&lt;br /&gt;
+Sub-Case 1 &amp;gt; If any point is above center, that point is &amp;#8220;lesser&amp;#8221; than other one.&lt;br /&gt;
+Sub-Case 2 &amp;gt; If both below center, the point closer to center is &amp;#8220;lesser&amp;#8221; than&lt;br /&gt;
+other one.&lt;/p&gt;
+&lt;p&gt;Case 3 &amp;gt; This is when Case 1, 2 and the standard check fails.&lt;br /&gt;
+This can only happen if &lt;img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="a" /&gt;, &lt;img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="b" /&gt; and&amp;#160;&lt;img alt="center" class="latex" src="https://s0.wp.com/latex.php?latex=center&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="center" /&gt; are all collinear points and &lt;img alt="a" class="latex" src="https://s0.wp.com/latex.php?latex=a&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="a" /&gt;, &lt;img alt="b" class="latex" src="https://s0.wp.com/latex.php?latex=b&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=-1" title="b" /&gt; both lie on the same side of the line with respect to center. Then, the one farthest&amp;#160; from center is &amp;#8220;lesser&amp;#8221; than the other one.&lt;/p&gt;
+&lt;p&gt;Ondrej and Prof.Sukumar have looked at the notebook but will discuss in detail further and then inform me about the final 2D API.&lt;/p&gt;
+&lt;p&gt;Till then, I&amp;#8217;ll work on the existing limitations.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/247/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/247/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=247&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/06/09/Week1-Report</guid>
       <author>Arihant Parsoya (parsoyaarihant)</author>
       <title>Arihant Parsoya (parsoyaarihant): GSoC Week1 Report</title>
@@ -529,6 +557,33 @@ and what the goal is.&lt;/p&gt;
 &lt;/div&gt;&lt;/div&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=62</guid>
+      <author>Arif Ahmed (ArifAhmed1995)</author>
+      <title>Arif Ahmed (ArifAhmed1995): Week 1 Report(May 24 &#x2013; June 2) : The 2D prototype</title>
+      <pubDate>Sat, 03 Jun 2017 00:39:01 GMT</pubDate>
+      <link>https://arif7blog.wordpress.com/2017/06/03/week-1-reportmay-24-june-2-the-2d-prototype/</link>
+      <description>&lt;p&gt;&lt;span style="color: #000000;"&gt;As per the timeline, I spent the week writing a prototype for the 2D use case.&lt;/span&gt; &lt;a href="https://github.com/sympy/sympy/pull/12673/files" rel="noopener noreferrer" target="_blank"&gt;Here&lt;/a&gt; &lt;span style="color: #000000;"&gt;is the current status of the implementation.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style="color: #000000;"&gt;At the time of writing this blog post, the prototype mostly works but fails for one of the test cases. I haven&amp;#8217;t used a debugger on it yet but will get around to fixing it today. The main agenda for the next week should be to improve this prototype and make it more robust and scalable. &lt;/span&gt;&lt;span style="color: #000000;"&gt;Making it robust would mean that the implementation need not require a naming convention for the axes and can handle more boundary cases.&lt;br /&gt;
+Scalability would refer to implementing in a way which works reasonably fast for large input data. It would also mean designing the functions in a use case independent way so that they could be re-used for the 3-Polytopes. The simplest example would be the &lt;span style="color: #3366ff;"&gt;&lt;a href="https://github.com/ArifAhmed1995/sympy/blob/daa69f291fb0cd5b7ba0e26ed81aa9be05b46150/sympy/integrals/intpoly.py#L374" rel="noopener noreferrer" target="_blank"&gt;norm&lt;/a&gt; &lt;span style="color: #000000;"&gt;function. It works for both 2D and 3D points. &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br /&gt;
+&lt;span style="color: #000000;"&gt;Currently, some parts of the implementation are hacky and depend upon denoting the axes by specific symbols namely&lt;/span&gt; &lt;span style="color: #993366;"&gt;&lt;strong&gt;x&lt;/strong&gt;&lt;/span&gt; &lt;span style="color: #000000;"&gt;and&lt;/span&gt; &lt;span style="color: #993366;"&gt;&lt;strong&gt;y&lt;span style="color: #000000;"&gt;. &lt;/span&gt;&lt;/strong&gt;&lt;span style="color: #000000;"&gt;That would be the main focus for the beginning of Week 2. Let&amp;#8217;s take a look at the methods implemented and their respective shortcomings. &lt;/span&gt;&lt;span style="color: #000000;"&gt;The methods currently implemented are :&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style="color: #000000;"&gt;1. &lt;span style="color: #003366;"&gt;polytope_integrate&lt;/span&gt; :&amp;#160;This is the main function which calls integration_reduction which further calls almost everything else. Mathematically, this function is the first application of the Generalized Stokes Theorem. Integration over the 2-Polytope surface is related to integration over it&amp;#8217;s facets (lines in this use case). Nothing much to change here.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style="color: #000000;"&gt;2.&lt;span style="color: #000080;"&gt; integration_reduction&lt;/span&gt; : This one is the second application of the Stokes Theorem. Integration over facets (lines) is related to evaluation of the function at the vertices. The implementation can be made more robust by avoiding accessing the values of the best_origin by the index and instead accessing it by key. One workaround would be to assign the Symbol &amp;#8216;&lt;span style="color: #993300;"&gt;x&lt;/span&gt;&amp;#8216; to the independent variable and &amp;#8216;&lt;span style="color: #993300;"&gt;y&lt;/span&gt;&amp;#8216; to the dependent one. In the code, all dictionary accesses will be done with these symbols. This offers scalability as well. An extra Symbol &amp;#8216;&lt;span style="color: #993300;"&gt;z&lt;/span&gt;&amp;#8216; will suffice to denote the third axis variable for the 3D use case.&lt;br /&gt;
+&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style="color: #000000;"&gt;3. &lt;span style="color: #000080;"&gt;hyperplane_parameters&lt;/span&gt; :&amp;#160; This function returns the values of the hyperplane parameters of which the facets are a part of. I can&amp;#8217;t see improvements to be made with respect to the 2D use case, but that may change with the new API.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style="color: #000000;"&gt;4. &lt;span style="color: #000080;"&gt;best_origin&lt;/span&gt; : This function returns a point on the line for which the vector inner product between the divergence of the homogeneous polynomial and that point yields a polynomial of least degree.&lt;/span&gt; &lt;span style="color: #000000;"&gt;This function is very much dependent on the naming scheme of the axes but this issue can be circumvented by &lt;/span&gt;&lt;span style="color: #000000;"&gt;assigning symbols as explained above.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style="color: #000000;"&gt;5. &lt;span style="color: #000080;"&gt;decompose&lt;/span&gt; : This function works perfectly for all test data. However, I&amp;#8217;ll see if it can be made faster. Will be important for scaling up-to polynomials containing large number of terms.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style="color: #000000;"&gt;6. &lt;span style="color: #000080;"&gt;norm&lt;/span&gt; : This is a really simple function. The only reason to change it&amp;#8217;s code would be adding support for different representations of points.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style="color: #000000;"&gt;7. &lt;span style="color: #000080;"&gt;intersection, is_vertex&lt;/span&gt; : Both of these methods are simple to write and don&amp;#8217;t require any further changes for the 2D case (at least as far as I can see).&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style="color: #000000;"&gt;9. &lt;span style="color: #000080;"&gt;plot_polytope, plot_polynomial&lt;/span&gt; : These are simple plotting functions to help visualize the polytope and polynomial respectively. If extra features for the plots are required then suitable changes to code can be made.&lt;br /&gt;
+&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style="color: #000000;"&gt;After I get all the tests for the 2D prototype to pass, I&amp;#8217;ll write a Jupyter notebook and add it to the examples/notebooks folder of SymPy. As recommended by Ondrej, it should contain examples along with some plots and description of whatever basic API exists now.&lt;br /&gt;
+The main focus for Week 2 should be : &lt;/span&gt;&lt;br /&gt;
+1 &amp;gt; Get the prototype to pass all test cases (should be completed really soon).&lt;br /&gt;
+2 &amp;gt; Make the notebook and discuss a better API for the 2D use case.&lt;br /&gt;
+3 &amp;gt; Implement the final 2D API and write any tests for it.&lt;br /&gt;
+3 &amp;gt; Discuss how to extend to the 3D use case (Implementation and API).&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/62/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/62/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=62&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/06/02/Coding-period-starts</guid>
       <author>Arihant Parsoya (parsoyaarihant)</author>
       <title>Arihant Parsoya (parsoyaarihant): Coding period starts</title>
@@ -615,6 +670,17 @@ and what the goal is.&lt;/p&gt;
 &lt;p&gt;The PRs I&amp;#8217;ve sent so far are &lt;a href="https://github.com/sympy/sympy/pull/12658"&gt;here&lt;/a&gt; and &lt;a href="https://github.com/sympy/sympy/pull/12681"&gt;here&lt;/a&gt; and are currently still being reviewed.&lt;/p&gt;
 
 &lt;p&gt;The next thing I&amp;#8217;m going to work on are a couple of methods that could be used to determine if a given &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; is infinite. The one I plan to do first is considering the abelianisation of the group, writing the relators in the form of an integer matrix and essentially finding its Smith Normal form. This will probably occupy me for the next week.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=30</guid>
+      <author>Arif Ahmed (ArifAhmed1995)</author>
+      <title>Arif Ahmed (ArifAhmed1995): Week 1 : The Beginning</title>
+      <pubDate>Thu, 25 May 2017 21:10:32 GMT</pubDate>
+      <link>https://arif7blog.wordpress.com/2017/05/25/week-1-the-beginning/</link>
+      <description>&lt;p style="text-align: justify;"&gt;After reaching home on May 18, I decided not to waste any more time and contacted my mentor(&lt;span style="color: #99cc00;"&gt;&lt;a href="http://www.lanl.gov/expertise/profiles/view/ondrej-certik" rel="noopener noreferrer" style="color: #99cc00;" target="_blank"&gt;Ondrej Certik&lt;/a&gt;&lt;/span&gt;). He suggested that we should have a discussion with &lt;span style="color: #3366ff;"&gt;&lt;a href="http://dilbert.engr.ucdavis.edu/~suku/" style="color: #3366ff;"&gt;Prof.N.Sukumar&lt;/a&gt;&lt;/span&gt; about the project and develop a plan for the summer.&lt;/p&gt;
+&lt;p style="text-align: justify;"&gt;After the Skype call, a basic timeline was made by Ondrej. It was decided that firstly a basic working prototype to handle the 2D use case (i.e. the capability to integrate a bivariate polynomial over a 2-Polytope) should be written. It would be fine to make some assumptions about the input data initially so as to have some working code as soon as possible. Eventually the implementation for the 2D case should be made robust before moving onto the 3D case.&lt;/p&gt;
+&lt;p style="text-align: justify;"&gt;I began by implementing some of the helper functions required for the main algorithm. You can see the current status of the implementation &lt;span style="color: #ffcc00;"&gt;&lt;a href="https://github.com/sympy/sympy/pull/12673/files" rel="noopener noreferrer" style="color: #ffcc00;" target="_blank"&gt;here.&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style="text-align: justify;"&gt;It&amp;#8217;s been 2 days since the discussion and I feel that I should pick up the pace now and get the basic 2D prototype working soon.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/30/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/30/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=30&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/05/25/Community-Bonding-Period</guid>
@@ -1271,6 +1337,17 @@ Fateman&lt;/a&gt;&lt;/li&gt;
 &lt;p&gt;Thanks&lt;/p&gt;
 
 &lt;p&gt;Bye for now&amp;#8230;.See You Soon !!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=4</guid>
+      <author>Arif Ahmed (ArifAhmed1995)</author>
+      <title>Arif Ahmed (ArifAhmed1995): Google Summer of Code 2017 : SymPy</title>
+      <pubDate>Mon, 27 Mar 2017 14:32:29 GMT</pubDate>
+      <link>https://arif7blog.wordpress.com/2017/03/27/summer-project/</link>
+      <description>&lt;p&gt;I have been accepted to work on an open source summer project under the flag of GSoC&amp;#8217;17. My work will be implementing a module in &lt;span style="color: #00ff00;"&gt;&lt;a href="http://www.sympy.org/en/index.html" rel="noopener noreferrer" style="color: #00ff00;" target="_blank"&gt;SymPy&lt;/a&gt;&lt;/span&gt; capable of efficient integration of functions over arbitrary (i.e. both convex and non-convex) polytopes.&lt;/p&gt;
+&lt;p&gt;Various techniques of solving this problem of numerical integration have been discovered, but most of them are either computationally expensive, or difficult to implement or incapable of exact integration &lt;span style="color: #00ff00;"&gt;&lt;a href="https://docs.google.com/viewer?a=v&amp;amp;pid=forums&amp;amp;srcid=MTc0ODA5NjEwNzE3MDA0NDQzODEBMTgyNjA3NzE1NzE4MzczOTc1MDEBenFfWmRWZlBCZ0FKATAuMQEBdjI" rel="noopener noreferrer" style="color: #00ff00;" target="_blank"&gt;[1]&lt;/a&gt;&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;The algorithm is mentioned in &lt;span style="color: #00ff00;"&gt;&lt;a href="http://dilbert.engr.ucdavis.edu/~suku/quadrature/cls-integration.pdf" rel="noopener noreferrer" style="color: #00ff00;" target="_blank"&gt;this paper&lt;/a&gt;&lt;/span&gt; and &lt;span style="color: #00ff00;"&gt;&lt;a href="https://docs.google.com/document/d/1pIH-HXoAesl34_Qs41Mfmwxa8-2ExYvhVHh9bfS4ijQ/edit" rel="noopener noreferrer" style="color: #00ff00;" target="_blank"&gt;here&lt;/a&gt;&lt;/span&gt; is my proposal to implement the module.&lt;/p&gt;
+&lt;p&gt;My final exams just got over and I still have to ask my &lt;span style="color: #00ff00;"&gt;&lt;a href="http://www.ondrejcertik.com/" rel="noopener noreferrer" style="color: #00ff00;" target="_blank"&gt;mentor&lt;/a&gt;&lt;/span&gt; how to communicate over the summer. Most probably it will be via a gitter chat room such as &lt;span style="color: #00ff00;"&gt;&lt;a href="https://gitter.im/sympy/Rubi-GSoC17" rel="noopener noreferrer" style="color: #00ff00;" target="_blank"&gt;this one&lt;/a&gt;&lt;/span&gt; which is for another SymPy GSoC&amp;#8217;17 project.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/4/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/4/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=4&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">https://shikharj.github.io//2017/03/15/Hello-Blogging!</guid>
@@ -2968,561 +3045,6 @@ catastrophic cancellation may occur which induce major loss in precision (&lt;a 
 &lt;/div&gt;
     &lt;/div&gt;
   &lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://gxyd.github.io/blogs/Gsoc2016-summary</guid>
-      <author>Gaurav Dhingra (gxyd)</author>
-      <title>Gaurav Dhingra (gxyd): GSoC 2016 Summary</title>
-      <pubDate>Wed, 30 Nov 2016 00:00:00 GMT</pubDate>
-      <link>https://gxyd.github.io/blogs/Gsoc2016-summary/</link>
-      <description>&lt;p&gt;Below is the summary:&lt;/p&gt;
-
-&lt;p&gt;&lt;a href="https://github.com/gxyd"&gt;Gaurav Dhingra&lt;/a&gt; - &lt;a href="https://summerofcode.withgoogle.com/archive/2016/projects/6593494743252992/"&gt;Computational Group Theory in SymPy&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;This project aimed to implement free groups, finitely presented groups and various algorithms like &lt;a href="https://en.wikipedia.org/wiki/Coset_enumeration"&gt;Coset Enumeration&lt;/a&gt; using Todd Coxeter method, Low index subgroup and Reidemeister schreier.
-Computation of order, index and other properties of the finitely presented
-groups is now present. The functionality is added in the combinatorics module
-of SymPy. He laid the groundwork for further addition of other algorithms
-and integrate it with the permutation groups.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://asmeurer.github.io/blog/posts/github-reviews-gripes/</guid>
-      <author>Aaron Meurer (asmeurer)</author>
-      <title>Aaron Meurer (asmeurer): GitHub Reviews Gripes</title>
-      <pubDate>Thu, 06 Oct 2016 00:12:16 GMT</pubDate>
-      <link>https://asmeurer.github.io/blog/posts/github-reviews-gripes/</link>
-      <description>&lt;div&gt;&lt;p&gt;&lt;em&gt;Update: I want to keep the original post intact, but I'll post any feature
-updates that GitHub makes here as they are released.&lt;/em&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;You can now &lt;a href="https://github.com/blog/2265-dismissing-reviews-on-pull-requests"&gt;dismiss a review&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;You can
-now
-&lt;a href="https://github.com/blog/2306-filter-pull-request-reviews-and-review-requests"&gt;filter the pull request list by review&lt;/a&gt;.
-The review status of a PR also appears in the pull request list (albeit in
-very tiny and easy to miss text).&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;You can
-now
-&lt;a href="https://github.com/blog/2330-restrict-review-dismissals-with-protected-branches"&gt;restrict review dismissals&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr /&gt;
-&lt;p&gt;GitHub
-&lt;a href="https://github.com/blog/2256-a-whole-new-github-universe-announcing-new-tools-forums-and-features"&gt;recently&lt;/a&gt; rolled
-out a new feature on their pull requests called "Reviews". The feature is (in
-theory), something that I've
-been
-&lt;a href="https://groups.google.com/d/msg/sympy/KJwDwT_P6Lw/27ha6ipuBwAJ"&gt;asking for&lt;/a&gt;.
-However, it really falls short in a big way, and I wanted to write down my
-gripes with it, in the hopes that it spurs someone at GitHub to fix it.&lt;/p&gt;
-&lt;p&gt;If you don't know, GitHub has had, for some time, a feature called "pull
-requests" ("PRs"), which lets you quite nicely show the diff and commit
-differences between two branches before merging them. People can comment on
-pull requests, or on individual lines in the diff. Once an administrator feels
-that the pull request is "ready", they can click a button and have the branch
-automatically merged.&lt;/p&gt;
-&lt;p&gt;The concept seems super simple
-in &lt;a href="https://en.wikipedia.org/wiki/Hindsight_bias"&gt;retrospect&lt;/a&gt;, but this
-feature completely revolutionized open source software development. It really
-is the bread and butter of GitHub. I would argue that this one single feature
-has made GitHub the (&lt;em&gt;the&lt;/em&gt;) primary hosting site for open source software.&lt;/p&gt;
-&lt;p&gt;Aside from being an awesome idea, GitHub's trademark with pull requests, along
-with their other features, has been absolute simplicity in implementation.
-GitHub Reviews marks, by my estimation, the first major feature released by
-GitHub that completely and utterly lacks in this execution of simplicity.&lt;/p&gt;
-&lt;p&gt;Let's look at what Reviews is. When the feature first came out, I had a hard
-time figuring out how it even worked (the
-poor
-&lt;a href="https://twitter.com/asmeurer/status/776125249712717824"&gt;release date docs&lt;/a&gt;
-didn't help here either).&lt;/p&gt;
-&lt;p&gt;Basically, at the bottom of a pull request, you now see this&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://asmeurer.github.io/blog/reviews1.png" width="788" /&gt;&lt;/p&gt;
-&lt;p&gt;Clicking the "Add your review" button takes you to the diff page (first gripe:
-why does it move you to the diff page?), and opens this dialog&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://asmeurer.github.io/blog/reviews2.png" width="1020" /&gt;&lt;/p&gt;
-&lt;p&gt;"OK", you might think, "this is simple enough. A review is just a special
-comment box where I can approve or reject a pull request." (This is basically
-the feature that I've been wanting, the ability to approve or reject pull
-requests.) And if you thought that, you'd be wrong.&lt;/p&gt;
-&lt;p&gt;The simplest way I can describe a review, having played with it, is that it is
-a distinct method of commenting on pull requests and on lines of diffs of pull
-requests. Distinct, that is, from the methods that &lt;strong&gt;already exist&lt;/strong&gt; in the
-GitHub pull requests feature. That's right. There are now two ways to comment
-on a pull request (or on a line in a pull request). There's the old way, which
-involves typing text into the box at the bottom of the main pull request page
-(or on a line, and then pressing "Add a single comment"), and the new way,
-which involves clicking a special button at the top of the diff view (and the
-diff view only) (or by clicking a line in the diff and
-clicking "Start a review").&lt;/p&gt;
-&lt;p&gt;How do these two ways of the extremely simple task of commenting differ from
-one another? Two ways. One, with the old way, when you comment on a PR (or
-line), the comment is made immediately. It's saved instantly to the GitHub
-database, and a notification email is sent to everyone subscribed to the PR.
-With the new way, the comment is &lt;strong&gt;not&lt;/strong&gt; made immediately.  Instead, you start
-a "review", which postpones all comments from being published until you scroll
-to the top and press a button ("Review changes"). &lt;strong&gt;Did you forget to scroll
-to the top and press that button? Oh well, your comments never got sent to
-anyone.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Now, I've been told by some people that delayed commenting is a feature that
-they like. I can see how fewer total emails could be nice. &lt;strong&gt;But if you just
-want a way to delay comments, why do you need distinct commenting UIs?&lt;/strong&gt;
-Couldn't the same thing be achieved via a user setting (I highly suspect that
-any given person will either like or dislike delayed commenting universally)?
-Or with a checkbox next to the comment button, like "delay notifications for
-this comment"? You can probably guess by now which of the two commenting
-systems I prefer. But guess what happens when I press the "Cmd-Enter" keyboard
-shortcut that's been hard-wired into my brain to submit a comment? I'll give
-you a hint: the
-result
-&lt;a href="https://twitter.com/asmeurer/status/781949163562999808"&gt;does not make me happy&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The second distinction between normal, old-fashioned commenting and the
-new-fangled reviews system is that when you finalize a review, you can elect
-to "approve" or "reject" the pull request. This approval or rejection gets set
-as a special status on the pull request. This status, for me personally, is
-the only feature here that I've been wanting. It turns out, however, that it's
-completely broken, and useless.&lt;/p&gt;
-&lt;p&gt;Here's my problem. We have, at the time of
-writing, &lt;a href="https://github.com/sympy/sympy/pulls"&gt;382 open pull requests&lt;/a&gt; in
-SymPy. A lot of these are old, and need to be triaged. But the problem from my
-point of view is the new ones. When I look through the list of pull requests,
-I want to be able to know, at a glance, which ones are "reviewable". For me,
-this means two things&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;The tests pass.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;No other reviewer (myself included) has already requested changes, which
-still need to be made by the PR author.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Point 1 is really easy to see. In the pull request list, there is a nice green
-checkmark if Travis passed and a red X if it failed.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://asmeurer.github.io/blog/prlist.png" width="608" /&gt;&lt;/p&gt;
-&lt;p&gt;The second point is a disaster. Unfortunately, there's no simple way to do
-this. You might suggest adding a special label, like "Needs changes", to pull
-requests that have been reviewed. The problem with this is that the label
-won't go away when the changes have been made. And to worsen things, people
-who don't have push access (in the list above, only two PR authors have push
-access, and one of them is me), cannot add or remove labels on pull requests.&lt;/p&gt;
-&lt;p&gt;Another thing
-that
-&lt;a href="https://twitter.com/asmeurer/status/771393023389339649"&gt;has been suggested to me&lt;/a&gt; is
-an external "review" service that sets a status for a review. The problem with
-this (aside from the fact that I couldn't find one that actually did the very
-simple thing that I wanted), is that you now have to teach all your pull
-request reviewers to use this service. You might as well forget about it.&lt;/p&gt;
-&lt;p&gt;Having a first-class way in GitHub for reviewers to say "I approve these
-changes" or "I don't approve these changes" would be a huge boon, because then
-everyone would use it.&lt;/p&gt;
-&lt;p&gt;So great right, this new Reviews feature is exactly what you want, you say.
-You can now approve or reject pull requests.&lt;/p&gt;
-&lt;p&gt;Well no, because GitHub managed to overengineer this feature to the point of
-making it useless. This completely simple feature. All they had to do was
-extend the status UI and add a simple "I approve/I reject" button. If they did
-that, it would have worked perfectly.&lt;/p&gt;
-&lt;p&gt;Here are the problems. First, the pull request list has no indication of
-review status. Guess which pull requests in the above screenshot have reviews
-(and which are positive and which are negative). You can't tell (for example,
-the last one in the list has a negative review). If they were actually treated
-like statuses, like the UI suggests that they would, you would at least see an
-X on the ones that have negative reviews (positive reviews I'm much less
-worried about; most people who review PRs have merge access, so if they like
-the PR they can just merge it). I would suggest to GitHub to add, next to the
-status checkbox, a picture of everyone who's made a review on the PR, with a
-green checkmark or red X to indicate the type of review. Also, add buttons
-(&lt;strong&gt;buttons&lt;/strong&gt;, not just buried advanced search options) to filter by reviews.&lt;/p&gt;
-&lt;p&gt;OK, so that's a minor UI annoyance, but it gets worse. Next on the docket, &lt;strong&gt;you
-can't review your own pull requests.&lt;/strong&gt; It's not allowed for some reason.&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://asmeurer.github.io/blog/reviews3.png" width="411" /&gt;&lt;/p&gt;
-&lt;p&gt;Now why would you want to review your own pull request, you might ask? Aren't
-you always going to "approve" your own PR? Well, first off, no. There is such
-a thing as
-a &lt;a href="http://ben.balter.com/2015/12/08/types-of-pull-requests/"&gt;WIP PR&lt;/a&gt;. The
-author setting a negative review on his own PR would be a great way to
-indicate WIP status (especially given the way reviews work, see my next
-gripe). Secondly, the "author" of a pull request is just the person who
-clicked the "New pull request" button. That's not necessarily the only person
-who has changes in the pull request. Thanks to the magic of how git works,
-it's quite easy to have a pull request with commits from many people. Multiple
-people pushing to a shared branch, with a matching pull request for discussion
-(and easy viewing of new commits and diff) is a valid and useful workflow
-(it's the only one I know of that works for writing collaborative prose). For
-the &lt;a href="https://github.com/sympy/sympy-paper"&gt;SymPy paper&lt;/a&gt;, I wanted to use
-GitHub Reviews to sign off on a common branch, but since I'm the one who
-started the pull request, I couldn't do it.&lt;/p&gt;
-&lt;p&gt;Next gripe, and this, I want to stress, makes the whole feature completely
-useless for my needs: &lt;strong&gt;reviews do not reset when new commits are pushed&lt;/strong&gt;.
-Now, I just outlined above two use-cases where you might want to do a review
-that doesn't reset (marking WIP, and marking approval, although the second is
-debatable), but both of those can easily be done by other means, like editing
-the title of the PR, or old-fashioned commenting. The whole point of Reviews
-(especially negative reviews), you'd think, would be to indicate to people
-that the pull request, as it currently stands, needs new changes. A negative
-review is like failing your "human" test suite.&lt;/p&gt;
-&lt;p&gt;But unlike your automated test suite, which reset and get a new go every time
-you push a change (because hey, who knows, maybe the change ACTUALLY FIXED THE
-ISSUE), reviews do not reset, unless the original reviewers explicitly change
-them. So my dream of being able to glance at the pull request list and see
-which PRs need changes has officially
-been &lt;a href="https://en.wiktionary.org/wiki/pipe_dream"&gt;piped&lt;/a&gt;. Even if the list
-actually showed what PRs have been reviewed, it would be a lie, because as
-soon as the PR author pushes a change, the review status becomes potentially
-outdated.&lt;/p&gt;
-&lt;p&gt;Now, given the rocky start that this whole feature has had, I figured that
-this was probably just a simple bug. But after I reported it to GitHub,
-they've informed me that this is in fact &lt;em&gt;intended behavior&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;To make things worse, GitHub has another feature with Reviews,
-called
-&lt;a href="https://help.github.com/articles/approving-a-pull-request-with-required-reviews/"&gt;required reviews&lt;/a&gt;.
-You can make it so that every pull request must receive at least one positive
-review and zero negative reviews before it can be merged (go to the branch
-settings for your repository). This works similar to required status checks,
-which make it so that your tests must pass before a PR can be merged. In
-practice, this means you need zero negative reviews, since anyone with push
-access could just do a positive review before merging (although annoyingly,
-you have to actually manually do it; IMHO, just requiring zero negative
-reviews should be sufficient, since merging is implicitly a positive review).&lt;/p&gt;
-&lt;p&gt;Now, you can see that the above "feature" of reviews not resetting breaks the
-whole thing. If someone negative reviews a PR, that one person has to go in
-and change their review before it can be merged. And even if the author pushes
-new changes to fix the issues outlined in the review, the PR cannot be merged
-until the reviewer resets it. So this actually makes the reviewing situation
-&lt;em&gt;worse&lt;/em&gt;, because now anyone who reviews a pull request at any point in time
-has to go through with it all the way to the merge. I can't go to a PR that
-someone requested changes for, which were later made by the author, and merge
-it. I have to ping the reviewer and get them to change their review first.
-Needless to say, we do not have this feature enabled for SymPy's repo.&lt;/p&gt;
-&lt;p&gt;I think I maybe see the intended use-case here. You want to make it so that
-people's reviews are not forgotten or ignored. But that's completely foreign
-to my own problems. I trust the SymPy community, and the people who have push
-access to do due diligence before merging a pull request. And if a bad change
-gets in, we can revert it. Maybe this feature matters more for projects that
-continuously deploy. Likely most of the code internal at GitHub works like
-that. But guess what GitHub, most of the code &lt;em&gt;on&lt;/em&gt; GitHub does &lt;em&gt;not&lt;/em&gt; work like
-that. You need to rethink this feature to support more than just your
-use-cases.&lt;/p&gt;
-&lt;p&gt;I think starting simple, say, just a simple "approve/reject" button on each
-PR, which just adds an icon, and that's it, would have been a better approach.
-Then they could have listened to the feedback on what sorts of things people
-wanted it to be able to do (like setting a status, or showing up in the search
-list, or "delayed commenting" if that's really what people want). This is how
-GitHub used to do things. It's frustrating to see a feature implemented that
-doesn't (yet) do quite what you want, but it's even more frustrating to see a
-feature implemented that does all the things that you don't want.&lt;/p&gt;
-&lt;h2&gt;Summary&lt;/h2&gt;
-&lt;p&gt;Yes, I'm a little mad here. I hope you enjoyed my rant. Here are what I see as
-the problems with the "Reviews" feature. I don't know how to fix these
-problems (I'm not a UI/UX guy. GitHub supposedly hires them, though).&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;There are now two distinct ways to comment on a PR (delayed and non-delayed).
-There should be one (say, with a checkbox to delay commenting).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;If you insist on keeping delayed commenting, let me turn it off by default
-(default = the Cmd-Enter keyboard shortcut).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The reviews button is buried on the diff page. I would put it under the
-main PR comment box, and just reuse the same comment box.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Reviews should show up in the pull request list. They should be filterable
-with a nice UI.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Let me review my own pull requests. These can be excluded from required
-reviews (that makes sense to me). Beyond that, there's no reason this
-shouldn't be allowed.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Don't require a positive review for required reviews, only zero negative
-reviews. Merging a PR is implicitly positively reviewing it.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Allow reviews to reset when new commits are pushed.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;I get that the last point may not be what everyone wants. But GitHub needs to
-think about UI, and defaults here. Right now, the UI looks like reviews are
-like statuses, but they actually aren't because of this.&lt;/p&gt;
-&lt;p&gt;I am dispirited to see GitHub release such a broken feature, but even the best
-trip up sometimes. I'm not yet calling "doom" on GitHub. Everyone has
-their &lt;a href="https://en.wikipedia.org/wiki/Apple_USB_Mouse"&gt;hockey puck mice&lt;/a&gt;. I'm
-actually hopeful that they can fix these issues, and implement a feature that
-makes real headway into helping me solve one of my biggest problems on GitHub
-right now, the reviewing of pull requests.&lt;/p&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://asmeurer.github.io/blog/posts/tuples/</guid>
-      <author>Aaron Meurer (asmeurer)</author>
-      <title>Aaron Meurer (asmeurer): Tuples</title>
-      <pubDate>Thu, 22 Sep 2016 02:33:14 GMT</pubDate>
-      <link>https://asmeurer.github.io/blog/posts/tuples/</link>
-      <description>&lt;div&gt;&lt;p&gt;Today, David Beazley made some tweets:&lt;/p&gt;
-&lt;blockquote class="twitter-tweet"&gt;&lt;p dir="ltr" lang="en"&gt;At the bookstore. I'll admit I judge Python books by their tuple description. "Read only list?"  Back on the shelf.  Nope.&lt;/p&gt;&amp;#8212; David Beazley (@dabeaz) &lt;a href="https://twitter.com/dabeaz/status/778634205395845120"&gt;September 21, 2016&lt;/a&gt;&lt;/blockquote&gt;
-
-
-
-&lt;blockquote class="twitter-tweet"&gt;&lt;p dir="ltr" lang="en"&gt;Usually there's a sentence nearby "sometimes you need a read only list." No. No, I haven't. Not in 20 years. Not even once. Sorry.&lt;/p&gt;&amp;#8212; David Beazley (@dabeaz) &lt;a href="https://twitter.com/dabeaz/status/778635637457088512"&gt;September 21, 2016&lt;/a&gt;&lt;/blockquote&gt;
-
-
-
-&lt;blockquote class="twitter-tweet"&gt;&lt;p dir="ltr" lang="en"&gt;My main objection is that "read only list" is a lazy description lacking thought. A red flag for every other topic that might be covered.&lt;/p&gt;&amp;#8212; David Beazley (@dabeaz) &lt;a href="https://twitter.com/dabeaz/status/778639979052498944"&gt;September 21, 2016&lt;/a&gt;&lt;/blockquote&gt;
-
-
-
-&lt;p&gt;There are quite a few good responses to these tweets, both from David and from
-others (and from yours truly). I recommend reading the the thread (click on
-the &lt;a href="https://twitter.com/dabeaz/status/778634205395845120"&gt;first tweet&lt;/a&gt; above).&lt;/p&gt;
-&lt;p&gt;Now to start off, I want to say that I respect the hell out of David Beazley.
-The guy literally &lt;a href="http://www.dabeaz.com/cookbook.html"&gt;wrote the book&lt;/a&gt; on
-Python, and he knows way more about Python than I ever will. He's also one of
-the most entertaining Python people you can
-&lt;a href="https://twitter.com/dabeaz"&gt;follow on Twitter&lt;/a&gt;. But hey, that doesn't mean I
-can't disagree sometimes.&lt;/p&gt;
-&lt;h2&gt;List vs. Tuple. Fight!&lt;/h2&gt;
-&lt;p&gt;As you probably know, there are two "array" datatypes in Python, &lt;code&gt;list&lt;/code&gt; and
-&lt;code&gt;tuple&lt;/code&gt;.&lt;sup id="fnref:list"&gt;&lt;a class="footnote-ref" href="https://asmeurer.github.io/blog/posts/tuples/#fn:list" rel="footnote"&gt;1&lt;/a&gt;&lt;/sup&gt; The primary difference between the two is that lists are &lt;em&gt;mutable&lt;/em&gt;,
-that is you can change their entries and length after they are created, with
-methods like &lt;code&gt;.append&lt;/code&gt; or &lt;code&gt;+=&lt;/code&gt;. Tuples, on the other hand, are &lt;em&gt;immutable&lt;/em&gt;.
-Once you create one, you cannot change it. This makes the implementation
-simpler (and hence faster, although don't let anyone tell you you should use a
-tuple just because it's faster). This, as
-&lt;a href="http://nedbatchelder.com/blog/201608/lists_vs_tuples.html"&gt;Ned Batchelder&lt;/a&gt;
-points out, is the only technical difference between the two.&lt;/p&gt;
-&lt;p&gt;The the idea that particularly bugs me here is that tuples are primarily
-useful as "record" datatypes.&lt;/p&gt;
-&lt;blockquote class="twitter-tweet"&gt;&lt;p dir="ltr" lang="en"&gt;&lt;a href="https://twitter.com/AllenDowney"&gt;@AllenDowney&lt;/a&gt; Better than "read-only-list." ;-).   Mainly looking for the tuple-as-record description. That's often what's missing.&lt;/p&gt;&amp;#8212; David Beazley (@dabeaz) &lt;a href="https://twitter.com/dabeaz/status/778685294593716224"&gt;September 21, 2016&lt;/a&gt;&lt;/blockquote&gt;
-
-
-
-&lt;p&gt;Tuples are awesome for records. This is both by design&amp;#8212;since they have a
-fixed shape, the positions in a tuple can be "fixed" values, and by convention&amp;#8212;if a
-Python programmer sees parentheses instead of square brackets, he is more
-likely to see the object as "record-like". The &lt;code&gt;namedtuple&lt;/code&gt; object in the standard library
-takes the record idea further by letting you actually name the fields:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;collections&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;namedtuple&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;person&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;namedtuple&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'Person'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;'name, age'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;person&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'Aaron'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;26&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;Person&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;'Aaron'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;age&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;26&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;p&gt;But is that really the &lt;em&gt;only&lt;/em&gt; place you'd want to use a tuple over a list?&lt;/p&gt;
-&lt;p&gt;Consider five other places you might encounter a tuple in Python, courtesy of
-Allen Downey:&lt;/p&gt;
-&lt;blockquote class="twitter-tweet"&gt;&lt;p dir="ltr" lang="en"&gt;&lt;a href="https://twitter.com/dabeaz"&gt;@dabeaz&lt;/a&gt; (1) tuple assignment (2) multiple return values (3) *args (4) output from zip, enumerate, etc (5) key in dictionary&lt;/p&gt;&amp;#8212; Allen Downey (@AllenDowney) &lt;a href="https://twitter.com/AllenDowney/status/778691102094176257"&gt;September 21, 2016&lt;/a&gt;&lt;/blockquote&gt;
-
-
-
-&lt;p&gt;In code these look like:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Multiple assignments:&lt;/strong&gt;&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&amp;gt;&amp;gt;&amp;gt; (a, b) = 1, 2
-&lt;/pre&gt;
-
-
-&lt;p&gt;(yes, the parentheses are optional here, as they are in many places where a
-tuple can be used, but this is still a tuple, or at least it looks like one ;)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Multiple return values:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;For example,
-&lt;a href="https://docs.python.org/3/library/os.html#os.walk"&gt;&lt;code&gt;os.walk&lt;/code&gt;&lt;/a&gt;. This is
-for the most part a special case of using tuples as records.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;&lt;code&gt;*args&lt;/code&gt;:&lt;/strong&gt;&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&amp;gt;&amp;gt;&amp;gt; def f(*args):
-...     print(type(args), args)
-...
-&amp;gt;&amp;gt;&amp;gt; f(1, 2, 3)
-&amp;lt;class 'tuple'&amp;gt; (1, 2, 3)
-&lt;/pre&gt;
-
-
-&lt;p&gt;Arbitrary positional function arguments are always stored as a &lt;code&gt;tuple&lt;/code&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Return value from builtins &lt;code&gt;zip&lt;/code&gt;, &lt;code&gt;enumerate&lt;/code&gt;, etc.:&lt;/strong&gt;&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&amp;gt;&amp;gt;&amp;gt; for i in zip(range(3), 'abc'):
-...     print(i)
-...
-(0, 'a')
-(1, 'b')
-(2, 'c')
-&amp;gt;&amp;gt;&amp;gt; for i in enumerate('abc'):
-...     print(i)
-...
-(0, 'a')
-(1, 'b')
-(2, 'c')
-&lt;/pre&gt;
-
-
-&lt;p&gt;This also applies to the combinatoric generators in
-&lt;a href="https://docs.python.org/3.6/library/itertools.html"&gt;itertools&lt;/a&gt; (like
-&lt;code&gt;product&lt;/code&gt;, &lt;code&gt;combinations&lt;/code&gt;, etc.)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Dictionary keys:&lt;/strong&gt;&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&amp;gt;&amp;gt;&amp;gt; {
-...     (0, 0): '.',
-...     (0, 1): ' ',
-...     (1, 0): '.',
-...     (1, 1): ' ',
-... }
-{(0, 1): ' ', (1, 0): '.', (0, 0): '.', (1, 1): ' '}
-&lt;/pre&gt;
-
-
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;This last one I find to be very important. You could arguably use a list for
-the first four of Allen Downey's points&lt;sup id="fnref:assign"&gt;&lt;a class="footnote-ref" href="https://asmeurer.github.io/blog/posts/tuples/#fn:assign" rel="footnote"&gt;2&lt;/a&gt;&lt;/sup&gt; (or Python could have, if it wanted to). But it
-is
-&lt;a href="https://asmeurer.github.io/blog/posts/what-happens-when-you-mess-with-hashing-in-python/"&gt;impossible&lt;/a&gt;
-to meaningfully hash a mutable data structure in Python, and hashability is a
-requirement for dictionary keys.&lt;/p&gt;
-&lt;p&gt;However, be careful. Not all tuples are hashable. Tuples can contain
-anything, but only tuples of immutable values are hashable. Consider&lt;sup id="fnref:TypeError"&gt;&lt;a class="footnote-ref" href="https://asmeurer.github.io/blog/posts/tuples/#fn:TypeError" rel="footnote"&gt;4&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;
-&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;p&gt;Such tuples are not hashable, and cannot be used as dictionary keys.&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;hash&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;Traceback&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;most&lt;/span&gt; &lt;span class="n"&gt;recent&lt;/span&gt; &lt;span class="n"&gt;call&lt;/span&gt; &lt;span class="n"&gt;last&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-  &lt;span class="n"&gt;File&lt;/span&gt; &lt;span class="s"&gt;"&amp;lt;ipython-input-39-36822ba665ca&amp;gt;"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;module&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
-    &lt;span class="nb"&gt;hash&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="ne"&gt;TypeError&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;unhashable&lt;/span&gt; &lt;span class="nb"&gt;type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s"&gt;'list'&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;h2&gt;Why is &lt;code&gt;list&lt;/code&gt; the Default?&lt;/h2&gt;
-&lt;p&gt;My second gripe here is this notion that your default ordered collection
-object in Python should be &lt;code&gt;list&lt;/code&gt;. &lt;code&gt;tuples&lt;/code&gt; are only to be used as "records",
-or if you suspect &lt;em&gt;might&lt;/em&gt; want to use it as a dictionary key. First off, you
-never know when you'll want something to be hashable. Both dictionary keys and
-&lt;code&gt;sets&lt;/code&gt; require hashability. Suppose you want to de-duplicate a collection of
-sequences. If you represent the sequences with &lt;code&gt;list&lt;/code&gt;, you'll either have to
-write a custom loop that checks for duplicates, or manually convert them to
-&lt;code&gt;tuple&lt;/code&gt; and throw them in a &lt;code&gt;set&lt;/code&gt;. If you start with &lt;code&gt;tuple&lt;/code&gt;, you don't have
-to worry about it (again, assuming the entries of the tuples are all hashable
-as well).&lt;/p&gt;
-&lt;p&gt;Consider another usage of tuples, which I consider to be
-important, namely tree structures. Say you wanted a simple representation of a
-Python syntax tree. You might represent &lt;code&gt;1 - 2*(-3 + 4)&lt;/code&gt; as&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'-'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'*'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'+'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'-'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
-&lt;/pre&gt;
-
-
-&lt;p&gt;This isn't really a record. The meaning of the entries in the tuples is
-determined by the first value of the tuple, not position. In this example, the length
-of the tuple also signifies meaning (binary vs. unary &lt;code&gt;-&lt;/code&gt;).&lt;/p&gt;
-&lt;p&gt;If this looks familiar to you, it's because this is how the language Lisp
-represents all programs. This is a common pattern.
-&lt;a href="http://dask.pydata.org/en/latest/graphs.html"&gt;Dask graphs&lt;/a&gt; use tuples and
-dictionaries to represent computations.
-&lt;a href="http://docs.sympy.org/latest/tutorial/manipulation.html"&gt;SymPy expression trees&lt;/a&gt;
-use tuples and Python classes to represent symbolic mathematical expressions.&lt;/p&gt;
-&lt;p&gt;But why use tuples over lists here? Suppose you had an object like the one
-above, but using lists: &lt;code&gt;['-', 1, ['*', 2, ['+', ['-', 3], 4]]]&lt;/code&gt;. If you
-discover you need to use this as a dictionary key, or want to put it in a
-&lt;code&gt;set&lt;/code&gt;, you would need to convert this to a hashable object. To do this you
-need to write a function that recursively converts each &lt;code&gt;list&lt;/code&gt; to a &lt;code&gt;tuple&lt;/code&gt;.
-See how long it takes you to write that function correctly.&lt;/p&gt;
-&lt;h2&gt;Mutability is Bad&lt;/h2&gt;
-&lt;p&gt;More to the point, however, mutability is bad. I counted 12 distinct methods
-on &lt;code&gt;list&lt;/code&gt; that mutate it (how many can you remember off the top of your
-head?&lt;sup id="fnref:mutate"&gt;&lt;a class="footnote-ref" href="https://asmeurer.github.io/blog/posts/tuples/#fn:mutate" rel="footnote"&gt;3&lt;/a&gt;&lt;/sup&gt;). &lt;em&gt;Any&lt;/em&gt; function that gets access to a list can mutate it,
-using any one of these methods. All it takes is for someone to forget that
-&lt;code&gt;+=&lt;/code&gt; mutates a list (and that they should copy it first) for code completely
-distant from the origin definition to cause issues. The hardest bug I ever
-debugged had a three character
-&lt;a href="https://github.com/inducer/pudb/commit/b979fc5909c8d731eb907fc25f4e97904fb7cbbd"&gt;fix&lt;/a&gt;,
-adding &lt;code&gt;[:]&lt;/code&gt; to copy a global list that I was (accidentally) mutating. It took
-me a several hour airplane ride and some deep dark magic that I'll leave for
-another blog post to discover the source of my problems (the problems I was
-having appeared to be quite distant from the actual source).&lt;/p&gt;
-&lt;h2&gt;A Better "Default"&lt;/h2&gt;
-&lt;p&gt;I propose that Python code in general would be vastly improved if people used
-&lt;code&gt;tuple&lt;/code&gt; as the default ordered collection, and only switched to &lt;code&gt;list&lt;/code&gt; if
-mutation was necessary (it's less necessary than you think; you can always
-copy a tuple instead of mutating it). I agree with David Beazley that you
-don't "sometimes need a read only list". Rather, you "sometimes need a
-writable tuple".&lt;/p&gt;
-&lt;p&gt;This makes more sense than defaulting to &lt;code&gt;list&lt;/code&gt;, and only switching to &lt;code&gt;tuple&lt;/code&gt;
-when hashability is needed, or when some weird "rule of thumb" applies that
-says that you should use &lt;code&gt;tuple&lt;/code&gt; if you have a "record". Maybe there's a good
-reason that &lt;code&gt;*args&lt;/code&gt; and almost all builtin and standard library functions
-return tuples instead of lists. It's harder to accidentally break someone
-else's code, or have someone else accidentally break your code, when your data
-structures are immutable.&lt;/p&gt;
-&lt;h2&gt;Footnotes&lt;/h2&gt;
-&lt;div class="footnote"&gt;
-&lt;hr /&gt;
-&lt;ol&gt;
-&lt;li id="fn:list"&gt;
-&lt;p&gt;I want to avoid saying "a tuple is an immutable list", since "list"
-can be interpreted in two ways, as an English word meaning "ordered
-collection" (in
-which case, the statement is true), or as the Python type &lt;code&gt;list&lt;/code&gt; (in which
-case, the statement is false&amp;#8212;&lt;code&gt;tuple&lt;/code&gt; is not a subclass of &lt;code&gt;list&lt;/code&gt;).&amp;#160;&lt;a class="footnote-backref" href="https://asmeurer.github.io/blog/posts/tuples/#fnref:list" rev="footnote" title="Jump back to footnote 1 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li id="fn:assign"&gt;
-&lt;p&gt;Yes,&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&amp;gt;&amp;gt;&amp;gt; [a, b] = 1, 2
-&lt;/pre&gt;
-
-
-&lt;p&gt;works.&amp;#160;&lt;a class="footnote-backref" href="https://asmeurer.github.io/blog/posts/tuples/#fnref:assign" rev="footnote" title="Jump back to footnote 2 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li id="fn:mutate"&gt;
-&lt;p&gt;&lt;/p&gt;&lt;div id="spoiler" style="display: none;"&gt;
-&lt;code&gt;__delitem__&lt;/code&gt;, &lt;code&gt;__iadd__&lt;/code&gt;, &lt;code&gt;__imul__&lt;/code&gt;, &lt;code&gt;__setitem__&lt;/code&gt;, &lt;code&gt;append&lt;/code&gt;, &lt;code&gt;clear&lt;/code&gt;, &lt;code&gt;extend&lt;/code&gt;, &lt;code&gt;insert&lt;/code&gt;,
-&lt;code&gt;pop&lt;/code&gt;, &lt;code&gt;remove&lt;/code&gt;, &lt;code&gt;reverse&lt;/code&gt;, and &lt;code&gt;sort&lt;/code&gt;.
-&lt;/div&gt;
-&lt;button title="Click to show/hide content" type="button"&gt;Show/hide answer&lt;/button&gt;&amp;#160;&lt;a class="footnote-backref" href="https://asmeurer.github.io/blog/posts/tuples/#fnref:mutate" rev="footnote" title="Jump back to footnote 3 in the text"&gt;&amp;#8617;&lt;/a&gt;
-&lt;/li&gt;
-&lt;li id="fn:TypeError"&gt;
-&lt;p&gt;One of the tweets from the conversation:&lt;/p&gt;
-&lt;p&gt;&lt;/p&gt;&lt;blockquote class="twitter-tweet"&gt;&lt;p dir="ltr" lang="en"&gt;&lt;a href="https://twitter.com/asmeurer"&gt;@asmeurer&lt;/a&gt; &lt;a href="https://twitter.com/AllenDowney"&gt;@AllenDowney&lt;/a&gt; As yes:&lt;br /&gt;&lt;br /&gt;t = (1,2, [3, 4])&lt;br /&gt;t[2] += [5,6]&lt;br /&gt;&lt;br /&gt;;-)&lt;/p&gt;&amp;#8212; David Beazley (@dabeaz) &lt;a href="https://twitter.com/dabeaz/status/778697399975813120"&gt;September 21, 2016&lt;/a&gt;&lt;/blockquote&gt; 
-&lt;p&gt;This is similar to this example. But
-it turns out this one doesn't work:&lt;/p&gt;
-&lt;pre class="code literal-block"&gt;&amp;gt;&amp;gt;&amp;gt; t = (1,2, [3, 4])
-&amp;gt;&amp;gt;&amp;gt; t[2] += [5,6]
-Traceback (most recent call last):
-  File "&amp;lt;stdin&amp;gt;", line 1, in &amp;lt;module&amp;gt;
-TypeError: 'tuple' object does not support item assignment
-&lt;/pre&gt;
-
-
-&lt;p&gt;I have no idea why. It seems to me that it should work. &lt;code&gt;t[2]&lt;/code&gt; is a list
-and &lt;code&gt;list&lt;/code&gt; has &lt;code&gt;__iadd__&lt;/code&gt; defined. It seems that Python gets kind of weird
-about things on the left-hand side of an assignment. &lt;strong&gt;EDIT:
-&lt;a href="http://stackoverflow.com/a/29747466/161801"&gt;Here's&lt;/a&gt; why.&lt;/strong&gt;&amp;#160;&lt;a class="footnote-backref" href="https://asmeurer.github.io/blog/posts/tuples/#fnref:TypeError" rev="footnote" title="Jump back to footnote 4 in the text"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nishnik.github.io/GSoC-Thirteenth-Week</guid>
-      <author>Nishant Nikhil (nishnik)</author>
-      <title>Nishant Nikhil (nishnik): GSoC Thirteenth Week</title>
-      <pubDate>Fri, 02 Sep 2016 00:00:00 GMT</pubDate>
-      <link>http://nishnik.github.io/GSoC-Thirteenth-Week/</link>
-      <description>&lt;p&gt;&lt;img alt="Logo" src="https://summerofcode.withgoogle.com/static/img/summer-of-code-logo.svg" /&gt;&lt;/p&gt;
-
-&lt;p&gt;This week I worked on the &lt;a href="https://github.com/symengine/symengine/pull/1066"&gt;PR&lt;/a&gt; of factoring square free polynomials.
-Adding many changes for size in base. Like changing this:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class="language-C++"&gt;auto l = std::ceil(std::log(2 * B + 1) / std::log(mp_get_ui(fsqf.first)));
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;to&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class="language-C++"&gt;if (mp_fits_slong_p(B)) {
-    temp = 2 * B + 1;
-    l = std::ceil(std::log(mp_get_d(temp))
-                  / std::log(mp_get_ui(fsqf.first)));
-} else {
-    auto b_d = mp_get_d(mp_abs(b));
-    l = std::ceil(
-        (1 + std::log2(n + 1) / 2.0 + n + log2_d_A + std::log2(b_d))
-        / (std::log2(mp_get_ui(fsqf.first))));
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This prevented over-flow.
-And a lot of implementation changes were incorporated in &lt;code class="highlighter-rouge"&gt;gf_gcdex&lt;/code&gt; also.&lt;/p&gt;
-
-&lt;p&gt;I also wrote documentation on &lt;code class="highlighter-rouge"&gt;Fields&lt;/code&gt; module &lt;a href="https://github.com/symengine/symengine/wiki/Fields-in-SymEngine"&gt;here&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
