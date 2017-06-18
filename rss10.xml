@@ -17,8 +17,16 @@
 &lt;ol&gt;
 &lt;li&gt;I had used python floating point numbers instead of SymPy&amp;#8217;s exact representation in numerous places(both in the algorithm and the test file). So, that had to be changed first.&lt;/li&gt;
 &lt;li&gt;The decompose() method discarded all constant terms in a polynomial. Now, the constant value is assigned a value of zero as key.&lt;br /&gt;
-Example: Before &amp;#8212;&amp;gt; decompose(x**2 + x + 2) = {1: x, 2: x**2}&lt;br /&gt;
-After &amp;#8212;&amp;#8211;&amp;gt; decompose(x**2 + x + 2) = {0: 2, 1: x, 2: x**2}&lt;/li&gt;
+Example:&lt;br /&gt;
+Before:&lt;/p&gt;
+&lt;pre class="brush: python; title: ; notranslate"&gt;
+decompose(x**2 + x + 2) = {1: x, 2: x**2}
+&lt;/pre&gt;
+&lt;p&gt;After:&lt;/p&gt;
+&lt;pre class="brush: python; title: ; notranslate"&gt;
+decompose(x**2 + x + 2) = {0: 2, 1: x, 2: x**2}
+&lt;/pre&gt;
+&lt;/li&gt;
 &lt;li&gt;Instead of computing component-wise and passing that value to integration_reduction(), the inner product is computed directly and then passed on. This leads to only one recursive call instead of two for 2D case and future three for 3D case.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;Prof. Sukumar also suggested that I should add the option of hyperplane representation. This was simple to do as well. All I did was compute intersection of the hyperplanes(lines as of now) to get the vertices. In case of vertex representation the hyperplane parameters would have to be computed.&lt;/p&gt;
@@ -31,7 +39,7 @@ sympy.geometry.exceptions.GeometryError: Polygon has intersecting sides.
 
 &lt;/pre&gt;
 &lt;p&gt;It seems that the existing polygon class in SymPy does not account for polygons with intersecting sides. At first I thought maybe polygons are not supposed to have intersecting sides by geometrical definition but that was &lt;span style="color: #00ffff;"&gt;&lt;a href="https://en.wikipedia.org/wiki/Complex_polygon" rel="noopener" target="_blank"&gt;not true.&amp;#160;&amp;#160;&lt;/a&gt;&lt;/span&gt;I&amp;#8217;ll have to discuss how to circumvent this problem with my mentor.&lt;/p&gt;
-&lt;p&gt;2. Prof. Sukumar correctly questioned the use of best_origin(). As explained in an earlier post, best_origin() finds that point on the facet which will lead to an inner product with lesser degree. But, obviously there is an associated cost with computing that intersection point. So, I wrote some really basic code to test out the current best_origin() verses simply choosing the first vertex of the facet.&lt;/p&gt;
+&lt;p&gt;2. Prof. Sukumar correctly questioned the use of best_origin(). As explained in an earlier post, best_origin() finds that point on the facet which will lead to an inner product with lesser degree. But, obviously there is an associated cost with computing that intersection point. So, I wrote some really basic code to test out the current best_origin() versus simply choosing the first vertex of the facet.&lt;/p&gt;
 &lt;pre class="brush: python; title: ; notranslate"&gt;
 
 from __future__ import print_function, division
