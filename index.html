@@ -93,6 +93,146 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-4db58090 feed-" id="item-7cf32c2c">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/bjodah.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://bjodah.github.io/blog/posts/gsoc-week3.html">21:15, Monday, 19 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-week3.html">Bj&#246;rn Dahlgren (bjodah): Status update week 3 GSoC</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/bjodah.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://bjodah.github.io/blog/posts/gsoc-week3.html">21:15, Monday, 19 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-week3.html">Status update week 3 GSoC</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<div><div class="section" id="fast-callbacks-from-sympy-using-symengine">
+<h2>Fast callbacks from SymPy using SymEngine</h2>
+<p>My main focus the past week has been to get <tt class="docutils literal">Lambdify</tt> in SymEngine
+to work with multiple output parameters. Last year Isuru Fernando lead
+the <a class="reference external" href="https://github.com/symengine/symengine/pull/1094">development</a> to support jit-compiled callbacks using LLVM in SymEngine.
+I started work on leveraging this in the Python wrappers of SymEngine
+but my work stalled due to time constraints.</p>
+<p>But since it is very much related to code generation in SymPy I did
+put it into my time-line (later in the summer) in my GSoC
+application. But with the upcoming SciPy conference, and the fact that
+it would make a nice addition to our tutorial, I have put in <a class="reference external" href="https://github.com/symengine/symengine.py/pull/112">work</a> to
+get this done earlier than first planned.</p>
+<p>Another thing on my to-do-list from last week was to get <tt class="docutils literal">numba</tt> working
+with <tt class="docutils literal">lambdify</tt>. But for this to work we need to wait for a new upstream
+release of <tt class="docutils literal">numba</tt> (which they are hoping to release before the SciPy
+<a class="reference external" href="https://scipy2017.scipy.org/ehome/220975/493418/">conference</a>).</p>
+</div>
+<div class="section" id="status-of-codegen-tutorial-material">
+<h2>Status of codegen-tutorial material</h2>
+<p>I have not added any new tutorial material this week, but have been
+working on making all notebooks work under all targeted operating
+systems. However, every change to the notebooks have to be checked
+on all operating systems using both Python 2 and Python 3. This
+becomes tedious very quickly so I decided to enable continuous
+integration on our <a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial">repository</a>. I followed conda-forges approach: Travis CI
+for OS X, CircleCI for Linux and AppVeyor for Windows (and a private
+CI server for another Linux setup). And last night
+I <em>finally</em> got green light on all 4 of our CI services.</p>
+</div>
+<div class="section" id="plans-for-the-upcoming-week">
+<h2>Plans for the upcoming week</h2>
+<p>We have had a performance <a class="reference external" href="https://github.com/sympy/sympy/issues/12411">regression</a> in <tt class="docutils literal">sympy.cse</tt> which has bit me
+multiple times this week. I managed to <a class="reference external" href="https://github.com/sympy/sympy_benchmarks/pull/38">craft</a> a small test case
+indicating that the algorithmic complexity of the new function is
+considerably worse than before (effectively making it useless for many
+applications). In my weekly mentor-meeting (with Aaron) we discussed
+possibly reverting that <a class="reference external" href="https://github.com/sympy/sympy/pull/11232">change</a>. I will first try to see if I can
+identify easy-to-fix bottlenecks by profiling the code. But the
+risk is that it is too much work to be done before the upcoming
+new release of SymPy, and then we will simply revert for now (choosing
+speed over extensiveness of the sub-expression elimination).</p>
+<p>I still need to test the notebooks using not only <tt class="docutils literal">msvc</tt> under Windows
+(which is currently used in the AppVeyor tests), but also <tt class="docutils literal">mingw</tt>. I did
+manage to get it working locally but there is still some effort left
+in order to make this work on AppVeyor. It's extra tricky since there
+is a <a class="reference external" href="https://bugs.python.org/issue21821">bug</a> in <tt class="docutils literal">distutils</tt> in Python 3 which causes the detection of mingw
+to fail. So we need to either:</p>
+<ul class="simple">
+<li>Patch <tt class="docutils literal">cygwincompiler.py</tt> in <tt class="docutils literal">distutils</tt> (which I believe we can do
+if we create a conda package for our tutorial material).</li>
+<li>...or use something else than <tt class="docutils literal">pyximport</tt> (I'm hesitant to do this
+before the conference).</li>
+<li>...or provide a gcc executable (not a <tt class="docutils literal">.bat</tt> file) that simply
+spawns <tt class="docutils literal">gcc.bat</tt> (but that executable would need to be compiled
+during build of our conda package).</li>
+</ul>
+<p>Based on my work on making the CI services work, we will need to
+provide test scripts for the participants to run. We need to provide
+the organizers with these scripts by June 27th so this needs to be
+decided upon during next week. I am leaning towards providing an
+<tt class="docutils literal">environment.yml</tt> file together with a simple instruction of
+activating said environment, e.g.:</p>
+<pre class="literal-block">
+$ conda env create -f environment.yml
+$ source activate codegen17
+$ python -c "import scipy2017codegen as cg; cg.test()"
+</pre>
+<p>This could even be tested on our CI services.</p>
+<p>I also intend to add a (perhaps final) tutorial notebook for chemical
+kinetics where we also consider diffusion. We will solve the PDE using
+the method of lines. The addition of a spatial dimension in this way
+is simple in principle, things do tend to become tricky when handling
+boundary conditions though. I will try to use the simplest possible
+treatment in order to avoid taking focus from what we are teaching
+(code-generation).</p>
+<p>It is also my hope that this combined diffusion-reaction model is a
+good candidate for <tt class="docutils literal">ufuncify</tt> from
+<tt class="docutils literal">sympy.utilities.autowrap</tt>.</p>
+</div></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-65d5e286 feed-" id="item-389b397c">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -3390,77 +3530,6 @@ Fateman</a></li>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">April 01, 2017</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-040fd9d5 feed-" id="item-71701428">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/ranjithkumar007.png"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Ranjith Kumar (ranjithkumar007) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://ranjithkumar007.github.io/2017/04/01/gsoc-proposal/">00:00, Saturday, 01 April UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://ranjithkumar007.github.io/2017/04/01/gsoc-proposal/">Ranjith Kumar (ranjithkumar007): GSoC Proposal</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/ranjithkumar007.png"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Ranjith Kumar (ranjithkumar007) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://ranjithkumar007.github.io/2017/04/01/gsoc-proposal/">00:00, Saturday, 01 April UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://ranjithkumar007.github.io/2017/04/01/gsoc-proposal/">GSoC Proposal</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This is my first blog post. I am applying for GSoC this year to work on <code class="highlighter-rouge">Implementing Solvers for SymEngine</code>.Here is my <a href="https://docs.google.com/document/d/1yCicYJ0hfS8APcXIqoBOacx8n2HnjfSfR7q4OshLGYI/">proposal</a>.Feel free to give it a read and suggestions on improving it would be highly welcome. This blog would serve as a way to track and document progress of my GSoC project.</p>
-
-<p>Wish me Good Luck.</p>
-
-<p>Thanks</p>
-
-<p>Bye for now&#8230;.See You Soon !!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3488,134 +3557,134 @@ Fateman</a></li>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td>https://szymag.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>23:21, Monday, 19 June</td>
-<td>23:36, Monday, 19 June</td>
+<td>23:41, Monday, 19 June</td>
+<td>23:56, Monday, 19 June</td>
 </tr>
 </table>
 
