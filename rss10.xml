@@ -554,6 +554,40 @@ SqrtNumberQ[u_] :=
 &lt;p&gt;I hope the next blog post is going to be a good mathematical one :)&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/06/13/Improve Sets Module Part II</guid>
+      <author>Ranjith Kumar (ranjithkumar007)</author>
+      <title>Ranjith Kumar (ranjithkumar007): Improve Sets Module Part II</title>
+      <pubDate>Tue, 13 Jun 2017 00:00:00 GMT</pubDate>
+      <link>http://ranjithkumar007.github.io/2017/06/13/Improve-Sets-Module-Part-II/</link>
+      <description>&lt;p&gt;Last week&amp;#8217;s PR &lt;a href="https://github.com/symengine/symengine/pull/1281"&gt;#1281&lt;/a&gt; on &lt;code class="highlighter-rouge"&gt;Complement&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;set_intersection&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;set_complement&lt;/code&gt; got merged in. This week, I implemented &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt;. This work is done in &lt;a href="https://github.com/symengine/symengine/pull/1291"&gt;#1291&lt;/a&gt; for &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; and &lt;a href="https://github.com/symengine/symengine/pull/1293"&gt;#1293&lt;/a&gt; for &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; : &lt;br /&gt;
+It is useful to represent unsolved equations or a partially solved equation.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;class ConditionSet : public Set
+{
+private:
+    vec_sym syms_;
+    RCP&amp;lt;const Boolean&amp;gt; condition_;
+...
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;Earlier, I used another data member for storing the base set. Thanks to &lt;a href="https://github.com/isuruf"&gt;isuruf&lt;/a&gt;, I was able to merge it within &lt;code class="highlighter-rouge"&gt;condition_&lt;/code&gt;. &lt;br /&gt;
+For implementing &lt;code class="highlighter-rouge"&gt;contains&lt;/code&gt; method for &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt;, I added Subs Visitor for &lt;code class="highlighter-rouge"&gt;Contains&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;And&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; : &lt;br /&gt;
+It is a Set representation of a mathematical function defined on symbols over some set.
+For example, &lt;code class="highlighter-rouge"&gt;x**2 for all x in [0,2]&lt;/code&gt; is represented as &lt;code class="highlighter-rouge"&gt;imageset({x},x**2,[0,2])&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;When is ImageSet useful ? &lt;br /&gt;
+Say, I need to solve a trignometric equation &lt;code class="highlighter-rouge"&gt;sin(x) = 1&lt;/code&gt;. Solution is &lt;code class="highlighter-rouge"&gt;2*n*pi+pi/2, n belongs to [0,oo)&lt;/code&gt;. for such solutions imageset is a useful representation to have.&lt;/p&gt;
+
+&lt;p&gt;I will try to get these two PRs merged in ASAP. &lt;br /&gt;
+Next week, I will be working on implementing solvers for lower degree(&amp;lt;=4) polynomials.&lt;/p&gt;
+
+&lt;p&gt;See you next time. Bye for now !&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://shikharj.github.io//2017/06/12/GSoC-Progress-Week-2</guid>
       <author>Shikhar Jaiswal (ShikharJ)</author>
       <title>Shikhar Jaiswal (ShikharJ): GSoC Progress - Week 2</title>
@@ -807,6 +841,52 @@ FreeQ[2,x] &amp;amp;&amp;amp; NonzeroQ[2]
 &lt;p&gt;&lt;strong&gt;Adi&amp;#243;s&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/06/05/Improve Sets Module - The Beginning</guid>
+      <author>Ranjith Kumar (ranjithkumar007)</author>
+      <title>Ranjith Kumar (ranjithkumar007): Improve Sets Module - The Beginning</title>
+      <pubDate>Mon, 05 Jun 2017 00:00:00 GMT</pubDate>
+      <link>http://ranjithkumar007.github.io/2017/06/05/Improve-Sets-Module-The-Beginning/</link>
+      <description>&lt;p&gt;As discussed in the previous blog, this and the next week&amp;#8217;s task for me is to improve the Sets module.
+I started off by implementing the class for &lt;code class="highlighter-rouge"&gt;Complemsent&lt;/code&gt; and the functions &lt;code class="highlighter-rouge"&gt;set_complement&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;set_intersection&lt;/code&gt;.
+This work is done in &lt;a href="https://github.com/symengine/symengine/pull/1281"&gt;#1281&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;set_intersection&lt;/code&gt; :&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;RCP&amp;lt;const Set&amp;gt; set_intersection(const set_set &amp;amp;in);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;set_intersection&lt;/code&gt; tries to simplify the set of sets input by applying various rules.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;trivial rules like if one of the input is &lt;code class="highlighter-rouge"&gt;emptyset()&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;handles finitesets by checking all other sets in the input for all elements in finitesets.&lt;/li&gt;
+  &lt;li&gt;If any of the sets is union, then it tries to return a Union of Intersections&lt;/li&gt;
+  &lt;li&gt;If any of the sets is Complement, then this returns a simplified &lt;code class="highlighter-rouge"&gt;Complement&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;pair-wise rules checks every pair of sets and tries to merge them into one.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;set_complement&lt;/code&gt; :&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;RCP&amp;lt;const Set&amp;gt; set_complement(const RCP&amp;lt;const Set&amp;gt; &amp;amp;universe, const RCP&amp;lt;const Set&amp;gt; &amp;amp;container);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;For this function, i had to implement virtual functions &lt;code class="highlighter-rouge"&gt;set_complement&lt;/code&gt; for all the existing child classes of &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt;.
+and this function simply calls the container&amp;#8217;s &lt;code class="highlighter-rouge"&gt;set_complement()&lt;/code&gt; with the given universe.&lt;/p&gt;
+
+&lt;p&gt;Details of &lt;code class="highlighter-rouge"&gt;Complement&lt;/code&gt; class :&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;similar to other classes in sets module, the class prototype for &lt;code class="highlighter-rouge"&gt;Complement&lt;/code&gt; is
+    &lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;class Complement : public Set
+&lt;/code&gt;&lt;/pre&gt;
+    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;It stores two Sets. Universe and container, and Complement(a, b) represents a-b where a is universe and b is the container.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Apart from this, I started maintaining a &lt;a href="https://github.com/symengine/symengine/wiki/GSoC-2017-Solvers-Progress-report"&gt;wiki page&lt;/a&gt; for GSoC&amp;#8217;s progress report as suggested by &lt;a href="https://github.com/aktech/"&gt;Amit Kumar&lt;/a&gt; in the first weekly meeting. I will post minutes of all meetings in this wiki page.&lt;/p&gt;
+
+&lt;p&gt;Next week, I will be working on &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;That&amp;#8217;s it for now. See you next time. Until then, Goodbye !&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://valglad.github.io/2017/06/05/smith</guid>
       <author>Valeriia Gladkova (valglad)</author>
       <title>Valeriia Gladkova (valglad): The Smith Normal Form</title>
@@ -1036,6 +1116,31 @@ The main focus for Week 2 should be : &lt;/span&gt;&lt;br /&gt;
 &lt;p style="text-align: justify;"&gt;After the Skype call, a basic timeline was made by Ondrej. It was decided that firstly a basic working prototype to handle the 2D use case (i.e. the capability to integrate a bivariate polynomial over a 2-Polytope) should be written. It would be fine to make some assumptions about the input data initially so as to have some working code as soon as possible. Eventually the implementation for the 2D case should be made robust before moving onto the 3D case.&lt;/p&gt;
 &lt;p style="text-align: justify;"&gt;I began by implementing some of the helper functions required for the main algorithm. You can see the current status of the implementation &lt;span style="color: #ffcc00;"&gt;&lt;a href="https://github.com/sympy/sympy/pull/12673/files" rel="noopener noreferrer" style="color: #ffcc00;" target="_blank"&gt;here.&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;p style="text-align: justify;"&gt;It&amp;#8217;s been 2 days since the discussion and I feel that I should pick up the pace now and get the basic 2D prototype working soon.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/30/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/30/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=30&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/05/25/Community-Bonding-Period</guid>
+      <author>Ranjith Kumar (ranjithkumar007)</author>
+      <title>Ranjith Kumar (ranjithkumar007): Community Bonding Period</title>
+      <pubDate>Thu, 25 May 2017 00:00:00 GMT</pubDate>
+      <link>http://ranjithkumar007.github.io/2017/05/25/Community-Bonding-Period/</link>
+      <description>&lt;p&gt;I am selected for GSoC&amp;#8217;17 with SymPy. I have been alotted &lt;a href="https://github.com/sumith1896"&gt;Sumith Kulal&lt;/a&gt;, &lt;a href="https://github.com/srajangarg"&gt;Srajan Garg&lt;/a&gt;, &lt;a href="https://github.com/shivamvats"&gt;Shivam Vats&lt;/a&gt;, &lt;a href="https://github.com/nishnik"&gt;Nishant Nikhil&lt;/a&gt; and &lt;a href="https://github.com/aktech"&gt;Amit Kumar&lt;/a&gt; as my official mentors. My &lt;a href="https://ranjithkumar007.github.io/docs.google.com/document/d/1yCicYJ0hfS8APcXIqoBOacx8n2HnjfSfR7q4OshLGYI/"&gt;Project&lt;/a&gt; is to implement Solvers for SymEngine.&lt;/p&gt;
+
+&lt;p&gt;Time-line as mentioned in the proposal upto First Evaluations:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Week-1 : Flint wrappers for factorisation.&lt;/li&gt;
+  &lt;li&gt;Week-2 and 3: Improve Sets Module.&lt;/li&gt;
+  &lt;li&gt;Week-4: Implement lower degree polynomial solvers and helper function for cyclotomic polynomials.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;After my summer vacation ends, progress of the project might get slow; So, I will try to be ahead of the proposed timeline by atleast one week.&lt;/p&gt;
+
+&lt;p&gt;During the Community Bonding period, I went through the &lt;a href="http://www.flintlib.org/flint-2.5.pdf"&gt;documentation&lt;/a&gt; of FLINT library, precisely the required functions for wrapping factorisation of polynomials. The Major Problem I came across is the lack of &lt;a href="https://github.com/wbhart/flint2/blob/trunk/fmpz_poly_factor.h#L86"&gt;fmpz_poly_factor()&lt;/a&gt; function in FLINT&amp;#8217;s latest release 2.5.2. Going by the Suggestion made by &lt;a href="https://github.com/isuruf"&gt;isuruf&lt;/a&gt;, I updated Travis to use the development branch of FLINT along with its latest release. This work is done in &lt;a href="https://github.com/symengine/symengine/pull/1275"&gt;#1275&lt;/a&gt;. This &lt;a href="https://github.com/symengine/symengine/pull/1274"&gt;#1274&lt;/a&gt; PR wraps up the FLINT factorisation. Before 31st May, I will try to get this &lt;a href="https://github.com/symengine/symengine/pull/1274"&gt;PR&lt;/a&gt; merged in.&lt;/p&gt;
+
+&lt;p&gt;Apart from the this, I worked on this &lt;a href="https://github.com/symengine/symengine/pull/1258"&gt;PR&lt;/a&gt; to implement JuliaStrPrinter for nan and infs.&lt;/p&gt;
+
+&lt;p&gt;After Coding period starts(from 31st May), I will start working on Improving Sets module.&lt;/p&gt;
+
+&lt;p&gt;See you soon .&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">https://gxyd.github.io/blogs/Gsoc2017-with-sympy</guid>
@@ -1653,58 +1758,6 @@ Fateman&lt;/a&gt;&lt;/li&gt;
       <pubDate>Sun, 02 Apr 2017 16:36:31 GMT</pubDate>
       <link>https://nesar2017.wordpress.com/2017/04/02/first-blog-post/</link>
       <description>&lt;p&gt;Community bonding period comes to an end. We have roughly discussed on the plan and splitted our work.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/nesar2017.wordpress.com/4/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/nesar2017.wordpress.com/4/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=nesar2017.wordpress.com&amp;#038;blog=126779945&amp;#038;post=4&amp;#038;subd=nesar2017&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=4</guid>
-      <author>Arif Ahmed (ArifAhmed1995)</author>
-      <title>Arif Ahmed (ArifAhmed1995): Google Summer of Code 2017 : SymPy</title>
-      <pubDate>Mon, 27 Mar 2017 14:32:29 GMT</pubDate>
-      <link>https://arif7blog.wordpress.com/2017/03/27/summer-project/</link>
-      <description>&lt;p&gt;I have been accepted to work on an open source summer project under the flag of GSoC&amp;#8217;17. My work will be implementing a module in &lt;span style="color: #00ff00;"&gt;&lt;a href="http://www.sympy.org/en/index.html" rel="noopener noreferrer" style="color: #00ff00;" target="_blank"&gt;SymPy&lt;/a&gt;&lt;/span&gt; capable of efficient integration of functions over arbitrary (i.e. both convex and non-convex) polytopes.&lt;/p&gt;
-&lt;p&gt;Various techniques of solving this problem of numerical integration have been discovered, but most of them are either computationally expensive, or difficult to implement or incapable of exact integration &lt;span style="color: #00ff00;"&gt;&lt;a href="https://docs.google.com/viewer?a=v&amp;amp;pid=forums&amp;amp;srcid=MTc0ODA5NjEwNzE3MDA0NDQzODEBMTgyNjA3NzE1NzE4MzczOTc1MDEBenFfWmRWZlBCZ0FKATAuMQEBdjI" rel="noopener noreferrer" style="color: #00ff00;" target="_blank"&gt;[1]&lt;/a&gt;&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;The algorithm is mentioned in &lt;span style="color: #00ff00;"&gt;&lt;a href="http://dilbert.engr.ucdavis.edu/~suku/quadrature/cls-integration.pdf" rel="noopener noreferrer" style="color: #00ff00;" target="_blank"&gt;this paper&lt;/a&gt;&lt;/span&gt; and &lt;span style="color: #00ff00;"&gt;&lt;a href="https://docs.google.com/document/d/1pIH-HXoAesl34_Qs41Mfmwxa8-2ExYvhVHh9bfS4ijQ/edit" rel="noopener noreferrer" style="color: #00ff00;" target="_blank"&gt;here&lt;/a&gt;&lt;/span&gt; is my proposal to implement the module.&lt;/p&gt;
-&lt;p&gt;My final exams just got over and I still have to ask my &lt;span style="color: #00ff00;"&gt;&lt;a href="http://www.ondrejcertik.com/" rel="noopener noreferrer" style="color: #00ff00;" target="_blank"&gt;mentor&lt;/a&gt;&lt;/span&gt; how to communicate over the summer. Most probably it will be via a gitter chat room such as &lt;span style="color: #00ff00;"&gt;&lt;a href="https://gitter.im/sympy/Rubi-GSoC17" rel="noopener noreferrer" style="color: #00ff00;" target="_blank"&gt;this one&lt;/a&gt;&lt;/span&gt; which is for another SymPy GSoC&amp;#8217;17 project.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/4/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/4/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=4&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://shikharj.github.io//2017/03/15/Hello-Blogging!</guid>
-      <author>Shikhar Jaiswal (ShikharJ)</author>
-      <title>Shikhar Jaiswal (ShikharJ): Hello Blogging!</title>
-      <pubDate>Wed, 15 Mar 2017 00:00:00 GMT</pubDate>
-      <link>https://shikharj.github.io//2017/03/15/Hello-Blogging!/</link>
-      <description>&lt;p&gt;My very first blog post. This blog&amp;#8217;s purpose is primarily to track the progress of my GSoC project and get feedback from my mentors, if my proposal gets selected. I propose to improve upon the Python wrappers for &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt;, and work on rooting it as a symbolic backend for &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt; CAS, the purpose for which it has been in development for a number of years. My proposal can be found &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2017-Application-Shikhar-Jaiswal:-Improving-SymEngine's-Python-Wrappers-and-SymPy-SymEngine-Integration"&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Till Next Time!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://bjodah.github.io/blog/posts/writing-tests-for-python.html</guid>
-      <author>Bj&#xF6;rn Dahlgren (bjodah)</author>
-      <title>Bj&#xF6;rn Dahlgren (bjodah): Writing tests for Python</title>
-      <pubDate>Tue, 17 Jan 2017 23:13:33 GMT</pubDate>
-      <link>http://bjodah.github.io/blog/posts/writing-tests-for-python.html</link>
-      <description>&lt;div&gt;&lt;p&gt;A coworker asked me about "tests" from a programming practice perspective, "what's the big deal?".
-For me, writing tests is a very small price to pay to comfortably daring to change code without
-the fear of breaking it. Every bug I fix, even during the design phase, gives rise to at least one test.&lt;/p&gt;
-&lt;p&gt;No library or script is too small to have tests, here is a silly example (let's call it &lt;tt class="docutils literal"&gt;rootof.py&lt;/tt&gt;):&lt;/p&gt;
-&lt;pre class="code python"&gt;&lt;a name="rest_code_1f66c939a3944149b939ebe8bd546915-1"&gt;&lt;/a&gt;&lt;span class="ch"&gt;#!/usr/bin/env python&lt;/span&gt;
-&lt;a name="rest_code_1f66c939a3944149b939ebe8bd546915-2"&gt;&lt;/a&gt;
-&lt;a name="rest_code_1f66c939a3944149b939ebe8bd546915-3"&gt;&lt;/a&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;argh&lt;/span&gt;
-&lt;a name="rest_code_1f66c939a3944149b939ebe8bd546915-4"&gt;&lt;/a&gt;
-&lt;a name="rest_code_1f66c939a3944149b939ebe8bd546915-5"&gt;&lt;/a&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;root_of&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;number&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mf"&gt;1.0&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-&lt;a name="rest_code_1f66c939a3944149b939ebe8bd546915-6"&gt;&lt;/a&gt;    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;number&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mf"&gt;0.5&lt;/span&gt;
-&lt;a name="rest_code_1f66c939a3944149b939ebe8bd546915-7"&gt;&lt;/a&gt;
-&lt;a name="rest_code_1f66c939a3944149b939ebe8bd546915-8"&gt;&lt;/a&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;test_root_of&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
-&lt;a name="rest_code_1f66c939a3944149b939ebe8bd546915-9"&gt;&lt;/a&gt;    &lt;span class="k"&gt;assert&lt;/span&gt; &lt;span class="n"&gt;root_of&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;
-&lt;a name="rest_code_1f66c939a3944149b939ebe8bd546915-10"&gt;&lt;/a&gt;    &lt;span class="k"&gt;assert&lt;/span&gt; &lt;span class="nb"&gt;abs&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;root_of&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mf"&gt;1.4142&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mf"&gt;1e-4&lt;/span&gt;
-&lt;a name="rest_code_1f66c939a3944149b939ebe8bd546915-11"&gt;&lt;/a&gt;
-&lt;a name="rest_code_1f66c939a3944149b939ebe8bd546915-12"&gt;&lt;/a&gt;&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="vm"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s1"&gt;'__main__'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-&lt;a name="rest_code_1f66c939a3944149b939ebe8bd546915-13"&gt;&lt;/a&gt;    &lt;span class="n"&gt;argh&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;dispatch_command&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;root_of&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;p&gt;The example is so short it's silly, but the point is that each time you edit &lt;tt class="docutils literal"&gt;rootof.py&lt;/tt&gt; you
-should run&lt;/p&gt;
-&lt;pre class="code bash"&gt;&lt;a name="rest_code_86ac70335e294f61b718aad2ccf19a1b-1"&gt;&lt;/a&gt;$ python -m pytest rootof.py
-&lt;/pre&gt;&lt;p&gt;which should exit without errors. That's pretty much the gist of it. Happy testing!&lt;/p&gt;
-&lt;p&gt;P.S. if you don't have &lt;tt class="docutils literal"&gt;argh&lt;/tt&gt; just install it by typing:&lt;/p&gt;
-&lt;pre class="code bash"&gt;&lt;a name="rest_code_7088ab25c4c04198a83f942560a86de0-1"&gt;&lt;/a&gt;$ python -m pip install --user argh
-&lt;/pre&gt;&lt;p&gt;P.P.S if you don't have &lt;tt class="docutils literal"&gt;pip&lt;/tt&gt;: see &lt;a class="reference external" href="https://pip.pypa.io/en/stable/installing/"&gt;this&lt;/a&gt;.&lt;/p&gt;&lt;/div&gt;</description>
     </item>
   </channel>
 </rss>
