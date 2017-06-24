@@ -93,6 +93,74 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-3b0ec3aa feed-" id="item-52f9635d">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/arifahmed.jpeg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://arif7blog.wordpress.com/2017/06/24/week-4-reportjune-18-24-dynamic-programming/">22:33, Saturday, 24 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/06/24/week-4-reportjune-18-24-dynamic-programming/">Arif Ahmed (ArifAhmed1995): Week 4 Report(June 18 &#8211; 24) : Dynamic Programming</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/arifahmed.jpeg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://arif7blog.wordpress.com/2017/06/24/week-4-reportjune-18-24-dynamic-programming/">22:33, Saturday, 24 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/06/24/week-4-reportjune-18-24-dynamic-programming/">Week 4 Report(June 18 &#8211; 24) : Dynamic Programming</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Note : If you&#8217;re viewing this on Planet SymPy and Latex looks weird, go to the <a href="https://arif7blog.wordpress.com/" rel="noopener" target="_blank">WordPress site</a> instead.</p>
+<p>Prof. Sukumar came up with the following optimization idea :<br />
+Consider equation 10 in <a href="http://dilbert.engr.ucdavis.edu/~suku/quadrature/cls-integration.pdf" rel="noopener" target="_blank">Chin et. al .</a> The integral of the inner product of the gradient of <img alt="f(x) " class="latex" src="https://s0.wp.com/latex.php?latex=f%28x%29+&#038;bg=ffffff&#038;fg=444444&#038;s=0" title="f(x) " /> and <img alt="{x}_{0} " class="latex" src="https://s0.wp.com/latex.php?latex=%7Bx%7D_%7B0%7D+&#038;bg=ffffff&#038;fg=444444&#038;s=0" title="{x}_{0} " /> need not be always re-calculated. This is because it might have been calculated before. Hence, the given polynomial can be broken up into a list of monomials with increasing degree. Over a certain facet, the integrals of the list of monomials can be calculated and stored for later use. Before calculation of a certain monomial we need to see if it&#8217;s gradient has&#160; already calculated and hence available for re-use.<br />
+Then again, there&#8217;s another way to implement this idea of re-use. Given the degree of the input polynomial we know all the types of monomials which can possibly exist. For example, for max_degree = 2 the monomials are : <img alt="[1, x, y, x^2, xy, y^2]" class="latex" src="https://s0.wp.com/latex.php?latex=%5B1%2C+x%2C+y%2C+x%5E2%2C+xy%2C+y%5E2%5D&#038;bg=ffffff&#038;fg=444444&#038;s=1" title="[1, x, y, x^2, xy, y^2]" />.<br />
+All the monomial integrals over all facets can be calculated and stored in a list of lists. This would be very useful for one specific use-case, that is when there are many different polynomials with max degree less than or equal to a certain global maximum to be integrated over a given polytope.</p>
+<p>I&#8217;m still working on implementing the first one. That&#8217;s cause the worst case time(when no or very few dictionary terms are re-used) turns out to much more expensive than the straightforward method. Maybe computing the standard deviation among monomial degrees would be a good way to understand which technique to use. Here is an example to show what I mean. If we have a monomial list : <img alt="[x^3, y^3, 3x^2y, 3xy^2] " class="latex" src="https://s0.wp.com/latex.php?latex=%5Bx%5E3%2C+y%5E3%2C+3x%5E2y%2C+3xy%5E2%5D+&#038;bg=ffffff&#038;fg=444444&#038;s=0" title="[x^3, y^3, 3x^2y, 3xy^2] " /> , then the dynamic programming technique becomes useless here since gradient of any term will have degree 2 and not belong in the list. Now, the corresponding list of degrees is : <img alt="[3, 3, 3, 3] " class="latex" src="https://s0.wp.com/latex.php?latex=%5B3%2C+3%2C+3%2C+3%5D+&#038;bg=ffffff&#038;fg=444444&#038;s=0" title="[3, 3, 3, 3] " />, and standard deviation is zero. Hence the normal technique is applicable here.</p>
+<p>In reality, I&#8217;ll probably have to use another measure to make the judgement of dynamic vs. normal. Currently, I&#8217;m trying to fix a bug in the implementation of the first technique. After that, I&#8217;ll try out the second one.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/516/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/516/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&#038;blog=126429718&#038;post=516&#038;subd=arif7blog&#038;ref=&#038;feed=1" width="1" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-debb4ede feed-" id="item-a9866313">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -2903,85 +2971,6 @@ The main focus for Week 2 should be : </span><br />
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-040fd9d5 feed-" id="item-2e6997e0">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/ranjithkumar007.png"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Ranjith Kumar (ranjithkumar007) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://ranjithkumar007.github.io/2017/05/25/Community-Bonding-Period/">00:00, Thursday, 25 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://ranjithkumar007.github.io/2017/05/25/Community-Bonding-Period/">Ranjith Kumar (ranjithkumar007): Community Bonding Period</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/ranjithkumar007.png"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Ranjith Kumar (ranjithkumar007) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://ranjithkumar007.github.io/2017/05/25/Community-Bonding-Period/">00:00, Thursday, 25 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://ranjithkumar007.github.io/2017/05/25/Community-Bonding-Period/">Community Bonding Period</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>I am selected for GSoC&#8217;17 with SymPy. I have been alotted <a href="https://github.com/sumith1896">Sumith Kulal</a>, <a href="https://github.com/srajangarg">Srajan Garg</a>, <a href="https://github.com/shivamvats">Shivam Vats</a>, <a href="https://github.com/nishnik">Nishant Nikhil</a> and <a href="https://github.com/aktech">Amit Kumar</a> as my official mentors. My <a href="https://ranjithkumar007.github.io/docs.google.com/document/d/1yCicYJ0hfS8APcXIqoBOacx8n2HnjfSfR7q4OshLGYI/">Project</a> is to implement Solvers for SymEngine.</p>
-
-<p>Time-line as mentioned in the proposal upto First Evaluations:</p>
-<ul>
-  <li>Week-1 : Flint wrappers for factorisation.</li>
-  <li>Week-2 and 3: Improve Sets Module.</li>
-  <li>Week-4: Implement lower degree polynomial solvers and helper function for cyclotomic polynomials.</li>
-</ul>
-
-<p>After my summer vacation ends, progress of the project might get slow; So, I will try to be ahead of the proposed timeline by atleast one week.</p>
-
-<p>During the Community Bonding period, I went through the <a href="http://www.flintlib.org/flint-2.5.pdf">documentation</a> of FLINT library, precisely the required functions for wrapping factorisation of polynomials. The Major Problem I came across is the lack of <a href="https://github.com/wbhart/flint2/blob/trunk/fmpz_poly_factor.h#L86">fmpz_poly_factor()</a> function in FLINT&#8217;s latest release 2.5.2. Going by the Suggestion made by <a href="https://github.com/isuruf">isuruf</a>, I updated Travis to use the development branch of FLINT along with its latest release. This work is done in <a href="https://github.com/symengine/symengine/pull/1275">#1275</a>. This <a href="https://github.com/symengine/symengine/pull/1274">#1274</a> PR wraps up the FLINT factorisation. Before 31st May, I will try to get this <a href="https://github.com/symengine/symengine/pull/1274">PR</a> merged in.</p>
-
-<p>Apart from the this, I worked on this <a href="https://github.com/symengine/symengine/pull/1258">PR</a> to implement JuliaStrPrinter for nan and infs.</p>
-
-<p>After Coding period starts(from 31st May), I will start working on Improving Sets module.</p>
-
-<p>See you soon .</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -3010,134 +2999,134 @@ The main focus for Week 2 should be : </span><br />
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>22:21, Saturday, 24 June</td>
-<td>22:36, Saturday, 24 June</td>
+<td>22:41, Saturday, 24 June</td>
+<td>22:56, Saturday, 24 June</td>
 </tr>
 </table>
 

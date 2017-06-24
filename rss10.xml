@@ -7,6 +7,20 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=516</guid>
+      <author>Arif Ahmed (ArifAhmed1995)</author>
+      <title>Arif Ahmed (ArifAhmed1995): Week 4 Report(June 18 &#x2013; 24) : Dynamic Programming</title>
+      <pubDate>Sat, 24 Jun 2017 22:33:31 GMT</pubDate>
+      <link>https://arif7blog.wordpress.com/2017/06/24/week-4-reportjune-18-24-dynamic-programming/</link>
+      <description>&lt;p&gt;Note : If you&amp;#8217;re viewing this on Planet SymPy and Latex looks weird, go to the &lt;a href="https://arif7blog.wordpress.com/" rel="noopener" target="_blank"&gt;WordPress site&lt;/a&gt; instead.&lt;/p&gt;
+&lt;p&gt;Prof. Sukumar came up with the following optimization idea :&lt;br /&gt;
+Consider equation 10 in &lt;a href="http://dilbert.engr.ucdavis.edu/~suku/quadrature/cls-integration.pdf" rel="noopener" target="_blank"&gt;Chin et. al .&lt;/a&gt; The integral of the inner product of the gradient of &lt;img alt="f(x) " class="latex" src="https://s0.wp.com/latex.php?latex=f%28x%29+&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=0" title="f(x) " /&gt; and &lt;img alt="{x}_{0} " class="latex" src="https://s0.wp.com/latex.php?latex=%7Bx%7D_%7B0%7D+&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=0" title="{x}_{0} " /&gt; need not be always re-calculated. This is because it might have been calculated before. Hence, the given polynomial can be broken up into a list of monomials with increasing degree. Over a certain facet, the integrals of the list of monomials can be calculated and stored for later use. Before calculation of a certain monomial we need to see if it&amp;#8217;s gradient has&amp;#160; already calculated and hence available for re-use.&lt;br /&gt;
+Then again, there&amp;#8217;s another way to implement this idea of re-use. Given the degree of the input polynomial we know all the types of monomials which can possibly exist. For example, for max_degree = 2 the monomials are : &lt;img alt="[1, x, y, x^2, xy, y^2]" class="latex" src="https://s0.wp.com/latex.php?latex=%5B1%2C+x%2C+y%2C+x%5E2%2C+xy%2C+y%5E2%5D&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=1" title="[1, x, y, x^2, xy, y^2]" /&gt;.&lt;br /&gt;
+All the monomial integrals over all facets can be calculated and stored in a list of lists. This would be very useful for one specific use-case, that is when there are many different polynomials with max degree less than or equal to a certain global maximum to be integrated over a given polytope.&lt;/p&gt;
+&lt;p&gt;I&amp;#8217;m still working on implementing the first one. That&amp;#8217;s cause the worst case time(when no or very few dictionary terms are re-used) turns out to much more expensive than the straightforward method. Maybe computing the standard deviation among monomial degrees would be a good way to understand which technique to use. Here is an example to show what I mean. If we have a monomial list : &lt;img alt="[x^3, y^3, 3x^2y, 3xy^2] " class="latex" src="https://s0.wp.com/latex.php?latex=%5Bx%5E3%2C+y%5E3%2C+3x%5E2y%2C+3xy%5E2%5D+&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=0" title="[x^3, y^3, 3x^2y, 3xy^2] " /&gt; , then the dynamic programming technique becomes useless here since gradient of any term will have degree 2 and not belong in the list. Now, the corresponding list of degrees is : &lt;img alt="[3, 3, 3, 3] " class="latex" src="https://s0.wp.com/latex.php?latex=%5B3%2C+3%2C+3%2C+3%5D+&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=0" title="[3, 3, 3, 3] " /&gt;, and standard deviation is zero. Hence the normal technique is applicable here.&lt;/p&gt;
+&lt;p&gt;In reality, I&amp;#8217;ll probably have to use another measure to make the judgement of dynamic vs. normal. Currently, I&amp;#8217;m trying to fix a bug in the implementation of the first technique. After that, I&amp;#8217;ll try out the second one.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/516/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/516/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=516&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/06/24/GSoC17-Week3-Report</guid>
       <author>Arihant Parsoya (parsoyaarihant)</author>
       <title>Arihant Parsoya (parsoyaarihant): GSoC17 Week 3 Report</title>
@@ -1195,31 +1209,6 @@ The main focus for Week 2 should be : &lt;/span&gt;&lt;br /&gt;
 &lt;p style="text-align: justify;"&gt;After the Skype call, a basic timeline was made by Ondrej. It was decided that firstly a basic working prototype to handle the 2D use case (i.e. the capability to integrate a bivariate polynomial over a 2-Polytope) should be written. It would be fine to make some assumptions about the input data initially so as to have some working code as soon as possible. Eventually the implementation for the 2D case should be made robust before moving onto the 3D case.&lt;/p&gt;
 &lt;p style="text-align: justify;"&gt;I began by implementing some of the helper functions required for the main algorithm. You can see the current status of the implementation &lt;span style="color: #ffcc00;"&gt;&lt;a href="https://github.com/sympy/sympy/pull/12673/files" rel="noopener noreferrer" style="color: #ffcc00;" target="_blank"&gt;here.&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;p style="text-align: justify;"&gt;It&amp;#8217;s been 2 days since the discussion and I feel that I should pick up the pace now and get the basic 2D prototype working soon.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/30/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/30/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=30&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/05/25/Community-Bonding-Period</guid>
-      <author>Ranjith Kumar (ranjithkumar007)</author>
-      <title>Ranjith Kumar (ranjithkumar007): Community Bonding Period</title>
-      <pubDate>Thu, 25 May 2017 00:00:00 GMT</pubDate>
-      <link>http://ranjithkumar007.github.io/2017/05/25/Community-Bonding-Period/</link>
-      <description>&lt;p&gt;I am selected for GSoC&amp;#8217;17 with SymPy. I have been alotted &lt;a href="https://github.com/sumith1896"&gt;Sumith Kulal&lt;/a&gt;, &lt;a href="https://github.com/srajangarg"&gt;Srajan Garg&lt;/a&gt;, &lt;a href="https://github.com/shivamvats"&gt;Shivam Vats&lt;/a&gt;, &lt;a href="https://github.com/nishnik"&gt;Nishant Nikhil&lt;/a&gt; and &lt;a href="https://github.com/aktech"&gt;Amit Kumar&lt;/a&gt; as my official mentors. My &lt;a href="https://ranjithkumar007.github.io/docs.google.com/document/d/1yCicYJ0hfS8APcXIqoBOacx8n2HnjfSfR7q4OshLGYI/"&gt;Project&lt;/a&gt; is to implement Solvers for SymEngine.&lt;/p&gt;
-
-&lt;p&gt;Time-line as mentioned in the proposal upto First Evaluations:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Week-1 : Flint wrappers for factorisation.&lt;/li&gt;
-  &lt;li&gt;Week-2 and 3: Improve Sets Module.&lt;/li&gt;
-  &lt;li&gt;Week-4: Implement lower degree polynomial solvers and helper function for cyclotomic polynomials.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;After my summer vacation ends, progress of the project might get slow; So, I will try to be ahead of the proposed timeline by atleast one week.&lt;/p&gt;
-
-&lt;p&gt;During the Community Bonding period, I went through the &lt;a href="http://www.flintlib.org/flint-2.5.pdf"&gt;documentation&lt;/a&gt; of FLINT library, precisely the required functions for wrapping factorisation of polynomials. The Major Problem I came across is the lack of &lt;a href="https://github.com/wbhart/flint2/blob/trunk/fmpz_poly_factor.h#L86"&gt;fmpz_poly_factor()&lt;/a&gt; function in FLINT&amp;#8217;s latest release 2.5.2. Going by the Suggestion made by &lt;a href="https://github.com/isuruf"&gt;isuruf&lt;/a&gt;, I updated Travis to use the development branch of FLINT along with its latest release. This work is done in &lt;a href="https://github.com/symengine/symengine/pull/1275"&gt;#1275&lt;/a&gt;. This &lt;a href="https://github.com/symengine/symengine/pull/1274"&gt;#1274&lt;/a&gt; PR wraps up the FLINT factorisation. Before 31st May, I will try to get this &lt;a href="https://github.com/symengine/symengine/pull/1274"&gt;PR&lt;/a&gt; merged in.&lt;/p&gt;
-
-&lt;p&gt;Apart from the this, I worked on this &lt;a href="https://github.com/symengine/symengine/pull/1258"&gt;PR&lt;/a&gt; to implement JuliaStrPrinter for nan and infs.&lt;/p&gt;
-
-&lt;p&gt;After Coding period starts(from 31st May), I will start working on Improving Sets module.&lt;/p&gt;
-
-&lt;p&gt;See you soon .&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
