@@ -89,6 +89,143 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">June 25, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-5a972359 feed-" id="item-1b53520d">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/gxyd.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Gaurav Dhingra (gxyd) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://gxyd.github.io/blogs/Gsoc2017-week-3/">00:00, Sunday, 25 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2017-week-3/">Gaurav Dhingra (gxyd): GSoC Week 3</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/gxyd.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Gaurav Dhingra (gxyd) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://gxyd.github.io/blogs/Gsoc2017-week-3/">00:00, Sunday, 25 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2017-week-3/">GSoC Week 3</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<blockquote>
+  <h2 id="rischs-structure-theorems">Risch&#8217;s structure theorem&#8217;s</h2>
+</blockquote>
+
+<p>For the next couple of weeks we will be moving to understand and implement the Risch&#8217;s structure theorem and applications that we will make use of in gsoc project. One of the application is that of &#8220;Simplification of real elementary functions&#8221;, a paper by Manuel Bronstein (in 1989). This paper by Bronstein uses Risch&#8217;s real structure theorem (which I will describe in this post), the paper determines explicitly all algebraic relations among a set of real elementary functions.</p>
+
+<blockquote>
+  <h3 id="simplification-of-real-elementary-functions">Simplification of Real Elementary Functions</h3>
+</blockquote>
+
+<p>Risch in 1979 gave a theorem and an algorithm that found explicitly all algebraic relations among a set of only &#8217;s and &#8217;s. And to apply this algorithm required to convert trigonometric functions to &#8217;s and &#8217;s.</p>
+
+<p>Consider the integrand . For this first we make use of  form of , i.e . Substituting it in the original expression we get . Now using the exponential form of  we get .
+ And substituting  in place of  we get the final expression. , which is a complex algebraic function.</p>
+
+<p>All of this could be avoided since the original function  is a real algebraic function. The part that could be a problem to see it is , which can be seen to satisfy the algebraic equation  using the formula for . Bronstein discusses the algorithm that wouldn&#8217;t require the use of complex &#8217;s and &#8217;s.</p>
+
+<p>A function  is called real elementary over a differential field , if for a differential extension  () of . If either  is algebraic over  or it is , , ,  of an element of  (consider this recursively).
+For example:  is real elementary over , so is  and .</p>
+
+<p>Point to mention here is, we have to explicitly include , , since we don&#8217;t want the function to be a complex function by re-writing  as ,  form( and  can be written in form of complex  and  respectively), and we can write other trigonometric functions have real elementary relations with  and . Alone  or alone  can&#8217;t do the job.</p>
+
+<p>This way we can form the definition of a <em>real-elementary extension of a differential field</em> .</p>
+
+<blockquote>
+  <h3 id="functions-currently-using-approach-of-structure-theorems-in-sympy">Functions currently using approach of structure theorems in SymPy</h3>
+</blockquote>
+
+<p>Moving on, let us now look at the three functions in SymPy that use the structure theorem &#8220;approach&#8221;:</p>
+
+<ol>
+  <li>
+    <p><code class="highlighter-rouge">is_log_deriv_k_t_radical(fa, fd, DE)</code>: Checks if  is the logarithmic derivative of a <code class="highlighter-rouge">k(t)-radical</code>. Mathematically  where , . In naive terms if . Here <code class="highlighter-rouge">k(t)-radical</code> means <code class="highlighter-rouge">n-th</code> roots of element of . Used in process of calculating DifferentialExtension of an object where &#8216;case&#8217; is &#8216;exp&#8217;.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">is_log_deriv_k_t_radical_in_field(fa, fd, DE)</code>: Checks if  is the logarithmic derivative of a <code class="highlighter-rouge">k(t)-radical</code>. Mathematically  where , . It may seem like it is just the same as above with <code class="highlighter-rouge">f</code> given as input instead of having to calculate , but the &#8220;in_field&#8221; part in function name is important.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">is_deriv_k</code>: Checks if  is the derivative of a k(t), i.e.  where .</p>
+  </li>
+</ol>
+
+<blockquote>
+  <h3 id="what-have-i-done-this-week">What have I done this week?</h3>
+</blockquote>
+
+<p>Moving onto what I have been doing for the last few days (at a very slow pace) went through a debugger for understanding the working of <code class="highlighter-rouge">DifferentialExtension(exp(x**2/2) + exp(x**2), x)</code> in which <code class="highlighter-rouge">integer_powers</code> function is currently used to determine the relation  and , instead of  and , since we can&#8217;t handle algebraic extensions currently (that will hopefully come later in my gsoc project). Similar example for  is there in the book , though the difference is it uses the <code class="highlighter-rouge">is_deriv_k</code> (for <code class="highlighter-rouge">case == 'primitive'</code>, we have <code class="highlighter-rouge">is_log_deriv_k_t_radical</code> for case == &#8216;exp&#8217;) to reach the conclusion that ,  and .</p>
+
+<p>I still have to understand the structure theorem, for what they are? and how exactly they are used. According to Aaron, Kalevi, I should start reading the source of <code class="highlighter-rouge">is_deriv_k</code>, <code class="highlighter-rouge">is_log_deriv_k_t_radical</code> and <code class="highlighter-rouge">parametric_log_deriv</code> functions in prde.py file.</p>
+
+<p>We worked on <a href="https://github.com/sympy/sympy/pull/12743">#12743 Liouvillian case for Parametric Risch Diff Eq.</a> this week, it handles liouvillian cancellation cases. It enables us to handle integrands like .</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;&gt;&gt; risch_integrate(log(x/exp(x) + 1), x)
+(x*log(x*exp(-x) + 1) + NonElementaryIntegral((x**2 - x)/(x + exp(x)), x))
+</code></pre>
+</div>
+
+<p>earlier it used to raise error <code class="highlighter-rouge">prde_cancel()</code> not implemented. After testing it a bit I realised that part of returned answer could be further integrated instead of being returned as a <code class="highlighter-rouge">NonElementaryIntegral</code>. Consider this</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>In [4]: risch_integrate(x + exp(x**2), x)
+Out[4]: Integral(x + exp(x**2), x)
+</code></pre>
+</div>
+
+<p>as can be easily seen it can be further integrated. Though I am not sure why Kalevi has still not merged the <code class="highlighter-rouge">liouvillia</code> PR (only a comment needs to be fixed <code class="highlighter-rouge">n=2</code> -&gt; <code class="highlighter-rouge">n=5</code> in a comment), though that PR is not blocking me from doing further work.</p>
+
+<p>Starting tomorrow (26th) we have the first evaluation of GSoC. Anyways I don&#8217;t like the idea of having 3 evaluations.</p>
+
+<blockquote>
+  <h3 id="todo-for-the-next-week">TODO for the next week:</h3>
+</blockquote>
+
+<p>Figuring out and implementing the structure theorems.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">June 24, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -2904,74 +3041,6 @@ The main focus for Week 2 should be : </span><br />
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">May 25, 2017</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-3b0ec3aa feed-" id="item-7eeb07a4">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/arifahmed.jpeg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://arif7blog.wordpress.com/2017/05/25/week-1-the-beginning/">21:10, Thursday, 25 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/05/25/week-1-the-beginning/">Arif Ahmed (ArifAhmed1995): Week 1 : The Beginning</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/arifahmed.jpeg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://arif7blog.wordpress.com/2017/05/25/week-1-the-beginning/">21:10, Thursday, 25 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/05/25/week-1-the-beginning/">Week 1 : The Beginning</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p style="text-align: justify;">After reaching home on May 18, I decided not to waste any more time and contacted my mentor(<span style="color: #99cc00;"><a href="http://www.lanl.gov/expertise/profiles/view/ondrej-certik" rel="noopener noreferrer" style="color: #99cc00;" target="_blank">Ondrej Certik</a></span>). He suggested that we should have a discussion with <span style="color: #3366ff;"><a href="http://dilbert.engr.ucdavis.edu/~suku/" style="color: #3366ff;">Prof.N.Sukumar</a></span> about the project and develop a plan for the summer.</p>
-<p style="text-align: justify;">After the Skype call, a basic timeline was made by Ondrej. It was decided that firstly a basic working prototype to handle the 2D use case (i.e. the capability to integrate a bivariate polynomial over a 2-Polytope) should be written. It would be fine to make some assumptions about the input data initially so as to have some working code as soon as possible. Eventually the implementation for the 2D case should be made robust before moving onto the 3D case.</p>
-<p style="text-align: justify;">I began by implementing some of the helper functions required for the main algorithm. You can see the current status of the implementation <span style="color: #ffcc00;"><a href="https://github.com/sympy/sympy/pull/12673/files" rel="noopener noreferrer" style="color: #ffcc00;" target="_blank">here.</a></span></p>
-<p style="text-align: justify;">It&#8217;s been 2 days since the discussion and I feel that I should pick up the pace now and get the basic 2D prototype working soon.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/30/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/30/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&#038;blog=126429718&#038;post=30&#038;subd=arif7blog&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2999,134 +3068,134 @@ The main focus for Week 2 should be : </span><br />
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>13:01, Sunday, 25 June</td>
-<td>13:16, Sunday, 25 June</td>
+<td>13:21, Sunday, 25 June</td>
+<td>13:36, Sunday, 25 June</td>
 </tr>
 </table>
 
