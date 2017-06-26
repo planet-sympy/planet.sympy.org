@@ -202,92 +202,6 @@ But, Unfortunately there were several mistakes in the earlier implementation of 
 &lt;p&gt;More on Solvers coming soon !! Until then Stay tuned !!&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://bjodah.github.io/blog/posts/gsoc-week3.html</guid>
-      <author>Bj&#xF6;rn Dahlgren (bjodah)</author>
-      <title>Bj&#xF6;rn Dahlgren (bjodah): Status update week 3 GSoC</title>
-      <pubDate>Mon, 19 Jun 2017 21:15:00 GMT</pubDate>
-      <link>http://bjodah.github.io/blog/posts/gsoc-week3.html</link>
-      <description>&lt;div&gt;&lt;div class="section" id="fast-callbacks-from-sympy-using-symengine"&gt;
-&lt;h2&gt;Fast callbacks from SymPy using SymEngine&lt;/h2&gt;
-&lt;p&gt;My main focus the past week has been to get &lt;tt class="docutils literal"&gt;Lambdify&lt;/tt&gt; in SymEngine
-to work with multiple output parameters. Last year Isuru Fernando lead
-the &lt;a class="reference external" href="https://github.com/symengine/symengine/pull/1094"&gt;development&lt;/a&gt; to support jit-compiled callbacks using LLVM in SymEngine.
-I started work on leveraging this in the Python wrappers of SymEngine
-but my work stalled due to time constraints.&lt;/p&gt;
-&lt;p&gt;But since it is very much related to code generation in SymPy I did
-put it into my time-line (later in the summer) in my GSoC
-application. But with the upcoming SciPy conference, and the fact that
-it would make a nice addition to our tutorial, I have put in &lt;a class="reference external" href="https://github.com/symengine/symengine.py/pull/112"&gt;work&lt;/a&gt; to
-get this done earlier than first planned.&lt;/p&gt;
-&lt;p&gt;Another thing on my to-do-list from last week was to get &lt;tt class="docutils literal"&gt;numba&lt;/tt&gt; working
-with &lt;tt class="docutils literal"&gt;lambdify&lt;/tt&gt;. But for this to work we need to wait for a new upstream
-release of &lt;tt class="docutils literal"&gt;numba&lt;/tt&gt; (which they are hoping to release before the SciPy
-&lt;a class="reference external" href="https://scipy2017.scipy.org/ehome/220975/493418/"&gt;conference&lt;/a&gt;).&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="section" id="status-of-codegen-tutorial-material"&gt;
-&lt;h2&gt;Status of codegen-tutorial material&lt;/h2&gt;
-&lt;p&gt;I have not added any new tutorial material this week, but have been
-working on making all notebooks work under all targeted operating
-systems. However, every change to the notebooks have to be checked
-on all operating systems using both Python 2 and Python 3. This
-becomes tedious very quickly so I decided to enable continuous
-integration on our &lt;a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial"&gt;repository&lt;/a&gt;. I followed conda-forges approach: Travis CI
-for OS X, CircleCI for Linux and AppVeyor for Windows (and a private
-CI server for another Linux setup). And last night
-I &lt;em&gt;finally&lt;/em&gt; got green light on all 4 of our CI services.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="section" id="plans-for-the-upcoming-week"&gt;
-&lt;h2&gt;Plans for the upcoming week&lt;/h2&gt;
-&lt;p&gt;We have had a performance &lt;a class="reference external" href="https://github.com/sympy/sympy/issues/12411"&gt;regression&lt;/a&gt; in &lt;tt class="docutils literal"&gt;sympy.cse&lt;/tt&gt; which has bit me
-multiple times this week. I managed to &lt;a class="reference external" href="https://github.com/sympy/sympy_benchmarks/pull/38"&gt;craft&lt;/a&gt; a small test case
-indicating that the algorithmic complexity of the new function is
-considerably worse than before (effectively making it useless for many
-applications). In my weekly mentor-meeting (with Aaron) we discussed
-possibly reverting that &lt;a class="reference external" href="https://github.com/sympy/sympy/pull/11232"&gt;change&lt;/a&gt;. I will first try to see if I can
-identify easy-to-fix bottlenecks by profiling the code. But the
-risk is that it is too much work to be done before the upcoming
-new release of SymPy, and then we will simply revert for now (choosing
-speed over extensiveness of the sub-expression elimination).&lt;/p&gt;
-&lt;p&gt;I still need to test the notebooks using not only &lt;tt class="docutils literal"&gt;msvc&lt;/tt&gt; under Windows
-(which is currently used in the AppVeyor tests), but also &lt;tt class="docutils literal"&gt;mingw&lt;/tt&gt;. I did
-manage to get it working locally but there is still some effort left
-in order to make this work on AppVeyor. It's extra tricky since there
-is a &lt;a class="reference external" href="https://bugs.python.org/issue21821"&gt;bug&lt;/a&gt; in &lt;tt class="docutils literal"&gt;distutils&lt;/tt&gt; in Python 3 which causes the detection of mingw
-to fail. So we need to either:&lt;/p&gt;
-&lt;ul class="simple"&gt;
-&lt;li&gt;Patch &lt;tt class="docutils literal"&gt;cygwincompiler.py&lt;/tt&gt; in &lt;tt class="docutils literal"&gt;distutils&lt;/tt&gt; (which I believe we can do
-if we create a conda package for our tutorial material).&lt;/li&gt;
-&lt;li&gt;...or use something else than &lt;tt class="docutils literal"&gt;pyximport&lt;/tt&gt; (I'm hesitant to do this
-before the conference).&lt;/li&gt;
-&lt;li&gt;...or provide a gcc executable (not a &lt;tt class="docutils literal"&gt;.bat&lt;/tt&gt; file) that simply
-spawns &lt;tt class="docutils literal"&gt;gcc.bat&lt;/tt&gt; (but that executable would need to be compiled
-during build of our conda package).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Based on my work on making the CI services work, we will need to
-provide test scripts for the participants to run. We need to provide
-the organizers with these scripts by June 27th so this needs to be
-decided upon during next week. I am leaning towards providing an
-&lt;tt class="docutils literal"&gt;environment.yml&lt;/tt&gt; file together with a simple instruction of
-activating said environment, e.g.:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-$ conda env create -f environment.yml
-$ source activate codegen17
-$ python -c "import scipy2017codegen as cg; cg.test()"
-&lt;/pre&gt;
-&lt;p&gt;This could even be tested on our CI services.&lt;/p&gt;
-&lt;p&gt;I also intend to add a (perhaps final) tutorial notebook for chemical
-kinetics where we also consider diffusion. We will solve the PDE using
-the method of lines. The addition of a spatial dimension in this way
-is simple in principle, things do tend to become tricky when handling
-boundary conditions though. I will try to use the simplest possible
-treatment in order to avoid taking focus from what we are teaching
-(code-generation).&lt;/p&gt;
-&lt;p&gt;It is also my hope that this combined diffusion-reaction model is a
-good candidate for &lt;tt class="docutils literal"&gt;ufuncify&lt;/tt&gt; from
-&lt;tt class="docutils literal"&gt;sympy.utilities.autowrap&lt;/tt&gt;.&lt;/p&gt;
-&lt;/div&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">https://asmeurer.github.io/blog/posts/automatically-deploying-this-blog-to-github-pages-with-travis-ci/</guid>
       <author>Aaron Meurer (asmeurer)</author>
       <title>Aaron Meurer (asmeurer): Automatically deploying this blog to GitHub Pages with Travis CI</title>
@@ -817,123 +731,6 @@ I also opened &lt;a href="https://github.com/symengine/symengine.py/pull/153"&gt
 &lt;p&gt;&lt;strong&gt;Au Revoir&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://bjodah.github.io/blog/posts/gsoc-week2.html</guid>
-      <author>Bj&#xF6;rn Dahlgren (bjodah)</author>
-      <title>Bj&#xF6;rn Dahlgren (bjodah): Status update week 2 GSoC</title>
-      <pubDate>Sun, 11 Jun 2017 21:37:00 GMT</pubDate>
-      <link>http://bjodah.github.io/blog/posts/gsoc-week2.html</link>
-      <description>&lt;div&gt;&lt;p&gt;I have spent the second week of Google Summer of Code on essentially two things:&lt;/p&gt;
-&lt;ol class="arabic simple"&gt;
-&lt;li&gt;Continued work on type awareness in the code printers (&lt;tt class="docutils literal"&gt;CCodePrinter&lt;/tt&gt; and
-&lt;tt class="docutils literal"&gt;FCodePrinter&lt;/tt&gt;). The work is ongoing in &lt;a class="reference external" href="https://github.com/sympy/sympy/pull/12693"&gt;gh-12693&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Writing tutorial &lt;a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial"&gt;code&lt;/a&gt; on code-generation in the form of jupyter notebooks for the
-upcoming SciPy 2017 &lt;a class="reference external" href="https://scipy2017.scipy.org/ehome/220975/493418/"&gt;conference&lt;/a&gt;.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class="section" id="precision-aware-code-printers"&gt;
-&lt;h2&gt;Precision aware code printers&lt;/h2&gt;
-&lt;p&gt;After my weekly mentor meeting, we decided to take another approach to
-how we are going to represent &lt;tt class="docutils literal"&gt;Variable&lt;/tt&gt; instances in the
-&lt;tt class="docutils literal"&gt;.codegen.ast&lt;/tt&gt; module. Previously I had proposed to use quite a
-number of arguments (stored in &lt;tt class="docutils literal"&gt;.args&lt;/tt&gt; since it inherits
-&lt;tt class="docutils literal"&gt;Basic&lt;/tt&gt;). Aaron suggested we might want to represent that underlying
-information differently. After some discussion we came to the
-conclusion that we could introduce a &lt;tt class="docutils literal"&gt;Attribute&lt;/tt&gt; class (inhereting
-from &lt;tt class="docutils literal"&gt;Symbol&lt;/tt&gt;) to describe things such as value const-ness, and
-pointer const-ness (those two are available as &lt;tt class="docutils literal"&gt;value_const&lt;/tt&gt; and
-&lt;tt class="docutils literal"&gt;pointer_const&lt;/tt&gt;). Attributes will be stored in a &lt;tt class="docutils literal"&gt;FiniteSet&lt;/tt&gt;
-(essentially SymPy version of &lt;tt class="docutils literal"&gt;set&lt;/tt&gt;) and the instances we provide as
-"pre-made" in the &lt;tt class="docutils literal"&gt;.codegen.ast&lt;/tt&gt; module will be supported by the
-printers by default. Here is some example code showing what the
-current proposed API looks like (for C99):&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-&amp;gt;&amp;gt;&amp;gt; u = symbols('u', real=True)
-&amp;gt;&amp;gt;&amp;gt; ptr = Pointer.deduced(u, {pointer_const, restrict})
-&amp;gt;&amp;gt;&amp;gt; ccode(Declaration(ptr))
-'double * const restrict u;'
-&lt;/pre&gt;
-&lt;p&gt;and for Fortran:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-&amp;gt;&amp;gt;&amp;gt; vx = Variable(Symbol('x'), {value_const}, float32)
-&amp;gt;&amp;gt;&amp;gt; fcode(Declaration(vx, 42))
-'real(4), parameter :: x = 42'
-&lt;/pre&gt;
-&lt;p&gt;The C code printer can now also print code using different math functions depending
-on the targeted precision (functions guaranteed to be present in the C99 stanard):&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-&amp;gt;&amp;gt;&amp;gt; ccode(x**3.7, standard='c99', precision=float32)
-'powf(x, 3.7F)'
-&amp;gt;&amp;gt;&amp;gt; ccode(exp(x/2), standard='c99', precision=float80)
-'expl((1.0L/2.0L)*x)'
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div class="section" id="tutorial-material-for-code-generation"&gt;
-&lt;h2&gt;Tutorial material for code generation&lt;/h2&gt;
-&lt;p&gt;Aaron, Jason and I have been discussing what examples to use for the
-tutorial on code generation with SymPy. Right now we are aiming to use
-quite a few examples from chemistry actually, and more specifically
-&lt;a class="reference external" href="https://en.wikipedia.org/wiki/Chemical_kinetics"&gt;chemical kinetics&lt;/a&gt;. This is the
-precise application which got me started using SymPy for
-code-generation, so it lies close to my heart (I do extensive modeling
-of chemical kinetics in my PhD studies).&lt;/p&gt;
-&lt;p&gt;Working on the tutorial material has already been really helpful for
-getting insight in development needs for the exisiting classes and
-functions used for code-generation. I was hoping to use &lt;tt class="docutils literal"&gt;autowrap&lt;/tt&gt;
-from the &lt;tt class="docutils literal"&gt;.utilities&lt;/tt&gt; module. Unfortunately I found that it was not
-flexible enough to be useful for integration of systems of ODEs (where
-we need to evaluate a vector-valued function taking a vector as
-input). I did attempt to subclass the &lt;tt class="docutils literal"&gt;CodeWrapper&lt;/tt&gt; class to allow
-me to do this. But personally I found those classes to be quite hard to
-extend (much unlike the printers which I've often found to be
-intuitive).&lt;/p&gt;
-&lt;p&gt;My current plan for the chemical kinetics case is to first solve it
-using &lt;tt class="docutils literal"&gt;sympy.lambdify&lt;/tt&gt;.  That allows for quick prototyping, and
-unless one has very high demands with respect to performance, it is
-usually good enough.&lt;/p&gt;
-&lt;p&gt;The next step is to generate a native callback (it was here I was
-hoping to use &lt;tt class="docutils literal"&gt;autowrap&lt;/tt&gt; with the Cython backend). The current
-approach is to write the expressions as Cython code using a template.
-Cython conveniently follows Python syntax, and hence the string
-printer can be used for the code generation. Doing this speeds up the
-integration considerably. At this point the bottleneck is going back and
-forth through the Python layer.&lt;/p&gt;
-&lt;p&gt;So in order to speed up the integration further, we need to bypass
-Python during integration (and let the solver call the user
-provided callbacks without going through the interpreter). I did
-this by providing a C-code template which relies on &lt;tt class="docutils literal"&gt;CVode&lt;/tt&gt; from the
-&lt;a class="reference external" href="https://computation.llnl.gov/projects/sundials"&gt;Sundials&lt;/a&gt; suite of
-non-linear solvers. It is a well established solver and is already
-available for Linux, Mac &amp;amp; Windows under conda from the
-&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;conda-forge&lt;/span&gt;&lt;/tt&gt; channel. I then provide a thin Cython wrapper, calling
-into the C-function, which:&lt;/p&gt;
-&lt;ol class="arabic simple"&gt;
-&lt;li&gt;sets up the CVode solver&lt;/li&gt;
-&lt;li&gt;runs the integration&lt;/li&gt;
-&lt;li&gt;records some statistics&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Using native code does come at a cost. One of the strengths of Python
-is that it is cross-platform. It (usually) does not matter if your
-Python application runs on Linux, OSX or Windows (or any other
-supported operating system). However, since we are doing
-code-generation, we are relying on compilers provided by the
-respective platform. Since we want to support both Python 2 &amp;amp; Python 3
-on said three platforms, there are quite a few combinations to cover.
-That meant quite a few surprises (I now know for example that MS
-Visual C++ 2008 does not support C99), but thanks to the kind &lt;a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial/issues/2#issuecomment-307538308"&gt;help&lt;/a&gt; of
-&lt;a class="reference external" href="https://github.com/isuruf"&gt;Isuru Fernando&lt;/a&gt; I think I will manage to
-have all platform/version combinations working during next week.&lt;/p&gt;
-&lt;p&gt;Also planned for next week:&lt;/p&gt;
-&lt;ul class="simple"&gt;
-&lt;li&gt;Use &lt;tt class="docutils literal"&gt;numba&lt;/tt&gt; together with &lt;tt class="docutils literal"&gt;lambdify&lt;/tt&gt;&lt;/li&gt;
-&lt;li&gt;Use &lt;tt class="docutils literal"&gt;Lambdify&lt;/tt&gt; from &lt;a class="reference external" href="https://github.com/symengine"&gt;SymEngine&lt;/a&gt;
-(preferably with the LLVM backend).&lt;/li&gt;
-&lt;li&gt;Make the notebooks more tutorial like (right now they are more of a
-show-case).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;and of course: continued work on the code printers. That's all for now
-feel free to get in touch with any feedback or questions.&lt;/p&gt;
-&lt;/div&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=247</guid>
       <author>Arif Ahmed (ArifAhmed1995)</author>
       <title>Arif Ahmed (ArifAhmed1995): Week 2 Report(June 3 &#x2013; June 10) : Working Prototype, Improving functionality.</title>
@@ -1110,92 +907,6 @@ and this function simply calls the container&amp;#8217;s &lt;code class="highlig
 &lt;p&gt;I have begun working on it but this week is the last before my exams, and I feel that I should spend more time revising. For this reason, I probably wouldn&amp;#8217;t be able to send a PR with this new test by the end of the week. However, it would most likely be ready by the end of the next one, and considering that the only other thing I planned to do until the first evaluation period was to write (the main parts of) the &lt;code class="highlighter-rouge"&gt;GroupHomomorphism&lt;/code&gt; class assuming that the things it depends on (e.g. rewriting systems) are already implemented, I believe I am going to stay on schedule.&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://bjodah.github.io/blog/posts/gsoc-week1.html</guid>
-      <author>Bj&#xF6;rn Dahlgren (bjodah)</author>
-      <title>Bj&#xF6;rn Dahlgren (bjodah): A summer of code and mathematics</title>
-      <pubDate>Sat, 03 Jun 2017 13:10:00 GMT</pubDate>
-      <link>http://bjodah.github.io/blog/posts/gsoc-week1.html</link>
-      <description>&lt;div&gt;&lt;p&gt;Google are generously funding work on selected &lt;a class="reference external" href="https://en.wikipedia.org/wiki/Open-source_software"&gt;open source&lt;/a&gt; projects each
-year through the &lt;a class="reference external" href="https://summerofcode.withgoogle.com/"&gt;Google Summer of Code&lt;/a&gt; project. The project allows
-under- and post-graduate students around the world to apply to
-mentoring organizations for a scholarship to work on a project during
-the summer. This spring I made the leap, I wrote a &lt;a class="reference external" href="https://github.com/sympy/sympy/wiki/GSoC-2017-Application-Bj%C3%B6rn-Dahlgren:-Improved-code-generation-facilities"&gt;proposal&lt;/a&gt; which
-got accepted, and I am now working full time for the duration of this
-summer on one of these projects. In this blog post I'll give some
-background and tell you about the first project week.&lt;/p&gt;
-&lt;div class="section" id="background"&gt;
-&lt;h2&gt;Background&lt;/h2&gt;
-&lt;p&gt;Since a few years I've been contributing code to the open-source project
-&lt;a class="reference external" href="http://www.sympy.org"&gt;SymPy&lt;/a&gt;. SymPy is a so-called "computer algebra system",
-which lets you manipulate mathematical expressions symbolically. I've used this
-software package extensively in my own doctoral studies and it has been really useful.&lt;/p&gt;
-&lt;p&gt;My research involves formulating mathematical models to: rationalize experimental observations,
-fit parameters or aid in design of experiments. Traditionally one sits down and derive equations,
-often using pen &amp;amp; paper, then one writes computer code which implements said model, and finally
-one writes a paper with the same formulas as LaTeX code (or something similar).
-Note how this procedure involves writing the same equations essentially three times,
-during derivation, coding and finally the article.&lt;/p&gt;
-&lt;p&gt;By using SymPy I can, from a single source:&lt;/p&gt;
-&lt;ol class="arabic simple"&gt;
-&lt;li&gt;Do the derivations (fewer hard-to-find mistakes)&lt;/li&gt;
-&lt;li&gt;Generate the numerical code (a blazing fast computer program)&lt;/li&gt;
-&lt;li&gt;Output LaTeX formatted equations (pretty formulas for the report)&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;A very attractive side-effect of this is that one truly get reproducible research
-(reproducibility is one of the pillars in science). Every step of the process is
-self-documented, and because SymPy is free software: &lt;em&gt;anyone&lt;/em&gt; can redo them. I
-can't stress enough how big this truly is. It is also the main
-motivation why I haven't used proprietary software in place of SymPy,
-even though that software may be considerably more feature complete
-than SymPy, any code I wrote for it would be inaccessible to people
-without a license (possibly even including myself if I leave academia).&lt;/p&gt;
-&lt;p&gt;For this work-flow to work in practice the capabilities of the computer algebra system
-need to be quite extensive, and it is here my current project with SymPy comes in.
-I have had several ideas on how to improve capability number two
-listed above: generating the numerical code, and now I get the chance
-to realize some of them and work with the community to improve SymPy.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="section" id="first-week"&gt;
-&lt;h2&gt;First week&lt;/h2&gt;
-&lt;p&gt;The majority of the first week has been spent on introducing type-awareness into
-the code-printers. SymPy has printer-classes which specialize printing of e.g.
-strings, C code, Fortran code etc. Up to now there has been no way to indicate
-what precision the generated code should be for. The default floating point type
-in python is for example "double precision" (i.e. 64-bit binary IEEE 754 floating
-point). This is also the default precision targeted by the code
-printers.&lt;/p&gt;
-&lt;p&gt;However, there are occasions where one want to use another
-precision. For example, consumer class graphics cards which are
-ubiquitous often have excellent single precision performance, but are
-intentionally capped with respect to double precision arithmetic (due
-to marketing reasons). At other times, one want just a bit of extra
-precision and extended precision (80-bit floating point, usually the
-data type of C's &lt;tt class="docutils literal"&gt;long double&lt;/tt&gt;) is just what's needed to compute
-some values with the required precision. In C, the &lt;a class="reference external" href="http://en.cppreference.com/w/c/numeric/math"&gt;corresponding math functions&lt;/a&gt; are standardized since
-C99.&lt;/p&gt;
-&lt;p&gt;I have started the work to enable the code printers to print this in a
-&lt;a class="reference external" href="https://github.com/sympy/sympy/pull/12693"&gt;pull-request&lt;/a&gt; to the
-SymPy source repository. I have also started experimenting with a
-class representing arrays. Arrays&lt;/p&gt;
-&lt;p&gt;The first weekly meeting with &lt;a class="reference external" href="http://asmeurer.com"&gt;Aaron Meurer&lt;/a&gt; went well and we also briefly
-discussed how to reach out to the SymPy community for wishes on what
-code-generation functions to provide, I've set up a wiki-page for it
-under the SymPy projects wiki:&lt;/p&gt;
-&lt;p&gt;&lt;a class="reference external" href="https://github.com/sympy/sympy/wiki/codegen-gsoc17"&gt;https://github.com/sympy/sympy/wiki/codegen-gsoc17&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;I'll be sending out an email to the &lt;a class="reference external" href="https://groups.google.com/forum/#!forum/sympy"&gt;mailing list for SymPy&lt;/a&gt; asking for feedback.&lt;/p&gt;
-&lt;p&gt;We also discussed the upcoming SciPy 2017 conference where Aaron
-Meurer and &lt;a class="reference external" href="http://www.moorepants.info/"&gt;Jason Moore&lt;/a&gt; will be giving
-a tutorial on code-generation with SymPy. They've asked me to join
-forces with them and I've happily accepted that offer and am looking
-forward to working on the tutorial material and teaching fellow
-developers and researchers in the scientific python community about
-how to leverage SymPy for code generation.&lt;/p&gt;
-&lt;p&gt;Next blog post will most likely be a bit more technical, but I thought
-it was important to give some background on what motivates this effort
-and what the goal is.&lt;/p&gt;
-&lt;/div&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=62</guid>
       <author>Arif Ahmed (ArifAhmed1995)</author>
       <title>Arif Ahmed (ArifAhmed1995): Week 1 Report(May 24 &#x2013; June 2) : The 2D prototype</title>
@@ -1301,6 +1012,58 @@ The main focus for Week 2 should be : &lt;/span&gt;&lt;br /&gt;
 &lt;p&gt;Besides, I also sent a PR(&lt;a href="https://github.com/symengine/symengine/pull/1277"&gt;#1277&lt;/a&gt;) fixing some minor grammatical errors which I stumbled upon in the codebase.&lt;/p&gt;
 
 &lt;p&gt;See you next week! Goodbye!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://valglad.github.io/2017/05/29/start</guid>
+      <author>Valeriia Gladkova (valglad)</author>
+      <title>Valeriia Gladkova (valglad): The start</title>
+      <pubDate>Mon, 29 May 2017 00:00:00 GMT</pubDate>
+      <link>http://valglad.github.io/2017/05/29/start/</link>
+      <description>&lt;p&gt;GSoC officially starts tomorrow but I&amp;#8217;ve already begun working on my project because of exams later in June. So far everything is going according to plan. I&amp;#8217;ve implemented the &lt;code class="highlighter-rouge"&gt;subgroup()&lt;/code&gt; method for &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;s and &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s as well as &lt;code class="highlighter-rouge"&gt;is_subgroup()&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s. That was straight-forward except this one moment where I wanted to avoid creating a new instance of &lt;code class="highlighter-rouge"&gt;FreeGroup&lt;/code&gt; and rewriting the relators returned by &lt;code class="highlighter-rouge"&gt;reidemeister_presentation()&lt;/code&gt; in terms of this new instance because it seemed inelegant. I spend quite a while trying to come up with a better way and even started thinking of reimplementing the &lt;code class="highlighter-rouge"&gt;FreeGroup&lt;/code&gt; class but after a discussion with one of my mentors on SymPy&amp;#8217;s &lt;a href="https://gitter.im/sympy/GroupTheory"&gt;Group Theory channel&lt;/a&gt; decided to create a new instance after all. It shouldn&amp;#8217;t affect the performance too much anyway and reimplementing a whole class would be quite extreme.&lt;/p&gt;
+
+&lt;p&gt;Then I looked into improving the techniques for simplifying the presentation of subgroups. I hadn&amp;#8217;t been sure about whether there would be much to do but actually I found that the code had quite a few redundant bits and there were some more serious potential problems with it, like a loop that deleted elements of the list over which it iterated. I ended up rewriting it to be more readable and making sure the list of relators is traversed properly. Additionally, the &lt;code class="highlighter-rouge"&gt;reidemeister_presentation()&lt;/code&gt; code used to apply the simplification techniques 20 times in a for loop which in some cases would be excessive and in others not enough - I replaced it with a while loop so that the representaion is simplified until no further improvement is achieved.&lt;/p&gt;
+
+&lt;p&gt;While I was at it, I found myself modifying some of the &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt; methods either to extend their functionality or because I noticed that their implementation would lead to bugs in some special cases. I also added a couple of new methods for manipulation of group words. Intuitively, &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt; words are just symbolic expressions on non-commutative (in the general case) symbols that only admit integer powers. But their implementation in SymPy is different from the regular symbolic expressions which are instances of the &lt;code class="highlighter-rouge"&gt;Expr&lt;/code&gt; class. As a result, the &lt;code class="highlighter-rouge"&gt;Expr&lt;/code&gt; methods, e.g. &lt;code class="highlighter-rouge"&gt;subs()&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;simplify()&lt;/code&gt; can&amp;#8217;t be used with them directly (though of course, theoretically, one could build an equivalent symbolic expression out of a &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt;, apply the desired &lt;code class="highlighter-rouge"&gt;Expr&lt;/code&gt; method, make sure no fractional powers appear and go back) so equivalent methods have to be written separately. I have extended the group word substitution to probably all (or at least most) cases one might need. Simplification, on the other hand, is still missing. That said, the &lt;code class="highlighter-rouge"&gt;simplify()&lt;/code&gt; method of the &lt;code class="highlighter-rouge"&gt;Exrp&lt;/code&gt; class doesn&amp;#8217;t currently do much in terms of simplification of non-commutative expressions so it couldn&amp;#8217;t be used anyway (perhaps, some other method would be appropriate but I&amp;#8217;m not sure which). However, unlike instances of &lt;code class="highlighter-rouge"&gt;Expr&lt;/code&gt;, group elements only involve one binary operation so the problem is somewhat easier (conceptually). The only real simplification one can make is finding powers of subwords and collecting them into one thing. Say, if we have the word &lt;code class="highlighter-rouge"&gt;x*y*x*y*x*y&lt;/code&gt;, a simpler way to write it would be &lt;code class="highlighter-rouge"&gt;(x*y)**3&lt;/code&gt; and it would be good to have that done automatically. I might work on implementing that sort of thing somewhere along the way because then simplifications for &lt;code class="highlighter-rouge"&gt;reidemeister_presentation()&lt;/code&gt; can be improved even further, and the output relators will be more readable. Plus it&amp;#8217;s just a nice feature to have, though at present I&amp;#8217;m not sure about how exactly I would go about that efficiently and how to best store the simplification so that it doesn&amp;#8217;t need to be done again.&lt;/p&gt;
+
+&lt;p&gt;The PRs I&amp;#8217;ve sent so far are &lt;a href="https://github.com/sympy/sympy/pull/12658"&gt;here&lt;/a&gt; and &lt;a href="https://github.com/sympy/sympy/pull/12681"&gt;here&lt;/a&gt; and are currently still being reviewed.&lt;/p&gt;
+
+&lt;p&gt;The next thing I&amp;#8217;m going to work on are a couple of methods that could be used to determine if a given &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; is infinite. The one I plan to do first is considering the abelianisation of the group, writing the relators in the form of an integer matrix and essentially finding its Smith Normal form. This will probably occupy me for the next week.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=30</guid>
+      <author>Arif Ahmed (ArifAhmed1995)</author>
+      <title>Arif Ahmed (ArifAhmed1995): Week 1 : The Beginning</title>
+      <pubDate>Thu, 25 May 2017 21:10:32 GMT</pubDate>
+      <link>https://arif7blog.wordpress.com/2017/05/25/week-1-the-beginning/</link>
+      <description>&lt;p style="text-align: justify;"&gt;After reaching home on May 18, I decided not to waste any more time and contacted my mentor(&lt;span style="color: #99cc00;"&gt;&lt;a href="http://www.lanl.gov/expertise/profiles/view/ondrej-certik" rel="noopener noreferrer" style="color: #99cc00;" target="_blank"&gt;Ondrej Certik&lt;/a&gt;&lt;/span&gt;). He suggested that we should have a discussion with &lt;span style="color: #3366ff;"&gt;&lt;a href="http://dilbert.engr.ucdavis.edu/~suku/" style="color: #3366ff;"&gt;Prof.N.Sukumar&lt;/a&gt;&lt;/span&gt; about the project and develop a plan for the summer.&lt;/p&gt;
+&lt;p style="text-align: justify;"&gt;After the Skype call, a basic timeline was made by Ondrej. It was decided that firstly a basic working prototype to handle the 2D use case (i.e. the capability to integrate a bivariate polynomial over a 2-Polytope) should be written. It would be fine to make some assumptions about the input data initially so as to have some working code as soon as possible. Eventually the implementation for the 2D case should be made robust before moving onto the 3D case.&lt;/p&gt;
+&lt;p style="text-align: justify;"&gt;I began by implementing some of the helper functions required for the main algorithm. You can see the current status of the implementation &lt;span style="color: #ffcc00;"&gt;&lt;a href="https://github.com/sympy/sympy/pull/12673/files" rel="noopener noreferrer" style="color: #ffcc00;" target="_blank"&gt;here.&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style="text-align: justify;"&gt;It&amp;#8217;s been 2 days since the discussion and I feel that I should pick up the pace now and get the basic 2D prototype working soon.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/30/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/30/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=30&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/05/25/Community-Bonding-Period</guid>
+      <author>Ranjith Kumar (ranjithkumar007)</author>
+      <title>Ranjith Kumar (ranjithkumar007): Community Bonding Period</title>
+      <pubDate>Thu, 25 May 2017 00:00:00 GMT</pubDate>
+      <link>http://ranjithkumar007.github.io/2017/05/25/Community-Bonding-Period/</link>
+      <description>&lt;p&gt;I am selected for GSoC&amp;#8217;17 with SymPy. I have been alotted &lt;a href="https://github.com/sumith1896"&gt;Sumith Kulal&lt;/a&gt;, &lt;a href="https://github.com/srajangarg"&gt;Srajan Garg&lt;/a&gt;, &lt;a href="https://github.com/shivamvats"&gt;Shivam Vats&lt;/a&gt;, &lt;a href="https://github.com/nishnik"&gt;Nishant Nikhil&lt;/a&gt; and &lt;a href="https://github.com/aktech"&gt;Amit Kumar&lt;/a&gt; as my official mentors. My &lt;a href="https://ranjithkumar007.github.io/docs.google.com/document/d/1yCicYJ0hfS8APcXIqoBOacx8n2HnjfSfR7q4OshLGYI/"&gt;Project&lt;/a&gt; is to implement Solvers for SymEngine.&lt;/p&gt;
+
+&lt;p&gt;Time-line as mentioned in the proposal upto First Evaluations:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Week-1 : Flint wrappers for factorisation.&lt;/li&gt;
+  &lt;li&gt;Week-2 and 3: Improve Sets Module.&lt;/li&gt;
+  &lt;li&gt;Week-4: Implement lower degree polynomial solvers and helper function for cyclotomic polynomials.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;After my summer vacation ends, progress of the project might get slow; So, I will try to be ahead of the proposed timeline by atleast one week.&lt;/p&gt;
+
+&lt;p&gt;During the Community Bonding period, I went through the &lt;a href="http://www.flintlib.org/flint-2.5.pdf"&gt;documentation&lt;/a&gt; of FLINT library, precisely the required functions for wrapping factorisation of polynomials. The Major Problem I came across is the lack of &lt;a href="https://github.com/wbhart/flint2/blob/trunk/fmpz_poly_factor.h#L86"&gt;fmpz_poly_factor()&lt;/a&gt; function in FLINT&amp;#8217;s latest release 2.5.2. Going by the Suggestion made by &lt;a href="https://github.com/isuruf"&gt;isuruf&lt;/a&gt;, I updated Travis to use the development branch of FLINT along with its latest release. This work is done in &lt;a href="https://github.com/symengine/symengine/pull/1275"&gt;#1275&lt;/a&gt;. This &lt;a href="https://github.com/symengine/symengine/pull/1274"&gt;#1274&lt;/a&gt; PR wraps up the FLINT factorisation. Before 31st May, I will try to get this &lt;a href="https://github.com/symengine/symengine/pull/1274"&gt;PR&lt;/a&gt; merged in.&lt;/p&gt;
+
+&lt;p&gt;Apart from the this, I worked on this &lt;a href="https://github.com/symengine/symengine/pull/1258"&gt;PR&lt;/a&gt; to implement JuliaStrPrinter for nan and infs.&lt;/p&gt;
+
+&lt;p&gt;After Coding period starts(from 31st May), I will start working on Improving Sets module.&lt;/p&gt;
+
+&lt;p&gt;See you soon .&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
