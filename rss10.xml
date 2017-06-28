@@ -276,6 +276,30 @@ Time taken to run the tests: 4967.428s
       <description>&lt;p&gt;In the last week I focused mainly on finishing tasks related Lame coefficients. During this time two PR were merged. In my previous post I described how we can calculate gradient, curl and divergence in different type of coordinate system, so now I described only new thing which was already add to mainline. We decided to remove dependency between Del class and CoordSysCartesian. From mathematical point of view it makes sense, because nabla operator is just an entity which acts on vector or scalar and his behavior is independent from coordinate system.</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/06/20/Solvers</guid>
+      <author>Ranjith Kumar (ranjithkumar007)</author>
+      <title>Ranjith Kumar (ranjithkumar007): Solvers</title>
+      <pubDate>Tue, 20 Jun 2017 00:00:00 GMT</pubDate>
+      <link>http://ranjithkumar007.github.io/2017/06/20/Solvers/</link>
+      <description>&lt;p&gt;This week, I tried to get the earlier PR&amp;#8217;s &lt;a href="https://github.com/symengine/symengine/pull/1291"&gt;#1291&lt;/a&gt; and &lt;a href="https://github.com/symengine/symengine/pull/1293"&gt;#1293&lt;/a&gt; merged in.
+But, Unfortunately there were several mistakes in the earlier implementation of simplifications in &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt;. Thanks to &lt;a href="https://github.com/isuruf"&gt;isuruf&lt;/a&gt;, I was able to correct them and finally it got merged in.
+&lt;a href="https://github.com/symengine/symengine/pull/1293"&gt;#1293&lt;/a&gt; PR on ImageSet is also complete but not yet merged.&lt;/p&gt;
+
+&lt;p&gt;Along side, I started working on implementing lower order polynomial solvers. This work is done here in &lt;a href="https://github.com/symengine/symengine/pull/1296"&gt;#1296&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Short description of this PR:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Basic module for sovlers is up and running.&lt;/li&gt;
+  &lt;li&gt;adds solvers for polynomials with degree &amp;lt;= 4.&lt;/li&gt;
+  &lt;li&gt;integrates Flint&amp;#8217;s wrappers for factorisation into solvers.&lt;/li&gt;
+  &lt;li&gt;Fixes a bug in Forward Iterator. credits : &lt;a href="https://github.com/srajangarg"&gt;Srajangarg&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This PR is still a WIP, as it doesn&amp;#8217;t handle polynomials with symbolic coefficients.&lt;/p&gt;
+
+&lt;p&gt;More on Solvers coming soon !! Until then Stay tuned !!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://bjodah.github.io/blog/posts/gsoc-week3.html</guid>
       <author>Bj&#xF6;rn Dahlgren (bjodah)</author>
       <title>Bj&#xF6;rn Dahlgren (bjodah): Status update week 3 GSoC</title>
@@ -832,6 +856,40 @@ SqrtNumberQ[u_] :=
 Having access to Lame coefficient I was able to modified Del operator (in mathematics nabla operators) to handle spherical and cylindrical coordinate system.</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/06/13/Improve Sets Module Part II</guid>
+      <author>Ranjith Kumar (ranjithkumar007)</author>
+      <title>Ranjith Kumar (ranjithkumar007): Improve Sets Module Part II</title>
+      <pubDate>Tue, 13 Jun 2017 00:00:00 GMT</pubDate>
+      <link>http://ranjithkumar007.github.io/2017/06/13/Improve-Sets-Module-Part-II/</link>
+      <description>&lt;p&gt;Last week&amp;#8217;s PR &lt;a href="https://github.com/symengine/symengine/pull/1281"&gt;#1281&lt;/a&gt; on &lt;code class="highlighter-rouge"&gt;Complement&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;set_intersection&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;set_complement&lt;/code&gt; got merged in. This week, I implemented &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt;. This work is done in &lt;a href="https://github.com/symengine/symengine/pull/1291"&gt;#1291&lt;/a&gt; for &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; and &lt;a href="https://github.com/symengine/symengine/pull/1293"&gt;#1293&lt;/a&gt; for &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; : &lt;br /&gt;
+It is useful to represent unsolved equations or a partially solved equation.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;class ConditionSet : public Set
+{
+private:
+    vec_sym syms_;
+    RCP&amp;lt;const Boolean&amp;gt; condition_;
+...
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;Earlier, I used another data member for storing the base set. Thanks to &lt;a href="https://github.com/isuruf"&gt;isuruf&lt;/a&gt;, I was able to merge it within &lt;code class="highlighter-rouge"&gt;condition_&lt;/code&gt;. &lt;br /&gt;
+For implementing &lt;code class="highlighter-rouge"&gt;contains&lt;/code&gt; method for &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt;, I added Subs Visitor for &lt;code class="highlighter-rouge"&gt;Contains&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;And&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; : &lt;br /&gt;
+It is a Set representation of a mathematical function defined on symbols over some set.
+For example, &lt;code class="highlighter-rouge"&gt;x**2 for all x in [0,2]&lt;/code&gt; is represented as &lt;code class="highlighter-rouge"&gt;imageset({x},x**2,[0,2])&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;When is ImageSet useful ? &lt;br /&gt;
+Say, I need to solve a trignometric equation &lt;code class="highlighter-rouge"&gt;sin(x) = 1&lt;/code&gt;. Solution is &lt;code class="highlighter-rouge"&gt;2*n*pi+pi/2, n belongs to [0,oo)&lt;/code&gt;. for such solutions imageset is a useful representation to have.&lt;/p&gt;
+
+&lt;p&gt;I will try to get these two PRs merged in ASAP. &lt;br /&gt;
+Next week, I will be working on implementing solvers for lower degree(&amp;lt;=4) polynomials.&lt;/p&gt;
+
+&lt;p&gt;See you next time. Bye for now !&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://shikharj.github.io//2017/06/12/GSoC-Progress-Week-2</guid>
       <author>Shikhar Jaiswal (ShikharJ)</author>
       <title>Shikhar Jaiswal (ShikharJ): GSoC Progress - Week 2</title>
@@ -1085,6 +1143,52 @@ FreeQ[2,x] &amp;amp;&amp;amp; NonzeroQ[2]
 &lt;p&gt;&lt;strong&gt;Adi&amp;#243;s&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/06/05/Improve Sets Module - The Beginning</guid>
+      <author>Ranjith Kumar (ranjithkumar007)</author>
+      <title>Ranjith Kumar (ranjithkumar007): Improve Sets Module - The Beginning</title>
+      <pubDate>Mon, 05 Jun 2017 00:00:00 GMT</pubDate>
+      <link>http://ranjithkumar007.github.io/2017/06/05/Improve-Sets-Module-The-Beginning/</link>
+      <description>&lt;p&gt;As discussed in the previous blog, this and the next week&amp;#8217;s task for me is to improve the Sets module.
+I started off by implementing the class for &lt;code class="highlighter-rouge"&gt;Complemsent&lt;/code&gt; and the functions &lt;code class="highlighter-rouge"&gt;set_complement&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;set_intersection&lt;/code&gt;.
+This work is done in &lt;a href="https://github.com/symengine/symengine/pull/1281"&gt;#1281&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;set_intersection&lt;/code&gt; :&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;RCP&amp;lt;const Set&amp;gt; set_intersection(const set_set &amp;amp;in);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;set_intersection&lt;/code&gt; tries to simplify the set of sets input by applying various rules.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;trivial rules like if one of the input is &lt;code class="highlighter-rouge"&gt;emptyset()&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;handles finitesets by checking all other sets in the input for all elements in finitesets.&lt;/li&gt;
+  &lt;li&gt;If any of the sets is union, then it tries to return a Union of Intersections&lt;/li&gt;
+  &lt;li&gt;If any of the sets is Complement, then this returns a simplified &lt;code class="highlighter-rouge"&gt;Complement&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;pair-wise rules checks every pair of sets and tries to merge them into one.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;set_complement&lt;/code&gt; :&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;RCP&amp;lt;const Set&amp;gt; set_complement(const RCP&amp;lt;const Set&amp;gt; &amp;amp;universe, const RCP&amp;lt;const Set&amp;gt; &amp;amp;container);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;For this function, i had to implement virtual functions &lt;code class="highlighter-rouge"&gt;set_complement&lt;/code&gt; for all the existing child classes of &lt;code class="highlighter-rouge"&gt;Set&lt;/code&gt;.
+and this function simply calls the container&amp;#8217;s &lt;code class="highlighter-rouge"&gt;set_complement()&lt;/code&gt; with the given universe.&lt;/p&gt;
+
+&lt;p&gt;Details of &lt;code class="highlighter-rouge"&gt;Complement&lt;/code&gt; class :&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;similar to other classes in sets module, the class prototype for &lt;code class="highlighter-rouge"&gt;Complement&lt;/code&gt; is
+    &lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;class Complement : public Set
+&lt;/code&gt;&lt;/pre&gt;
+    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;It stores two Sets. Universe and container, and Complement(a, b) represents a-b where a is universe and b is the container.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Apart from this, I started maintaining a &lt;a href="https://github.com/symengine/symengine/wiki/GSoC-2017-Solvers-Progress-report"&gt;wiki page&lt;/a&gt; for GSoC&amp;#8217;s progress report as suggested by &lt;a href="https://github.com/aktech/"&gt;Amit Kumar&lt;/a&gt; in the first weekly meeting. I will post minutes of all meetings in this wiki page.&lt;/p&gt;
+
+&lt;p&gt;Next week, I will be working on &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;That&amp;#8217;s it for now. See you next time. Until then, Goodbye !&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://valglad.github.io/2017/06/05/smith</guid>
       <author>Valeriia Gladkova (valglad)</author>
       <title>Valeriia Gladkova (valglad): The Smith Normal Form</title>
@@ -1261,56 +1365,6 @@ The main focus for Week 2 should be : &lt;/span&gt;&lt;br /&gt;
 &lt;p&gt;I used &lt;code class="highlighter-rouge"&gt;3to2&lt;/code&gt; to convert MatchPy code to Python2 syntax. Majority tests are passing in Python2 Syntax. I am currently trying to get the code working in Python2.&lt;/p&gt;
 
 &lt;p&gt;In coming week I will import MatchPy code to SymPy directly. If there are some setbacks in this approach, I will reimplement MatchPy algorithms in SymPy.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nesar2017.wordpress.com/?p=44</guid>
-      <author>Abdullah Javed Nesar (Abdullahjavednesar)</author>
-      <title>Abdullah Javed Nesar (Abdullahjavednesar): Week 1: time to start</title>
-      <pubDate>Thu, 01 Jun 2017 17:45:56 GMT</pubDate>
-      <link>https://nesar2017.wordpress.com/2017/06/01/week-1/</link>
-      <description>&lt;p&gt;Greetings!&lt;/p&gt;
-&lt;p&gt;Community bonding period is officially over, I have been taking help from my mentors and ex-gsocer friends. This would be my first experience on working on parsing so I am very excited. &amp;#160;I have taken help from Francesco to get a better idea about my work and we have even discussed it with Ondrej. &amp;#8204;The work is divided between us (me and Arihant) .&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&amp;#8204;1st person: translates the code of MatchPy.&lt;/li&gt;
-&lt;li&gt;2nd person: creates a translator for the RUBI rules (first to MatchPy, then to the new code that person 1 will develop).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&amp;#8204;I have taken second persons work preparing a translator to transform downvalues of the RUBI rules to MatchPy.&lt;br /&gt;
-&amp;#8204;I have been reading more on regular expressions in python and now I have sufficient knowledge to head start.&amp;#160;Francesco had provided a basic parser I will be trying to extend that and translate rules in small bits.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/nesar2017.wordpress.com/44/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/nesar2017.wordpress.com/44/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=nesar2017.wordpress.com&amp;#038;blog=126779945&amp;#038;post=44&amp;#038;subd=nesar2017&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://shikharj.github.io//2017/05/30/Community-Bonding-End-Report</guid>
-      <author>Shikhar Jaiswal (ShikharJ)</author>
-      <title>Shikhar Jaiswal (ShikharJ): Community Bonding - End Report</title>
-      <pubDate>Tue, 30 May 2017 00:00:00 GMT</pubDate>
-      <link>https://shikharj.github.io//2017/05/30/Community-Bonding-End-Report/</link>
-      <description>&lt;p&gt;Greetings!&lt;/p&gt;
-
-&lt;p&gt;The Community Bonding period is officially closed and its time for the official coding period to begin. I had a great time reaching out to other fellow GSoCers in the community as well as conversing with my mentors over the project plans.&lt;/p&gt;
-
-&lt;h3 id="the-tasks"&gt;The Tasks&lt;/h3&gt;
-&lt;p&gt;Last week, I had mentioned that I&amp;#8217;d be working on porting over &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;Parsing&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Physics&lt;/code&gt; modules. However, as pointed out by &lt;a href="https://ShikharJ.github.io/github.com/isuruf"&gt;Isuru&lt;/a&gt;, there was no real gain in working on &lt;code class="highlighter-rouge"&gt;Parsing&lt;/code&gt;, as we already had a parser in &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt;. Hence, my focus shifted on &lt;code class="highlighter-rouge"&gt;Physics&lt;/code&gt; and its sub-modules. As such, I&amp;#8217;ve pushed in two PRs, covering &lt;code class="highlighter-rouge"&gt;ContinuumMechanics&lt;/code&gt;(&lt;a href="https://github.com/sympy/sympy/pull/12660"&gt;#12660&lt;/a&gt;) and &lt;code class="highlighter-rouge"&gt;Hep&lt;/code&gt;(&lt;a href="https://github.com/sympy/sympy/pull/12655"&gt;#12655&lt;/a&gt;) sub-modules to keep a track of the work. I&amp;#8217;ve also been able to weed out most of the compatibility issues in the standalone files of &lt;code class="highlighter-rouge"&gt;Physics&lt;/code&gt; module.&lt;/p&gt;
-
-&lt;p&gt;Though I had planned on finishing these tasks within the Community Bonding period itself, I realised that the &lt;code class="highlighter-rouge"&gt;Quantum&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Optics&lt;/code&gt; sub-modules require a bit more work than what I had originally planned for the time. Nevertheless, I started off implementing &lt;code class="highlighter-rouge"&gt;Relationals&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt;, which was a task originally planned for the first week of the coding period. The PR(&lt;a href="https://github.com/symengine/symengine/pull/1276"&gt;#1276&lt;/a&gt;) is currently under review, and would be ready to merge within a day or two. The time gained thus will be devoted to the previously mentioned work, apart from what was originally planned in my proposal.&lt;/p&gt;
-
-&lt;p&gt;Besides, I also sent a PR(&lt;a href="https://github.com/symengine/symengine/pull/1277"&gt;#1277&lt;/a&gt;) fixing some minor grammatical errors which I stumbled upon in the codebase.&lt;/p&gt;
-
-&lt;p&gt;See you next week! Goodbye!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://valglad.github.io/2017/05/29/start</guid>
-      <author>Valeriia Gladkova (valglad)</author>
-      <title>Valeriia Gladkova (valglad): The start</title>
-      <pubDate>Mon, 29 May 2017 00:00:00 GMT</pubDate>
-      <link>http://valglad.github.io/2017/05/29/start/</link>
-      <description>&lt;p&gt;GSoC officially starts tomorrow but I&amp;#8217;ve already begun working on my project because of exams later in June. So far everything is going according to plan. I&amp;#8217;ve implemented the &lt;code class="highlighter-rouge"&gt;subgroup()&lt;/code&gt; method for &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;s and &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s as well as &lt;code class="highlighter-rouge"&gt;is_subgroup()&lt;/code&gt; for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s. That was straight-forward except this one moment where I wanted to avoid creating a new instance of &lt;code class="highlighter-rouge"&gt;FreeGroup&lt;/code&gt; and rewriting the relators returned by &lt;code class="highlighter-rouge"&gt;reidemeister_presentation()&lt;/code&gt; in terms of this new instance because it seemed inelegant. I spend quite a while trying to come up with a better way and even started thinking of reimplementing the &lt;code class="highlighter-rouge"&gt;FreeGroup&lt;/code&gt; class but after a discussion with one of my mentors on SymPy&amp;#8217;s &lt;a href="https://gitter.im/sympy/GroupTheory"&gt;Group Theory channel&lt;/a&gt; decided to create a new instance after all. It shouldn&amp;#8217;t affect the performance too much anyway and reimplementing a whole class would be quite extreme.&lt;/p&gt;
-
-&lt;p&gt;Then I looked into improving the techniques for simplifying the presentation of subgroups. I hadn&amp;#8217;t been sure about whether there would be much to do but actually I found that the code had quite a few redundant bits and there were some more serious potential problems with it, like a loop that deleted elements of the list over which it iterated. I ended up rewriting it to be more readable and making sure the list of relators is traversed properly. Additionally, the &lt;code class="highlighter-rouge"&gt;reidemeister_presentation()&lt;/code&gt; code used to apply the simplification techniques 20 times in a for loop which in some cases would be excessive and in others not enough - I replaced it with a while loop so that the representaion is simplified until no further improvement is achieved.&lt;/p&gt;
-
-&lt;p&gt;While I was at it, I found myself modifying some of the &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt; methods either to extend their functionality or because I noticed that their implementation would lead to bugs in some special cases. I also added a couple of new methods for manipulation of group words. Intuitively, &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt; words are just symbolic expressions on non-commutative (in the general case) symbols that only admit integer powers. But their implementation in SymPy is different from the regular symbolic expressions which are instances of the &lt;code class="highlighter-rouge"&gt;Expr&lt;/code&gt; class. As a result, the &lt;code class="highlighter-rouge"&gt;Expr&lt;/code&gt; methods, e.g. &lt;code class="highlighter-rouge"&gt;subs()&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;simplify()&lt;/code&gt; can&amp;#8217;t be used with them directly (though of course, theoretically, one could build an equivalent symbolic expression out of a &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt;, apply the desired &lt;code class="highlighter-rouge"&gt;Expr&lt;/code&gt; method, make sure no fractional powers appear and go back) so equivalent methods have to be written separately. I have extended the group word substitution to probably all (or at least most) cases one might need. Simplification, on the other hand, is still missing. That said, the &lt;code class="highlighter-rouge"&gt;simplify()&lt;/code&gt; method of the &lt;code class="highlighter-rouge"&gt;Exrp&lt;/code&gt; class doesn&amp;#8217;t currently do much in terms of simplification of non-commutative expressions so it couldn&amp;#8217;t be used anyway (perhaps, some other method would be appropriate but I&amp;#8217;m not sure which). However, unlike instances of &lt;code class="highlighter-rouge"&gt;Expr&lt;/code&gt;, group elements only involve one binary operation so the problem is somewhat easier (conceptually). The only real simplification one can make is finding powers of subwords and collecting them into one thing. Say, if we have the word &lt;code class="highlighter-rouge"&gt;x*y*x*y*x*y&lt;/code&gt;, a simpler way to write it would be &lt;code class="highlighter-rouge"&gt;(x*y)**3&lt;/code&gt; and it would be good to have that done automatically. I might work on implementing that sort of thing somewhere along the way because then simplifications for &lt;code class="highlighter-rouge"&gt;reidemeister_presentation()&lt;/code&gt; can be improved even further, and the output relators will be more readable. Plus it&amp;#8217;s just a nice feature to have, though at present I&amp;#8217;m not sure about how exactly I would go about that efficiently and how to best store the simplification so that it doesn&amp;#8217;t need to be done again.&lt;/p&gt;
-
-&lt;p&gt;The PRs I&amp;#8217;ve sent so far are &lt;a href="https://github.com/sympy/sympy/pull/12658"&gt;here&lt;/a&gt; and &lt;a href="https://github.com/sympy/sympy/pull/12681"&gt;here&lt;/a&gt; and are currently still being reviewed.&lt;/p&gt;
-
-&lt;p&gt;The next thing I&amp;#8217;m going to work on are a couple of methods that could be used to determine if a given &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; is infinite. The one I plan to do first is considering the abelianisation of the group, writing the relators in the form of an integer matrix and essentially finding its Smith Normal form. This will probably occupy me for the next week.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
