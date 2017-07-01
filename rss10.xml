@@ -7,6 +7,42 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/07/01/GSoC17-Week4-Report</guid>
+      <author>Arihant Parsoya (parsoyaarihant)</author>
+      <title>Arihant Parsoya (parsoyaarihant): GSoC17 Week 4 Report</title>
+      <pubDate>Sat, 01 Jul 2017 06:30:00 GMT</pubDate>
+      <link>https://parsoyaarihant.github.io/blog/gsoc/2017/07/01/GSoC17-Week4-Report.html</link>
+      <description>&lt;p&gt;While running the Rubi test suit I found that matching was getting slower as the test progressed. Manuel suggested to analyze the code using &lt;a href="https://jiffyclub.github.io/snakeviz/#generating-profiles"&gt;snakeviz&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Two functions which were taking significant amount of time were &lt;code class="highlighter-rouge"&gt;ExpandIntegrand&lt;/code&gt;(a utility function) and MatchPy&amp;#8217;s pattern matching. Here is the sunburst chart for 100 integrands(pink coloured arc corresponds to time taken by &lt;code class="highlighter-rouge"&gt;ExpandIntegrand&lt;/code&gt;):&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt="With ExpandIntegrand" class="img-responsive" src="https://parsoyaarihant.github.io/blog/img/1.png" /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;ExpandIntegrand&lt;/code&gt; expands the expression into sums of smaller terms. And then each of those terms gets integrated again. This can be very time consuming if the expression is of the form &lt;code class="highlighter-rouge"&gt;(1 + x)**10/x&lt;/code&gt;. I should try to optimize &lt;code class="highlighter-rouge"&gt;ExpandIntegrand&lt;/code&gt; and use SymPy&amp;#8217;s &lt;code class="highlighter-rouge"&gt;.expand()&lt;/code&gt; function whenever possible. Manuel made some improvements to MatchPy which prevents redundant work in the matcher.&lt;/p&gt;
+
+&lt;h4 id="test-suit"&gt;Test Suit&lt;/h4&gt;
+&lt;p&gt;Rubi test suit we have gives us the optimal antiderivative, for some of the integrands, SymPy gives correct output but the answers does not match because the answer cannot be matched. Example:&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;r1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;atanh&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="c"&gt;# Rubi Output&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;r2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;atanh&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="c"&gt;# Optimal answer&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;r1&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;r2&lt;/span&gt;
+&lt;span class="bp"&gt;False&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;In the above example both &lt;code class="highlighter-rouge"&gt;r1&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;r2&lt;/code&gt; are same(they render same graphs).&lt;/p&gt;
+
+&lt;h4 id="utility-functions"&gt;Utility Functions&lt;/h4&gt;
+&lt;p&gt;Mathematica has functionality of matching functions such as:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-Mathematica"&gt;ExpandIntegrand[u_*(a_.+b_.*F_[c_.+d_.*x_])^n_,x_Symbol] :=
+  ExpandLinearProduct[(a+b*F[c+d*x])^n,u,c,d,x] /;
+FreeQ[{a,b,c,d,n},x] &amp;amp;&amp;amp; PolynomialQ[u,x] &amp;amp;&amp;amp; MemberQ[{ArcSin,ArcCos,ArcSinh,ArcCosh},F]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the above example, &lt;code class="highlighter-rouge"&gt;F_[ ]&lt;/code&gt; can match functions. SymPy only has single &lt;code class="highlighter-rouge"&gt;Wild&lt;/code&gt; which can match a single node. So, in order to match the above pattern(&lt;code class="highlighter-rouge"&gt;u_*(a_.+b_.*F_[c_.+d_.*x_])^n_&lt;/code&gt;), I need to do &lt;code class="highlighter-rouge"&gt;.match()&lt;/code&gt; twice in order to match the expression with the pattern.&lt;/p&gt;
+
+&lt;p&gt;Francesco suggested to generate test suit for utility functions by exporting I/O of functions in Mathematica. I am trying it for functions which are very large such as &lt;code class="highlighter-rouge"&gt;ExpandIntegrand&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;FixSimplify&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I and Abdullah are about to complete 50% of utility functions. I will continue working on utility functions and try my best to complete it by next weekend.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://shikharj.github.io//2017/06/27/GSoC-Progress-Week-4</guid>
       <author>Shikhar Jaiswal (ShikharJ)</author>
       <title>Shikhar Jaiswal (ShikharJ): GSoC Progress - Week 4</title>
@@ -1327,44 +1363,6 @@ The main focus for Week 2 should be : &lt;/span&gt;&lt;br /&gt;
       <pubDate>Fri, 02 Jun 2017 22:41:21 GMT</pubDate>
       <link>https://szymag.github.io/post/week-1/</link>
       <description>&lt;p&gt;My first task, which corresponds to GSoC was create three classes, Curl, Divergence, Gradient. They create object which are unevaluated mathematical expression. Sometimes it&amp;rsquo;s better working on such expression, for example when we wants to check some identity. We have to check if it&amp;rsquo;s true for every possible vector. We have still some work here, because in next step we want to create abstract vector expression. There is one open PR corresponding to described task:</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/06/02/Coding-period-starts</guid>
-      <author>Arihant Parsoya (parsoyaarihant)</author>
-      <title>Arihant Parsoya (parsoyaarihant): Coding period starts</title>
-      <pubDate>Fri, 02 Jun 2017 06:30:00 GMT</pubDate>
-      <link>https://parsoyaarihant.github.io/blog/gsoc/2017/06/02/Coding-period-starts.html</link>
-      <description>&lt;p&gt;Community bonding period is completed and coding period started on 31st May.&lt;/p&gt;
-
-&lt;p&gt;Our original plan was to rewrite the pattern matcher for SymPy and generate decision tree for Rubi rules from &lt;code class="highlighter-rouge"&gt;Downvalues[]&lt;/code&gt; &lt;a href="https://raw.githubusercontent.com/Upabjojr/RUBI_integration_rules/master/RUBI_DownValues_FullForm.txt"&gt;generated&lt;/a&gt; by Francesco.&lt;/p&gt;
-
-&lt;p&gt;Aaron gave us a link to &lt;a href="https://arxiv.org/pdf/1705.00907.pdf"&gt;this&lt;/a&gt; paper by Manuel Krebber. Pattern matching algorithms discussed in the paper are implemented in &lt;a href="https://github.com/HPAC/matchpy"&gt;MatchPy&lt;/a&gt; library.&lt;/p&gt;
-
-&lt;h4 id="matchpy"&gt;MatchPy&lt;/h4&gt;
-
-&lt;p&gt;MatchPy uses &lt;code class="highlighter-rouge"&gt;discrimination net&lt;/code&gt;&amp;#8217;s to do many-to-one matching(i.e. matching one subject to multiple patterns). MatchPy generates its own discrimination net as we add patterns to its &lt;code class="highlighter-rouge"&gt;ManyToOneReplacer&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Discrimination nets can be more efficient than a decision tree hence we decided to use MatchPy as the pattern matcher for Rubi. I wrote basic matching programs which implements few Rubi rules MatchPy.&lt;/p&gt;
-
-&lt;p&gt;I found the following issues with MatchPy:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;MatchPy cannot be directly added to SymPy because it is written in Python3.6(whereas SymPy supports Python2 also).&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;It lacked mathematical operations on its &lt;code class="highlighter-rouge"&gt;Symbols&lt;/code&gt; due to which it becomes difficult to implement Rubi constrains. A workaround this issue is to &lt;code class="highlighter-rouge"&gt;sympify&lt;/code&gt; the expression and do calculations in SymPy.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;MatchPy uses external libraries such as &lt;code class="highlighter-rouge"&gt;Multiset&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;enum&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;typing&lt;/code&gt;. SymPy does not encourage using external libraries in its code. Those modules need to be reimplemented into SymPy if we are going to directly import MatchPy code into SymPy.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Re-implementing MatchPy algorithms in SymPy can be very challenging and time consuming task as I am not very familiar with the algorithms used in MatchPy.&lt;/p&gt;
-
-&lt;p&gt;I used &lt;code class="highlighter-rouge"&gt;3to2&lt;/code&gt; to convert MatchPy code to Python2 syntax. Majority tests are passing in Python2 Syntax. I am currently trying to get the code working in Python2.&lt;/p&gt;
-
-&lt;p&gt;In coming week I will import MatchPy code to SymPy directly. If there are some setbacks in this approach, I will reimplement MatchPy algorithms in SymPy.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
