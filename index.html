@@ -89,6 +89,141 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">July 03, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-4db58090 feed-" id="item-28732614">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/bjodah.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://bjodah.github.io/blog/posts/gsoc-week5.html">18:37, Monday, 03 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-week5.html">Bj&#246;rn Dahlgren (bjodah): Status update week 5 GSoC</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/bjodah.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://bjodah.github.io/blog/posts/gsoc-week5.html">18:37, Monday, 03 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-week5.html">Status update week 5 GSoC</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<div><div class="section" id="continued-work-on-tutorial-material">
+<h2>Continued work on tutorial material</h2>
+<p>Cross-platform work is always a bit tricky. Python does in general
+a great job of allowing programs to access the filesystem, network etc
+in an OS agnostic manner, but sometimes there is no way around having
+to write special code for each platform. In Python that often means
+that we will do runtime inspection:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; sys.platform
+'linux'  # or e.g. darwin
+&gt;&gt;&gt; os.name
+'posix'  # or e.g. nt
+</pre>
+<p>To add another dimension of complexity we sometimes deal with 32-bit
+and sometimes 64-bit systems (most headaches are caused by pointer
+sizes, size of <tt class="docutils literal">int</tt> and <tt class="docutils literal">long</tt>), in python we can get the size of
+<tt class="docutils literal">int</tt> of the platform quite easily:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; sys.maxsize - 2**63 + 1
+0
+</pre>
+<p>when you, in addition to this, are doing code-generation, you are most
+likely relying on a compiler. That is our third dimension of
+complexity, on linux that (usually) translates to gcc &amp; llvm/clang
+(but Intel's icc/ifort &amp; portland group compilers and not uncommon).
+This third "dimension" has been the number one struggle the past
+week (and in particular the <a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial/issues/13">combination</a>
+mingw/<a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial/pull/14">windows</a>). At
+this point I feel that it is not worthwhile to continue pursuing <tt class="docutils literal">mingw</tt>
+support on Windows.</p>
+<p>It is quite likely that a few of our attendees will have some
+technical difficulties with system installed compilers. Therefore, I'm
+particularly happy that we now have got our <a class="reference external" href="https://mybinder.org">binder</a> environment to work flawlessly. It took some
+work to setup a <a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial/blob/master/Dockerfile">Dockerfile</a>,
+but now it feels reassuring to have this as a fall-back.</p>
+</div>
+<div class="section" id="work-on-sympy-for-version-1-1">
+<h2>Work on SymPy for version 1.1</h2>
+<p>The <a class="reference external" href="https://github.com/sympy/sympy/pull/12808">work</a> on the
+<tt class="docutils literal">PythonCodePrinter</tt> has progressed since last week and should
+hopefully soon be ready for merging. The purpose of this class is to
+be stepping stone moving away from having e.g. <tt class="docutils literal">lambdify</tt> relying on
+the StrPrinter, and instead use the <tt class="docutils literal">CodePrinter</tt> class in
+<tt class="docutils literal">.printing.codeprinter</tt>. Changing the super class showed to be
+trickier than first anticipiated (I thought it would be an afternoons
+work at most). I originally planned to rename the original
+<tt class="docutils literal">PythonPrinter</tt> to something more appropriate (<tt class="docutils literal">SymPyCodePrinter</tt>)
+together with its convenience functions. However, since this would
+incur a deprecation for only name change, it was decided that we will
+have to live with the old naming (to avoid raising tons of deprecation
+warnings in downstream projects).</p>
+<p>We had identified two extensions we wanted to introduce to the
+codegeneration/autowrap factilities before the v1.1 release:</p>
+<ul class="simple">
+<li>Kenneth Lyons (@ixjlyons) <a class="reference external" href="https://github.com/sympy/sympy/pull/12833">spear-headed</a> the effort to allow
+custom CodeGen subclasses to be passed to <tt class="docutils literal">codegen</tt></li>
+<li>...and Jason the <a class="reference external" href="https://github.com/sympy/sympy/pull/12843">changes</a> to the
+<tt class="docutils literal">CythonWrapper</tt> to allow compiler arguments to be passed to
+autowrap.</li>
+</ul>
+</div>
+<div class="section" id="plans-for-the-upcoming-week">
+<h2>Plans for the upcoming week</h2>
+<p>With a release candidate of SymPy v1.1 out the door (an impressive
+effort led by @asmeurer) and most cross-platform issues out of the
+way, it is about time for the final iterations of the  tutorial
+material (and hopefully iron out any related issues in the rc).</p>
+<p>At the end of the week it's time for me to fly to the US to attend
+SciPy 2017. I have high expectations and believe that it will be a
+great catalyst for the rest of the summers work on code-generation.</p>
+</div></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 02, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -3060,87 +3195,6 @@ and what the goal is.</p>
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-3b0ec3aa feed-" id="item-098a1ffe">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/arifahmed.jpeg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://arif7blog.wordpress.com/2017/06/03/week-1-reportmay-24-june-2-the-2d-prototype/">00:39, Saturday, 03 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/06/03/week-1-reportmay-24-june-2-the-2d-prototype/">Arif Ahmed (ArifAhmed1995): Week 1 Report(May 24 &#8211; June 2) : The 2D prototype</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/arifahmed.jpeg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://arif7blog.wordpress.com/2017/06/03/week-1-reportmay-24-june-2-the-2d-prototype/">00:39, Saturday, 03 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/06/03/week-1-reportmay-24-june-2-the-2d-prototype/">Week 1 Report(May 24 &#8211; June 2) : The 2D prototype</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p><span style="color: #000000;">As per the timeline, I spent the week writing a prototype for the 2D use case.</span> <a href="https://github.com/sympy/sympy/pull/12673/files" rel="noopener noreferrer" target="_blank">Here</a> <span style="color: #000000;">is the current status of the implementation.</span></p>
-<p><span style="color: #000000;">At the time of writing this blog post, the prototype mostly works but fails for one of the test cases. I haven&#8217;t used a debugger on it yet but will get around to fixing it today. The main agenda for the next week should be to improve this prototype and make it more robust and scalable. </span><span style="color: #000000;">Making it robust would mean that the implementation need not require a naming convention for the axes and can handle more boundary cases.<br />
-Scalability would refer to implementing in a way which works reasonably fast for large input data. It would also mean designing the functions in a use case independent way so that they could be re-used for the 3-Polytopes. The simplest example would be the <span style="color: #3366ff;"><a href="https://github.com/ArifAhmed1995/sympy/blob/daa69f291fb0cd5b7ba0e26ed81aa9be05b46150/sympy/integrals/intpoly.py#L374" rel="noopener noreferrer" target="_blank">norm</a> <span style="color: #000000;">function. It works for both 2D and 3D points. </span></span></span><br />
-<span style="color: #000000;">Currently, some parts of the implementation are hacky and depend upon denoting the axes by specific symbols namely</span> <span style="color: #993366;"><strong>x</strong></span> <span style="color: #000000;">and</span> <span style="color: #993366;"><strong>y<span style="color: #000000;">. </span></strong><span style="color: #000000;">That would be the main focus for the beginning of Week 2. Let&#8217;s take a look at the methods implemented and their respective shortcomings. </span><span style="color: #000000;">The methods currently implemented are :</span></span></p>
-<p><span style="color: #000000;">1. <span style="color: #003366;">polytope_integrate</span> :&#160;This is the main function which calls integration_reduction which further calls almost everything else. Mathematically, this function is the first application of the Generalized Stokes Theorem. Integration over the 2-Polytope surface is related to integration over it&#8217;s facets (lines in this use case). Nothing much to change here.</span></p>
-<p><span style="color: #000000;">2.<span style="color: #000080;"> integration_reduction</span> : This one is the second application of the Stokes Theorem. Integration over facets (lines) is related to evaluation of the function at the vertices. The implementation can be made more robust by avoiding accessing the values of the best_origin by the index and instead accessing it by key. One workaround would be to assign the Symbol &#8216;<span style="color: #993300;">x</span>&#8216; to the independent variable and &#8216;<span style="color: #993300;">y</span>&#8216; to the dependent one. In the code, all dictionary accesses will be done with these symbols. This offers scalability as well. An extra Symbol &#8216;<span style="color: #993300;">z</span>&#8216; will suffice to denote the third axis variable for the 3D use case.<br />
-</span></p>
-<p><span style="color: #000000;">3. <span style="color: #000080;">hyperplane_parameters</span> :&#160; This function returns the values of the hyperplane parameters of which the facets are a part of. I can&#8217;t see improvements to be made with respect to the 2D use case, but that may change with the new API.</span></p>
-<p><span style="color: #000000;">4. <span style="color: #000080;">best_origin</span> : This function returns a point on the line for which the vector inner product between the divergence of the homogeneous polynomial and that point yields a polynomial of least degree.</span> <span style="color: #000000;">This function is very much dependent on the naming scheme of the axes but this issue can be circumvented by </span><span style="color: #000000;">assigning symbols as explained above.</span></p>
-<p><span style="color: #000000;">5. <span style="color: #000080;">decompose</span> : This function works perfectly for all test data. However, I&#8217;ll see if it can be made faster. Will be important for scaling up-to polynomials containing large number of terms.</span></p>
-<p><span style="color: #000000;">6. <span style="color: #000080;">norm</span> : This is a really simple function. The only reason to change it&#8217;s code would be adding support for different representations of points.</span></p>
-<p><span style="color: #000000;">7. <span style="color: #000080;">intersection, is_vertex</span> : Both of these methods are simple to write and don&#8217;t require any further changes for the 2D case (at least as far as I can see).</span></p>
-<p><span style="color: #000000;">9. <span style="color: #000080;">plot_polytope, plot_polynomial</span> : These are simple plotting functions to help visualize the polytope and polynomial respectively. If extra features for the plots are required then suitable changes to code can be made.<br />
-</span></p>
-<p><span style="color: #000000;">After I get all the tests for the 2D prototype to pass, I&#8217;ll write a Jupyter notebook and add it to the examples/notebooks folder of SymPy. As recommended by Ondrej, it should contain examples along with some plots and description of whatever basic API exists now.<br />
-The main focus for Week 2 should be : </span><br />
-1 &gt; Get the prototype to pass all test cases (should be completed really soon).<br />
-2 &gt; Make the notebook and discuss a better API for the 2D use case.<br />
-3 &gt; Implement the final 2D API and write any tests for it.<br />
-3 &gt; Discuss how to extend to the 3D use case (Implementation and API).</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/62/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/62/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&#038;blog=126429718&#038;post=62&#038;subd=arif7blog&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -3169,134 +3223,134 @@ The main focus for Week 2 should be : </span><br />
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>21:21, Monday, 03 July</td>
-<td>21:36, Monday, 03 July</td>
+<td>21:41, Monday, 03 July</td>
+<td>21:56, Monday, 03 July</td>
 </tr>
 </table>
 

@@ -7,6 +7,84 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://bjodah.github.io/blog/posts/gsoc-week5.html</guid>
+      <author>Bj&#xF6;rn Dahlgren (bjodah)</author>
+      <title>Bj&#xF6;rn Dahlgren (bjodah): Status update week 5 GSoC</title>
+      <pubDate>Mon, 03 Jul 2017 18:37:00 GMT</pubDate>
+      <link>http://bjodah.github.io/blog/posts/gsoc-week5.html</link>
+      <description>&lt;div&gt;&lt;div class="section" id="continued-work-on-tutorial-material"&gt;
+&lt;h2&gt;Continued work on tutorial material&lt;/h2&gt;
+&lt;p&gt;Cross-platform work is always a bit tricky. Python does in general
+a great job of allowing programs to access the filesystem, network etc
+in an OS agnostic manner, but sometimes there is no way around having
+to write special code for each platform. In Python that often means
+that we will do runtime inspection:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+&amp;gt;&amp;gt;&amp;gt; sys.platform
+'linux'  # or e.g. darwin
+&amp;gt;&amp;gt;&amp;gt; os.name
+'posix'  # or e.g. nt
+&lt;/pre&gt;
+&lt;p&gt;To add another dimension of complexity we sometimes deal with 32-bit
+and sometimes 64-bit systems (most headaches are caused by pointer
+sizes, size of &lt;tt class="docutils literal"&gt;int&lt;/tt&gt; and &lt;tt class="docutils literal"&gt;long&lt;/tt&gt;), in python we can get the size of
+&lt;tt class="docutils literal"&gt;int&lt;/tt&gt; of the platform quite easily:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+&amp;gt;&amp;gt;&amp;gt; sys.maxsize - 2**63 + 1
+0
+&lt;/pre&gt;
+&lt;p&gt;when you, in addition to this, are doing code-generation, you are most
+likely relying on a compiler. That is our third dimension of
+complexity, on linux that (usually) translates to gcc &amp;amp; llvm/clang
+(but Intel's icc/ifort &amp;amp; portland group compilers and not uncommon).
+This third "dimension" has been the number one struggle the past
+week (and in particular the &lt;a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial/issues/13"&gt;combination&lt;/a&gt;
+mingw/&lt;a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial/pull/14"&gt;windows&lt;/a&gt;). At
+this point I feel that it is not worthwhile to continue pursuing &lt;tt class="docutils literal"&gt;mingw&lt;/tt&gt;
+support on Windows.&lt;/p&gt;
+&lt;p&gt;It is quite likely that a few of our attendees will have some
+technical difficulties with system installed compilers. Therefore, I'm
+particularly happy that we now have got our &lt;a class="reference external" href="https://mybinder.org"&gt;binder&lt;/a&gt; environment to work flawlessly. It took some
+work to setup a &lt;a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial/blob/master/Dockerfile"&gt;Dockerfile&lt;/a&gt;,
+but now it feels reassuring to have this as a fall-back.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="work-on-sympy-for-version-1-1"&gt;
+&lt;h2&gt;Work on SymPy for version 1.1&lt;/h2&gt;
+&lt;p&gt;The &lt;a class="reference external" href="https://github.com/sympy/sympy/pull/12808"&gt;work&lt;/a&gt; on the
+&lt;tt class="docutils literal"&gt;PythonCodePrinter&lt;/tt&gt; has progressed since last week and should
+hopefully soon be ready for merging. The purpose of this class is to
+be stepping stone moving away from having e.g. &lt;tt class="docutils literal"&gt;lambdify&lt;/tt&gt; relying on
+the StrPrinter, and instead use the &lt;tt class="docutils literal"&gt;CodePrinter&lt;/tt&gt; class in
+&lt;tt class="docutils literal"&gt;.printing.codeprinter&lt;/tt&gt;. Changing the super class showed to be
+trickier than first anticipiated (I thought it would be an afternoons
+work at most). I originally planned to rename the original
+&lt;tt class="docutils literal"&gt;PythonPrinter&lt;/tt&gt; to something more appropriate (&lt;tt class="docutils literal"&gt;SymPyCodePrinter&lt;/tt&gt;)
+together with its convenience functions. However, since this would
+incur a deprecation for only name change, it was decided that we will
+have to live with the old naming (to avoid raising tons of deprecation
+warnings in downstream projects).&lt;/p&gt;
+&lt;p&gt;We had identified two extensions we wanted to introduce to the
+codegeneration/autowrap factilities before the v1.1 release:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Kenneth Lyons (@ixjlyons) &lt;a class="reference external" href="https://github.com/sympy/sympy/pull/12833"&gt;spear-headed&lt;/a&gt; the effort to allow
+custom CodeGen subclasses to be passed to &lt;tt class="docutils literal"&gt;codegen&lt;/tt&gt;&lt;/li&gt;
+&lt;li&gt;...and Jason the &lt;a class="reference external" href="https://github.com/sympy/sympy/pull/12843"&gt;changes&lt;/a&gt; to the
+&lt;tt class="docutils literal"&gt;CythonWrapper&lt;/tt&gt; to allow compiler arguments to be passed to
+autowrap.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class="section" id="plans-for-the-upcoming-week"&gt;
+&lt;h2&gt;Plans for the upcoming week&lt;/h2&gt;
+&lt;p&gt;With a release candidate of SymPy v1.1 out the door (an impressive
+effort led by @asmeurer) and most cross-platform issues out of the
+way, it is about time for the final iterations of the  tutorial
+material (and hopefully iron out any related issues in the rc).&lt;/p&gt;
+&lt;p&gt;At the end of the week it's time for me to fly to the US to attend
+SciPy 2017. I have high expectations and believe that it will be a
+great catalyst for the rest of the summers work on code-generation.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://valglad.github.io/2017/07/02/plan2</guid>
       <author>Valeriia Gladkova (valglad)</author>
       <title>Valeriia Gladkova (valglad): The Plan (Part II)</title>
@@ -1352,33 +1430,6 @@ how to leverage SymPy for code generation.&lt;/p&gt;
 it was important to give some background on what motivates this effort
 and what the goal is.&lt;/p&gt;
 &lt;/div&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=62</guid>
-      <author>Arif Ahmed (ArifAhmed1995)</author>
-      <title>Arif Ahmed (ArifAhmed1995): Week 1 Report(May 24 &#x2013; June 2) : The 2D prototype</title>
-      <pubDate>Sat, 03 Jun 2017 00:39:01 GMT</pubDate>
-      <link>https://arif7blog.wordpress.com/2017/06/03/week-1-reportmay-24-june-2-the-2d-prototype/</link>
-      <description>&lt;p&gt;&lt;span style="color: #000000;"&gt;As per the timeline, I spent the week writing a prototype for the 2D use case.&lt;/span&gt; &lt;a href="https://github.com/sympy/sympy/pull/12673/files" rel="noopener noreferrer" target="_blank"&gt;Here&lt;/a&gt; &lt;span style="color: #000000;"&gt;is the current status of the implementation.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style="color: #000000;"&gt;At the time of writing this blog post, the prototype mostly works but fails for one of the test cases. I haven&amp;#8217;t used a debugger on it yet but will get around to fixing it today. The main agenda for the next week should be to improve this prototype and make it more robust and scalable. &lt;/span&gt;&lt;span style="color: #000000;"&gt;Making it robust would mean that the implementation need not require a naming convention for the axes and can handle more boundary cases.&lt;br /&gt;
-Scalability would refer to implementing in a way which works reasonably fast for large input data. It would also mean designing the functions in a use case independent way so that they could be re-used for the 3-Polytopes. The simplest example would be the &lt;span style="color: #3366ff;"&gt;&lt;a href="https://github.com/ArifAhmed1995/sympy/blob/daa69f291fb0cd5b7ba0e26ed81aa9be05b46150/sympy/integrals/intpoly.py#L374" rel="noopener noreferrer" target="_blank"&gt;norm&lt;/a&gt; &lt;span style="color: #000000;"&gt;function. It works for both 2D and 3D points. &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br /&gt;
-&lt;span style="color: #000000;"&gt;Currently, some parts of the implementation are hacky and depend upon denoting the axes by specific symbols namely&lt;/span&gt; &lt;span style="color: #993366;"&gt;&lt;strong&gt;x&lt;/strong&gt;&lt;/span&gt; &lt;span style="color: #000000;"&gt;and&lt;/span&gt; &lt;span style="color: #993366;"&gt;&lt;strong&gt;y&lt;span style="color: #000000;"&gt;. &lt;/span&gt;&lt;/strong&gt;&lt;span style="color: #000000;"&gt;That would be the main focus for the beginning of Week 2. Let&amp;#8217;s take a look at the methods implemented and their respective shortcomings. &lt;/span&gt;&lt;span style="color: #000000;"&gt;The methods currently implemented are :&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style="color: #000000;"&gt;1. &lt;span style="color: #003366;"&gt;polytope_integrate&lt;/span&gt; :&amp;#160;This is the main function which calls integration_reduction which further calls almost everything else. Mathematically, this function is the first application of the Generalized Stokes Theorem. Integration over the 2-Polytope surface is related to integration over it&amp;#8217;s facets (lines in this use case). Nothing much to change here.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style="color: #000000;"&gt;2.&lt;span style="color: #000080;"&gt; integration_reduction&lt;/span&gt; : This one is the second application of the Stokes Theorem. Integration over facets (lines) is related to evaluation of the function at the vertices. The implementation can be made more robust by avoiding accessing the values of the best_origin by the index and instead accessing it by key. One workaround would be to assign the Symbol &amp;#8216;&lt;span style="color: #993300;"&gt;x&lt;/span&gt;&amp;#8216; to the independent variable and &amp;#8216;&lt;span style="color: #993300;"&gt;y&lt;/span&gt;&amp;#8216; to the dependent one. In the code, all dictionary accesses will be done with these symbols. This offers scalability as well. An extra Symbol &amp;#8216;&lt;span style="color: #993300;"&gt;z&lt;/span&gt;&amp;#8216; will suffice to denote the third axis variable for the 3D use case.&lt;br /&gt;
-&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style="color: #000000;"&gt;3. &lt;span style="color: #000080;"&gt;hyperplane_parameters&lt;/span&gt; :&amp;#160; This function returns the values of the hyperplane parameters of which the facets are a part of. I can&amp;#8217;t see improvements to be made with respect to the 2D use case, but that may change with the new API.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style="color: #000000;"&gt;4. &lt;span style="color: #000080;"&gt;best_origin&lt;/span&gt; : This function returns a point on the line for which the vector inner product between the divergence of the homogeneous polynomial and that point yields a polynomial of least degree.&lt;/span&gt; &lt;span style="color: #000000;"&gt;This function is very much dependent on the naming scheme of the axes but this issue can be circumvented by &lt;/span&gt;&lt;span style="color: #000000;"&gt;assigning symbols as explained above.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style="color: #000000;"&gt;5. &lt;span style="color: #000080;"&gt;decompose&lt;/span&gt; : This function works perfectly for all test data. However, I&amp;#8217;ll see if it can be made faster. Will be important for scaling up-to polynomials containing large number of terms.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style="color: #000000;"&gt;6. &lt;span style="color: #000080;"&gt;norm&lt;/span&gt; : This is a really simple function. The only reason to change it&amp;#8217;s code would be adding support for different representations of points.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style="color: #000000;"&gt;7. &lt;span style="color: #000080;"&gt;intersection, is_vertex&lt;/span&gt; : Both of these methods are simple to write and don&amp;#8217;t require any further changes for the 2D case (at least as far as I can see).&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style="color: #000000;"&gt;9. &lt;span style="color: #000080;"&gt;plot_polytope, plot_polynomial&lt;/span&gt; : These are simple plotting functions to help visualize the polytope and polynomial respectively. If extra features for the plots are required then suitable changes to code can be made.&lt;br /&gt;
-&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style="color: #000000;"&gt;After I get all the tests for the 2D prototype to pass, I&amp;#8217;ll write a Jupyter notebook and add it to the examples/notebooks folder of SymPy. As recommended by Ondrej, it should contain examples along with some plots and description of whatever basic API exists now.&lt;br /&gt;
-The main focus for Week 2 should be : &lt;/span&gt;&lt;br /&gt;
-1 &amp;gt; Get the prototype to pass all test cases (should be completed really soon).&lt;br /&gt;
-2 &amp;gt; Make the notebook and discuss a better API for the 2D use case.&lt;br /&gt;
-3 &amp;gt; Implement the final 2D API and write any tests for it.&lt;br /&gt;
-3 &amp;gt; Discuss how to extend to the 3D use case (Implementation and API).&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/62/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/62/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=62&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>
