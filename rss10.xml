@@ -7,6 +7,44 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://gxyd.github.io/blogs/Gsoc2017-week-4</guid>
+      <author>Gaurav Dhingra (gxyd)</author>
+      <title>Gaurav Dhingra (gxyd): GSoC 2017: Week 4</title>
+      <pubDate>Tue, 04 Jul 2017 00:00:00 GMT</pubDate>
+      <link>https://gxyd.github.io/blogs/Gsoc2017-week-4/</link>
+      <description>&lt;p&gt;This week we completed &lt;font color="purple"&gt;[PR #12850](https://github.com/sympy/sympy/pull/12850)&lt;/font&gt; on adding/removing variable in &lt;code class="highlighter-rouge"&gt;DifferentialExtension&lt;/code&gt; class for later introduction of creating extensions of , , and probably algebraic extensions as well. Lists like &lt;code class="highlighter-rouge"&gt;E_K&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;L_K&lt;/code&gt; and the new ones have been combined in a single list one, and the variables to record that information are &lt;code class="highlighter-rouge"&gt;exts&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;extargs&lt;/code&gt;. &lt;code class="highlighter-rouge"&gt;exts&lt;/code&gt; will store &lt;code class="highlighter-rouge"&gt;str&lt;/code&gt; instances having value in {&amp;#8216;exp&amp;#8217;, &amp;#8216;log&amp;#8217;, &amp;#8216;atan&amp;#8217;, &amp;#8216;tan&amp;#8217;, &amp;#8216;alg&amp;#8217;}, so whenever we at each &amp;#8216;level&amp;#8217; earlier we discovered the extension to be exponential we appended &lt;code class="highlighter-rouge"&gt;level - 1&lt;/code&gt; to the list &lt;code class="highlighter-rouge"&gt;E_K&lt;/code&gt; (i.e. index) or to &lt;code class="highlighter-rouge"&gt;L_K&lt;/code&gt; when the extension is &lt;code class="highlighter-rouge"&gt;primitive&lt;/code&gt; but now we will append to just a single list and i.e. to &lt;code class="highlighter-rouge"&gt;exts&lt;/code&gt; either &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;log&lt;/code&gt;/&lt;code class="highlighter-rouge"&gt;atan&lt;/code&gt; accordingly (Note:  is also a &lt;code class="highlighter-rouge"&gt;primitive&lt;/code&gt; until now, the only &amp;#8216;primitive&amp;#8217; has been &amp;#8216;log&amp;#8217;).&lt;/p&gt;
+
+&lt;p&gt;While &lt;code class="highlighter-rouge"&gt;extargs&lt;/code&gt; as is clear from the name stores the argument of extension. Well, it seems odd what the meaing of &lt;code class="highlighter-rouge"&gt;args&lt;/code&gt; will be for the algebraic case, I am guessing a tuple (base, exp), but we needn&amp;#8217;t worry about that for now.&lt;/p&gt;
+
+&lt;p&gt;First argument of both of them is currently kept as &lt;code class="highlighter-rouge"&gt;None&lt;/code&gt;(owing )entry at each level recording the type &amp;#8216;exp&amp;#8217;, &amp;#8216;log&amp;#8217;, &amp;#8216;tan&amp;#8217;, &amp;#8216;atan&amp;#8217; and finally &amp;#8216;alg&amp;#8217;. That would contain the same information as the separate lists. Then the code itself could be reorganized by collecting those sections that inspect and rewrite pows and logs into separate methods like _rewrite_powsand _rewrite_logs. Then it would be easier to add code for tan and atan (after other trig. functions have been rewritten).&lt;/p&gt;
+
+&lt;p&gt;We also have an open pull request on some re-organising of &lt;code class="highlighter-rouge"&gt;__init__&lt;/code&gt; of &lt;code class="highlighter-rouge"&gt;DifferentialExtension&lt;/code&gt; &lt;a href="https://github.com/sympy/sympy/pull/12849"&gt;#12849&lt;/a&gt;. It isn&amp;#8217;t blocking anything. I think that PR is done.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;h3 id="key-points"&gt;Key points&lt;/h3&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;What seems important to me is that I can list some of the discussion key points here, since I need to those issues to be solved in my mind, in particular I often go back and look at the archives of gitter discussion.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Aaron mention about the issue in &lt;code class="highlighter-rouge"&gt;is_deriv_k&lt;/code&gt; (also present in &lt;code class="highlighter-rouge"&gt;is_log_deriv_k_t_radical&lt;/code&gt;), which prevent integrals of the form , and it raises &lt;code class="highlighter-rouge"&gt;NotImplementedError: Cannot work with non-rational coefficients in this case.&lt;/code&gt;. Now this problem can be solved with the use of Risch structure Theorem (yes, with capital &lt;code class="highlighter-rouge"&gt;R&lt;/code&gt;, small &lt;code class="highlighter-rouge"&gt;s&lt;/code&gt; and capital &lt;code class="highlighter-rouge"&gt;T&lt;/code&gt;, it comes to my mind whenever I see the name in the text, IIRC last time summers I was corrected Kalevi regarding &lt;code class="highlighter-rouge"&gt;Todd Coxeter&lt;/code&gt;, may be someone else).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Using the paper on &amp;#8220;Simplification of Real Elementary Functions&amp;#8221; (already mentioned in last blog post).&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;blockquote&gt;
+  &lt;h3 id="todo"&gt;TODO&lt;/h3&gt;
+  &lt;p&gt;Now coming to what I am currently doing is reading the text for &lt;code class="highlighter-rouge"&gt;parametric_log_deriv&lt;/code&gt; (there isn&amp;#8217;t pseudo code of this). I think it would take me about 2 weeks to complete this task, by that time my next semester in university will start as well (on 15th July)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This time I am late for my blog post, damn!. Aaron had to mail me for the post, SymPy has a Code Generation workshop in the upcoming SciPy conference (probably 9th of this month), and also we are going to have a release of SymPy 1.1 coming out soon, I guess that is handling quite a bit.&lt;/p&gt;
+
+&lt;p&gt;Oh, I forgot to mention, I passed the first evaluation as well.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://bjodah.github.io/blog/posts/gsoc-week5.html</guid>
       <author>Bj&#xF6;rn Dahlgren (bjodah)</author>
       <title>Bj&#xF6;rn Dahlgren (bjodah): Status update week 5 GSoC</title>
@@ -93,17 +131,17 @@ great catalyst for the rest of the summers work on code-generation.&lt;/p&gt;
       <description>&lt;p&gt;This a combined blog for progress of week-4 and week-5.
 The &lt;a href="https://github.com/symengine/symengine/pull/1293"&gt;PR&lt;/a&gt; on ImageSet is merged in. As mentioned in my previous blog, I continued my work on implementing solvers for lower degree polynomials &lt;a href="https://github.com/symengine/symengine/pull/1296"&gt;here&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;we can now solve polynomials even with symbolic coefficients.
+&lt;p&gt;We can now solve polynomials even with symbolic coefficients.
 When FLINT is not supported,
-if the order of the polynomial is &amp;lt;=4, then Solve Poly returns a FiniteSet of roots calculated using the known algorithms as described in detail &lt;a href="https://github.com/symengine/symengine/pull/1296#issuecomment-310926613"&gt;here&lt;/a&gt; and otherwise, for the rest of the polynomials, it will return a ConditionSet.
+if the order of the polynomial is &amp;lt;=4, then Solve Poly returns a FiniteSet of roots calculated using the known algorithms as described in detail &lt;a href="https://github.com/symengine/symengine/pull/1296#issuecomment-310926613"&gt;here&lt;/a&gt;
 When FLINT is supported, &lt;code class="highlighter-rouge"&gt;solve_poly&lt;/code&gt; tries to fit the given input as a Flint Polynomial.
 If it fails, then it will use the method described above. or else, It factorises the polynomial using the wrappers developed during community bonding period and returns the solutions found for each factor.&lt;/p&gt;
 
 &lt;p&gt;For solving inputs, if we already know that input is a kind of polynomial, initially i designed a different function &lt;a href="https://github.com/symengine/symengine/pull/1296/commits/da814699e7b4488f0c63a6386c3d8be98ff01368#diff-9feeb2259dbd2a97efd7a1c71d8eaf6cR94"&gt;here&lt;/a&gt;, But later upon &lt;a href="https://github.com/srajangarg"&gt;Srajan&amp;#8217;s&lt;/a&gt; suggestion, I went on to modify &lt;code class="highlighter-rouge"&gt;from_basic&amp;lt;&amp;gt;()&lt;/code&gt; &lt;a href="https://github.com/symengine/symengine/pull/1296/commits/3acad80079e45b30cc5c694e56062aa9b225d454"&gt;here&lt;/a&gt; to directly call &lt;code class="highlighter-rouge"&gt;from_poly&amp;lt;&amp;gt;()&lt;/code&gt; if the input is a &lt;code class="highlighter-rouge"&gt;poly&lt;/code&gt;.&lt;/p&gt;
 
-&lt;p&gt;Only hurdle left in getting this PR merged is with the &lt;a href="https://github.com/symengine/symengine/pull/1296#discussion_r123874931"&gt;decision&lt;/a&gt; of whether or not to expand the solutions before returing them. I hope this will be cleared ASAP.&lt;/p&gt;
+&lt;p&gt;Only hurdle left in getting this PR merged is with the &lt;a href="https://github.com/symengine/symengine/pull/1296#discussion_r123874931"&gt;decision&lt;/a&gt; of whether or not to expand the solutions before returing them. I will try to get this cleared ASAP.&lt;/p&gt;
 
-&lt;p&gt;I started working on implementing solvers for trigonometric equations. You can track its progress on &lt;a href="https://github.com/ranjithkumar007/symengine/tree/trigsolve"&gt;trigsolve&lt;/a&gt; branch of my repo. I will make a PR once &lt;a href="https://github.com/symengine/symengine/pull/1296"&gt;#1296&lt;/a&gt; gets in. 
+&lt;p&gt;I started working on implementing solvers for trigonometric equations. You can track its progress on &lt;a href="https://github.com/ranjithkumar007/symengine/tree/trigsolve"&gt;trigsolve&lt;/a&gt; branch of my repo. I will make a PR once &lt;a href="https://github.com/symengine/symengine/pull/1296"&gt;#1296&lt;/a&gt; gets in. &lt;br /&gt;
 Short story of how this is implemented :&lt;/p&gt;
 &lt;ul&gt;
   &lt;li&gt;First, we figure out if given input is of type trigonometric/hyperbolic(excluding inverses). What I mean by &lt;code class="highlighter-rouge"&gt;type&lt;/code&gt; is whether if given input
@@ -111,7 +149,7 @@ Short story of how this is implemented :&lt;/p&gt;
   &lt;li&gt;Then using &lt;code class="highlighter-rouge"&gt;expand_as_exp()&lt;/code&gt;, we write all trigs/hyperbolics in the given equation in terms of &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt;, then &lt;code class="highlighter-rouge"&gt;exp(I*x)&lt;/code&gt; is substituted with a dummy and solved using polynomial solver. using &lt;code class="highlighter-rouge"&gt;invertComplex&lt;/code&gt; on the solutions thus found, we find the actual solutions of the given input.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;For this^, I implemented a new function &lt;code class="highlighter-rouge"&gt;as_real_imag()&lt;/code&gt; using visitor pattern for getting the real and imaginary parts. This was needed for implementing &lt;code class="highlighter-rouge"&gt;invertComplex&lt;/code&gt; routine. Also, earlier subs was incapable of handling cases described in the method above. It is handled correctly now.&lt;/p&gt;
+&lt;p&gt;For this^, I implemented a new function &lt;code class="highlighter-rouge"&gt;as_real_imag()&lt;/code&gt; using visitor pattern for getting the real and imaginary parts. This was needed for implementing &lt;code class="highlighter-rouge"&gt;invertComplex&lt;/code&gt; routine. Also, earlier subs was incapable of handling cases as described in the second point above. It is handled correctly now.&lt;/p&gt;
 
 &lt;p&gt;More on Trigonometric Solvers next time !!&lt;/p&gt;</description>
     </item>
@@ -1356,25 +1394,6 @@ and this function simply calls the container&amp;#8217;s &lt;code class="highlig
 &lt;p&gt;Next week, I will be working on &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;That&amp;#8217;s it for now. See you next time. Until then, Goodbye !&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://valglad.github.io/2017/06/05/smith</guid>
-      <author>Valeriia Gladkova (valglad)</author>
-      <title>Valeriia Gladkova (valglad): The Smith Normal Form</title>
-      <pubDate>Mon, 05 Jun 2017 00:00:00 GMT</pubDate>
-      <link>http://valglad.github.io/2017/06/05/smith/</link>
-      <description>&lt;p&gt;Last week I was working on implementing the Smith Normal Form for matrices over principal ideal domains. I&amp;#8217;m still making corrections as the &lt;a href="https://github.com/sympy/sympy/pull/12705"&gt;PR&lt;/a&gt; is being reviewed. I used the standard algorithm: use invertable (in the ring) row and column operations to make the matrix diagonal and make sure the diagonal entries have the property that an entry divides all of the entries that come after it (this is described in more detail on &lt;a href="https://en.wikipedia.org/wiki/Smith_normal_form#Algorithm"&gt;wikipedia&lt;/a&gt; for example). I ran into trouble when trying to determine the domain of the matrix entries if the user hadn&amp;#8217;t explicitly specified one. Matrices in SymPy don&amp;#8217;t have a &lt;code class="highlighter-rouge"&gt;.domain&lt;/code&gt; attribute or anything similar, and can contain objects of different types. So, if I did attempt to find some suitable principal ideal domain over which to consider all of them, the only way would be to try a few of the ones that are currently implemented until something fits, and that would have to be extended every time a new domain is implemented and generally sounds tedious to do. I&amp;#8217;ve asked on the &lt;a href="https://gitter.im/sympy/GroupTheory"&gt;Group Theory channel&lt;/a&gt; if there was a better way and that started a discussion about changing the &lt;code class="highlighter-rouge"&gt;Matrix&lt;/code&gt; class to have a &lt;code class="highlighter-rouge"&gt;.domain&lt;/code&gt; or a &lt;code class="highlighter-rouge"&gt;.ring&lt;/code&gt; attribute and have the entries checked at construction. In fact, this has been brought up by other people before as well. Unfortunately, adding this attribute would require going over the matrix methods implemented so far and making sure they don&amp;#8217;t assume anything that might not hold for general rings (especially non-commutative ones: like the determinant in its traditional form wouldn&amp;#8217;t even make sense; however, it turns out there are several generalisations of determinants to non-commutative rings like &lt;a href="https://en.wikipedia.org/wiki/Quasideterminant"&gt;quasideterminants&lt;/a&gt; and &lt;a href="https://en.wikipedia.org/wiki/Dieudonn%C3%A9_determinant"&gt;Dieudonn&amp;#233; determinant&lt;/a&gt;). And this would probably take quite a while and is not directly related to my project. So in the end we decided to have the function work only for matrices for which a &lt;code class="highlighter-rouge"&gt;.ring&lt;/code&gt; attribute has been added manually by the user. For example,&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.polys.solvers import RawMatrix as Matrix
-&amp;gt;&amp;gt;&amp;gt; from sympy.polys.domains import ZZ
-&amp;gt;&amp;gt;&amp;gt; m = Matrix([0,1,3],[2,4,1])
-&amp;gt;&amp;gt;&amp;gt; setattr(m, "ring", ZZ)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;Hopefully, at some point in the future matrices will have this attribute by default.&lt;/p&gt;
-
-&lt;p&gt;The Smith Normal Form was necessary to analyse the structure of the abelianisation of a group: abelian groups are modules over integers which is a PID and so the Smith Normal form is applicable if the relators of the abelianisation are written in the form of a matrix. If 0 is one of the abelian invariants (the diagonal entries of the Smith Normal form), then the abelianisation is infinite and so must be the whole group. I&amp;#8217;ve added this test to the &lt;code class="highlighter-rouge"&gt;.order()&lt;/code&gt; method for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s and now it is able to terminate with the answer &lt;code class="highlighter-rouge"&gt;oo&lt;/code&gt; (infinity) for certain groups for which it wouldn&amp;#8217;t terminate previously. I hope to extend this further with another way to evaluate the order: trying to find a finite index cyclic subgroup (this can be achieved by generating a random word in the group and considering the coset table corresponging to it), and obtain the order of the group by multiplying the index with the order of the cyclic subgroup. The latter could be infinite, in which case the whole group is. Of course, this might not always terminate, but it will terminate in more cases than coset enumeration applied directly to the whole group. This is also what&amp;#8217;s done in &lt;a href="https://www.gap-system.org"&gt;GAP&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;I have begun working on it but this week is the last before my exams, and I feel that I should spend more time revising. For this reason, I probably wouldn&amp;#8217;t be able to send a PR with this new test by the end of the week. However, it would most likely be ready by the end of the next one, and considering that the only other thing I planned to do until the first evaluation period was to write (the main parts of) the &lt;code class="highlighter-rouge"&gt;GroupHomomorphism&lt;/code&gt; class assuming that the things it depends on (e.g. rewriting systems) are already implemented, I believe I am going to stay on schedule.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

@@ -89,6 +89,101 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">July 04, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-5a972359 feed-" id="item-cace5bc2">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/gxyd.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Gaurav Dhingra (gxyd) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://gxyd.github.io/blogs/Gsoc2017-week-4/">00:00, Tuesday, 04 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2017-week-4/">Gaurav Dhingra (gxyd): GSoC 2017: Week 4</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/gxyd.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Gaurav Dhingra (gxyd) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://gxyd.github.io/blogs/Gsoc2017-week-4/">00:00, Tuesday, 04 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2017-week-4/">GSoC 2017: Week 4</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>This week we completed <font color="purple">[PR #12850](https://github.com/sympy/sympy/pull/12850)</font> on adding/removing variable in <code class="highlighter-rouge">DifferentialExtension</code> class for later introduction of creating extensions of , , and probably algebraic extensions as well. Lists like <code class="highlighter-rouge">E_K</code>, <code class="highlighter-rouge">L_K</code> and the new ones have been combined in a single list one, and the variables to record that information are <code class="highlighter-rouge">exts</code> and <code class="highlighter-rouge">extargs</code>. <code class="highlighter-rouge">exts</code> will store <code class="highlighter-rouge">str</code> instances having value in {&#8216;exp&#8217;, &#8216;log&#8217;, &#8216;atan&#8217;, &#8216;tan&#8217;, &#8216;alg&#8217;}, so whenever we at each &#8216;level&#8217; earlier we discovered the extension to be exponential we appended <code class="highlighter-rouge">level - 1</code> to the list <code class="highlighter-rouge">E_K</code> (i.e. index) or to <code class="highlighter-rouge">L_K</code> when the extension is <code class="highlighter-rouge">primitive</code> but now we will append to just a single list and i.e. to <code class="highlighter-rouge">exts</code> either <code class="highlighter-rouge">exp</code> or <code class="highlighter-rouge">log</code>/<code class="highlighter-rouge">atan</code> accordingly (Note:  is also a <code class="highlighter-rouge">primitive</code> until now, the only &#8216;primitive&#8217; has been &#8216;log&#8217;).</p>
+
+<p>While <code class="highlighter-rouge">extargs</code> as is clear from the name stores the argument of extension. Well, it seems odd what the meaing of <code class="highlighter-rouge">args</code> will be for the algebraic case, I am guessing a tuple (base, exp), but we needn&#8217;t worry about that for now.</p>
+
+<p>First argument of both of them is currently kept as <code class="highlighter-rouge">None</code>(owing )entry at each level recording the type &#8216;exp&#8217;, &#8216;log&#8217;, &#8216;tan&#8217;, &#8216;atan&#8217; and finally &#8216;alg&#8217;. That would contain the same information as the separate lists. Then the code itself could be reorganized by collecting those sections that inspect and rewrite pows and logs into separate methods like _rewrite_powsand _rewrite_logs. Then it would be easier to add code for tan and atan (after other trig. functions have been rewritten).</p>
+
+<p>We also have an open pull request on some re-organising of <code class="highlighter-rouge">__init__</code> of <code class="highlighter-rouge">DifferentialExtension</code> <a href="https://github.com/sympy/sympy/pull/12849">#12849</a>. It isn&#8217;t blocking anything. I think that PR is done.</p>
+
+<blockquote>
+  <h3 id="key-points">Key points</h3>
+</blockquote>
+
+<p>What seems important to me is that I can list some of the discussion key points here, since I need to those issues to be solved in my mind, in particular I often go back and look at the archives of gitter discussion.</p>
+
+<ol>
+  <li>
+    <p>Aaron mention about the issue in <code class="highlighter-rouge">is_deriv_k</code> (also present in <code class="highlighter-rouge">is_log_deriv_k_t_radical</code>), which prevent integrals of the form , and it raises <code class="highlighter-rouge">NotImplementedError: Cannot work with non-rational coefficients in this case.</code>. Now this problem can be solved with the use of Risch structure Theorem (yes, with capital <code class="highlighter-rouge">R</code>, small <code class="highlighter-rouge">s</code> and capital <code class="highlighter-rouge">T</code>, it comes to my mind whenever I see the name in the text, IIRC last time summers I was corrected Kalevi regarding <code class="highlighter-rouge">Todd Coxeter</code>, may be someone else).</p>
+  </li>
+  <li>
+    <p>Using the paper on &#8220;Simplification of Real Elementary Functions&#8221; (already mentioned in last blog post).</p>
+  </li>
+</ol>
+
+<blockquote>
+  <h3 id="todo">TODO</h3>
+  <p>Now coming to what I am currently doing is reading the text for <code class="highlighter-rouge">parametric_log_deriv</code> (there isn&#8217;t pseudo code of this). I think it would take me about 2 weeks to complete this task, by that time my next semester in university will start as well (on 15th July)</p>
+</blockquote>
+
+<p>This time I am late for my blog post, damn!. Aaron had to mail me for the post, SymPy has a Code Generation workshop in the upcoming SciPy conference (probably 9th of this month), and also we are going to have a release of SymPy 1.1 coming out soon, I guess that is handling quite a bit.</p>
+
+<p>Oh, I forgot to mention, I passed the first evaluation as well.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 03, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -225,7 +320,7 @@ great catalyst for the rest of the summers work on code-generation.</p>
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-040fd9d5 feed-" id="item-9e60930b">
+		    <div class="box" class="item feed-040fd9d5 feed-" id="item-8e5f6213">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -281,17 +376,17 @@ great catalyst for the rest of the summers work on code-generation.</p>
 						<p>This a combined blog for progress of week-4 and week-5.
 The <a href="https://github.com/symengine/symengine/pull/1293">PR</a> on ImageSet is merged in. As mentioned in my previous blog, I continued my work on implementing solvers for lower degree polynomials <a href="https://github.com/symengine/symengine/pull/1296">here</a>.</p>
 
-<p>we can now solve polynomials even with symbolic coefficients.
+<p>We can now solve polynomials even with symbolic coefficients.
 When FLINT is not supported,
-if the order of the polynomial is &lt;=4, then Solve Poly returns a FiniteSet of roots calculated using the known algorithms as described in detail <a href="https://github.com/symengine/symengine/pull/1296#issuecomment-310926613">here</a> and otherwise, for the rest of the polynomials, it will return a ConditionSet.
+if the order of the polynomial is &lt;=4, then Solve Poly returns a FiniteSet of roots calculated using the known algorithms as described in detail <a href="https://github.com/symengine/symengine/pull/1296#issuecomment-310926613">here</a>
 When FLINT is supported, <code class="highlighter-rouge">solve_poly</code> tries to fit the given input as a Flint Polynomial.
 If it fails, then it will use the method described above. or else, It factorises the polynomial using the wrappers developed during community bonding period and returns the solutions found for each factor.</p>
 
 <p>For solving inputs, if we already know that input is a kind of polynomial, initially i designed a different function <a href="https://github.com/symengine/symengine/pull/1296/commits/da814699e7b4488f0c63a6386c3d8be98ff01368#diff-9feeb2259dbd2a97efd7a1c71d8eaf6cR94">here</a>, But later upon <a href="https://github.com/srajangarg">Srajan&#8217;s</a> suggestion, I went on to modify <code class="highlighter-rouge">from_basic&lt;&gt;()</code> <a href="https://github.com/symengine/symengine/pull/1296/commits/3acad80079e45b30cc5c694e56062aa9b225d454">here</a> to directly call <code class="highlighter-rouge">from_poly&lt;&gt;()</code> if the input is a <code class="highlighter-rouge">poly</code>.</p>
 
-<p>Only hurdle left in getting this PR merged is with the <a href="https://github.com/symengine/symengine/pull/1296#discussion_r123874931">decision</a> of whether or not to expand the solutions before returing them. I hope this will be cleared ASAP.</p>
+<p>Only hurdle left in getting this PR merged is with the <a href="https://github.com/symengine/symengine/pull/1296#discussion_r123874931">decision</a> of whether or not to expand the solutions before returing them. I will try to get this cleared ASAP.</p>
 
-<p>I started working on implementing solvers for trigonometric equations. You can track its progress on <a href="https://github.com/ranjithkumar007/symengine/tree/trigsolve">trigsolve</a> branch of my repo. I will make a PR once <a href="https://github.com/symengine/symengine/pull/1296">#1296</a> gets in. 
+<p>I started working on implementing solvers for trigonometric equations. You can track its progress on <a href="https://github.com/ranjithkumar007/symengine/tree/trigsolve">trigsolve</a> branch of my repo. I will make a PR once <a href="https://github.com/symengine/symengine/pull/1296">#1296</a> gets in. <br />
 Short story of how this is implemented :</p>
 <ul>
   <li>First, we figure out if given input is of type trigonometric/hyperbolic(excluding inverses). What I mean by <code class="highlighter-rouge">type</code> is whether if given input
@@ -299,7 +394,7 @@ Short story of how this is implemented :</p>
   <li>Then using <code class="highlighter-rouge">expand_as_exp()</code>, we write all trigs/hyperbolics in the given equation in terms of <code class="highlighter-rouge">exp</code>, then <code class="highlighter-rouge">exp(I*x)</code> is substituted with a dummy and solved using polynomial solver. using <code class="highlighter-rouge">invertComplex</code> on the solutions thus found, we find the actual solutions of the given input.</li>
 </ul>
 
-<p>For this^, I implemented a new function <code class="highlighter-rouge">as_real_imag()</code> using visitor pattern for getting the real and imaginary parts. This was needed for implementing <code class="highlighter-rouge">invertComplex</code> routine. Also, earlier subs was incapable of handling cases described in the method above. It is handled correctly now.</p>
+<p>For this^, I implemented a new function <code class="highlighter-rouge">as_real_imag()</code> using visitor pattern for getting the real and imaginary parts. This was needed for implementing <code class="highlighter-rouge">invertComplex</code> routine. Also, earlier subs was incapable of handling cases as described in the second point above. It is handled correctly now.</p>
 
 <p>More on Trigonometric Solvers next time !!</p>
 					</div>
@@ -3064,79 +3159,6 @@ and this function simply calls the container&#8217;s <code class="highlighter-ro
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-29fba86e feed-" id="item-7e4a0372">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/valglad.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Valeriia Gladkova (valglad) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://valglad.github.io/2017/06/05/smith/">00:00, Monday, 05 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://valglad.github.io/2017/06/05/smith/">Valeriia Gladkova (valglad): The Smith Normal Form</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/valglad.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Valeriia Gladkova (valglad) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://valglad.github.io/2017/06/05/smith/">00:00, Monday, 05 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://valglad.github.io/2017/06/05/smith/">The Smith Normal Form</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Last week I was working on implementing the Smith Normal Form for matrices over principal ideal domains. I&#8217;m still making corrections as the <a href="https://github.com/sympy/sympy/pull/12705">PR</a> is being reviewed. I used the standard algorithm: use invertable (in the ring) row and column operations to make the matrix diagonal and make sure the diagonal entries have the property that an entry divides all of the entries that come after it (this is described in more detail on <a href="https://en.wikipedia.org/wiki/Smith_normal_form#Algorithm">wikipedia</a> for example). I ran into trouble when trying to determine the domain of the matrix entries if the user hadn&#8217;t explicitly specified one. Matrices in SymPy don&#8217;t have a <code class="highlighter-rouge">.domain</code> attribute or anything similar, and can contain objects of different types. So, if I did attempt to find some suitable principal ideal domain over which to consider all of them, the only way would be to try a few of the ones that are currently implemented until something fits, and that would have to be extended every time a new domain is implemented and generally sounds tedious to do. I&#8217;ve asked on the <a href="https://gitter.im/sympy/GroupTheory">Group Theory channel</a> if there was a better way and that started a discussion about changing the <code class="highlighter-rouge">Matrix</code> class to have a <code class="highlighter-rouge">.domain</code> or a <code class="highlighter-rouge">.ring</code> attribute and have the entries checked at construction. In fact, this has been brought up by other people before as well. Unfortunately, adding this attribute would require going over the matrix methods implemented so far and making sure they don&#8217;t assume anything that might not hold for general rings (especially non-commutative ones: like the determinant in its traditional form wouldn&#8217;t even make sense; however, it turns out there are several generalisations of determinants to non-commutative rings like <a href="https://en.wikipedia.org/wiki/Quasideterminant">quasideterminants</a> and <a href="https://en.wikipedia.org/wiki/Dieudonn%C3%A9_determinant">Dieudonn&#233; determinant</a>). And this would probably take quite a while and is not directly related to my project. So in the end we decided to have the function work only for matrices for which a <code class="highlighter-rouge">.ring</code> attribute has been added manually by the user. For example,</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>&gt;&gt;&gt; from sympy.polys.solvers import RawMatrix as Matrix
-&gt;&gt;&gt; from sympy.polys.domains import ZZ
-&gt;&gt;&gt; m = Matrix([0,1,3],[2,4,1])
-&gt;&gt;&gt; setattr(m, "ring", ZZ)
-</code></pre>
-</div>
-<p>Hopefully, at some point in the future matrices will have this attribute by default.</p>
-
-<p>The Smith Normal Form was necessary to analyse the structure of the abelianisation of a group: abelian groups are modules over integers which is a PID and so the Smith Normal form is applicable if the relators of the abelianisation are written in the form of a matrix. If 0 is one of the abelian invariants (the diagonal entries of the Smith Normal form), then the abelianisation is infinite and so must be the whole group. I&#8217;ve added this test to the <code class="highlighter-rouge">.order()</code> method for <code class="highlighter-rouge">FpGroup</code>s and now it is able to terminate with the answer <code class="highlighter-rouge">oo</code> (infinity) for certain groups for which it wouldn&#8217;t terminate previously. I hope to extend this further with another way to evaluate the order: trying to find a finite index cyclic subgroup (this can be achieved by generating a random word in the group and considering the coset table corresponging to it), and obtain the order of the group by multiplying the index with the order of the cyclic subgroup. The latter could be infinite, in which case the whole group is. Of course, this might not always terminate, but it will terminate in more cases than coset enumeration applied directly to the whole group. This is also what&#8217;s done in <a href="https://www.gap-system.org">GAP</a>.</p>
-
-<p>I have begun working on it but this week is the last before my exams, and I feel that I should spend more time revising. For this reason, I probably wouldn&#8217;t be able to send a PR with this new test by the end of the week. However, it would most likely be ready by the end of the next one, and considering that the only other thing I planned to do until the first evaluation period was to write (the main parts of) the <code class="highlighter-rouge">GroupHomomorphism</code> class assuming that the things it depends on (e.g. rewriting systems) are already implemented, I believe I am going to stay on schedule.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -3165,134 +3187,134 @@ and this function simply calls the container&#8217;s <code class="highlighter-ro
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>03:42, Tuesday, 04 July</td>
-<td>03:57, Tuesday, 04 July</td>
+<td>04:01, Tuesday, 04 July</td>
+<td>04:16, Tuesday, 04 July</td>
 </tr>
 </table>
 
