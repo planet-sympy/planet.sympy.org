@@ -89,6 +89,86 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">July 10, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-29fba86e feed-" id="item-983ce766">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/valglad.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Valeriia Gladkova (valglad) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://valglad.github.io/2017/07/10/rewriting/">00:00, Monday, 10 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://valglad.github.io/2017/07/10/rewriting/">Valeriia Gladkova (valglad): The Rewriting System class</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/valglad.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Valeriia Gladkova (valglad) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://valglad.github.io/2017/07/10/rewriting/">00:00, Monday, 10 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://valglad.github.io/2017/07/10/rewriting/">The Rewriting System class</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>I sent the <a href="https://github.com/sympy/sympy/pull/12893">PR</a> with the rewriting system implementation on Wednesday night, i.e. by Thursday as planned. It could have been earlier if I hadn&#8217;t spent one day experimenting with making the elements of <code class="highlighter-rouge">FpGroup</code> different from the underlying <code class="highlighter-rouge">FreeGroup</code>. At the moment they are the same so that, for instance:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;&gt;&gt; F, a, b = free_group('a, b')
+&gt;&gt;&gt; G = FpGroup(F, [a**2, a*b*a**-1*b**-1])
+&gt;&gt;&gt; a in F
+True
+&gt;&gt;&gt; a in G
+True
+</code></pre>
+</div>
+
+<p>Theoretically, since <code class="highlighter-rouge">F</code> and <code class="highlighter-rouge">G</code> are different groups (not even isomorphic), it would make sense for their elements to be represented by different objects, e.g. the generators for <code class="highlighter-rouge">G</code> could be <code class="highlighter-rouge">a_1, b_1</code> so that <code class="highlighter-rouge">G</code> and <code class="highlighter-rouge">F</code> are connected by the injective homomorphism sending <code class="highlighter-rouge">a_1</code> and <code class="highlighter-rouge">b_1</code> to <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code> respectively. Though, for convenience, it could be allowed to refer to the elements of an <code class="highlighter-rouge">FpGroup</code> by the names of the underlying free group elements (and performing the conversion to <code class="highlighter-rouge">a_1</code> and <code class="highlighter-rouge">b_1</code> backstage before passing them onto <code class="highlighter-rouge">FpGroup</code>&#8217;s methods).</p>
+
+<p>Now, if this were done, it would be possible to check for equality of two elements of <code class="highlighter-rouge">FpGroup</code> using the <code class="highlighter-rouge">==</code> syntax. E.g., if the generators of <code class="highlighter-rouge">G</code> were made distinct from <code class="highlighter-rouge">a, b</code> and called <code class="highlighter-rouge">a_1, b_1</code>, then we could have <code class="highlighter-rouge">a_1*b_1 == b_1*a_1</code> (while, of course, <code class="highlighter-rouge">a*b == b*a</code> is not true because <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code> are the elements of a <code class="highlighter-rouge">FreeGroup</code>). The latter was the main motivation for trying this out but in the end, after additionally discussing things with my mentor, I left everything as it is and implemented a couple new <code class="highlighter-rouge">FpGroup</code> methods instead. So, for example, to check if <code class="highlighter-rouge">a*b</code> and <code class="highlighter-rouge">b*a</code> are equal in <code class="highlighter-rouge">G</code>, one would call <code class="highlighter-rouge">G.equals(a*b, b*a)</code>. The PR has more details.</p>
+
+<p>At the moment I&#8217;m in the middle of writing the function for finding finite presentations of permutation groups. I&#8217;m slightly modifying the coset enumeration code to allow it to return an incomplete <code class="highlighter-rouge">CosetTable</code> (instead of raising a <code class="highlighter-rouge">ValueError</code> if, say, the maximum number of cosets is exceeded) and to start running with a partially filled table (which could be passed as a keyword argument) rather than with a new, empty instance. This is necessary as finding the presentation requires setting some of the coset table entries manually and adding relators to the future presentation while examining the undefined table entries, after which coset enumeration could be used to make more deductions. Messing with coset enumeration is the only complicated part (as far as I can see): the rest is pretty much sorted by now. I suppose, the only other thing is deciding when to find the presentation in one step and when to use the multi-step version (finding the presentation of a subgroup first and then the whole presentation based on that). The latter can be more efficient for larger groups. But I could think about that later, maybe run some tests, once the coset enumeration is set up properly.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 09, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -3069,75 +3149,6 @@ FreeQ[2,x] &amp;&amp; NonzeroQ[2]
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">June 08, 2017</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-b59b3a28 feed-" id="item-fa88c903">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Abdullahjavednesar.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Abdullah Javed Nesar (Abdullahjavednesar) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://nesar2017.wordpress.com/2017/06/08/week-2-begins/">18:40, Thursday, 08 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://nesar2017.wordpress.com/2017/06/08/week-2-begins/">Abdullah Javed Nesar (Abdullahjavednesar): Week 2 Begins</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Abdullahjavednesar.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Abdullah Javed Nesar (Abdullahjavednesar) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://nesar2017.wordpress.com/2017/06/08/week-2-begins/">18:40, Thursday, 08 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://nesar2017.wordpress.com/2017/06/08/week-2-begins/">Week 2 Begins</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Hello all!</p>
-<p>The first week comes to an end and we (Arihant and me) have partially implemented Algebraic functions\ Linear products.</p>
-<p><strong>THE PROGRESS</strong></p>
-<p>Most of my task was to translate Algebraic Integration tests from <a href="http://www.apmaths.uwo.ca/~arich/IntegrationProblems/MapleSyntaxFiles/MapleSyntaxFiles.html">Maple Syntax</a> to Python, write Utility Functions and writing tests for Utility Functions. I have already implemented <a href="http://www.apmaths.uwo.ca/~arich/IntegrationProblems/MapleSyntaxFiles/1%20Algebraic%20functions/1%20Linear%20products/1.2%20(a+b%20x)%5Em%20(c+d%20x)%5En.txt">1 Algebraic functions\1 Linear products\1.2 (a+b x)**m (c+d x)**n</a>,&#160;<a href="https://github.com/parsoyaarihant/sympy/blob/rubi4/sympy/rubi/tests/test_all_algebriac.py">here</a>. And test sets for&#160;<a href="http://www.apmaths.uwo.ca/~arich/IntegrationProblems/MapleSyntaxFiles/1%20Algebraic%20functions/1%20Linear%20products/1.3%20(a+b%20x)%5Em%20(c+d%20x)%5En%20(e+f%20x)%5Ep.txt">1 Algebraic functions\1 Linear products\1.3 (a+b x)**m (c+d x)**n (e+f x)**p</a>&#160;and&#160;<a href="http://www.apmaths.uwo.ca/~arich/IntegrationProblems/MapleSyntaxFiles/1%20Algebraic%20functions/1%20Linear%20products/1.4%20(a+b%20x)%5Em%20(c+d%20x)%5En%20(e+f%20x)%5Ep%20(g+h%20x)%5Eq.txt">1 Algebraic functions\1 Linear products\1.4 (a+b x)^m (c+d x)^n (e+f x)^p (g+h x)^q</a> are almost ready&#160;<a href="https://github.com/parsoyaarihant/sympy/pulls">here</a>&#160;along with most of the Utility Functions we require till now, after this we will be successfully covering the <span style="color: #808080;">Algebraic\ Linear products </span>portion.</p>
-<p>Next what&#8217;s delaying our progress is Utility Functions, I &#160;have been taking help from <a href="http://www.apmaths.uwo.ca/~arich/IntegrationRules/PortableDocumentFiles/Integration%20utility%20functions.pdf">this pdf</a>&#160;on Integration Utility Functions and looking for their definitions in Mathematica website but the major problem is the definitions provided are not very clear or no definition at all. Meanwhile Arihant was implementing RUBI rules, default values for variables and working on constraints .</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/nesar2017.wordpress.com/49/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/nesar2017.wordpress.com/49/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=nesar2017.wordpress.com&#038;blog=126779945&#038;post=49&#038;subd=nesar2017&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3165,134 +3176,134 @@ FreeQ[2,x] &amp;&amp; NonzeroQ[2]
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td>https://szymag.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>20:20, Monday, 10 July</td>
-<td>20:35, Monday, 10 July</td>
+<td>20:41, Monday, 10 July</td>
+<td>20:56, Monday, 10 July</td>
 </tr>
 </table>
 
