@@ -31,26 +31,25 @@
       <title>Ranjith Kumar (ranjithkumar007): Trigonometric Solvers</title>
       <pubDate>Tue, 11 Jul 2017 00:00:00 GMT</pubDate>
       <link>http://ranjithkumar007.github.io/2017/07/11/Trigonometric-Solvers/</link>
-      <description>&lt;p&gt;This is the blog for progress of week-6. It revolves mostly around solvers for trigonometric equations. 
+      <description>&lt;p&gt;This is the blog on progress for week-6. It revolves around solvers for trigonometric equations. 
 The &lt;a href="https://github.com/symengine/symengine/pull/1296"&gt;PR&lt;/a&gt; on polynomial solvers is merged in.&lt;/p&gt;
 
-&lt;p&gt;As I mentioned in my previous blog, I continued my work on solving simple trigonometric equations. I made a &lt;a href="https://github.com/symengine/symengine/pull/1305"&gt;PR&lt;/a&gt;.
-Currently, this PR doesn&amp;#8217;t pass the whole test suit. Specifically, the below case.&lt;/p&gt;
+&lt;p&gt;As I mentioned in my previous blog, I continued my work on solving simple trigonometric equations. I made a &lt;a href="https://github.com/symengine/symengine/pull/1305"&gt;PR&lt;/a&gt;. See the commit messages for more details. Currently, this PR doesn&amp;#8217;t pass the whole test suit. Specifically, the below case.&lt;/p&gt;
 &lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt; auto y = symbol("y");
  eqn = sub(sin(add(x, y)), sin(x));
  soln = solve(eqn, y);
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;p&gt;This currently returns a ConditionSet(means it is unable to find any solution). The reason for this traces to problem in &lt;code class="highlighter-rouge"&gt;expand()&lt;/code&gt;. &lt;code class="highlighter-rouge"&gt;expand(exp(I*(x + y)))&lt;/code&gt; stays as &lt;code class="highlighter-rouge"&gt;exp(I*(x+y))&lt;/code&gt;. It should be returning &lt;code class="highlighter-rouge"&gt;exp(I*x)*exp(I*y)&lt;/code&gt;. This is needed because &lt;code class="highlighter-rouge"&gt;subs&lt;/code&gt; are not robust enough to handle inputs like &lt;code class="highlighter-rouge"&gt;exp(x + I*y)-&amp;gt;subs(exp(I*y) = z)&lt;/code&gt;. Even SymPy subs are not robust enough(see example below).&lt;/p&gt;
+&lt;p&gt;It currently returns a ConditionSet(means it is unable to find any solution). The reason for this traces to problem in &lt;code class="highlighter-rouge"&gt;expand()&lt;/code&gt;. &lt;code class="highlighter-rouge"&gt;expand(exp(I*(x + y)))&lt;/code&gt; stays as &lt;code class="highlighter-rouge"&gt;exp(I*(x+y))&lt;/code&gt;. It should be returning &lt;code class="highlighter-rouge"&gt;exp(I*x)*exp(I*y)&lt;/code&gt;. This is needed because &lt;code class="highlighter-rouge"&gt;subs&lt;/code&gt; are not robust enough to handle inputs like &lt;code class="highlighter-rouge"&gt;exp(x + I*y)-&amp;gt;subs(exp(I*y) = z)&lt;/code&gt;. Even SymPy subs are not robust enough(see example below).&lt;/p&gt;
 
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;`&amp;gt;&amp;gt;&amp;gt;` a=sin(x+y).rewrite('exp')
-`&amp;gt;&amp;gt;&amp;gt;` a.subs(exp(I*y),z)
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; a=sin(x+y).rewrite('exp')
+&amp;gt;&amp;gt;&amp;gt; a.subs(exp(I*y),z)
    &amp;#9115;   &amp;#8520;&amp;#8901;(-x - y)    &amp;#8520;&amp;#8901;(x + y)&amp;#9118; 
 -&amp;#8520;&amp;#8901;&amp;#9117;- &amp;#8495;           + &amp;#8495;         &amp;#9120; 
 &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;
                2                
-`&amp;gt;&amp;gt;&amp;gt;` a=expand(sin(x+y).rewrite('exp'))
-`&amp;gt;&amp;gt;&amp;gt;` a.subs(exp(I*y),z)
+&amp;gt;&amp;gt;&amp;gt; a=expand(sin(x+y).rewrite('exp'))
+&amp;gt;&amp;gt;&amp;gt; a.subs(exp(I*y),z)
        &amp;#8520;&amp;#8901;x      -&amp;#8520;&amp;#8901;x
   &amp;#8520;&amp;#8901;z&amp;#8901;&amp;#8495;      &amp;#8520;&amp;#8901;&amp;#8495;    
 - &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; + &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;
@@ -60,7 +59,8 @@ Currently, this PR doesn&amp;#8217;t pass the whole test suit. Specifically, the
 
 &lt;p&gt;Apart from this, I fixed a bug in &lt;code class="highlighter-rouge"&gt;dummy::compare&lt;/code&gt; &lt;a href="https://github.com/symengine/symengine/pull/1304"&gt;here&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;Next immediate goal is to implement trigonometric simplification using &lt;code class="highlighter-rouge"&gt;fu&lt;/code&gt;. I will add as many rules as possible. You can track my progress on this at &lt;a href="https://github.com/ranjithkumar007/symengine/commits/fu"&gt;&lt;code class="highlighter-rouge"&gt;fu&lt;/code&gt;&lt;/a&gt; branch.&lt;/p&gt;
+&lt;p&gt;Next immediate goal is to implement trigonometric simplification using &lt;code class="highlighter-rouge"&gt;fu&lt;/code&gt; and integrate it with current &lt;code class="highlighter-rouge"&gt;trig_solve&lt;/code&gt;. I will add as many rules as possible. Hopefully, we would be able to solve not so simple equations as well after it is successfully integrated.
+You can track my progress on this at &lt;a href="https://github.com/ranjithkumar007/symengine/commits/fu"&gt;&lt;code class="highlighter-rouge"&gt;fu&lt;/code&gt;&lt;/a&gt; branch.&lt;/p&gt;
 
 &lt;p&gt;That&amp;#8217;s it for now. See you next week. Until then, Goodbye !&lt;/p&gt;</description>
     </item>

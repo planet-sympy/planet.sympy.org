@@ -166,7 +166,7 @@
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-040fd9d5 feed-" id="item-7716a38c">
+		    <div class="box" class="item feed-040fd9d5 feed-" id="item-2b7dc9a2">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -219,26 +219,25 @@
 				</div>
 				<div class="row">
 					<div class="col-md-12 col-xs-12 descript">
-						<p>This is the blog for progress of week-6. It revolves mostly around solvers for trigonometric equations. 
+						<p>This is the blog on progress for week-6. It revolves around solvers for trigonometric equations. 
 The <a href="https://github.com/symengine/symengine/pull/1296">PR</a> on polynomial solvers is merged in.</p>
 
-<p>As I mentioned in my previous blog, I continued my work on solving simple trigonometric equations. I made a <a href="https://github.com/symengine/symengine/pull/1305">PR</a>.
-Currently, this PR doesn&#8217;t pass the whole test suit. Specifically, the below case.</p>
+<p>As I mentioned in my previous blog, I continued my work on solving simple trigonometric equations. I made a <a href="https://github.com/symengine/symengine/pull/1305">PR</a>. See the commit messages for more details. Currently, this PR doesn&#8217;t pass the whole test suit. Specifically, the below case.</p>
 <div class="highlighter-rouge"><pre class="highlight"><code> auto y = symbol("y");
  eqn = sub(sin(add(x, y)), sin(x));
  soln = solve(eqn, y);
 </code></pre>
 </div>
-<p>This currently returns a ConditionSet(means it is unable to find any solution). The reason for this traces to problem in <code class="highlighter-rouge">expand()</code>. <code class="highlighter-rouge">expand(exp(I*(x + y)))</code> stays as <code class="highlighter-rouge">exp(I*(x+y))</code>. It should be returning <code class="highlighter-rouge">exp(I*x)*exp(I*y)</code>. This is needed because <code class="highlighter-rouge">subs</code> are not robust enough to handle inputs like <code class="highlighter-rouge">exp(x + I*y)-&gt;subs(exp(I*y) = z)</code>. Even SymPy subs are not robust enough(see example below).</p>
+<p>It currently returns a ConditionSet(means it is unable to find any solution). The reason for this traces to problem in <code class="highlighter-rouge">expand()</code>. <code class="highlighter-rouge">expand(exp(I*(x + y)))</code> stays as <code class="highlighter-rouge">exp(I*(x+y))</code>. It should be returning <code class="highlighter-rouge">exp(I*x)*exp(I*y)</code>. This is needed because <code class="highlighter-rouge">subs</code> are not robust enough to handle inputs like <code class="highlighter-rouge">exp(x + I*y)-&gt;subs(exp(I*y) = z)</code>. Even SymPy subs are not robust enough(see example below).</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>`&gt;&gt;&gt;` a=sin(x+y).rewrite('exp')
-`&gt;&gt;&gt;` a.subs(exp(I*y),z)
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;&gt;&gt; a=sin(x+y).rewrite('exp')
+&gt;&gt;&gt; a.subs(exp(I*y),z)
    &#9115;   &#8520;&#8901;(-x - y)    &#8520;&#8901;(x + y)&#9118; 
 -&#8520;&#8901;&#9117;- &#8495;           + &#8495;         &#9120; 
 &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
                2                
-`&gt;&gt;&gt;` a=expand(sin(x+y).rewrite('exp'))
-`&gt;&gt;&gt;` a.subs(exp(I*y),z)
+&gt;&gt;&gt; a=expand(sin(x+y).rewrite('exp'))
+&gt;&gt;&gt; a.subs(exp(I*y),z)
        &#8520;&#8901;x      -&#8520;&#8901;x
   &#8520;&#8901;z&#8901;&#8495;      &#8520;&#8901;&#8495;    
 - &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472; + &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
@@ -248,7 +247,8 @@ Currently, this PR doesn&#8217;t pass the whole test suit. Specifically, the bel
 
 <p>Apart from this, I fixed a bug in <code class="highlighter-rouge">dummy::compare</code> <a href="https://github.com/symengine/symengine/pull/1304">here</a>.</p>
 
-<p>Next immediate goal is to implement trigonometric simplification using <code class="highlighter-rouge">fu</code>. I will add as many rules as possible. You can track my progress on this at <a href="https://github.com/ranjithkumar007/symengine/commits/fu"><code class="highlighter-rouge">fu</code></a> branch.</p>
+<p>Next immediate goal is to implement trigonometric simplification using <code class="highlighter-rouge">fu</code> and integrate it with current <code class="highlighter-rouge">trig_solve</code>. I will add as many rules as possible. Hopefully, we would be able to solve not so simple equations as well after it is successfully integrated.
+You can track my progress on this at <a href="https://github.com/ranjithkumar007/symengine/commits/fu"><code class="highlighter-rouge">fu</code></a> branch.</p>
 
 <p>That&#8217;s it for now. See you next week. Until then, Goodbye !</p>
 					</div>
@@ -3055,134 +3055,134 @@ I also opened <a href="https://github.com/symengine/symengine.py/pull/153">#153<
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td>https://szymag.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>00:20, Wednesday, 12 July</td>
-<td>00:35, Wednesday, 12 July</td>
+<td>00:40, Wednesday, 12 July</td>
+<td>00:55, Wednesday, 12 July</td>
 </tr>
 </table>
 
