@@ -108,29 +108,6 @@ So, I submitted another pull request to resolve that matter. Of course, it will 
 &lt;p&gt;Now,&amp;#160; I have to begin implementing the 3D case. When making the proposal I thought of writing an entire 3-Polytope module first, but now that would seem like overkill and it isn&amp;#8217;t a simple task to do so. Of course, if such a need arises then I definitely will get down to the task and write one on similar lines as the Polygon module. Firstly, I&amp;#8217;ll have to think about the input API for 3-Polytopes. Once I have some kind of idea, I&amp;#8217;ll ask Ondrej for advice.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/650/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/650/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=650&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://valglad.github.io/2017/07/10/rewriting</guid>
-      <author>Valeriia Gladkova (valglad)</author>
-      <title>Valeriia Gladkova (valglad): The Rewriting System class</title>
-      <pubDate>Mon, 10 Jul 2017 00:00:00 GMT</pubDate>
-      <link>http://valglad.github.io/2017/07/10/rewriting/</link>
-      <description>&lt;p&gt;I sent the &lt;a href="https://github.com/sympy/sympy/pull/12893"&gt;PR&lt;/a&gt; with the rewriting system implementation on Wednesday night, i.e. by Thursday as planned. It could have been earlier if I hadn&amp;#8217;t spent one day experimenting with making the elements of &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; different from the underlying &lt;code class="highlighter-rouge"&gt;FreeGroup&lt;/code&gt;. At the moment they are the same so that, for instance:&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; F, a, b = free_group('a, b')
-&amp;gt;&amp;gt;&amp;gt; G = FpGroup(F, [a**2, a*b*a**-1*b**-1])
-&amp;gt;&amp;gt;&amp;gt; a in F
-True
-&amp;gt;&amp;gt;&amp;gt; a in G
-True
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Theoretically, since &lt;code class="highlighter-rouge"&gt;F&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; are different groups (not even isomorphic), it would make sense for their elements to be represented by different objects, e.g. the generators for &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; could be &lt;code class="highlighter-rouge"&gt;a_1, b_1&lt;/code&gt; so that &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;F&lt;/code&gt; are connected by the injective homomorphism sending &lt;code class="highlighter-rouge"&gt;a_1&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;b_1&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;a&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;b&lt;/code&gt; respectively. Though, for convenience, it could be allowed to refer to the elements of an &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; by the names of the underlying free group elements (and performing the conversion to &lt;code class="highlighter-rouge"&gt;a_1&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;b_1&lt;/code&gt; backstage before passing them onto &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;&amp;#8217;s methods).&lt;/p&gt;
-
-&lt;p&gt;Now, if this were done, it would be possible to check for equality of two elements of &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; using the &lt;code class="highlighter-rouge"&gt;==&lt;/code&gt; syntax. E.g., if the generators of &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; were made distinct from &lt;code class="highlighter-rouge"&gt;a, b&lt;/code&gt; and called &lt;code class="highlighter-rouge"&gt;a_1, b_1&lt;/code&gt;, then we could have &lt;code class="highlighter-rouge"&gt;a_1*b_1 == b_1*a_1&lt;/code&gt; (while, of course, &lt;code class="highlighter-rouge"&gt;a*b == b*a&lt;/code&gt; is not true because &lt;code class="highlighter-rouge"&gt;a&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;b&lt;/code&gt; are the elements of a &lt;code class="highlighter-rouge"&gt;FreeGroup&lt;/code&gt;). The latter was the main motivation for trying this out but in the end, after additionally discussing things with my mentor, I left everything as it is and implemented a couple new &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; methods instead. So, for example, to check if &lt;code class="highlighter-rouge"&gt;a*b&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;b*a&lt;/code&gt; are equal in &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt;, one would call &lt;code class="highlighter-rouge"&gt;G.equals(a*b, b*a)&lt;/code&gt;. The PR has more details.&lt;/p&gt;
-
-&lt;p&gt;At the moment I&amp;#8217;m in the middle of writing the function for finding finite presentations of permutation groups. I&amp;#8217;m slightly modifying the coset enumeration code to allow it to return an incomplete &lt;code class="highlighter-rouge"&gt;CosetTable&lt;/code&gt; (instead of raising a &lt;code class="highlighter-rouge"&gt;ValueError&lt;/code&gt; if, say, the maximum number of cosets is exceeded) and to start running with a partially filled table (which could be passed as a keyword argument) rather than with a new, empty instance. This is necessary as finding the presentation requires setting some of the coset table entries manually and adding relators to the future presentation while examining the undefined table entries, after which coset enumeration could be used to make more deductions. Messing with coset enumeration is the only complicated part (as far as I can see): the rest is pretty much sorted by now. I suppose, the only other thing is deciding when to find the presentation in one step and when to use the multi-step version (finding the presentation of a subgroup first and then the whole presentation based on that). The latter can be more efficient for larger groups. But I could think about that later, maybe run some tests, once the coset enumeration is set up properly.&lt;/p&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/07/09/GSoC17-Week5-Report</guid>
       <author>Arihant Parsoya (parsoyaarihant)</author>
       <title>Arihant Parsoya (parsoyaarihant): GSoC17 Week 5 Report</title>
@@ -356,30 +333,6 @@ Short story of how this is implemented :&lt;/p&gt;
 &lt;p&gt;For this^, I implemented a new function &lt;code class="highlighter-rouge"&gt;as_real_imag()&lt;/code&gt; using visitor pattern for getting the real and imaginary parts. This was needed for implementing &lt;code class="highlighter-rouge"&gt;invertComplex&lt;/code&gt; routine. Also, earlier subs was incapable of handling cases as described in the second point above. It is handled correctly now.&lt;/p&gt;
 
 &lt;p&gt;More on Trigonometric Solvers next time !!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://valglad.github.io/2017/07/02/plan2</guid>
-      <author>Valeriia Gladkova (valglad)</author>
-      <title>Valeriia Gladkova (valglad): The Plan (Part II)</title>
-      <pubDate>Sun, 02 Jul 2017 00:00:00 GMT</pubDate>
-      <link>http://valglad.github.io/2017/07/02/plan2/</link>
-      <description>&lt;p&gt;At the beginning of this week I finished writing the first draft of the homomorphism class, at least as much of it as is possible without the rewriting systems for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s. Homomorphisms from &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s to &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;s are fully implemented though I&amp;#8217;m sure corrections will be made as the &lt;a href="https://github.com/sympy/sympy/pull/12827"&gt;PR&lt;/a&gt; is reviewed. I mentioned that I wasn&amp;#8217;t planning on sending the PR until after the rewriting systems but there is quite a bit there and a lot of it can be reviewed (and even merged) now.&lt;/p&gt;
-
-&lt;p&gt;It took a bit longer than I expected because the rewriting for permutation groups wasn&amp;#8217;t quite what was necessary for homomorphisms. I knew that there was a function returning the unique normal form of a permutation in the group (the &lt;code class="highlighter-rouge"&gt;coset_factor()&lt;/code&gt; method) and had assumed that that would be enough but the normal form wasn&amp;#8217;t in terms of the generators, nor was there an easy way to rewrite it in terms of the generators. So I had to modify the &lt;code class="highlighter-rouge"&gt;schreier_sims()&lt;/code&gt; method that finds the strong generating set and the elements that make up the normal form returned by &lt;code class="highlighter-rouge"&gt;coset_factor()&lt;/code&gt; to keep track of which generators in what order are multiplied to obtain them. Then I wrote a method that would write any permutation in the group as a product of the strong generators and, since I had the information about the make-up of the strong generators, this could easily be rewritten in terms of the original generators. Doing this was a bit fiddly and took a while. Though I suppose it could be counted as part of the work on rewriting systems.&lt;/p&gt;
-
-&lt;p&gt;The rewriting systems for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s are coming along. At the moment, it is a new class &lt;code class="highlighter-rouge"&gt;RewritingSystem&lt;/code&gt; which &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s will probably have an attribute for. I&amp;#8217;ve almost finished implementing the Knuth-Bendix completion algorithm and that was most of the work. Though there is also the matter of reduction. At the moment I&amp;#8217;m using the &lt;code class="highlighter-rouge"&gt;eliminate_words()&lt;/code&gt; method from the &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt; class - it takes a dictionary of substitutions (in this case a dictionary of reduction rules) and substitutes all of them into a given word, if possible. But that isn&amp;#8217;t very efficient for long words and large reduction dictionaries since &lt;code class="highlighter-rouge"&gt;eliminate_words()&lt;/code&gt; will scan the word from the start every time it tries to perform a new substitution. The approach I&amp;#8217;ve seen described in papers on rewriting systems is to construct a finite automaton to perform the reduction and modify it every time a new rule is added. This would somewhat increase the time taken to initiate the system and to make it confluent but would also make word reductions much quicker. However, it could also take a while to actually implement. I&amp;#8217;m unsure if it&amp;#8217;s worth doing it now - perhaps, I could add it later, when the rest of my project is done.&lt;/p&gt;
-
-&lt;p&gt;Anyway, I was going to use this post to outline a schedule for this month&amp;#8217;s work, like I did in the first post. Looking back at the Timeline I sketched in my &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2017-Application-Valeriia-Gladkova:-Group-Theory"&gt;proposal&lt;/a&gt;, I seem to have given myself 2 weeks for implementing the rewriting systems. This estimate wasn&amp;#8217;t unreasonable, considering the unexpected matter of rewriting in permutation groups I had to deal with in the first half of the week and the reading I had to do to get a better idea of Knuth-Bendix. But if I don&amp;#8217;t implement finite automatons for reductions right now, I think I should be able to send the rewriting PR by Thursday (probably earlier). With this in mind, my plan for the month is roughly as follows.&lt;/p&gt;
-
-&lt;h3 id="the-plan-continued"&gt;The Plan (continued)&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;3 July - 6 July: finish the &lt;code class="highlighter-rouge"&gt;RewritingSystem&lt;/code&gt; class.&lt;/li&gt;
-  &lt;li&gt;6 July - 16 July: implement finite presentations for &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;s (this should be plenty of time considering that I made a start on this during the application period)&lt;/li&gt;
-  &lt;li&gt;17 July - 23 July: complete the homomorphism implementation to allow homomorphisms from &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;s and to &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s. Implement the permutation presentation for finite &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s.&lt;/li&gt;
-  &lt;li&gt;24 July - 30 July: Set up the use of &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; methods for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s via homomorphisms.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;So by the end of the month, the homomorphism functionality should be complete, so should be the switching between &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; presentations (where it is possible, i.e. finite &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s). Making &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; methods work for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s properly could take more time but if everything goes more or less according to plan, I should have most of August to try and implement Sylow subgroups for &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;s (there is a chapter on it in &amp;#8220;The Handbook of Computational Group Theory&amp;#8221;), look into the construction of finite automatons for word reduction or automatically grouping subwords of group words, like &lt;code class="highlighter-rouge"&gt;(a*b)**2&lt;/code&gt; instead of &lt;code class="highlighter-rouge"&gt;a*b*a*b&lt;/code&gt;, or anything else project-related really. That&amp;#8217;s the optimistic scenario of course, provided no sudden terrible complications arise which can never be guaranteed.&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/07/01/GSoC17-Week4-Report</guid>
@@ -608,31 +561,6 @@ Out[4]: Integral(x + exp(x**2), x)
 &lt;ul&gt;
   &lt;li&gt;{1}. Simplification of real elementary functions, http://dl.acm.org/citation.cfm?id=74566&lt;/li&gt;
 &lt;/ul&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://valglad.github.io/2017/06/25/homomorphism</guid>
-      <author>Valeriia Gladkova (valglad)</author>
-      <title>Valeriia Gladkova (valglad): The homomorphism class</title>
-      <pubDate>Sun, 25 Jun 2017 00:00:00 GMT</pubDate>
-      <link>http://valglad.github.io/2017/06/25/homomorphism/</link>
-      <description>&lt;p&gt;At the beginning of the week, all of my previous PRs got merged. This is good. Also, the homomorphism class is now mostly written with the exception of the kernel computation. The kernel is the only tricky bit. I don&amp;#8217;t think there is any general method of computing it, but there is a way for finite groups. Suppose we have a homomorphism &lt;code class="highlighter-rouge"&gt;phi&lt;/code&gt; from a finite group &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt;. If &lt;code class="highlighter-rouge"&gt;g&lt;/code&gt; is an element of &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;phi.invert(h)&lt;/code&gt; returns an element of the preimage of &lt;code class="highlighter-rouge"&gt;h&lt;/code&gt; under &lt;code class="highlighter-rouge"&gt;phi&lt;/code&gt;, then &lt;code class="highlighter-rouge"&gt;g*phi.invert(phi(g))**-1&lt;/code&gt; is an element of the kernel (note that this is not necessarily the identity as the preimage of &lt;code class="highlighter-rouge"&gt;phi(g)&lt;/code&gt; can contain other elements beside &lt;code class="highlighter-rouge"&gt;g&lt;/code&gt;). With this in mind, we could start by defining &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt; to be the trivial subgroup of &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt;. If &lt;code class="highlighter-rouge"&gt;K.order()*phi.image().order() == G.order()&lt;/code&gt;, then we are done. If not, generate some random elements until &lt;code class="highlighter-rouge"&gt;g*phi.invert(phi(g))**-1&lt;/code&gt; is not the identity, and redefine &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt; to be the subgroup generated by &lt;code class="highlighter-rouge"&gt;g*phi.invert(phi(g))**-1&lt;/code&gt;. Continue adding generators like this until &lt;code class="highlighter-rouge"&gt;K.order()*phi.image().order() == G.order()&lt;/code&gt; or finite &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; this will always terminate (or rather almost always considering that the elements are generated randomly - though it would only not terminate if at least one of the elements of &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; is never generated which is practically impossible).&lt;/p&gt;
-
-&lt;p&gt;This is how I am going to implement it. I haven&amp;#8217;t already because I&amp;#8217;ve been thinking about some of the details of the implementation. One thing that could be problematic is multiple calls to &lt;code class="highlighter-rouge"&gt;reidemeister_presentation()&lt;/code&gt; to compute the presentation of &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt; at each step. As I&amp;#8217;ve discovered when I was implementing the search for finite index subgroups last week, this can be very inefficient if the index of &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt; is large (which it could well be for a small number of generators at the start). After giving it some thought, I realised that actually we could completely avoid finding the presentation because &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt;&amp;#8217;s coset table would be enough to calculate the order and check if an element belongs to it. Assuming &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; is finite, &lt;code class="highlighter-rouge"&gt;K.order()&lt;/code&gt; can be calculated as the order of &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; divided by the length of the coset table so the knowledge of the generators is enough. And for membership testing, all that&amp;#8217;s necessary is to check if a given element stabilises &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt; with the respect to the action on the cosets described by the coset table. And that should be a huge improvement over the obvious calls to the &lt;code class="highlighter-rouge"&gt;subgroup()&lt;/code&gt; method.&lt;/p&gt;
-
-&lt;p&gt;Actually, &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s doesn&amp;#8217;t currently have a &lt;code class="highlighter-rouge"&gt;__contains__()&lt;/code&gt; method so one can&amp;#8217;t check if a word &lt;code class="highlighter-rouge"&gt;w&lt;/code&gt; is in a group &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; using &lt;code class="highlighter-rouge"&gt;w in G&lt;/code&gt;. This is easy to correct. What I was wondering was if we wanted to be able to check if words over &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; belong to a subgroup of &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; created with the &lt;code class="highlighter-rouge"&gt;subgroup()&lt;/code&gt; method - that wouldn&amp;#8217;t be possible directly because &lt;code class="highlighter-rouge"&gt;subgroup()&lt;/code&gt; returns a group on a different set of generators but it wouldn&amp;#8217;t be too unreasonable to have SymPy do this:&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; F, a, b = free_group('a, b')
-&amp;gt;&amp;gt;&amp;gt; G = FpGroup(F, [a**3, b**2, (a*b)**2])
-&amp;gt;&amp;gt;&amp;gt; K = G.subgroup([a])
-&amp;gt;&amp;gt;&amp;gt; a**2 in K
-True
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;I asked &lt;a href="https://github.com/jksuom"&gt;Kalevi&lt;/a&gt; about it earlier today and they said that it would be preferable to treat &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt; in this case as a different group that happens to be linked to &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; through an injective homomorphism (essentially the canonical inclusion map). If we call this homomorphism &lt;code class="highlighter-rouge"&gt;phi&lt;/code&gt;, then the user can check if an element of &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; belongs to the subgroup represented by &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt; like so: &lt;code class="highlighter-rouge"&gt;a**2 in phi.image()&lt;/code&gt;. Here &lt;code class="highlighter-rouge"&gt;phi.image()&lt;/code&gt; wouldn&amp;#8217;t be an instance of &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; but rather of a new class &lt;code class="highlighter-rouge"&gt;FpSubgroup&lt;/code&gt; that I wrote today - it is a way to represent a subgroup of a group while keeping the same generators as in the original group. It&amp;#8217;s only attributes are &lt;code class="highlighter-rouge"&gt;generators&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;parent&lt;/code&gt; (the original group) and &lt;code class="highlighter-rouge"&gt;C&lt;/code&gt; (the coset table of the original group by the subgroup) and it has a &lt;code class="highlighter-rouge"&gt;__contains__&lt;/code&gt;, an &lt;code class="highlighter-rouge"&gt;order()&lt;/code&gt; and a &lt;code class="highlighter-rouge"&gt;to_FpGroup()&lt;/code&gt; methods (the names are self-explanatory). For finite parent groups, the order is calculated as I described above for the kernel and for the infinite ones &lt;code class="highlighter-rouge"&gt;redeimeister_presentation()&lt;/code&gt; has to be called. The injective homomorphism from an instance of &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; returned by &lt;code class="highlighter-rouge"&gt;subgroup()&lt;/code&gt; would need to be worked out during the running of &lt;code class="highlighter-rouge"&gt;reidemeister_presentation()&lt;/code&gt; when the schreier generators are defined - this is still to be done.&lt;/p&gt;
-
-&lt;p&gt;Another thing I implemented this week was an improved method for generating random elements of finitely presented groups. However, when I tried it out to see how random the elements looked, I got huge words even for small groups so I didn&amp;#8217;t send a PR with it yet. Once I implement rewriting systems, these words could be reduced to much shorter ones. Speaking of rewriting systems, I think it could be good if the rewriting was applied automatically much like &lt;code class="highlighter-rouge"&gt;x*x**-1&lt;/code&gt; is removed for &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt;s. Though I suppose this could be too inefficient some times - this would need testing. This is what I&amp;#8217;ll be working on this week.&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=516</guid>
@@ -1020,18 +948,237 @@ revert mistakes or typos without them ever actually being deployed.&lt;/p&gt;&lt
 &lt;p&gt;&lt;strong&gt;Addio&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://valglad.github.io/2017/06/18/order</guid>
-      <author>Valeriia Gladkova (valglad)</author>
-      <title>Valeriia Gladkova (valglad): The order method</title>
-      <pubDate>Sun, 18 Jun 2017 00:00:00 GMT</pubDate>
-      <link>http://valglad.github.io/2017/06/18/order/</link>
-      <description>&lt;p&gt;Last week and some of this one I was working on changing the &lt;code class="highlighter-rouge"&gt;order()&lt;/code&gt; method of &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s. Currently SymPy attempts to perform coset enumeration on the trivial subgroup and, if it terminates, the order of the group is the length of the coset table. A somewhat better way, at least theoretically, is to try and find a subgroup of finite index and compute the order of this subgroup separately. The function I&amp;#8217;ve implemented only looks for a finite index subgroup generated by a subset of the group&amp;#8217;s generators with a pseudo-random element thrown in (this can sometimes give smaller index subgroups and make the computation faster). The PR is &lt;a href="https://github.com/sympy/sympy/pull/12761"&gt;here&lt;/a&gt;.&lt;/p&gt;
+      <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=400</guid>
+      <author>Arif Ahmed (ArifAhmed1995)</author>
+      <title>Arif Ahmed (ArifAhmed1995): Week 3 Report(June 11 &#x2013; 17): Implementing suggestions</title>
+      <pubDate>Sat, 17 Jun 2017 17:17:28 GMT</pubDate>
+      <link>https://arif7blog.wordpress.com/2017/06/17/week-3-reportjune-11-17-implementing-suggestions/</link>
+      <description>&lt;p&gt;Ondrej and Prof.Sukumar were quite busy this week, but eventually they reviewed both the notebook and code. Their review was quite insightful as it brought to surface one major optimization problem which I&amp;#8217;ll discuss below. I also encountered a major issue with the already defined Polygon class.&lt;/p&gt;
+&lt;p&gt;Firstly, there were some minor issues :&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;I had used python floating point numbers instead of SymPy&amp;#8217;s exact representation in numerous places(both in the algorithm and the test file). So, that had to be changed first.&lt;/li&gt;
+&lt;li&gt;The decompose() method discarded all constant terms in a polynomial. Now, the constant value is assigned a value of zero as key.&lt;br /&gt;
+Example:&lt;br /&gt;
+Before:&lt;/p&gt;
+&lt;pre class="brush: python; title: ; notranslate"&gt;
+decompose(x**2 + x + 2) = {1: x, 2: x**2}
+&lt;/pre&gt;
+&lt;p&gt;After:&lt;/p&gt;
+&lt;pre class="brush: python; title: ; notranslate"&gt;
+decompose(x**2 + x + 2) = {0: 2, 1: x, 2: x**2}
+&lt;/pre&gt;
+&lt;/li&gt;
+&lt;li&gt;Instead of computing component-wise and passing that value to integration_reduction(), the inner product is computed directly and then passed on. This leads to only one recursive call instead of two for 2D case and future three for 3D case.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Prof. Sukumar also suggested that I should add the option of hyperplane representation. This was simple to do as well. All I did was compute intersection of the hyperplanes(lines as of now) to get the vertices. In case of vertex representation the hyperplane parameters would have to be computed.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Major Issues:&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Another suggestion was to add the tests for 2D polytopes mentioned in the &lt;span style="color: #00ffff;"&gt;&lt;a href="http://dilbert.engr.ucdavis.edu/~suku/quadrature/cls-integration.pdf" rel="noopener" target="_blank"&gt;paper&lt;/a&gt;&lt;/span&gt;(Page 10). The two tests which failed were polytopes with intersecting sides. In fact, this was the error which I got :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class="brush: python; title: ; notranslate"&gt;
+sympy.geometry.exceptions.GeometryError: Polygon has intersecting sides.
 
-&lt;p&gt;The idea is to split the list of generators (with a random element) into two halves and try coset enumeration on one of the halves. To make sure this doesn&amp;#8217;t go on for too long, it is necessary to limit the number of cosets that the coset enumeration algorithm is allowed to define. (Currently, the only way to set the maximum number of cosets is by changing the class variable &lt;code class="highlighter-rouge"&gt;CosetTable.coset_table_max_limit&lt;/code&gt; which is very large (4096000) by default - in the PR, I added a keyword argument to all functions relevant to coset enumeration so that the maximum can be set when calling the function.) If the coset enumeration fails (because the maximum number of cosets was exceeded), try the other half. If this doesn&amp;#8217;t succeed, double the maximum number of cosets and try again. Once (if) a suitable subgroup is found, the order of the group is just the index times the order of the subgroup. The latter is computed in the same way by having &lt;code class="highlighter-rouge"&gt;order()&lt;/code&gt; call itself recursively.&lt;/p&gt;
+&lt;/pre&gt;
+&lt;p&gt;It seems that the existing polygon class in SymPy does not account for polygons with intersecting sides. At first I thought maybe polygons are not supposed to have intersecting sides by geometrical definition but that was &lt;span style="color: #00ffff;"&gt;&lt;a href="https://en.wikipedia.org/wiki/Complex_polygon" rel="noopener" target="_blank"&gt;not true.&amp;#160;&amp;#160;&lt;/a&gt;&lt;/span&gt;I&amp;#8217;ll have to discuss how to circumvent this problem with my mentor.&lt;/p&gt;
+&lt;p&gt;2. Prof. Sukumar correctly questioned the use of best_origin(). As explained in an earlier post, best_origin() finds that point on the facet which will lead to an inner product with lesser degree. But, obviously there is an associated cost with computing that intersection point. So, I wrote some really basic code to test out the current best_origin() versus simply choosing the first vertex of the facet.&lt;/p&gt;
+&lt;pre class="brush: python; title: ; notranslate"&gt;
 
-&lt;p&gt;The implementation wasn&amp;#8217;t hard in itself but I did notice that finding the subgroup&amp;#8217;s presentation was taking far too long in certain cases (specifically when the subgroup&amp;#8217;s index wasn&amp;#8217;t small enough) and spent a while trying to think of a way around it. I think that for cyclic subgroups, there is a way to calculate the order during coset enumeration without having to find the presentation explicitly but I couldn&amp;#8217;t quite work out how to do that. Perhaps, I will eventually find a way and implement it. For now, I left it as it is. For large groups, coset enumeration will take a long time anyway and at least the new way will be faster in some cases and may also be able to tell if a group is infinite (while coset enumeration on the trivial subgroup wouldn&amp;#8217;t terminate at all).&lt;/p&gt;
+from __future__ import print_function, division
+from time import time
 
-&lt;p&gt;Now I am going to actually start working on homomorphisms which will be the main and largest part of my project. I&amp;#8217;ll begin by writing the &lt;code class="highlighter-rouge"&gt;GroupHomomorphism&lt;/code&gt; class in this coming week. This won&amp;#8217;t actually become a PR for a while but it is easier to do it first because I still have exams in the next several days. After that I&amp;#8217;ll implement the Knuth-Bendix algorithm for rewriting systems (I might make a start on this later this week as I&amp;#8217;ll have more time once the exams are over). Then I&amp;#8217;ll send a PR with rewriting systems and once that&amp;#8217;s merged, the &lt;code class="highlighter-rouge"&gt;GroupHomomorphism&lt;/code&gt; class one, because it would depend on rewriting systems.&lt;/p&gt;</description>
+import matplotlib.pyplot as plt
+
+from sympy import sqrt
+
+from sympy.core import S
+
+from sympy.integrals.intpoly import (is_vertex, intersection, norm,
+decompose, best_origin,
+hyperplane_parameters,
+integration_reduction, polytope_integrate,
+polytope_integrate_simple)
+from sympy.geometry.line import Segment2D
+from sympy.geometry.polygon import Polygon
+from sympy.geometry.point import Point
+from sympy.abc import x, y
+
+MAX_DEGREE = 10
+
+def generate_polynomial(degree, max_diff):
+    poly = 0
+    if max_diff % 2 == 0:
+    degree += 1
+    for i in range((degree - max_diff)//2, (degree + max_diff)//2):
+        if max_diff % 2 == 0:
+            poly += x**i*y**(degree - i - 1) + y**i*x**(degree - i - 1)
+        else:
+            poly += x**i*y**(degree - i) + y**i*x**(degree - i)
+    return poly
+
+times = {}
+times_simple = {}
+for max_diff in range(1, 11):
+    times[max_diff] = 0
+for max_diff in range(1, 11):
+    times_simple[max_diff] = 0
+
+def test_timings(degree):
+    hexagon = Polygon(Point(0, 0), Point(-sqrt(3) / 2, S(1) / 2),
+                      Point(-sqrt(3) / 2, 3 / 2), Point(0, 2),
+                      Point(sqrt(3) / 2, 3 / 2), Point(sqrt(3) / 2, S(1) / 2))
+    square = Polygon(Point(-1,-1), Point(-1,1), Point(1,1), Point(1,-1))
+
+    for max_diff in range(1, degree):
+        poly = generate_polynomial(degree, max_diff)
+
+    t1 = time()
+    polytope_integrate(square, poly)
+    times[max_diff] += time() - t1
+
+    t2 = time()
+    polytope_integrate_simple(square, poly)
+    times_simple[max_diff] += time() - t2
+
+    return times
+
+for i in range(1, MAX_DEGREE + 2):
+    test_timings(i)
+
+plt.plot(list(times.keys()), list(times.values()), 'b-', label=&amp;quot;Best origin&amp;quot;)
+plt.plot(list(times_simple.keys()), list(times_simple.values()), 'r-', label=&amp;quot;First point&amp;quot;)
+plt.show()
+
+&lt;/pre&gt;
+&lt;p&gt;The following figures are that of computation time vs. maximum difference in exponents of x and y. Blue line is when best_origin() is used. Red line is when simply the first vertex of the facet(line-segment) is selected.&lt;/p&gt;
+&lt;p&gt;&lt;span style="text-decoration: underline;"&gt;Hexagon&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="figure_hexagon" class="alignnone  wp-image-482" height="181" src="https://arif7blog.files.wordpress.com/2017/06/figure_hexagon.png?w=242&amp;#038;h=181" width="242" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="hexagon" class="alignnone size-full wp-image-485" src="https://arif7blog.files.wordpress.com/2017/06/hexagon.png?w=730" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style="text-decoration: underline;"&gt;Square&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="figure_square.png" class="alignnone  wp-image-488" height="213" src="https://arif7blog.files.wordpress.com/2017/06/figure_square.png?w=283&amp;#038;h=213" width="283" /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt="Square" class="alignnone size-full wp-image-491" src="https://arif7blog.files.wordpress.com/2017/06/square.png?w=730" /&gt;&lt;/p&gt;
+&lt;p&gt;When the polygon has a lot of facets which intersect axes thereby making it an obvious choice to select that intersection point as best origin, then the current best origin technique works better as in the case with the square where all four sides intersected the axes.&lt;br /&gt;
+However, in case of the hexagon the best_origin technique would result in a better point than the first vertex only for one facet. The added computation time makes it more expensive than just selecting the first vertex. Of course, as the difference between exponents increase then the time taken by best_origin is overshadowed by another processes in the algorithm. I&amp;#8217;ll need to look at the method again and see if there are preliminary checks which can be performed making computing intersections a last resort.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/400/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/400/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=400&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/06/16/GSoC17-Week2-Report</guid>
+      <author>Arihant Parsoya (parsoyaarihant)</author>
+      <title>Arihant Parsoya (parsoyaarihant): GSoC17 Week 2 Report</title>
+      <pubDate>Fri, 16 Jun 2017 06:30:00 GMT</pubDate>
+      <link>https://parsoyaarihant.github.io/blog/gsoc/2017/06/16/GSoC17-Week2-Report.html</link>
+      <description>&lt;p&gt;Our plan was to implement all Algebraic rules and complete the Rubi test suit for algebraic integration. However, there was a setback in our work because of a &lt;a href="https://github.com/HPAC/matchpy/issues/9"&gt;bug&lt;/a&gt; I found in &lt;code class="highlighter-rouge"&gt;ManyToOneReplacer&lt;/code&gt; of MatchPy. This bug prevents matching of expressions having many nested commutative expressions. Hence, we were not able to match all expressions in the test suit. &lt;a href="https://github.com/wheerd"&gt;Manuel Krebber&lt;/a&gt; have helped us a lot in adding features and giving suggestions to make MatchPy work for Rubi. He have fixed the bug today. I will resume my testing of algebraic rules asap.&lt;/p&gt;
+
+&lt;h3 id="utility-functions"&gt;Utility functions&lt;/h3&gt;
+
+&lt;p&gt;Previously, our strategy was to implement only those functions which were used by algebraic rules. However, we found that those functions have dependencies on many other functions. So, we decided to implement the functions from the beginning itself, to avoid problems in the long run.&lt;/p&gt;
+
+&lt;p&gt;Mathematica has functionality of implementing function arguments as patterns:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-Mathematica"&gt;SqrtNumberQ[m_^n_] :=
+  IntegerQ[n] &amp;amp;&amp;amp; SqrtNumberQ[m] || IntegerQ[n-1/2] &amp;amp;&amp;amp; RationalQ[m]
+
+
+SqrtNumberQ[u_*v_] :=
+  SqrtNumberQ[u] &amp;amp;&amp;amp; SqrtNumberQ[v]
+
+
+SqrtNumberQ[u_] :=
+  RationalQ[u] || u===I
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In the above code &lt;code class="highlighter-rouge"&gt;SqrtNumberQ&lt;/code&gt; is defined multiple times for different function arguments. To implement these functions in Python, Francesco suggested that we test the type of argument using conditionals:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-Python"&gt;def SqrtNumberQ(expr):
+    # SqrtNumberQ[u] returns True if u^2 is a rational number; else it returns False.
+    if expr.is_Pow:
+        m = expr.base
+        n = expr.exp
+        return IntegerQ(n) &amp;amp; SqrtNumberQ(m) | IntegerQ(n-1/2) &amp;amp; RationalQ(m)
+    elif expr.is_Mul:
+        return all(SqrtNumberQ(i) for i in expr.args)
+    else:
+        return RationalQ(expr) or expr == I
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There was some problem while implementing &lt;code class="highlighter-rouge"&gt;Catch&lt;/code&gt; since SymPy doesn&amp;#8217;t currently has &lt;code class="highlighter-rouge"&gt;Throw&lt;/code&gt; object:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class="language-Mathematica"&gt;MapAnd[f_,lst_] :=
+  Catch[Scan[Function[If[f[#],Null,Throw[False]]],lst];True]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I used the following code to implement &lt;code class="highlighter-rouge"&gt;ManAnd&lt;/code&gt; in Python:&lt;/p&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;MapAnd&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="c"&gt;# MapAnd[f,l] applies f to the elements of list l until False is returned; else returns True&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+                &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;l&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+            &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+                &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h2 id="todo"&gt;TODO&lt;/h2&gt;
+
+&lt;p&gt;I and Abdullah have implemented ~40 utility functions so far. There are around ~40 more functions which needs to be implemented in order to support all algebraic rules. We should be able to complete those functions by tomorrow.&lt;/p&gt;
+
+&lt;p&gt;I will also resume adding tests to Rubi test suit for algebraic functions.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://gxyd.github.io/blogs/Gsoc2017-week-2</guid>
+      <author>Gaurav Dhingra (gxyd)</author>
+      <title>Gaurav Dhingra (gxyd): GSoC Week 2</title>
+      <pubDate>Wed, 14 Jun 2017 00:00:00 GMT</pubDate>
+      <link>https://gxyd.github.io/blogs/Gsoc2017-week-2/</link>
+      <description>&lt;p&gt;After the Kalevi&amp;#8217;s comment&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;The param-rde branch is getting inconveniently big for hunting down and reviewing small changes. I think we should create another branch that would contain my original PR plus the added limited_integrate code (and optionally something else). Then that should be merged. Thereafter it would be easier to review new additions.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I decided to remove a few commits from top of &lt;code class="highlighter-rouge"&gt;param-rde&lt;/code&gt; branch and made the branch &lt;code class="highlighter-rouge"&gt;param-rde&lt;/code&gt; mergeable.&lt;/p&gt;
+
+&lt;p&gt;Yesterday Kalevi merged the pull request &lt;a href="https://github.com/sympy/sympy/pull/11761"&gt;#11761, Parametric Risch differentia equation&lt;/a&gt;, there were quite a few problems(unrelated to my work) with travis but finally it passes the tests.&lt;/p&gt;
+
+&lt;p&gt;So till now these are pull requests that have been completed/started for my project:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;font color="green"&gt;Merged:&lt;/font&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/11761"&gt;param-rde #11761&lt;/a&gt;: This is the pull request that Kalevi made back in september 2016. I further made commits for &lt;code class="highlighter-rouge"&gt;limited_integration&lt;/code&gt; function, implementation of parametric risch differential equation, though not many tests were added in this, which should definitely be done. I haven&amp;#8217;t been able to find tests that lead to non-cancellation cases (Kalevi mentions that we should be able to find them), so for the time being we decided to start the implementation of cancellation routines, particularly liouvillian cases (others being non-linear and hypertangent cases), there isn&amp;#8217;t a good reason to implement the hypertangent cases right now.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;font color="red"&gt;Unmerged:&lt;/font&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/12734"&gt;param-rde_polymatrix&lt;/a&gt; this pull request is intended to use &lt;code class="highlighter-rouge"&gt;PolyMatrix&lt;/code&gt; instead of &lt;code class="highlighter-rouge"&gt;Matrix&lt;/code&gt; (it is &lt;code class="highlighter-rouge"&gt;MutableDenseMatrix&lt;/code&gt;), here is Kalevi&amp;#8217;s comment regarding it: &amp;#8220;It would also be possible to use from &amp;#8230; import PolyMatrix as Matrix. That would hint that there might be a single matrix in the future.&amp;#8221;. The reason for making is &lt;code class="highlighter-rouge"&gt;Matrix&lt;/code&gt; doesn&amp;#8217;t play well with &lt;code class="highlighter-rouge"&gt;Poly&lt;/code&gt;(or related) elements.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;font color="green"&gt;Merged:&lt;/font&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/12727"&gt;Change printing of DifferentialExtension object&lt;/a&gt;, it wasn&amp;#8217;t necessary to make this pull request, but it does help me in debugging the problems a little easier.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I was hoping that I would write a bit of mathematics in my blog posts, but unfortunately things I have dealt with till now required me to focus on programming API, introducing &lt;code class="highlighter-rouge"&gt;PolyMatrix&lt;/code&gt; so it deals well with the elements of &lt;code class="highlighter-rouge"&gt;Poly&lt;/code&gt;&amp;#8217;s, but I am thinking this week I am going to deal with more of mathematics.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;h2 id="todo-for-this-week"&gt;TODO for this week&lt;/h2&gt;
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Complete the cancellation liouvillian cases. I just sent the pull request for it &lt;a href="https://github.com/sympy/sympy/pull/12743"&gt;Liouvillian cases for Parametric Risch differential equation #12743&lt;/a&gt;. I really need to catch with the core of things, do it a little quick.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I hope the next blog post is going to be a good mathematical one :)&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://szymag.github.io/post/week-2/</guid>
+      <author>Szymon Mieszczak (szymag)</author>
+      <title>Szymon Mieszczak (szymag): Week 2</title>
+      <pubDate>Tue, 13 Jun 2017 18:41:21 GMT</pubDate>
+      <link>https://szymag.github.io/post/week-2/</link>
+      <description>&lt;p&gt;My second week I spent on introducing Lame coefficients into CoordSysCartesian. Unfortunately, our work is restricted by SymPy structure so, we don&amp;rsquo;t have too much freedom in our implementation. Hopefully, with my mentor, Francesco, we found some solution how to achieve our goals without destroying vector module. This week shows that I have lack in my knowledge about object-oriented programming and SymPy.
+Having access to Lame coefficient I was able to modified Del operator (in mathematics nabla operators) to handle spherical and cylindrical coordinate system.</description>
     </item>
   </channel>
 </rss>
