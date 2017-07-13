@@ -521,6 +521,83 @@ So, I submitted another pull request to resolve that matter. Of course, it will 
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-29fba86e feed-" id="item-983ce766">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/valglad.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Valeriia Gladkova (valglad) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://valglad.github.io/2017/07/10/rewriting/">00:00, Monday, 10 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://valglad.github.io/2017/07/10/rewriting/">Valeriia Gladkova (valglad): The Rewriting System class</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/valglad.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Valeriia Gladkova (valglad) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://valglad.github.io/2017/07/10/rewriting/">00:00, Monday, 10 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://valglad.github.io/2017/07/10/rewriting/">The Rewriting System class</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>I sent the <a href="https://github.com/sympy/sympy/pull/12893">PR</a> with the rewriting system implementation on Wednesday night, i.e. by Thursday as planned. It could have been earlier if I hadn&#8217;t spent one day experimenting with making the elements of <code class="highlighter-rouge">FpGroup</code> different from the underlying <code class="highlighter-rouge">FreeGroup</code>. At the moment they are the same so that, for instance:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;&gt;&gt; F, a, b = free_group('a, b')
+&gt;&gt;&gt; G = FpGroup(F, [a**2, a*b*a**-1*b**-1])
+&gt;&gt;&gt; a in F
+True
+&gt;&gt;&gt; a in G
+True
+</code></pre>
+</div>
+
+<p>Theoretically, since <code class="highlighter-rouge">F</code> and <code class="highlighter-rouge">G</code> are different groups (not even isomorphic), it would make sense for their elements to be represented by different objects, e.g. the generators for <code class="highlighter-rouge">G</code> could be <code class="highlighter-rouge">a_1, b_1</code> so that <code class="highlighter-rouge">G</code> and <code class="highlighter-rouge">F</code> are connected by the injective homomorphism sending <code class="highlighter-rouge">a_1</code> and <code class="highlighter-rouge">b_1</code> to <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code> respectively. Though, for convenience, it could be allowed to refer to the elements of an <code class="highlighter-rouge">FpGroup</code> by the names of the underlying free group elements (and performing the conversion to <code class="highlighter-rouge">a_1</code> and <code class="highlighter-rouge">b_1</code> backstage before passing them onto <code class="highlighter-rouge">FpGroup</code>&#8217;s methods).</p>
+
+<p>Now, if this were done, it would be possible to check for equality of two elements of <code class="highlighter-rouge">FpGroup</code> using the <code class="highlighter-rouge">==</code> syntax. E.g., if the generators of <code class="highlighter-rouge">G</code> were made distinct from <code class="highlighter-rouge">a, b</code> and called <code class="highlighter-rouge">a_1, b_1</code>, then we could have <code class="highlighter-rouge">a_1*b_1 == b_1*a_1</code> (while, of course, <code class="highlighter-rouge">a*b == b*a</code> is not true because <code class="highlighter-rouge">a</code> and <code class="highlighter-rouge">b</code> are the elements of a <code class="highlighter-rouge">FreeGroup</code>). The latter was the main motivation for trying this out but in the end, after additionally discussing things with my mentor, I left everything as it is and implemented a couple new <code class="highlighter-rouge">FpGroup</code> methods instead. So, for example, to check if <code class="highlighter-rouge">a*b</code> and <code class="highlighter-rouge">b*a</code> are equal in <code class="highlighter-rouge">G</code>, one would call <code class="highlighter-rouge">G.equals(a*b, b*a)</code>. The PR has more details.</p>
+
+<p>At the moment I&#8217;m in the middle of writing the function for finding finite presentations of permutation groups. I&#8217;m slightly modifying the coset enumeration code to allow it to return an incomplete <code class="highlighter-rouge">CosetTable</code> (instead of raising a <code class="highlighter-rouge">ValueError</code> if, say, the maximum number of cosets is exceeded) and to start running with a partially filled table (which could be passed as a keyword argument) rather than with a new, empty instance. This is necessary as finding the presentation requires setting some of the coset table entries manually and adding relators to the future presentation while examining the undefined table entries, after which coset enumeration could be used to make more deductions. Messing with coset enumeration is the only complicated part (as far as I can see): the rest is pretty much sorted by now. I suppose, the only other thing is deciding when to find the presentation in one step and when to use the multi-step version (finding the presentation of a subgroup first and then the whole presentation based on that). The latter can be more efficient for larger groups. But I could think about that later, maybe run some tests, once the coset enumeration is set up properly.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">July 09, 2017</h2>
@@ -1191,6 +1268,87 @@ Short story of how this is implemented :</p>
 	</div>
 </div></div>
 <div class="day">
+<h2 class="dayform">July 02, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-29fba86e feed-" id="item-f404a27a">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/valglad.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Valeriia Gladkova (valglad) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://valglad.github.io/2017/07/02/plan2/">00:00, Sunday, 02 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://valglad.github.io/2017/07/02/plan2/">Valeriia Gladkova (valglad): The Plan (Part II)</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/valglad.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Valeriia Gladkova (valglad) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://valglad.github.io/2017/07/02/plan2/">00:00, Sunday, 02 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://valglad.github.io/2017/07/02/plan2/">The Plan (Part II)</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>At the beginning of this week I finished writing the first draft of the homomorphism class, at least as much of it as is possible without the rewriting systems for <code class="highlighter-rouge">FpGroup</code>s. Homomorphisms from <code class="highlighter-rouge">FpGroup</code>s to <code class="highlighter-rouge">PermutationGroup</code>s are fully implemented though I&#8217;m sure corrections will be made as the <a href="https://github.com/sympy/sympy/pull/12827">PR</a> is reviewed. I mentioned that I wasn&#8217;t planning on sending the PR until after the rewriting systems but there is quite a bit there and a lot of it can be reviewed (and even merged) now.</p>
+
+<p>It took a bit longer than I expected because the rewriting for permutation groups wasn&#8217;t quite what was necessary for homomorphisms. I knew that there was a function returning the unique normal form of a permutation in the group (the <code class="highlighter-rouge">coset_factor()</code> method) and had assumed that that would be enough but the normal form wasn&#8217;t in terms of the generators, nor was there an easy way to rewrite it in terms of the generators. So I had to modify the <code class="highlighter-rouge">schreier_sims()</code> method that finds the strong generating set and the elements that make up the normal form returned by <code class="highlighter-rouge">coset_factor()</code> to keep track of which generators in what order are multiplied to obtain them. Then I wrote a method that would write any permutation in the group as a product of the strong generators and, since I had the information about the make-up of the strong generators, this could easily be rewritten in terms of the original generators. Doing this was a bit fiddly and took a while. Though I suppose it could be counted as part of the work on rewriting systems.</p>
+
+<p>The rewriting systems for <code class="highlighter-rouge">FpGroup</code>s are coming along. At the moment, it is a new class <code class="highlighter-rouge">RewritingSystem</code> which <code class="highlighter-rouge">FpGroup</code>s will probably have an attribute for. I&#8217;ve almost finished implementing the Knuth-Bendix completion algorithm and that was most of the work. Though there is also the matter of reduction. At the moment I&#8217;m using the <code class="highlighter-rouge">eliminate_words()</code> method from the <code class="highlighter-rouge">FreeGroupElement</code> class - it takes a dictionary of substitutions (in this case a dictionary of reduction rules) and substitutes all of them into a given word, if possible. But that isn&#8217;t very efficient for long words and large reduction dictionaries since <code class="highlighter-rouge">eliminate_words()</code> will scan the word from the start every time it tries to perform a new substitution. The approach I&#8217;ve seen described in papers on rewriting systems is to construct a finite automaton to perform the reduction and modify it every time a new rule is added. This would somewhat increase the time taken to initiate the system and to make it confluent but would also make word reductions much quicker. However, it could also take a while to actually implement. I&#8217;m unsure if it&#8217;s worth doing it now - perhaps, I could add it later, when the rest of my project is done.</p>
+
+<p>Anyway, I was going to use this post to outline a schedule for this month&#8217;s work, like I did in the first post. Looking back at the Timeline I sketched in my <a href="https://github.com/sympy/sympy/wiki/GSoC-2017-Application-Valeriia-Gladkova:-Group-Theory">proposal</a>, I seem to have given myself 2 weeks for implementing the rewriting systems. This estimate wasn&#8217;t unreasonable, considering the unexpected matter of rewriting in permutation groups I had to deal with in the first half of the week and the reading I had to do to get a better idea of Knuth-Bendix. But if I don&#8217;t implement finite automatons for reductions right now, I think I should be able to send the rewriting PR by Thursday (probably earlier). With this in mind, my plan for the month is roughly as follows.</p>
+
+<h3 id="the-plan-continued">The Plan (continued)</h3>
+<ul>
+  <li>3 July - 6 July: finish the <code class="highlighter-rouge">RewritingSystem</code> class.</li>
+  <li>6 July - 16 July: implement finite presentations for <code class="highlighter-rouge">PermutationGroup</code>s (this should be plenty of time considering that I made a start on this during the application period)</li>
+  <li>17 July - 23 July: complete the homomorphism implementation to allow homomorphisms from <code class="highlighter-rouge">PermutationGroup</code>s and to <code class="highlighter-rouge">FpGroup</code>s. Implement the permutation presentation for finite <code class="highlighter-rouge">FpGroup</code>s.</li>
+  <li>24 July - 30 July: Set up the use of <code class="highlighter-rouge">PermutationGroup</code> methods for <code class="highlighter-rouge">FpGroup</code>s via homomorphisms.</li>
+</ul>
+
+<p>So by the end of the month, the homomorphism functionality should be complete, so should be the switching between <code class="highlighter-rouge">FpGroup</code> and <code class="highlighter-rouge">PermutationGroup</code> presentations (where it is possible, i.e. finite <code class="highlighter-rouge">FpGroup</code>s). Making <code class="highlighter-rouge">PermutationGroup</code> methods work for <code class="highlighter-rouge">FpGroup</code>s properly could take more time but if everything goes more or less according to plan, I should have most of August to try and implement Sylow subgroups for <code class="highlighter-rouge">PermutationGroup</code>s (there is a chapter on it in &#8220;The Handbook of Computational Group Theory&#8221;), look into the construction of finite automatons for word reduction or automatically grouping subwords of group words, like <code class="highlighter-rouge">(a*b)**2</code> instead of <code class="highlighter-rouge">a*b*a*b</code>, or anything else project-related really. That&#8217;s the optimistic scenario of course, provided no sudden terrible complications arise which can never be guaranteed.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 01, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -1640,6 +1798,85 @@ Out[4]: Integral(x + exp(x**2), x)
 <ul>
   <li>{1}. Simplification of real elementary functions, http://dl.acm.org/citation.cfm?id=74566</li>
 </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-29fba86e feed-" id="item-159bd78f">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/valglad.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Valeriia Gladkova (valglad) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://valglad.github.io/2017/06/25/homomorphism/">00:00, Sunday, 25 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://valglad.github.io/2017/06/25/homomorphism/">Valeriia Gladkova (valglad): The homomorphism class</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/valglad.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Valeriia Gladkova (valglad) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://valglad.github.io/2017/06/25/homomorphism/">00:00, Sunday, 25 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://valglad.github.io/2017/06/25/homomorphism/">The homomorphism class</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>At the beginning of the week, all of my previous PRs got merged. This is good. Also, the homomorphism class is now mostly written with the exception of the kernel computation. The kernel is the only tricky bit. I don&#8217;t think there is any general method of computing it, but there is a way for finite groups. Suppose we have a homomorphism <code class="highlighter-rouge">phi</code> from a finite group <code class="highlighter-rouge">G</code>. If <code class="highlighter-rouge">g</code> is an element of <code class="highlighter-rouge">G</code> and <code class="highlighter-rouge">phi.invert(h)</code> returns an element of the preimage of <code class="highlighter-rouge">h</code> under <code class="highlighter-rouge">phi</code>, then <code class="highlighter-rouge">g*phi.invert(phi(g))**-1</code> is an element of the kernel (note that this is not necessarily the identity as the preimage of <code class="highlighter-rouge">phi(g)</code> can contain other elements beside <code class="highlighter-rouge">g</code>). With this in mind, we could start by defining <code class="highlighter-rouge">K</code> to be the trivial subgroup of <code class="highlighter-rouge">G</code>. If <code class="highlighter-rouge">K.order()*phi.image().order() == G.order()</code>, then we are done. If not, generate some random elements until <code class="highlighter-rouge">g*phi.invert(phi(g))**-1</code> is not the identity, and redefine <code class="highlighter-rouge">K</code> to be the subgroup generated by <code class="highlighter-rouge">g*phi.invert(phi(g))**-1</code>. Continue adding generators like this until <code class="highlighter-rouge">K.order()*phi.image().order() == G.order()</code> or finite <code class="highlighter-rouge">G</code> this will always terminate (or rather almost always considering that the elements are generated randomly - though it would only not terminate if at least one of the elements of <code class="highlighter-rouge">G</code> is never generated which is practically impossible).</p>
+
+<p>This is how I am going to implement it. I haven&#8217;t already because I&#8217;ve been thinking about some of the details of the implementation. One thing that could be problematic is multiple calls to <code class="highlighter-rouge">reidemeister_presentation()</code> to compute the presentation of <code class="highlighter-rouge">K</code> at each step. As I&#8217;ve discovered when I was implementing the search for finite index subgroups last week, this can be very inefficient if the index of <code class="highlighter-rouge">K</code> is large (which it could well be for a small number of generators at the start). After giving it some thought, I realised that actually we could completely avoid finding the presentation because <code class="highlighter-rouge">K</code>&#8217;s coset table would be enough to calculate the order and check if an element belongs to it. Assuming <code class="highlighter-rouge">G</code> is finite, <code class="highlighter-rouge">K.order()</code> can be calculated as the order of <code class="highlighter-rouge">G</code> divided by the length of the coset table so the knowledge of the generators is enough. And for membership testing, all that&#8217;s necessary is to check if a given element stabilises <code class="highlighter-rouge">K</code> with the respect to the action on the cosets described by the coset table. And that should be a huge improvement over the obvious calls to the <code class="highlighter-rouge">subgroup()</code> method.</p>
+
+<p>Actually, <code class="highlighter-rouge">FpGroup</code>s doesn&#8217;t currently have a <code class="highlighter-rouge">__contains__()</code> method so one can&#8217;t check if a word <code class="highlighter-rouge">w</code> is in a group <code class="highlighter-rouge">G</code> using <code class="highlighter-rouge">w in G</code>. This is easy to correct. What I was wondering was if we wanted to be able to check if words over <code class="highlighter-rouge">G</code> belong to a subgroup of <code class="highlighter-rouge">G</code> created with the <code class="highlighter-rouge">subgroup()</code> method - that wouldn&#8217;t be possible directly because <code class="highlighter-rouge">subgroup()</code> returns a group on a different set of generators but it wouldn&#8217;t be too unreasonable to have SymPy do this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;&gt;&gt; F, a, b = free_group('a, b')
+&gt;&gt;&gt; G = FpGroup(F, [a**3, b**2, (a*b)**2])
+&gt;&gt;&gt; K = G.subgroup([a])
+&gt;&gt;&gt; a**2 in K
+True
+
+</code></pre>
+</div>
+
+<p>I asked <a href="https://github.com/jksuom">Kalevi</a> about it earlier today and they said that it would be preferable to treat <code class="highlighter-rouge">K</code> in this case as a different group that happens to be linked to <code class="highlighter-rouge">G</code> through an injective homomorphism (essentially the canonical inclusion map). If we call this homomorphism <code class="highlighter-rouge">phi</code>, then the user can check if an element of <code class="highlighter-rouge">G</code> belongs to the subgroup represented by <code class="highlighter-rouge">K</code> like so: <code class="highlighter-rouge">a**2 in phi.image()</code>. Here <code class="highlighter-rouge">phi.image()</code> wouldn&#8217;t be an instance of <code class="highlighter-rouge">FpGroup</code> but rather of a new class <code class="highlighter-rouge">FpSubgroup</code> that I wrote today - it is a way to represent a subgroup of a group while keeping the same generators as in the original group. It&#8217;s only attributes are <code class="highlighter-rouge">generators</code>, <code class="highlighter-rouge">parent</code> (the original group) and <code class="highlighter-rouge">C</code> (the coset table of the original group by the subgroup) and it has a <code class="highlighter-rouge">__contains__</code>, an <code class="highlighter-rouge">order()</code> and a <code class="highlighter-rouge">to_FpGroup()</code> methods (the names are self-explanatory). For finite parent groups, the order is calculated as I described above for the kernel and for the infinite ones <code class="highlighter-rouge">redeimeister_presentation()</code> has to be called. The injective homomorphism from an instance of <code class="highlighter-rouge">FpGroup</code> returned by <code class="highlighter-rouge">subgroup()</code> would need to be worked out during the running of <code class="highlighter-rouge">reidemeister_presentation()</code> when the schreier generators are defined - this is still to be done.</p>
+
+<p>Another thing I implemented this week was an improved method for generating random elements of finitely presented groups. However, when I tried it out to see how random the elements looked, I got huge words even for small groups so I didn&#8217;t send a PR with it yet. Once I implement rewriting systems, these words could be reduced to much shorter ones. Speaking of rewriting systems, I think it could be good if the rewriting was applied automatically much like <code class="highlighter-rouge">x*x**-1</code> is removed for <code class="highlighter-rouge">FreeGroupElement</code>s. Though I suppose this could be too inefficient some times - this would need testing. This is what I&#8217;ll be working on this week.</p>
 					</div>
 				</div>
 			</div>
@@ -2476,27 +2713,27 @@ revert mistakes or typos without them ever actually being deployed.</p></div>
 	</div>
 </div></div>
 <div class="day">
-<h2 class="dayform">June 17, 2017</h2>
+<h2 class="dayform">June 18, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-3b0ec3aa feed-" id="item-a2a916ca">
+		    <div class="box" class="item feed-29fba86e feed-" id="item-11a7682d">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
 			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
 			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/arifahmed.jpeg"/> 
+				    				 <img src="hackergotchi/valglad.jpg"/> 
 				    				
 				    			</div>
 			    			</td>
 			    			<td style="vertical-align:bottom;">
 			    				<div class="row" style="margin-top:15px;">
 					    			<div class="col-md-8">
-							    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
+							    		<a href="">Valeriia Gladkova (valglad) </a>
 							    	</div>
 							    	<div class="col-md-4 dtdate">
-							    		<a href="https://arif7blog.wordpress.com/2017/06/17/week-3-reportjune-11-17-implementing-suggestions/">17:17, Saturday, 17 June UTC</a>
+							    		<a href="http://valglad.github.io/2017/06/18/order/">00:00, Sunday, 18 June UTC</a>
 							    	</div>
 							    </div>
 			    			</td>
@@ -2505,431 +2742,41 @@ revert mistakes or typos without them ever actually being deployed.</p></div>
 			    			<td style="vertical-align:bottom;">
 			    				<div class="row">
 							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/06/17/week-3-reportjune-11-17-implementing-suggestions/">Arif Ahmed (ArifAhmed1995): Week 3 Report(June 11 &#8211; 17): Implementing suggestions</a></h4>
+							    		<h4><a class="boxh2" href="http://valglad.github.io/2017/06/18/order/">Valeriia Gladkova (valglad): The order method</a></h4>
 							    	</div>
 							    </div>
 			    			</td>
 			    		</tr>
 			    	</table>
 			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/arifahmed.jpeg"/> 
+			    		 <img src="hackergotchi/valglad.jpg"/> 
 			    		
 			    	</div>
 			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
 			    		<div class="row">
 			    			<div class="col-md-8">
-					    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
+					    		<a href="">Valeriia Gladkova (valglad) </a>
 					    	</div>
 					    	<div class="col-md-4 dtdate">
-					    		<a href="https://arif7blog.wordpress.com/2017/06/17/week-3-reportjune-11-17-implementing-suggestions/">17:17, Saturday, 17 June UTC</a>
+					    		<a href="http://valglad.github.io/2017/06/18/order/">00:00, Sunday, 18 June UTC</a>
 					    	</div>
 					    </div>
 					    <div class="row">
 					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/06/17/week-3-reportjune-11-17-implementing-suggestions/">Week 3 Report(June 11 &#8211; 17): Implementing suggestions</a></h4>
+					    		<h4><a class="boxh2" href="http://valglad.github.io/2017/06/18/order/">The order method</a></h4>
 					    	</div>
 					    </div>
 				    </div-->
 				</div>
 				<div class="row">
 					<div class="col-md-12 col-xs-12 descript">
-						<p>Ondrej and Prof.Sukumar were quite busy this week, but eventually they reviewed both the notebook and code. Their review was quite insightful as it brought to surface one major optimization problem which I&#8217;ll discuss below. I also encountered a major issue with the already defined Polygon class.</p>
-<p>Firstly, there were some minor issues :</p>
-<ol>
-<li>I had used python floating point numbers instead of SymPy&#8217;s exact representation in numerous places(both in the algorithm and the test file). So, that had to be changed first.</li>
-<li>The decompose() method discarded all constant terms in a polynomial. Now, the constant value is assigned a value of zero as key.<br />
-Example:<br />
-Before:</p>
-<pre class="brush: python; title: ; notranslate">
-decompose(x**2 + x + 2) = {1: x, 2: x**2}
-</pre>
-<p>After:</p>
-<pre class="brush: python; title: ; notranslate">
-decompose(x**2 + x + 2) = {0: 2, 1: x, 2: x**2}
-</pre>
-</li>
-<li>Instead of computing component-wise and passing that value to integration_reduction(), the inner product is computed directly and then passed on. This leads to only one recursive call instead of two for 2D case and future three for 3D case.</li>
-</ol>
-<p>Prof. Sukumar also suggested that I should add the option of hyperplane representation. This was simple to do as well. All I did was compute intersection of the hyperplanes(lines as of now) to get the vertices. In case of vertex representation the hyperplane parameters would have to be computed.</p>
-<p><strong>Major Issues:</strong></p>
-<ol>
-<li>Another suggestion was to add the tests for 2D polytopes mentioned in the <span style="color: #00ffff;"><a href="http://dilbert.engr.ucdavis.edu/~suku/quadrature/cls-integration.pdf" rel="noopener" target="_blank">paper</a></span>(Page 10). The two tests which failed were polytopes with intersecting sides. In fact, this was the error which I got :</li>
-</ol>
-<pre class="brush: python; title: ; notranslate">
-sympy.geometry.exceptions.GeometryError: Polygon has intersecting sides.
+						<p>Last week and some of this one I was working on changing the <code class="highlighter-rouge">order()</code> method of <code class="highlighter-rouge">FpGroup</code>s. Currently SymPy attempts to perform coset enumeration on the trivial subgroup and, if it terminates, the order of the group is the length of the coset table. A somewhat better way, at least theoretically, is to try and find a subgroup of finite index and compute the order of this subgroup separately. The function I&#8217;ve implemented only looks for a finite index subgroup generated by a subset of the group&#8217;s generators with a pseudo-random element thrown in (this can sometimes give smaller index subgroups and make the computation faster). The PR is <a href="https://github.com/sympy/sympy/pull/12761">here</a>.</p>
 
-</pre>
-<p>It seems that the existing polygon class in SymPy does not account for polygons with intersecting sides. At first I thought maybe polygons are not supposed to have intersecting sides by geometrical definition but that was <span style="color: #00ffff;"><a href="https://en.wikipedia.org/wiki/Complex_polygon" rel="noopener" target="_blank">not true.&#160;&#160;</a></span>I&#8217;ll have to discuss how to circumvent this problem with my mentor.</p>
-<p>2. Prof. Sukumar correctly questioned the use of best_origin(). As explained in an earlier post, best_origin() finds that point on the facet which will lead to an inner product with lesser degree. But, obviously there is an associated cost with computing that intersection point. So, I wrote some really basic code to test out the current best_origin() versus simply choosing the first vertex of the facet.</p>
-<pre class="brush: python; title: ; notranslate">
+<p>The idea is to split the list of generators (with a random element) into two halves and try coset enumeration on one of the halves. To make sure this doesn&#8217;t go on for too long, it is necessary to limit the number of cosets that the coset enumeration algorithm is allowed to define. (Currently, the only way to set the maximum number of cosets is by changing the class variable <code class="highlighter-rouge">CosetTable.coset_table_max_limit</code> which is very large (4096000) by default - in the PR, I added a keyword argument to all functions relevant to coset enumeration so that the maximum can be set when calling the function.) If the coset enumeration fails (because the maximum number of cosets was exceeded), try the other half. If this doesn&#8217;t succeed, double the maximum number of cosets and try again. Once (if) a suitable subgroup is found, the order of the group is just the index times the order of the subgroup. The latter is computed in the same way by having <code class="highlighter-rouge">order()</code> call itself recursively.</p>
 
-from __future__ import print_function, division
-from time import time
+<p>The implementation wasn&#8217;t hard in itself but I did notice that finding the subgroup&#8217;s presentation was taking far too long in certain cases (specifically when the subgroup&#8217;s index wasn&#8217;t small enough) and spent a while trying to think of a way around it. I think that for cyclic subgroups, there is a way to calculate the order during coset enumeration without having to find the presentation explicitly but I couldn&#8217;t quite work out how to do that. Perhaps, I will eventually find a way and implement it. For now, I left it as it is. For large groups, coset enumeration will take a long time anyway and at least the new way will be faster in some cases and may also be able to tell if a group is infinite (while coset enumeration on the trivial subgroup wouldn&#8217;t terminate at all).</p>
 
-import matplotlib.pyplot as plt
-
-from sympy import sqrt
-
-from sympy.core import S
-
-from sympy.integrals.intpoly import (is_vertex, intersection, norm,
-decompose, best_origin,
-hyperplane_parameters,
-integration_reduction, polytope_integrate,
-polytope_integrate_simple)
-from sympy.geometry.line import Segment2D
-from sympy.geometry.polygon import Polygon
-from sympy.geometry.point import Point
-from sympy.abc import x, y
-
-MAX_DEGREE = 10
-
-def generate_polynomial(degree, max_diff):
-    poly = 0
-    if max_diff % 2 == 0:
-    degree += 1
-    for i in range((degree - max_diff)//2, (degree + max_diff)//2):
-        if max_diff % 2 == 0:
-            poly += x**i*y**(degree - i - 1) + y**i*x**(degree - i - 1)
-        else:
-            poly += x**i*y**(degree - i) + y**i*x**(degree - i)
-    return poly
-
-times = {}
-times_simple = {}
-for max_diff in range(1, 11):
-    times[max_diff] = 0
-for max_diff in range(1, 11):
-    times_simple[max_diff] = 0
-
-def test_timings(degree):
-    hexagon = Polygon(Point(0, 0), Point(-sqrt(3) / 2, S(1) / 2),
-                      Point(-sqrt(3) / 2, 3 / 2), Point(0, 2),
-                      Point(sqrt(3) / 2, 3 / 2), Point(sqrt(3) / 2, S(1) / 2))
-    square = Polygon(Point(-1,-1), Point(-1,1), Point(1,1), Point(1,-1))
-
-    for max_diff in range(1, degree):
-        poly = generate_polynomial(degree, max_diff)
-
-    t1 = time()
-    polytope_integrate(square, poly)
-    times[max_diff] += time() - t1
-
-    t2 = time()
-    polytope_integrate_simple(square, poly)
-    times_simple[max_diff] += time() - t2
-
-    return times
-
-for i in range(1, MAX_DEGREE + 2):
-    test_timings(i)
-
-plt.plot(list(times.keys()), list(times.values()), 'b-', label=&quot;Best origin&quot;)
-plt.plot(list(times_simple.keys()), list(times_simple.values()), 'r-', label=&quot;First point&quot;)
-plt.show()
-
-</pre>
-<p>The following figures are that of computation time vs. maximum difference in exponents of x and y. Blue line is when best_origin() is used. Red line is when simply the first vertex of the facet(line-segment) is selected.</p>
-<p><span style="text-decoration: underline;">Hexagon</span></p>
-<p><img alt="figure_hexagon" class="alignnone  wp-image-482" height="181" src="https://arif7blog.files.wordpress.com/2017/06/figure_hexagon.png?w=242&#038;h=181" width="242" /></p>
-<p><img alt="hexagon" class="alignnone size-full wp-image-485" src="https://arif7blog.files.wordpress.com/2017/06/hexagon.png?w=730" /></p>
-<p><span style="text-decoration: underline;">Square</span></p>
-<p><img alt="figure_square.png" class="alignnone  wp-image-488" height="213" src="https://arif7blog.files.wordpress.com/2017/06/figure_square.png?w=283&#038;h=213" width="283" /></p>
-<p><img alt="Square" class="alignnone size-full wp-image-491" src="https://arif7blog.files.wordpress.com/2017/06/square.png?w=730" /></p>
-<p>When the polygon has a lot of facets which intersect axes thereby making it an obvious choice to select that intersection point as best origin, then the current best origin technique works better as in the case with the square where all four sides intersected the axes.<br />
-However, in case of the hexagon the best_origin technique would result in a better point than the first vertex only for one facet. The added computation time makes it more expensive than just selecting the first vertex. Of course, as the difference between exponents increase then the time taken by best_origin is overshadowed by another processes in the algorithm. I&#8217;ll need to look at the method again and see if there are preliminary checks which can be performed making computing intersections a last resort.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/400/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/400/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&#038;blog=126429718&#038;post=400&#038;subd=arif7blog&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">June 16, 2017</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-debb4ede feed-" id="item-a2fe16f1">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/16/GSoC17-Week2-Report.html">06:30, Friday, 16 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/16/GSoC17-Week2-Report.html">Arihant Parsoya (parsoyaarihant): GSoC17 Week 2 Report</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/16/GSoC17-Week2-Report.html">06:30, Friday, 16 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/16/GSoC17-Week2-Report.html">GSoC17 Week 2 Report</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Our plan was to implement all Algebraic rules and complete the Rubi test suit for algebraic integration. However, there was a setback in our work because of a <a href="https://github.com/HPAC/matchpy/issues/9">bug</a> I found in <code class="highlighter-rouge">ManyToOneReplacer</code> of MatchPy. This bug prevents matching of expressions having many nested commutative expressions. Hence, we were not able to match all expressions in the test suit. <a href="https://github.com/wheerd">Manuel Krebber</a> have helped us a lot in adding features and giving suggestions to make MatchPy work for Rubi. He have fixed the bug today. I will resume my testing of algebraic rules asap.</p>
-
-<h3 id="utility-functions">Utility functions</h3>
-
-<p>Previously, our strategy was to implement only those functions which were used by algebraic rules. However, we found that those functions have dependencies on many other functions. So, we decided to implement the functions from the beginning itself, to avoid problems in the long run.</p>
-
-<p>Mathematica has functionality of implementing function arguments as patterns:</p>
-<pre><code class="language-Mathematica">SqrtNumberQ[m_^n_] :=
-  IntegerQ[n] &amp;&amp; SqrtNumberQ[m] || IntegerQ[n-1/2] &amp;&amp; RationalQ[m]
-
-
-SqrtNumberQ[u_*v_] :=
-  SqrtNumberQ[u] &amp;&amp; SqrtNumberQ[v]
-
-
-SqrtNumberQ[u_] :=
-  RationalQ[u] || u===I
-</code></pre>
-
-<p>In the above code <code class="highlighter-rouge">SqrtNumberQ</code> is defined multiple times for different function arguments. To implement these functions in Python, Francesco suggested that we test the type of argument using conditionals:</p>
-
-<pre><code class="language-Python">def SqrtNumberQ(expr):
-    # SqrtNumberQ[u] returns True if u^2 is a rational number; else it returns False.
-    if expr.is_Pow:
-        m = expr.base
-        n = expr.exp
-        return IntegerQ(n) &amp; SqrtNumberQ(m) | IntegerQ(n-1/2) &amp; RationalQ(m)
-    elif expr.is_Mul:
-        return all(SqrtNumberQ(i) for i in expr.args)
-    else:
-        return RationalQ(expr) or expr == I
-</code></pre>
-
-<p>There was some problem while implementing <code class="highlighter-rouge">Catch</code> since SymPy doesn&#8217;t currently has <code class="highlighter-rouge">Throw</code> object:</p>
-
-<pre><code class="language-Mathematica">MapAnd[f_,lst_] :=
-  Catch[Scan[Function[If[f[#],Null,Throw[False]]],lst];True]
-</code></pre>
-
-<p>I used the following code to implement <code class="highlighter-rouge">ManAnd</code> in Python:</p>
-
-<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">MapAnd</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-    <span class="c"># MapAnd[f,l] applies f to the elements of list l until False is returned; else returns True</span>
-    <span class="k">if</span> <span class="n">x</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">False</span>
-        <span class="k">return</span> <span class="bp">True</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">f</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">False</span>
-        <span class="k">return</span> <span class="bp">True</span>
-</code></pre>
-</div>
-
-<h2 id="todo">TODO</h2>
-
-<p>I and Abdullah have implemented ~40 utility functions so far. There are around ~40 more functions which needs to be implemented in order to support all algebraic rules. We should be able to complete those functions by tomorrow.</p>
-
-<p>I will also resume adding tests to Rubi test suit for algebraic functions.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">June 14, 2017</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-5a972359 feed-" id="item-1265da6b">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/gxyd.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Gaurav Dhingra (gxyd) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://gxyd.github.io/blogs/Gsoc2017-week-2/">00:00, Wednesday, 14 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2017-week-2/">Gaurav Dhingra (gxyd): GSoC Week 2</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/gxyd.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Gaurav Dhingra (gxyd) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://gxyd.github.io/blogs/Gsoc2017-week-2/">00:00, Wednesday, 14 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2017-week-2/">GSoC Week 2</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>After the Kalevi&#8217;s comment</p>
-<blockquote>
-  <p>The param-rde branch is getting inconveniently big for hunting down and reviewing small changes. I think we should create another branch that would contain my original PR plus the added limited_integrate code (and optionally something else). Then that should be merged. Thereafter it would be easier to review new additions.</p>
-</blockquote>
-
-<p>I decided to remove a few commits from top of <code class="highlighter-rouge">param-rde</code> branch and made the branch <code class="highlighter-rouge">param-rde</code> mergeable.</p>
-
-<p>Yesterday Kalevi merged the pull request <a href="https://github.com/sympy/sympy/pull/11761">#11761, Parametric Risch differentia equation</a>, there were quite a few problems(unrelated to my work) with travis but finally it passes the tests.</p>
-
-<p>So till now these are pull requests that have been completed/started for my project:</p>
-
-<ul>
-  <li>
-    <font color="green">Merged:</font>
-    <p><a href="https://github.com/sympy/sympy/pull/11761">param-rde #11761</a>: This is the pull request that Kalevi made back in september 2016. I further made commits for <code class="highlighter-rouge">limited_integration</code> function, implementation of parametric risch differential equation, though not many tests were added in this, which should definitely be done. I haven&#8217;t been able to find tests that lead to non-cancellation cases (Kalevi mentions that we should be able to find them), so for the time being we decided to start the implementation of cancellation routines, particularly liouvillian cases (others being non-linear and hypertangent cases), there isn&#8217;t a good reason to implement the hypertangent cases right now.</p>
-  </li>
-  <li>
-    <font color="red">Unmerged:</font>
-    <p><a href="https://github.com/sympy/sympy/pull/12734">param-rde_polymatrix</a> this pull request is intended to use <code class="highlighter-rouge">PolyMatrix</code> instead of <code class="highlighter-rouge">Matrix</code> (it is <code class="highlighter-rouge">MutableDenseMatrix</code>), here is Kalevi&#8217;s comment regarding it: &#8220;It would also be possible to use from &#8230; import PolyMatrix as Matrix. That would hint that there might be a single matrix in the future.&#8221;. The reason for making is <code class="highlighter-rouge">Matrix</code> doesn&#8217;t play well with <code class="highlighter-rouge">Poly</code>(or related) elements.</p>
-  </li>
-  <li>
-    <font color="green">Merged:</font>
-    <p><a href="https://github.com/sympy/sympy/pull/12727">Change printing of DifferentialExtension object</a>, it wasn&#8217;t necessary to make this pull request, but it does help me in debugging the problems a little easier.</p>
-  </li>
-</ul>
-
-<p>I was hoping that I would write a bit of mathematics in my blog posts, but unfortunately things I have dealt with till now required me to focus on programming API, introducing <code class="highlighter-rouge">PolyMatrix</code> so it deals well with the elements of <code class="highlighter-rouge">Poly</code>&#8217;s, but I am thinking this week I am going to deal with more of mathematics.</p>
-
-<blockquote>
-  <h2 id="todo-for-this-week">TODO for this week</h2>
-</blockquote>
-
-<ul>
-  <li>Complete the cancellation liouvillian cases. I just sent the pull request for it <a href="https://github.com/sympy/sympy/pull/12743">Liouvillian cases for Parametric Risch differential equation #12743</a>. I really need to catch with the core of things, do it a little quick.</li>
-</ul>
-
-<p>I hope the next blog post is going to be a good mathematical one :)</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">June 13, 2017</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-5aa203d9 feed-" id="item-843d3c4a">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Szymon Mieszczak (szymag) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://szymag.github.io/post/week-2/">18:41, Tuesday, 13 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://szymag.github.io/post/week-2/">Szymon Mieszczak (szymag): Week 2</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Szymon Mieszczak (szymag) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://szymag.github.io/post/week-2/">18:41, Tuesday, 13 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://szymag.github.io/post/week-2/">Week 2</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>My second week I spent on introducing Lame coefficients into CoordSysCartesian. Unfortunately, our work is restricted by SymPy structure so, we don&rsquo;t have too much freedom in our implementation. Hopefully, with my mentor, Francesco, we found some solution how to achieve our goals without destroying vector module. This week shows that I have lack in my knowledge about object-oriented programming and SymPy.
-Having access to Lame coefficient I was able to modified Del operator (in mathematics nabla operators) to handle spherical and cylindrical coordinate system.
+<p>Now I am going to actually start working on homomorphisms which will be the main and largest part of my project. I&#8217;ll begin by writing the <code class="highlighter-rouge">GroupHomomorphism</code> class in this coming week. This won&#8217;t actually become a PR for a while but it is easier to do it first because I still have exams in the next several days. After that I&#8217;ll implement the Knuth-Bendix algorithm for rewriting systems (I might make a start on this later this week as I&#8217;ll have more time once the exams are over). Then I&#8217;ll send a PR with rewriting systems and once that&#8217;s merged, the <code class="highlighter-rouge">GroupHomomorphism</code> class one, because it would depend on rewriting systems.</p>
 					</div>
 				</div>
 			</div>
@@ -2963,134 +2810,134 @@ Having access to Lame coefficient I was able to modified Del operator (in mathem
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
-</tr>
-<tr class="feedsrow">
-<td>https://valglad.github.io/feed.xml</td>
-<td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
+</tr>
+<tr class="feedsrow">
+<td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
+<td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>02:20, Thursday, 13 July</td>
-<td>02:35, Thursday, 13 July</td>
+<td>02:40, Thursday, 13 July</td>
+<td>02:55, Thursday, 13 July</td>
 </tr>
 </table>
 
