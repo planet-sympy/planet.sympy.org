@@ -89,6 +89,94 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">July 16, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-debb4ede feed-" id="item-91201571">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/07/16/GSoC17-Week6-Report.html">06:30, Sunday, 16 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/07/16/GSoC17-Week6-Report.html">Arihant Parsoya (parsoyaarihant): GSoC17 Week 6 Report</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/07/16/GSoC17-Week6-Report.html">06:30, Sunday, 16 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/07/16/GSoC17-Week6-Report.html">GSoC17 Week 6 Report</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Manuel has implemented Optional arguments in MatchPy. I am currently working on modifying our current parser to accommodate the changes. Optional arguments in MatchPy will enable us to add all rules to <code class="highlighter-rouge">ManyToOneReplacer</code> without increasing the number of rules. Manuel has been helping us a lot in making Rubi work in SymPy. He has also found a way to add MatchPy expressions in SymPy. I will try to use it to implement <a href="http://reference.wolfram.com/language/ref/MatchQ.html.en">MatchQ</a> in SymPy.</p>
+
+<h3 id="expandintegrand">ExpandIntegrand</h3>
+<p>ExpandIntegrand takes up majority of time while integration. I have implemented <code class="highlighter-rouge">ExpandIntegrand</code> using SymPy&#8217;s <code class="highlighter-rouge">.match()</code>. However, <code class="highlighter-rouge">.match()</code> can give unwanted results such as:</p>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">((</span><span class="n">c_</span> <span class="o">+</span> <span class="n">d_</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="n">n_</span><span class="p">)</span>
+<span class="p">{</span><span class="n">d_</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="n">c_</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="n">n_</span><span class="p">:</span> <span class="n">a</span><span class="p">}</span>
+</code></pre>
+</div>
+<p>In the above example, it assumes that c_ is an optional variable when we don&#8217;t want it to be. To orevent these situations, I used <code class="highlighter-rouge">exclude</code> attribute to avoid these situations:</p>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">c_</span> <span class="o">=</span> <span class="n">Wild</span><span class="p">(</span><span class="s">'c'</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">d_</span> <span class="o">=</span> <span class="n">Wild</span><span class="p">(</span><span class="s">'d'</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">n_</span> <span class="o">=</span> <span class="n">Wild</span><span class="p">(</span><span class="s">'n'</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">match</span><span class="p">((</span><span class="n">c_</span> <span class="o">+</span> <span class="n">d_</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="n">n_</span><span class="p">)</span>
+<span class="bp">None</span>
+</code></pre>
+</div>
+<p>I have used the above trick to prevent unnecessary matches in <code class="highlighter-rouge">ExpandIntegrand</code> and made it a bit faster.</p>
+
+<h3 id="todo">TODO</h3>
+<ul>
+  <li>Implement parser without <code class="highlighter-rouge">powerset</code> and parse all Rubi rules.</li>
+  <li>Fix failing tests.</li>
+  <li>Add all algebraic tests in Rubi.</li>
+</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 12, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -2712,77 +2800,6 @@ revert mistakes or typos without them ever actually being deployed.</p></div>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">June 18, 2017</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-29fba86e feed-" id="item-11a7682d">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/valglad.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Valeriia Gladkova (valglad) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://valglad.github.io/2017/06/18/order/">00:00, Sunday, 18 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://valglad.github.io/2017/06/18/order/">Valeriia Gladkova (valglad): The order method</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/valglad.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Valeriia Gladkova (valglad) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://valglad.github.io/2017/06/18/order/">00:00, Sunday, 18 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://valglad.github.io/2017/06/18/order/">The order method</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Last week and some of this one I was working on changing the <code class="highlighter-rouge">order()</code> method of <code class="highlighter-rouge">FpGroup</code>s. Currently SymPy attempts to perform coset enumeration on the trivial subgroup and, if it terminates, the order of the group is the length of the coset table. A somewhat better way, at least theoretically, is to try and find a subgroup of finite index and compute the order of this subgroup separately. The function I&#8217;ve implemented only looks for a finite index subgroup generated by a subset of the group&#8217;s generators with a pseudo-random element thrown in (this can sometimes give smaller index subgroups and make the computation faster). The PR is <a href="https://github.com/sympy/sympy/pull/12761">here</a>.</p>
-
-<p>The idea is to split the list of generators (with a random element) into two halves and try coset enumeration on one of the halves. To make sure this doesn&#8217;t go on for too long, it is necessary to limit the number of cosets that the coset enumeration algorithm is allowed to define. (Currently, the only way to set the maximum number of cosets is by changing the class variable <code class="highlighter-rouge">CosetTable.coset_table_max_limit</code> which is very large (4096000) by default - in the PR, I added a keyword argument to all functions relevant to coset enumeration so that the maximum can be set when calling the function.) If the coset enumeration fails (because the maximum number of cosets was exceeded), try the other half. If this doesn&#8217;t succeed, double the maximum number of cosets and try again. Once (if) a suitable subgroup is found, the order of the group is just the index times the order of the subgroup. The latter is computed in the same way by having <code class="highlighter-rouge">order()</code> call itself recursively.</p>
-
-<p>The implementation wasn&#8217;t hard in itself but I did notice that finding the subgroup&#8217;s presentation was taking far too long in certain cases (specifically when the subgroup&#8217;s index wasn&#8217;t small enough) and spent a while trying to think of a way around it. I think that for cyclic subgroups, there is a way to calculate the order during coset enumeration without having to find the presentation explicitly but I couldn&#8217;t quite work out how to do that. Perhaps, I will eventually find a way and implement it. For now, I left it as it is. For large groups, coset enumeration will take a long time anyway and at least the new way will be faster in some cases and may also be able to tell if a group is infinite (while coset enumeration on the trivial subgroup wouldn&#8217;t terminate at all).</p>
-
-<p>Now I am going to actually start working on homomorphisms which will be the main and largest part of my project. I&#8217;ll begin by writing the <code class="highlighter-rouge">GroupHomomorphism</code> class in this coming week. This won&#8217;t actually become a PR for a while but it is easier to do it first because I still have exams in the next several days. After that I&#8217;ll implement the Knuth-Bendix algorithm for rewriting systems (I might make a start on this later this week as I&#8217;ll have more time once the exams are over). Then I&#8217;ll send a PR with rewriting systems and once that&#8217;s merged, the <code class="highlighter-rouge">GroupHomomorphism</code> class one, because it would depend on rewriting systems.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2810,134 +2827,134 @@ revert mistakes or typos without them ever actually being deployed.</p></div>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>16:20, Sunday, 16 July</td>
-<td>16:35, Sunday, 16 July</td>
+<td>16:40, Sunday, 16 July</td>
+<td>16:55, Sunday, 16 July</td>
 </tr>
 </table>
 
