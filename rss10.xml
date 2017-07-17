@@ -7,6 +7,18 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://valglad.github.io/2017/07/17/presentation</guid>
+      <author>Valeriia Gladkova (valglad)</author>
+      <title>Valeriia Gladkova (valglad): Presentations of Permutation Groups</title>
+      <pubDate>Mon, 17 Jul 2017 00:00:00 GMT</pubDate>
+      <link>http://valglad.github.io/2017/07/17/presentation/</link>
+      <description>&lt;p&gt;The work on finding finite presentations of permutation groups was somewhat delayed last week because I&amp;#8217;ve come across a bug in the &lt;code class="highlighter-rouge"&gt;reidemester_presentation&lt;/code&gt; code while testing the one step version of the presetation algorithm (which is essentially finished). Turned out it was caused by an unnecessary cyclic reduction on one line in the main elimination technique. See &lt;a href="https://github.com/sympy/sympy/pull/12973"&gt;PR&lt;/a&gt; for the explanation.&lt;/p&gt;
+
+&lt;p&gt;Another delay was because I realised that for the multi-step version, it would be useful to have the homomorphism &lt;a href="https://github.com/sympy/sympy/pull/12827"&gt;PR&lt;/a&gt; merged. Mostly this is because of the &lt;code class="highlighter-rouge"&gt;generator_product&lt;/code&gt; method from the &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; class - this takes an arbitrary permutation in the group and returns a list of the strong generators such that the product of the elements of the list is equal to this permutation. But the homomorphism functionality that&amp;#8217;s already there (the case of the homomorphism from an &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; to a &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;) would be helpful too. So I switched by attention to getting that PR ready for merging.&lt;/p&gt;
+
+&lt;p&gt;So this week I&amp;#8217;ll try to add the multistep version and will also start implementing homomorphisms from &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;s and to &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s, as outlined in the plan. Also, at some point when the rewriting PR is merged, I could try out the potentially improved random element generator for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s that I sketched a couple of weeks ago. This is not officially part of the plan and not in any way urgent, but could probably give better random elements which would be useful for the &lt;code class="highlighter-rouge"&gt;order()&lt;/code&gt; method and the kernel calculation for homomorphisms. Though I might not actually get around to it this week.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/07/16/GSoC17-Week6-Report</guid>
       <author>Arihant Parsoya (parsoyaarihant)</author>
       <title>Arihant Parsoya (parsoyaarihant): GSoC17 Week 6 Report</title>
@@ -1021,34 +1033,6 @@ hamburger menu, you can enable auto cancellation for branch builds. This will
 make it so that if you push many changes in succession, only the most recent
 one will get built. This makes the changes get built faster, and lets you
 revert mistakes or typos without them ever actually being deployed.&lt;/p&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://shikharj.github.io//2017/06/19/GSoC-Progress-Week-3</guid>
-      <author>Shikhar Jaiswal (ShikharJ)</author>
-      <title>Shikhar Jaiswal (ShikharJ): GSoC Progress - Week 3</title>
-      <pubDate>Mon, 19 Jun 2017 00:00:00 GMT</pubDate>
-      <link>https://shikharj.github.io//2017/06/19/GSoC-Progress-Week-3/</link>
-      <description>&lt;p&gt;Hello, this post contains the third report of my GSoC progress. This week was mostly spent on learning the internal structures of &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt; functionalities and methods on a deeper level.&lt;/p&gt;
-
-&lt;h2 id="report"&gt;Report&lt;/h2&gt;
-
-&lt;h3 id="symengine"&gt;SymEngine&lt;/h3&gt;
-&lt;p&gt;This week I worked on implementing &lt;code class="highlighter-rouge"&gt;Conjugate&lt;/code&gt; class and the related methods in &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt;, through PR &lt;a href="https://github.com/symengine/symengine/pull/1295"&gt;#1295&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;I also worked on implementing the &amp;#8220;fancy-set&amp;#8221; &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt;, the code for which would be complete enough to be pushed sometime in the coming GSoC week.&lt;/p&gt;
-
-&lt;p&gt;Also, since it would probably be the last week that I&amp;#8217;d be working on &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt;, I spent some time going through the codebase and checking for discontinuities between &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt;&amp;#8217;s implementations.&lt;/p&gt;
-
-&lt;h3 id="symenginepy"&gt;SymEngine.py&lt;/h3&gt;
-&lt;p&gt;I pushed in &lt;a href="https://github.com/symengine/symengine.py/pull/155"&gt;#155&lt;/a&gt; fixing a trivial change from &lt;code class="highlighter-rouge"&gt;_sympify&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;sympify&lt;/code&gt; in relevant cases throughout the &lt;code class="highlighter-rouge"&gt;SymEngine.py&lt;/code&gt; codebase. The PR is reviewed and merged.&lt;/p&gt;
-
-&lt;p&gt;I reached out to Isuru once again regarding further work to be undertaken for &lt;code class="highlighter-rouge"&gt;PyDy&lt;/code&gt;, and he suggested wrapping up &lt;code class="highlighter-rouge"&gt;Relationals&lt;/code&gt; from &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt;. The work, which is pushed through &lt;a href="https://github.com/symengine/symengine.py/pull/159"&gt;#159&lt;/a&gt;, is in itself close to completion, with only specific parsing capabilities left to be implemented (for eg.  &lt;code class="highlighter-rouge"&gt;x &amp;lt; y&lt;/code&gt; should return a &lt;code class="highlighter-rouge"&gt;LessThan(x, y)&lt;/code&gt; object).&lt;/p&gt;
-
-&lt;p&gt;Wrapping &lt;code class="highlighter-rouge"&gt;Relationals&lt;/code&gt; also marks the initiation of &lt;code class="highlighter-rouge"&gt;SymEngine.py&lt;/code&gt;&amp;#8217;s side of Phase II, which predominantly focuses on bug-fixing and wrapping.&lt;/p&gt;
-
-&lt;p&gt;See you again!&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Addio&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
