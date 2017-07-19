@@ -7,6 +7,62 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://gxyd.github.io/blogs/Gsoc2017-week-6</guid>
+      <author>Gaurav Dhingra (gxyd)</author>
+      <title>Gaurav Dhingra (gxyd): GSoC 2017: Week 6</title>
+      <pubDate>Wed, 19 Jul 2017 00:00:00 GMT</pubDate>
+      <link>https://gxyd.github.io/blogs/Gsoc2017-week-6/</link>
+      <description>
+
+
+
+&lt;p&gt;We worked on &lt;a href="https://github.com/sympy/sympy/pull/12885"&gt;Parametric logarithmic derivative PR #12885&lt;/a&gt; only this week. So now I will get to a few mathematical points regarding the problem of &amp;#8220;parametric logarithmic derivative&amp;#8221; problem (will shortly write it as &lt;code class="highlighter-rouge"&gt;PLD&lt;/code&gt; problem).&lt;/p&gt;
+
+&lt;p&gt;The &lt;code class="highlighter-rouge"&gt;PLD&lt;/code&gt; problem is, for a given hyperexponential monomial Kf \in Kn, m \in \mathbb{Z}n \neq 0nf = \frac{Dv}{v} + m\frac{D\theta}{\theta}$$, and to find one such solution.&lt;/p&gt;
+
+&lt;p&gt;There are two versions of it, the first one being the heursitic version which is quite simple (with available pseudo code) and is already implemented in SymPy, but since it doesn&amp;#8217;t handle all the cases, it becomes necessary to have the deterministic version of it. The deterministic version is sort of used as a fallback i.e in case the heuristic version fails (raises &lt;code class="highlighter-rouge"&gt;NotImplementedError&lt;/code&gt;) which isn&amp;#8217;t quite often.&lt;/p&gt;
+
+&lt;p&gt;We already have done the basic programming of it in SymPy, so before I say any further let&amp;#8217;s see an example.&lt;/p&gt;
+
+&lt;p&gt;A simple example of where the heuristic version fails is:&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; fa, fd = Poly(1, x), Poly(1, x)
+&amp;gt;&amp;gt;&amp;gt; wa, wd = Poly(1, x), Poly(1, x)
+&amp;gt;&amp;gt;&amp;gt; DE = DifferentialExtension(extension={'D': [Poly(1, x, domain='ZZ'), Poly(t, t, domain='ZZ')], 'exts': [None, 'exp']})
+&amp;gt;&amp;gt;&amp;gt; parametric_log_deriv_heu(fa, fd, wa, wd, DE)
+None
+
+# while the deterministic version, runs fine
+
+&amp;gt;&amp;gt;&amp;gt; parametric_log_deriv(fa, fd, wa, wd, DE)
+[Matrix([[-1, 1, 0]]), Matrix([[-1, 0, 1]])] # don't worry about output type
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;h2 id="internals-of-deterministic-version"&gt;Internals of deterministic version&lt;/h2&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In the deterministic version we use the Risch&amp;#8217;s structure theorem, i.e&lt;/p&gt;
+
+&lt;p&gt; ( &amp;#8211; 1 eq. )&lt;/p&gt;
+
+&lt;p&gt;where we solve for each .&lt;/p&gt;
+
+&lt;p&gt;This result of structure theorem is quite useful, this same theorem can be used in the process of &lt;code class="highlighter-rouge"&gt;DifferentialExtension&lt;/code&gt; construction, as can be seen the section 5.2 in book (Outline and Scope of Integration Algorithm, search by section name if you have a different version of the book).&lt;/p&gt;
+
+&lt;p&gt;In &lt;code class="highlighter-rouge"&gt;PLD&lt;/code&gt; (deterministic) we first obtain the  and  parts depending on &amp;#8216;log&amp;#8217;/&amp;#8217;exp&amp;#8217; extension respectively and store them in a list &lt;code class="highlighter-rouge"&gt;F&lt;/code&gt; (the order wouldn&amp;#8217;t matter).&lt;/p&gt;
+
+&lt;p&gt;We solve this problem in a way somewhat similar to &lt;code class="highlighter-rouge"&gt;limited_integrate&lt;/code&gt; problem, i.e  , we solve the problem  and chose the one where .&lt;/p&gt;
+
+&lt;p&gt;The same thing we do here in this problem, but that does cause some problem as  may not necesarily be contained in the extension , and currently we are working on solving this part of the problem, Kalevi suggests to take the unfinished &lt;code class="highlighter-rouge"&gt;DE&lt;/code&gt; object and the extension containing  could be built on that.(No need to start from scratch.)&lt;/p&gt;
+
+&lt;p&gt;I haven&amp;#8217;t mentioned much regarding the function that does the working for converting the relation in eq (1) over a field  to one over . It contains &lt;code class="highlighter-rouge"&gt;Poly&lt;/code&gt; manipulation methods to do that. It does mathematically the same thing as &amp;#8220;to obtain a system with coefficients in C and the same constant solutions.&amp;#8221;&lt;/p&gt;
+
+&lt;p&gt;I&amp;#8217;ll complete the &lt;code class="highlighter-rouge"&gt;parametric_log_deriv&lt;/code&gt; before the next week starts.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=677</guid>
       <author>Arif Ahmed (ArifAhmed1995)</author>
       <title>Arif Ahmed (ArifAhmed1995): Week 7 Report(July 11 &#x2013; July 17) : Implicit Intersections</title>
@@ -771,92 +827,6 @@ But, Unfortunately there were several mistakes in the earlier implementation of 
 &lt;p&gt;This PR is still a WIP, as it doesn&amp;#8217;t handle polynomials with symbolic coefficients.&lt;/p&gt;
 
 &lt;p&gt;More on Solvers coming soon !! Until then Stay tuned !!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://bjodah.github.io/blog/posts/gsoc-week3.html</guid>
-      <author>Bj&#xF6;rn Dahlgren (bjodah)</author>
-      <title>Bj&#xF6;rn Dahlgren (bjodah): Status update week 3 GSoC</title>
-      <pubDate>Mon, 19 Jun 2017 21:15:00 GMT</pubDate>
-      <link>http://bjodah.github.io/blog/posts/gsoc-week3.html</link>
-      <description>&lt;div&gt;&lt;div class="section" id="fast-callbacks-from-sympy-using-symengine"&gt;
-&lt;h2&gt;Fast callbacks from SymPy using SymEngine&lt;/h2&gt;
-&lt;p&gt;My main focus the past week has been to get &lt;tt class="docutils literal"&gt;Lambdify&lt;/tt&gt; in SymEngine
-to work with multiple output parameters. Last year Isuru Fernando lead
-the &lt;a class="reference external" href="https://github.com/symengine/symengine/pull/1094"&gt;development&lt;/a&gt; to support jit-compiled callbacks using LLVM in SymEngine.
-I started work on leveraging this in the Python wrappers of SymEngine
-but my work stalled due to time constraints.&lt;/p&gt;
-&lt;p&gt;But since it is very much related to code generation in SymPy I did
-put it into my time-line (later in the summer) in my GSoC
-application. But with the upcoming SciPy conference, and the fact that
-it would make a nice addition to our tutorial, I have put in &lt;a class="reference external" href="https://github.com/symengine/symengine.py/pull/112"&gt;work&lt;/a&gt; to
-get this done earlier than first planned.&lt;/p&gt;
-&lt;p&gt;Another thing on my to-do-list from last week was to get &lt;tt class="docutils literal"&gt;numba&lt;/tt&gt; working
-with &lt;tt class="docutils literal"&gt;lambdify&lt;/tt&gt;. But for this to work we need to wait for a new upstream
-release of &lt;tt class="docutils literal"&gt;numba&lt;/tt&gt; (which they are hoping to release before the SciPy
-&lt;a class="reference external" href="https://scipy2017.scipy.org/ehome/220975/493418/"&gt;conference&lt;/a&gt;).&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="section" id="status-of-codegen-tutorial-material"&gt;
-&lt;h2&gt;Status of codegen-tutorial material&lt;/h2&gt;
-&lt;p&gt;I have not added any new tutorial material this week, but have been
-working on making all notebooks work under all targeted operating
-systems. However, every change to the notebooks have to be checked
-on all operating systems using both Python 2 and Python 3. This
-becomes tedious very quickly so I decided to enable continuous
-integration on our &lt;a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial"&gt;repository&lt;/a&gt;. I followed conda-forges approach: Travis CI
-for OS X, CircleCI for Linux and AppVeyor for Windows (and a private
-CI server for another Linux setup). And last night
-I &lt;em&gt;finally&lt;/em&gt; got green light on all 4 of our CI services.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="section" id="plans-for-the-upcoming-week"&gt;
-&lt;h2&gt;Plans for the upcoming week&lt;/h2&gt;
-&lt;p&gt;We have had a performance &lt;a class="reference external" href="https://github.com/sympy/sympy/issues/12411"&gt;regression&lt;/a&gt; in &lt;tt class="docutils literal"&gt;sympy.cse&lt;/tt&gt; which has bit me
-multiple times this week. I managed to &lt;a class="reference external" href="https://github.com/sympy/sympy_benchmarks/pull/38"&gt;craft&lt;/a&gt; a small test case
-indicating that the algorithmic complexity of the new function is
-considerably worse than before (effectively making it useless for many
-applications). In my weekly mentor-meeting (with Aaron) we discussed
-possibly reverting that &lt;a class="reference external" href="https://github.com/sympy/sympy/pull/11232"&gt;change&lt;/a&gt;. I will first try to see if I can
-identify easy-to-fix bottlenecks by profiling the code. But the
-risk is that it is too much work to be done before the upcoming
-new release of SymPy, and then we will simply revert for now (choosing
-speed over extensiveness of the sub-expression elimination).&lt;/p&gt;
-&lt;p&gt;I still need to test the notebooks using not only &lt;tt class="docutils literal"&gt;msvc&lt;/tt&gt; under Windows
-(which is currently used in the AppVeyor tests), but also &lt;tt class="docutils literal"&gt;mingw&lt;/tt&gt;. I did
-manage to get it working locally but there is still some effort left
-in order to make this work on AppVeyor. It's extra tricky since there
-is a &lt;a class="reference external" href="https://bugs.python.org/issue21821"&gt;bug&lt;/a&gt; in &lt;tt class="docutils literal"&gt;distutils&lt;/tt&gt; in Python 3 which causes the detection of mingw
-to fail. So we need to either:&lt;/p&gt;
-&lt;ul class="simple"&gt;
-&lt;li&gt;Patch &lt;tt class="docutils literal"&gt;cygwincompiler.py&lt;/tt&gt; in &lt;tt class="docutils literal"&gt;distutils&lt;/tt&gt; (which I believe we can do
-if we create a conda package for our tutorial material).&lt;/li&gt;
-&lt;li&gt;...or use something else than &lt;tt class="docutils literal"&gt;pyximport&lt;/tt&gt; (I'm hesitant to do this
-before the conference).&lt;/li&gt;
-&lt;li&gt;...or provide a gcc executable (not a &lt;tt class="docutils literal"&gt;.bat&lt;/tt&gt; file) that simply
-spawns &lt;tt class="docutils literal"&gt;gcc.bat&lt;/tt&gt; (but that executable would need to be compiled
-during build of our conda package).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Based on my work on making the CI services work, we will need to
-provide test scripts for the participants to run. We need to provide
-the organizers with these scripts by June 27th so this needs to be
-decided upon during next week. I am leaning towards providing an
-&lt;tt class="docutils literal"&gt;environment.yml&lt;/tt&gt; file together with a simple instruction of
-activating said environment, e.g.:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-$ conda env create -f environment.yml
-$ source activate codegen17
-$ python -c "import scipy2017codegen as cg; cg.test()"
-&lt;/pre&gt;
-&lt;p&gt;This could even be tested on our CI services.&lt;/p&gt;
-&lt;p&gt;I also intend to add a (perhaps final) tutorial notebook for chemical
-kinetics where we also consider diffusion. We will solve the PDE using
-the method of lines. The addition of a spatial dimension in this way
-is simple in principle, things do tend to become tricky when handling
-boundary conditions though. I will try to use the simplest possible
-treatment in order to avoid taking focus from what we are teaching
-(code-generation).&lt;/p&gt;
-&lt;p&gt;It is also my hope that this combined diffusion-reaction model is a
-good candidate for &lt;tt class="docutils literal"&gt;ufuncify&lt;/tt&gt; from
-&lt;tt class="docutils literal"&gt;sympy.utilities.autowrap&lt;/tt&gt;.&lt;/p&gt;
-&lt;/div&gt;&lt;/div&gt;</description>
     </item>
   </channel>
 </rss>
