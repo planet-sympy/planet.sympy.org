@@ -18,7 +18,7 @@
 
 &lt;p&gt;We worked on &lt;a href="https://github.com/sympy/sympy/pull/12885"&gt;Parametric logarithmic derivative PR #12885&lt;/a&gt; only this week. So now I will get to a few mathematical points regarding the problem of &amp;#8220;parametric logarithmic derivative&amp;#8221; problem (will shortly write it as &lt;code class="highlighter-rouge"&gt;PLD&lt;/code&gt; problem).&lt;/p&gt;
 
-&lt;p&gt;The &lt;code class="highlighter-rouge"&gt;PLD&lt;/code&gt; problem is, for a given hyperexponential monomial Kf \in Kn, m \in \mathbb{Z}n \neq 0nf = \frac{Dv}{v} + m\frac{D\theta}{\theta}$$, and to find one such solution.&lt;/p&gt;
+&lt;p&gt;The &lt;code class="highlighter-rouge"&gt;PLD&lt;/code&gt; problem is, for a given hyperexponential monomial  over a differential field  and , to decide whether there exists  with , for the equation: , and to find one such solution.&lt;/p&gt;
 
 &lt;p&gt;There are two versions of it, the first one being the heursitic version which is quite simple (with available pseudo code) and is already implemented in SymPy, but since it doesn&amp;#8217;t handle all the cases, it becomes necessary to have the deterministic version of it. The deterministic version is sort of used as a fallback i.e in case the heuristic version fails (raises &lt;code class="highlighter-rouge"&gt;NotImplementedError&lt;/code&gt;) which isn&amp;#8217;t quite often.&lt;/p&gt;
 
@@ -54,7 +54,7 @@ None
 
 &lt;p&gt;In &lt;code class="highlighter-rouge"&gt;PLD&lt;/code&gt; (deterministic) we first obtain the  and  parts depending on &amp;#8216;log&amp;#8217;/&amp;#8217;exp&amp;#8217; extension respectively and store them in a list &lt;code class="highlighter-rouge"&gt;F&lt;/code&gt; (the order wouldn&amp;#8217;t matter).&lt;/p&gt;
 
-&lt;p&gt;We solve this problem in a way somewhat similar to &lt;code class="highlighter-rouge"&gt;limited_integrate&lt;/code&gt; problem, i.e  , we solve the problem  and chose the one where .&lt;/p&gt;
+&lt;p&gt;We reorganize this problem in a way somewhat similar to &lt;code class="highlighter-rouge"&gt;limited_integrate&lt;/code&gt; problem, i.e  , we solve the problem  and chose the one where .&lt;/p&gt;
 
 &lt;p&gt;The same thing we do here in this problem, but that does cause some problem as  may not necesarily be contained in the extension , and currently we are working on solving this part of the problem, Kalevi suggests to take the unfinished &lt;code class="highlighter-rouge"&gt;DE&lt;/code&gt; object and the extension containing  could be built on that.(No need to start from scratch.)&lt;/p&gt;
 
