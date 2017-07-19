@@ -7,6 +7,73 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://nesar2017.wordpress.com/?p=237</guid>
+      <author>Abdullah Javed Nesar (Abdullahjavednesar)</author>
+      <title>Abdullah Javed Nesar (Abdullahjavednesar): GSoC Progress Report</title>
+      <pubDate>Wed, 19 Jul 2017 18:21:17 GMT</pubDate>
+      <link>https://nesar2017.wordpress.com/2017/07/19/gsoc-progress-report-2/</link>
+      <description>&lt;p&gt;I&amp;#8217;ve been working on the last set of Utility functions and after that I&amp;#8217;ll complete some left over functions yet to be implemented. Along with it we have been fixing some bugs which we could notice.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;TrigReduce()&lt;/code&gt; is an inbuilt function in &lt;a href="http://reference.wolfram.com/language/ref/TrigReduce.html.en"&gt;Mathematica&lt;/a&gt;, following is its code in Python.&lt;/p&gt;
+&lt;pre&gt;def TrigReduce(i):
+ if SumQ(i):
+ t = 0
+ for k in i.args:
+ t += TrigReduce(k)
+ return t
+ if ProductQ(i):
+ if any(PowerQ(k) for k in i.args):
+ if (i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin)).has(I):
+ return i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin).simplify()
+ else:
+ return i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin)
+ else:
+ a = Wild('a')
+ b = Wild('b')
+ v = Wild('v')
+ Match = i.match(v*sin(a)*cos(b))
+ if Match:
+ a = Match[a]
+ b = Match[b]
+ v = Match[v]
+ # 2 sin A cos B = sin(A + B) + sin(A &amp;#8722; B)
+ return i.subs(v*sin(a)*cos(b), v*S(1)/2*(sin(a + b) + sin(a - b)))
+ Match = i.match(v*sin(a)*sin(b))
+ if Match:
+ a = Match[a]
+ b = Match[b]
+ v = Match[v]
+ # 2 sin A sin B = cos(A &amp;#8722; B) &amp;#8722; cos(A + B)
+ return i.subs(v*sin(a)*sin(b), v*S(1)/2*cos(a - b) - cos(a + b))
+ Match = i.match(v*cos(a)*cos(b))
+ if Match:
+ a = Match[a]
+ b = Match[b]
+ v = Match[v]
+ # 2 cos A cos B = cos(A + B) + cos(A &amp;#8722; B)
+ return i.subs(v*cos(a)*cos(b), v*S(1)/2*cos(a + b) + cos(a - b)) 
+ if PowerQ(i):
+ if i.has(sin):
+ if (i.rewrite(sin, exp).expand().rewrite(exp, sin)).has(I):
+ return i.rewrite(sin, exp).expand().rewrite(exp, sin).simplify()
+ else:
+ return i.rewrite(sin, exp).expand().rewrite(exp, sin)
+ if i.has(cos):
+ if (i.rewrite(cos, exp).expand().rewrite(exp, cos)).has(I):
+ return i.rewrite(cos, exp).expand().rewrite(exp, cos).simplify()
+ else:
+ return i.rewrite(cos, exp).expand().rewrite(exp, cos)
+ else:
+ return i&lt;/pre&gt;
+&lt;p&gt;Some tests for &lt;code&gt;TrigReduce()&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt; assert TrigReduce(cos(x)**2) == cos(2*x)/2 + 1/2
+ assert TrigReduce(cos(x)**2*sin(x)) == sin(x)/4 + sin(3*x)/4
+ assert TrigReduce(cos(x)**2+sin(x)) == sin(x) + cos(2*x)/2 + 1/2
+ assert TrigReduce(cos(x)**2*sin(x)**5) == 5*sin(x)/64 + sin(3*x)/64 - 3*sin(5*x)/64 + sin(7*x)/64
+ assert TrigReduce(2*sin(x)*cos(x) + 2*cos(x)**2) == sin(2*x) + cos(2*x) + 1&lt;/pre&gt;
+&lt;p&gt;I have taken some help from a reply in &lt;a href="https://stackoverflow.com/questions/30541734/how-to-rewrite-sinx2-to-cos2x-form-in-sympy"&gt;stackoverflow&lt;/a&gt;&amp;#160;and may be now we can answer that question much better.&lt;/p&gt;
+&lt;p&gt;My next week&amp;#8217;s target would be to complete all the utility functions and fix bugs as much as possible.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/nesar2017.wordpress.com/237/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/nesar2017.wordpress.com/237/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=nesar2017.wordpress.com&amp;#038;blog=126779945&amp;#038;post=237&amp;#038;subd=nesar2017&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://gxyd.github.io/blogs/Gsoc2017-week-6</guid>
       <author>Gaurav Dhingra (gxyd)</author>
       <title>Gaurav Dhingra (gxyd): GSoC 2017: Week 6</title>
@@ -817,14 +884,6 @@ Time taken to run the tests: 4967.428s
       <description>&lt;p&gt;Hello all!&lt;/p&gt;
 &lt;p&gt;After adding Algebraic\Linear Product rules and tests Arihant and I are working on implementations of Utility Functions, there is a huge set Utility Functions that needs to be implemented before we proceed ahead with next set of rules. Once we are done with the entire set of utility functions implementing rules and adding tests would be an easy task. Understanding the Mathematica codes and analyzing its dependent functions and converting it into Python syntax is a major task.&lt;/p&gt;
 &lt;p&gt;We started with implementation of only those functions which were necessary to support &lt;strong&gt;Algebraic rules\Linear Products&lt;/strong&gt; but because they were dependent on the previous functions we had to start off from the very beginning of the &lt;a href="http://www.apmaths.uwo.ca/~arich/IntegrationRules/PortableDocumentFiles/Integration%20utility%20functions.pdf"&gt;Pdf&lt;/a&gt;. So far we have implemented more that 100 utility functions. Our priority is to implement all Utility functions capable to support Algebraic Rules as soon as possible.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/nesar2017.wordpress.com/133/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/nesar2017.wordpress.com/133/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=nesar2017.wordpress.com&amp;#038;blog=126779945&amp;#038;post=133&amp;#038;subd=nesar2017&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://szymag.github.io/post/week-3/</guid>
-      <author>Szymon Mieszczak (szymag)</author>
-      <title>Szymon Mieszczak (szymag): Week 3</title>
-      <pubDate>Tue, 20 Jun 2017 22:41:21 GMT</pubDate>
-      <link>https://szymag.github.io/post/week-3/</link>
-      <description>&lt;p&gt;In the last week I focused mainly on finishing tasks related Lame coefficients. During this time two PR were merged. In my previous post I described how we can calculate gradient, curl and divergence in different type of coordinate system, so now I described only new thing which was already add to mainline. We decided to remove dependency between Del class and CoordSysCartesian. From mathematical point of view it makes sense, because nabla operator is just an entity which acts on vector or scalar and his behavior is independent from coordinate system.</description>
     </item>
   </channel>
 </rss>

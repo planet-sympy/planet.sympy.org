@@ -93,6 +93,127 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-b59b3a28 feed-" id="item-f82b7d24">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/Abdullahjavednesar.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Abdullah Javed Nesar (Abdullahjavednesar) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://nesar2017.wordpress.com/2017/07/19/gsoc-progress-report-2/">18:21, Wednesday, 19 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://nesar2017.wordpress.com/2017/07/19/gsoc-progress-report-2/">Abdullah Javed Nesar (Abdullahjavednesar): GSoC Progress Report</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/Abdullahjavednesar.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Abdullah Javed Nesar (Abdullahjavednesar) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://nesar2017.wordpress.com/2017/07/19/gsoc-progress-report-2/">18:21, Wednesday, 19 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://nesar2017.wordpress.com/2017/07/19/gsoc-progress-report-2/">GSoC Progress Report</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>I&#8217;ve been working on the last set of Utility functions and after that I&#8217;ll complete some left over functions yet to be implemented. Along with it we have been fixing some bugs which we could notice.</p>
+<p><code>TrigReduce()</code> is an inbuilt function in <a href="http://reference.wolfram.com/language/ref/TrigReduce.html.en">Mathematica</a>, following is its code in Python.</p>
+<pre>def TrigReduce(i):
+ if SumQ(i):
+ t = 0
+ for k in i.args:
+ t += TrigReduce(k)
+ return t
+ if ProductQ(i):
+ if any(PowerQ(k) for k in i.args):
+ if (i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin)).has(I):
+ return i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin).simplify()
+ else:
+ return i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin)
+ else:
+ a = Wild('a')
+ b = Wild('b')
+ v = Wild('v')
+ Match = i.match(v*sin(a)*cos(b))
+ if Match:
+ a = Match[a]
+ b = Match[b]
+ v = Match[v]
+ # 2 sin A cos B = sin(A + B) + sin(A &#8722; B)
+ return i.subs(v*sin(a)*cos(b), v*S(1)/2*(sin(a + b) + sin(a - b)))
+ Match = i.match(v*sin(a)*sin(b))
+ if Match:
+ a = Match[a]
+ b = Match[b]
+ v = Match[v]
+ # 2 sin A sin B = cos(A &#8722; B) &#8722; cos(A + B)
+ return i.subs(v*sin(a)*sin(b), v*S(1)/2*cos(a - b) - cos(a + b))
+ Match = i.match(v*cos(a)*cos(b))
+ if Match:
+ a = Match[a]
+ b = Match[b]
+ v = Match[v]
+ # 2 cos A cos B = cos(A + B) + cos(A &#8722; B)
+ return i.subs(v*cos(a)*cos(b), v*S(1)/2*cos(a + b) + cos(a - b)) 
+ if PowerQ(i):
+ if i.has(sin):
+ if (i.rewrite(sin, exp).expand().rewrite(exp, sin)).has(I):
+ return i.rewrite(sin, exp).expand().rewrite(exp, sin).simplify()
+ else:
+ return i.rewrite(sin, exp).expand().rewrite(exp, sin)
+ if i.has(cos):
+ if (i.rewrite(cos, exp).expand().rewrite(exp, cos)).has(I):
+ return i.rewrite(cos, exp).expand().rewrite(exp, cos).simplify()
+ else:
+ return i.rewrite(cos, exp).expand().rewrite(exp, cos)
+ else:
+ return i</pre>
+<p>Some tests for <code>TrigReduce()</code></p>
+<pre> assert TrigReduce(cos(x)**2) == cos(2*x)/2 + 1/2
+ assert TrigReduce(cos(x)**2*sin(x)) == sin(x)/4 + sin(3*x)/4
+ assert TrigReduce(cos(x)**2+sin(x)) == sin(x) + cos(2*x)/2 + 1/2
+ assert TrigReduce(cos(x)**2*sin(x)**5) == 5*sin(x)/64 + sin(3*x)/64 - 3*sin(5*x)/64 + sin(7*x)/64
+ assert TrigReduce(2*sin(x)*cos(x) + 2*cos(x)**2) == sin(2*x) + cos(2*x) + 1</pre>
+<p>I have taken some help from a reply in <a href="https://stackoverflow.com/questions/30541734/how-to-rewrite-sinx2-to-cos2x-form-in-sympy">stackoverflow</a>&#160;and may be now we can answer that question much better.</p>
+<p>My next week&#8217;s target would be to complete all the utility functions and fix bugs as much as possible.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/nesar2017.wordpress.com/237/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/nesar2017.wordpress.com/237/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=nesar2017.wordpress.com&#038;blog=126779945&#038;post=237&#038;subd=nesar2017&#038;ref=&#038;feed=1" width="1" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-5a972359 feed-" id="item-1130cae3">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -2517,71 +2638,6 @@ Time taken to run the tests: 4967.428s
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">June 20, 2017</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-5aa203d9 feed-" id="item-0cd2eb2c">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Szymon Mieszczak (szymag) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://szymag.github.io/post/week-3/">22:41, Tuesday, 20 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://szymag.github.io/post/week-3/">Szymon Mieszczak (szymag): Week 3</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Szymon Mieszczak (szymag) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://szymag.github.io/post/week-3/">22:41, Tuesday, 20 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://szymag.github.io/post/week-3/">Week 3</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>In the last week I focused mainly on finishing tasks related Lame coefficients. During this time two PR were merged. In my previous post I described how we can calculate gradient, curl and divergence in different type of coordinate system, so now I described only new thing which was already add to mainline. We decided to remove dependency between Del class and CoordSysCartesian. From mathematical point of view it makes sense, because nabla operator is just an entity which acts on vector or scalar and his behavior is independent from coordinate system.
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2609,134 +2665,134 @@ Time taken to run the tests: 4967.428s
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>18:20, Wednesday, 19 July</td>
-<td>18:35, Wednesday, 19 July</td>
+<td>18:40, Wednesday, 19 July</td>
+<td>18:55, Wednesday, 19 July</td>
 </tr>
 </table>
 
