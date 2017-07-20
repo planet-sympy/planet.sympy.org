@@ -15,55 +15,55 @@
       <description>&lt;p&gt;I&amp;#8217;ve been working on the last set of Utility functions and after that I&amp;#8217;ll complete some left over functions yet to be implemented. Along with it we have been fixing some bugs which we could notice.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;TrigReduce()&lt;/code&gt; is an inbuilt function in &lt;a href="http://reference.wolfram.com/language/ref/TrigReduce.html.en"&gt;Mathematica&lt;/a&gt;, following is its code in Python.&lt;/p&gt;
 &lt;pre&gt;def TrigReduce(i):
- if SumQ(i):
- t = 0
- for k in i.args:
- t += TrigReduce(k)
- return t
- if ProductQ(i):
- if any(PowerQ(k) for k in i.args):
- if (i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin)).has(I):
- return i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin).simplify()
- else:
- return i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin)
- else:
- a = Wild('a')
- b = Wild('b')
- v = Wild('v')
- Match = i.match(v*sin(a)*cos(b))
- if Match:
- a = Match[a]
- b = Match[b]
- v = Match[v]
- # 2 sin A cos B = sin(A + B) + sin(A &amp;#8722; B)
- return i.subs(v*sin(a)*cos(b), v*S(1)/2*(sin(a + b) + sin(a - b)))
- Match = i.match(v*sin(a)*sin(b))
- if Match:
- a = Match[a]
- b = Match[b]
- v = Match[v]
- # 2 sin A sin B = cos(A &amp;#8722; B) &amp;#8722; cos(A + B)
- return i.subs(v*sin(a)*sin(b), v*S(1)/2*cos(a - b) - cos(a + b))
- Match = i.match(v*cos(a)*cos(b))
- if Match:
- a = Match[a]
- b = Match[b]
- v = Match[v]
- # 2 cos A cos B = cos(A + B) + cos(A &amp;#8722; B)
- return i.subs(v*cos(a)*cos(b), v*S(1)/2*cos(a + b) + cos(a - b)) 
- if PowerQ(i):
- if i.has(sin):
- if (i.rewrite(sin, exp).expand().rewrite(exp, sin)).has(I):
- return i.rewrite(sin, exp).expand().rewrite(exp, sin).simplify()
- else:
- return i.rewrite(sin, exp).expand().rewrite(exp, sin)
- if i.has(cos):
- if (i.rewrite(cos, exp).expand().rewrite(exp, cos)).has(I):
- return i.rewrite(cos, exp).expand().rewrite(exp, cos).simplify()
- else:
- return i.rewrite(cos, exp).expand().rewrite(exp, cos)
- else:
- return i&lt;/pre&gt;
+    if SumQ(i):
+    t = 0
+        for k in i.args:
+            t += TrigReduce(k)
+        return t
+    if ProductQ(i):
+        if any(PowerQ(k) for k in i.args):
+            if (i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin)).has(I):
+                return i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin).simplify()
+            else:
+                return i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin)
+        else:
+            a = Wild('a')
+            b = Wild('b')
+            v = Wild('v')
+            Match = i.match(v*sin(a)*cos(b))
+            if Match:
+                a = Match[a]
+                b = Match[b]
+                v = Match[v]
+                # 2 sin A cos B = sin(A + B) + sin(A &amp;#8722; B)
+                return i.subs(v*sin(a)*cos(b), v*S(1)/2*(sin(a + b) + sin(a - b)))
+            Match = i.match(v*sin(a)*sin(b))
+            if Match:
+                a = Match[a]
+                b = Match[b]
+                v = Match[v]
+                # 2 sin A sin B = cos(A &amp;#8722; B) &amp;#8722; cos(A + B)
+                return i.subs(v*sin(a)*sin(b), v*S(1)/2*cos(a - b) - cos(a + b))
+            Match = i.match(v*cos(a)*cos(b))
+            if Match:
+                a = Match[a]
+                b = Match[b]
+                v = Match[v]
+                # 2 cos A cos B = cos(A + B) + cos(A &amp;#8722; B)
+                return i.subs(v*cos(a)*cos(b), v*S(1)/2*cos(a + b) + cos(a - b)) 
+    if PowerQ(i):
+        if i.has(sin):
+            if (i.rewrite(sin, exp).expand().rewrite(exp, sin)).has(I):
+                return i.rewrite(sin, exp).expand().rewrite(exp, sin).simplify()
+            else:
+                return i.rewrite(sin, exp).expand().rewrite(exp, sin)
+        if i.has(cos):
+            if (i.rewrite(cos, exp).expand().rewrite(exp, cos)).has(I):
+                return i.rewrite(cos, exp).expand().rewrite(exp, cos).simplify()
+            else:
+                return i.rewrite(cos, exp).expand().rewrite(exp, cos)
+    else:
+        return i&lt;/pre&gt;
 &lt;p&gt;Some tests for &lt;code&gt;TrigReduce()&lt;/code&gt;&lt;/p&gt;
 &lt;pre&gt; assert TrigReduce(cos(x)**2) == cos(2*x)/2 + 1/2
  assert TrigReduce(cos(x)**2*sin(x)) == sin(x)/4 + sin(3*x)/4
