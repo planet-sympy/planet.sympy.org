@@ -89,6 +89,127 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">July 23, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-debb4ede feed-" id="item-f1f41214">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/07/23/GSoC17-Week7-Report.html">06:30, Sunday, 23 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/07/23/GSoC17-Week7-Report.html">Arihant Parsoya (parsoyaarihant): GSoC17 Week 7 Report</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/07/23/GSoC17-Week7-Report.html">06:30, Sunday, 23 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/07/23/GSoC17-Week7-Report.html">GSoC17 Week 7 Report</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Francesco opened the <a href="https://github.com/sympy/sympy/pull/12978">PR</a> to merge the Rubi module in SymPy. I made the code compatible for python&lt;3.6 to pass the Travis tests. I used <code class="highlighter-rouge">@doctest_depends_on</code> function decorator to stop the doctest for python&lt;3.6 and defined dummy classes to pass the tests. We are keeping the PR open for now since it will allow me to run tests on Travis and I expect significant change in code after code generation functionality is added in MatchPy.</p>
+
+<h4 id="parser">Parser</h4>
+<p>I have updated the parser to accommodate for <code class="highlighter-rouge">Wildcard.optional()</code>. Previously, I sympified the expression and substituted the optional values to create new patterns. The current parser does not use sympy and is very fast compared to previous version.</p>
+
+<h4 id="tests">Tests</h4>
+<p>I ran the test suit for algebraic rules 1.2 previously and ~1250/1500 tests were passing. The tests are really slow since they use <code class="highlighter-rouge">simplify</code> and <code class="highlighter-rouge">expand</code> functions. I tried using numerical evaluation at random points and it turned out to be faster than evaluating tests symbolically. Test suits are grouped by the type of expression:</p>
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="c"># Integrands of the form a</span>
+
+<span class="p">[</span><span class="n">S</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">0</span><span class="p">)],</span>
+<span class="p">[</span><span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">x</span><span class="p">],</span>
+<span class="p">[</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="p">],</span>
+<span class="p">[</span> <span class="o">-</span> <span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="o">-</span> <span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="p">],</span>
+
+<span class="c"># Integrands of the form x**m</span>
+<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">m</span><span class="p">)],</span>
+<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="n">S</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="n">S</span><span class="p">(</span><span class="mi">101</span><span class="p">)],</span>
+<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="n">S</span><span class="p">(</span><span class="mi">4</span><span class="p">)],</span>
+
+<span class="c"># Integrands of the form x**(m/S(2))</span>
+<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">))],</span>
+<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">))],</span>
+<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">))],</span>
+
+<span class="c"># Integrands of the form x**(m/S(3))</span>
+<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">))],</span>
+<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">))],</span>
+<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">))],</span>
+</code></pre>
+</div>
+
+<p>Adding thousands of tests could lead to slowdown of tests. So far my plan is to add 1-2 test from each expression type:</p>
+
+<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="p">[</span><span class="n">S</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">0</span><span class="p">)],</span>
+<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">m</span><span class="p">)],</span>
+<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="n">S</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="n">S</span><span class="p">(</span><span class="mi">101</span><span class="p">)],</span>
+<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">))],</span>
+</code></pre>
+</div>
+
+<p>While inspecting the failed tests, I figured out that the failing tests depend on rules from other modules(such as binomials). Hence, they could not be integrated currently.</p>
+
+<h4 id="adding-more-rules">Adding more rules</h4>
+<p>I have added all algebriac rules to the matcher(~1700). But, it led to significant decrease in speed. In some cases, the matcher take so much time that I have to stop the program itself. I have <a href="https://github.com/HPAC/matchpy/issues/13">opened</a> an issue for this. Hope this get fixed asap.</p>
+
+<p>I have added all Algebriac rules to the matcher.</p>
+
+<h4 id="todo">Todo</h4>
+<p>I have already added all algebraic rules which is 1/5 of all the rules. I cannot really test all those rules
+until the speed issue gets fixed. I will focus on the following this week:</p>
+
+<ul>
+  <li>Once speed is fixed, start testing other modules</li>
+  <li>Prepare test for remaining rubi modules (add tests from each expression type)</li>
+  <li>Rename <code class="highlighter-rouge">Integer</code> in rubi.symbols to <code class="highlighter-rouge">matchpyInteger</code></li>
+  <li>Add support for code generation in Rubi if it gets implemented in MatchPy(Manuel said he was working on it last week)</li>
+</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 19, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -2558,80 +2679,6 @@ All the monomial integrals over all facets can be calculated and stored in a lis
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-debb4ede feed-" id="item-a9866313">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/24/GSoC17-Week3-Report.html">06:30, Saturday, 24 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/24/GSoC17-Week3-Report.html">Arihant Parsoya (parsoyaarihant): GSoC17 Week 3 Report</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/24/GSoC17-Week3-Report.html">06:30, Saturday, 24 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/24/GSoC17-Week3-Report.html">GSoC17 Week 3 Report</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>I ran the test suit for algebraic rules 1.2. Here is the report:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>Total number of tests: 1480
-Passed: 130
-Failed: 1350
-Time taken to run the tests: 4967.428s
-</code></pre>
-</div>
-
-<p>Very few test passed since many rules use <code class="highlighter-rouge">ExpandIntegrand[ ]</code> function to evaluate its integral. There are 37 definitions of <code class="highlighter-rouge">ExpandIntegrand[ ]</code>(for different expressions). I am trying to implement few definitions which can are used in algebraic rules. The problem is that <code class="highlighter-rouge">ExpandIntegrand[ ]</code> is defined after 50% of all the rules in the list. We have only been able to complete 10% of utility functions in SymPy. Hence, it is tricky to implement <code class="highlighter-rouge">ExpandIntegrand[ ]</code> when it depends on functions which we haven&#8217;t implemented.</p>
-
-<p>A good thing is that MatchPy was able to match almost all the patterns. Manuel said that he is going to work on incorporating <code class="highlighter-rouge">optional arguments</code> in MatchPy next week. I will rework on Rubi parser to incorporate his changes.</p>
-
-<p>I will complete my work on <code class="highlighter-rouge">ExpandIntegrand[ ]</code> and also continue my work in implementing remaining utility functions with Abdullah.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -2660,134 +2707,134 @@ Time taken to run the tests: 4967.428s
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>17:20, Sunday, 23 July</td>
-<td>17:35, Sunday, 23 July</td>
+<td>17:41, Sunday, 23 July</td>
+<td>17:56, Sunday, 23 July</td>
 </tr>
 </table>
 
