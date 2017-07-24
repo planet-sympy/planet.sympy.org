@@ -403,116 +403,6 @@ until the speed issue gets fixed. I will focus on the following this week:</p>
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-5a972359 feed-" id="item-1130cae3">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/gxyd.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Gaurav Dhingra (gxyd) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://gxyd.github.io/blogs/Gsoc2017-week-6/">00:00, Wednesday, 19 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2017-week-6/">Gaurav Dhingra (gxyd): GSoC 2017: Week 6</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/gxyd.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Gaurav Dhingra (gxyd) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://gxyd.github.io/blogs/Gsoc2017-week-6/">00:00, Wednesday, 19 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2017-week-6/">GSoC 2017: Week 6</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						
-
-
-
-<p>We worked on <a href="https://github.com/sympy/sympy/pull/12885">Parametric logarithmic derivative PR #12885</a> only this week. So now I will get to a few mathematical points regarding the problem of &#8220;parametric logarithmic derivative&#8221; problem (will shortly write it as <code class="highlighter-rouge">PLD</code> problem).</p>
-
-<p>The <code class="highlighter-rouge">PLD</code> problem is, for a given hyperexponential monomial  over a differential field  and , to decide whether there exists  with , for the equation: , and to find one such solution.</p>
-
-<p>There are two versions of it, the first one being the heursitic version which is quite simple (with available pseudo code) and is already implemented in SymPy, but since it doesn&#8217;t handle all the cases, it becomes necessary to have the deterministic version of it. The deterministic version is sort of used as a fallback i.e in case the heuristic version fails (raises <code class="highlighter-rouge">NotImplementedError</code>) which isn&#8217;t quite often.</p>
-
-<p>We already have done the basic programming of it in SymPy, so before I say any further let&#8217;s see an example.</p>
-
-<p>A simple example of where the heuristic version fails is:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>&gt;&gt;&gt; fa, fd = Poly(1, x), Poly(1, x)
-&gt;&gt;&gt; wa, wd = Poly(1, x), Poly(1, x)
-&gt;&gt;&gt; DE = DifferentialExtension(extension={'D': [Poly(1, x, domain='ZZ'), Poly(t, t, domain='ZZ')], 'exts': [None, 'exp']})
-&gt;&gt;&gt; parametric_log_deriv_heu(fa, fd, wa, wd, DE)
-None
-
-# while the deterministic version, runs fine
-
-&gt;&gt;&gt; parametric_log_deriv(fa, fd, wa, wd, DE)
-[Matrix([[-1, 1, 0]]), Matrix([[-1, 0, 1]])] # don't worry about output type
-
-</code></pre>
-</div>
-
-<blockquote>
-  <h2 id="internals-of-deterministic-version">Internals of deterministic version</h2>
-</blockquote>
-
-<p>In the deterministic version we use the Risch&#8217;s structure theorem, i.e</p>
-
-<p> ( equation 1)</p>
-
-<p>where we solve for each .</p>
-
-<p>This result of structure theorem is quite useful, this same theorem can be used in the process of <code class="highlighter-rouge">DifferentialExtension</code> construction, as can be seen the section 5.2 in book (Outline and Scope of Integration Algorithm, search by section name if you have a different version of the book).</p>
-
-<p>In <code class="highlighter-rouge">PLD</code> (deterministic) we first obtain the  and  parts depending on &#8216;log&#8217;/&#8217;exp&#8217; extension respectively and store them in a list <code class="highlighter-rouge">F</code> (the order wouldn&#8217;t matter).</p>
-
-<p>We reorganize this problem in a way somewhat similar to <code class="highlighter-rouge">limited_integrate</code> problem, i.e  , we solve the problem  and chose the one where .</p>
-
-<p>The same thing we do here in this problem, but that does cause some problem as  may not necesarily be contained in the extension , and currently we are working on solving this part of the problem, Kalevi suggests to take the unfinished <code class="highlighter-rouge">DE</code> object and the extension containing  could be built on that.(No need to start from scratch.)</p>
-
-<p>I haven&#8217;t mentioned much regarding the function that does the working for converting the relation in eq (1) over a field  to one over . It contains <code class="highlighter-rouge">Poly</code> manipulation methods to do that. It does mathematically the same thing as &#8220;to obtain a system with coefficients in C and the same constant solutions.&#8221;</p>
-
-<p>I&#8217;ll complete the <code class="highlighter-rouge">parametric_log_deriv</code> before the next week starts.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">July 18, 2017</h2>
@@ -947,72 +837,6 @@ So, from the discussion in pull request <a href="https://github.com/sympy/sympy/
 <p>Currently I&#8217;m work on implementation of <strong>Normalization functions</strong>, although I have implemented <code class="highlighter-rouge">NormalizeIntegrandFactorBase</code>&#160;using SymPy&#8217;s pattern matcher but that needs a bit improvisation. After that I&#8217;ll complete implementation of <code class="highlighter-rouge">SimpHelp</code>.<br />
 May be a couple of weeks more and we&#8217;ll be done with the implementation of all the Utility Functions.</p>
 <p>&nbsp;</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/nesar2017.wordpress.com/217/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/nesar2017.wordpress.com/217/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=nesar2017.wordpress.com&#038;blog=126779945&#038;post=217&#038;subd=nesar2017&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-5a972359 feed-" id="item-93c7304f">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/gxyd.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Gaurav Dhingra (gxyd) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://gxyd.github.io/blogs/Gsoc2017-week-5/">00:00, Wednesday, 12 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2017-week-5/">Gaurav Dhingra (gxyd): GSoC 2017: Week 5</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/gxyd.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Gaurav Dhingra (gxyd) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://gxyd.github.io/blogs/Gsoc2017-week-5/">00:00, Wednesday, 12 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2017-week-5/">GSoC 2017: Week 5</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>We started working on implementation of <a href="https://github.com/sympy/sympy/pull/12885">parametric logarithmic derivative problem using Risch structure Theorem</a>. First we implemented the function <code class="highlighter-rouge">basis_Q</code>, which seems like we wouldn&#8217;t be needing no-more. While doing that it seemed like there was problem with the <code class="highlighter-rouge">.is_algebraic</code> property, as it was returning <code class="highlighter-rouge">(pi**3).is_algebraic</code> as True. This bug was fixed in the pull request <a href="https://github.com/sympy/sympy/pull/12924">#12924</a>.</p>
-
-<p>Also a few improvements to the <a href="https://gxyd.github.io/:/github.com/sympy/sympy/pull/12925">integral module pull request #12925</a> was also merged.</p>
-
-<p>I don&#8217;t have much to say for now, until I complete the parametric logarithmic derivate PR.</p>
 					</div>
 				</div>
 			</div>
@@ -1755,96 +1579,6 @@ So, why doesn&#8217;t this technique work always ? Maybe, I implemented it in a 
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-5a972359 feed-" id="item-9545e230">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/gxyd.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Gaurav Dhingra (gxyd) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://gxyd.github.io/blogs/Gsoc2017-week-4/">00:00, Tuesday, 04 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2017-week-4/">Gaurav Dhingra (gxyd): GSoC 2017: Week 4</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/gxyd.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Gaurav Dhingra (gxyd) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://gxyd.github.io/blogs/Gsoc2017-week-4/">00:00, Tuesday, 04 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2017-week-4/">GSoC 2017: Week 4</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This week we completed <b><a color="purple" href="https://github.com/sympy/sympy/pull/12850">PR #12850]()</a></b> on adding/removing variable in <code class="highlighter-rouge">DifferentialExtension</code> class for later introduction of creating extensions of , , and probably algebraic extensions as well. Lists like <code class="highlighter-rouge">E_K</code>, <code class="highlighter-rouge">L_K</code> and the new ones have been combined in a single list one, and the variables to record that information are <code class="highlighter-rouge">exts</code> and <code class="highlighter-rouge">extargs</code>. <code class="highlighter-rouge">exts</code> will store <code class="highlighter-rouge">str</code> instances having value in {&#8216;exp&#8217;, &#8216;log&#8217;, &#8216;atan&#8217;, &#8216;tan&#8217;, &#8216;alg&#8217;}, so whenever we at each &#8216;level&#8217; earlier we discovered the extension to be exponential we appended <code class="highlighter-rouge">level - 1</code> to the list <code class="highlighter-rouge">E_K</code> (i.e. index) or to <code class="highlighter-rouge">L_K</code> when the extension is <code class="highlighter-rouge">primitive</code> but now we will append to just a single list and i.e. to <code class="highlighter-rouge">exts</code> either <code class="highlighter-rouge">exp</code> or <code class="highlighter-rouge">log</code>/<code class="highlighter-rouge">atan</code> accordingly (Note:  is also a <code class="highlighter-rouge">primitive</code> until now, the only &#8216;primitive&#8217; has been &#8216;log&#8217;). First argument of both of lists (<code class="highlighter-rouge">exts</code> and <code class="highlighter-rouge">extargs</code>) is currently kept as <code class="highlighter-rouge">None</code>(owing to keep the code clean).</p>
-
-<p>While <code class="highlighter-rouge">extargs</code> as is clear from the name stores the argument of extension. Well, it seems odd what the meaing of <code class="highlighter-rouge">args</code> will be for the algebraic case, I am guessing a tuple (base, exp), but we needn&#8217;t worry about that for now.</p>
-
-<p>We also have an open pull request on some re-organising of <code class="highlighter-rouge">__init__</code> of <code class="highlighter-rouge">DifferentialExtension</code> <a href="https://github.com/sympy/sympy/pull/12849">#12849</a>. It isn&#8217;t blocking anything. I think that PR is done.</p>
-
-<blockquote>
-  <h3 id="key-points">Key points</h3>
-</blockquote>
-
-<p>What seems important to me is that I can list some of the discussion key points here, since I need to those issues to be solved in my mind, in particular I often go back and look at the archives of gitter discussion.</p>
-
-<ol>
-  <li>
-    <p>Aaron mention about the issue in <code class="highlighter-rouge">is_deriv_k</code> (also present in <code class="highlighter-rouge">is_log_deriv_k_t_radical</code>), which prevent integrals of the form , and it raises <code class="highlighter-rouge">NotImplementedError: Cannot work with non-rational coefficients in this case.</code>. Now this problem can be solved with the use of Risch structure Theorem (yes, with capital <code class="highlighter-rouge">R</code>, small <code class="highlighter-rouge">s</code> and capital <code class="highlighter-rouge">T</code>, it comes to my mind whenever I see the name in the text, IIRC last time summers I was corrected Kalevi regarding <code class="highlighter-rouge">Todd Coxeter</code>, may be someone else).</p>
-  </li>
-  <li>
-    <p>Using the paper on &#8220;Simplification of Real Elementary Functions&#8221; (already mentioned in last blog post).</p>
-  </li>
-</ol>
-
-<blockquote>
-  <h3 id="todo">TODO</h3>
-  <p>Now coming to what I am currently doing is reading the text for <code class="highlighter-rouge">parametric_log_deriv</code> (there isn&#8217;t pseudo code of this). I think it would take me about 2 weeks to complete this task, by that time my next semester in university will start as well (on 15th July)</p>
-</blockquote>
-
-<p>This time I am late for my blog post, damn!. Aaron had to mail me for the post, SymPy has a Code Generation workshop in the upcoming SciPy conference (probably 9th of this month), and also we are going to have a release of SymPy 1.1 coming out soon, I guess that is handling quite a bit.</p>
-
-<p>Oh, I forgot to mention, I passed the first evaluation as well.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">July 03, 2017</h2>
@@ -2455,154 +2189,6 @@ said issue.</p>
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-5a972359 feed-" id="item-1ba88d27">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/gxyd.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Gaurav Dhingra (gxyd) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://gxyd.github.io/blogs/Gsoc2017-week-3/">00:00, Sunday, 25 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2017-week-3/">Gaurav Dhingra (gxyd): GSoC Week 3</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/gxyd.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Gaurav Dhingra (gxyd) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://gxyd.github.io/blogs/Gsoc2017-week-3/">00:00, Sunday, 25 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://gxyd.github.io/blogs/Gsoc2017-week-3/">GSoC Week 3</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						
-
-
-
-<blockquote>
-  <h2 id="rischs-structure-theorems">Risch&#8217;s structure theorem&#8217;s</h2>
-</blockquote>
-
-<p>For the next couple of weeks we will be moving to understand and implement the Risch&#8217;s structure theorem and applications that we will make use of in gsoc project. One of the application is that of &#8220;Simplification of real elementary functions&#8221;, a paper by Manuel Bronstein (in 1989)<sup>[1]</sup>. This paper by Bronstein uses Risch&#8217;s real structure theorem, the paper determines explicitly all algebraic relations among a set of real elementary functions.</p>
-
-<blockquote>
-  <h3 id="simplification-of-real-elementary-functions">Simplification of Real Elementary Functions</h3>
-</blockquote>
-
-<p>Risch in 1979 gave a theorem and an algorithm that found explicitly all algebraic relations among a set of only &#8217;s and &#8217;s. And to apply this algorithm required to convert trigonometric functions to &#8217;s and &#8217;s.</p>
-
-<p>Consider the integrand . For this first we make use of  form of , i.e . Substituting it in the original expression we get . Now using the exponential form of  we get .
- And substituting  in place of  we get the final expression. , which is a complex algebraic function.</p>
-
-<p>All of this could be avoided since the original function  is a real algebraic function. The part that could be a problem to see it is , which can be seen to satisfy the algebraic equation  using the formula for . Bronstein discusses the algorithm that wouldn&#8217;t require the use of complex &#8217;s and &#8217;s.</p>
-
-<p>A function  is called real elementary over a differential field , if for a differential extension  () of . If either  is algebraic over  or it is , , ,  of an element of  (consider this recursively).
-For example:  is real elementary over , so is  and .</p>
-
-<p>Point to mention here is, we have to explicitly include , , since we don&#8217;t want the function to be a complex function by re-writing  as ,  form( and  can be written in form of complex  and  respectively), and we can write other trigonometric functions have real elementary relations with  and . Alone  or alone  can&#8217;t do the job.</p>
-
-<p>This way we can form the definition of a <em>real-elementary extension of a differential field</em> .</p>
-
-<blockquote>
-  <h3 id="functions-currently-using-approach-of-structure-theorems-in-sympy">Functions currently using approach of structure theorems in SymPy</h3>
-</blockquote>
-
-<p>Moving on, let us now look at the three functions in SymPy that use the structure theorem &#8220;approach&#8221;:</p>
-
-<ol>
-  <li>
-    <p><code class="highlighter-rouge">is_log_deriv_k_t_radical(fa, fd, DE)</code>: Checks if  is the logarithmic derivative of a <code class="highlighter-rouge">k(t)-radical</code>. Mathematically  where , . In naive terms if . Here <code class="highlighter-rouge">k(t)-radical</code> means <code class="highlighter-rouge">n-th</code> roots of element of . Used in process of calculating DifferentialExtension of an object where &#8216;case&#8217; is &#8216;exp&#8217;.</p>
-  </li>
-  <li>
-    <p><code class="highlighter-rouge">is_log_deriv_k_t_radical_in_field(fa, fd, DE)</code>: Checks if  is the logarithmic derivative of a <code class="highlighter-rouge">k(t)-radical</code>. Mathematically  where , . It may seem like it is just the same as above with <code class="highlighter-rouge">f</code> given as input instead of having to calculate , but the &#8220;in_field&#8221; part in function name is important.</p>
-  </li>
-  <li>
-    <p><code class="highlighter-rouge">is_deriv_k</code>: Checks if  is the derivative of a k(t), i.e.  where .</p>
-  </li>
-</ol>
-
-<blockquote>
-  <h3 id="what-have-i-done-this-week">What have I done this week?</h3>
-</blockquote>
-
-<p>Moving onto what I have been doing for the last few days (at a very slow pace) went through a debugger for understanding the working of <code class="highlighter-rouge">DifferentialExtension(exp(x**2/2) + exp(x**2), x)</code> in which <code class="highlighter-rouge">integer_powers</code> function is currently used to determine the relation  and , instead of  and , since we can&#8217;t handle algebraic extensions currently (that will hopefully come later in my gsoc project). Similar example for  is there in the book , though the difference is it uses the <code class="highlighter-rouge">is_deriv_k</code> (for <code class="highlighter-rouge">case == 'primitive'</code>, we have <code class="highlighter-rouge">is_log_deriv_k_t_radical</code> for case == &#8216;exp&#8217;) to reach the conclusion that ,  and .</p>
-
-<p>I still have to understand the structure theorem, for what they are? and how exactly they are used. According to Aaron, Kalevi, I should start reading the source of <code class="highlighter-rouge">is_deriv_k</code>, <code class="highlighter-rouge">is_log_deriv_k_t_radical</code> and <code class="highlighter-rouge">parametric_log_deriv</code> functions in prde.py file.</p>
-
-<p>We worked on <a href="https://github.com/sympy/sympy/pull/12743">#12743 Liouvillian case for Parametric Risch Diff Eq.</a> this week, it handles liouvillian cancellation cases. It enables us to handle integrands like .</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>&gt;&gt;&gt; risch_integrate(log(x/exp(x) + 1), x)
-(x*log(x*exp(-x) + 1) + NonElementaryIntegral((x**2 - x)/(x + exp(x)), x))
-</code></pre>
-</div>
-
-<p>earlier it used to raise error <code class="highlighter-rouge">prde_cancel()</code> not implemented. After testing it a bit I realised that part of returned answer could be further integrated instead of being returned as a <code class="highlighter-rouge">NonElementaryIntegral</code>. Consider this</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>In [4]: risch_integrate(x + exp(x**2), x)
-Out[4]: Integral(x + exp(x**2), x)
-</code></pre>
-</div>
-
-<p>as can be easily seen it can be further integrated. So Aaron opened the issue <a href="https://github.com/sympy/sympy/issues/12779">#12779 Risch algorithm could split out more nonelementary cases</a>.</p>
-
-<p>Though I am not sure why Kalevi has still not merged the <code class="highlighter-rouge">liouvillian</code> PR (only a comment needs to be fixed <code class="highlighter-rouge">n=2</code> -&gt; <code class="highlighter-rouge">n=5</code> in a comment), though that PR is not blocking me from doing further work.</p>
-
-<p>Starting tomorrow (26th) we have the first evaluation of GSoC. Anyways I don&#8217;t like the idea of having 3 evaluations.</p>
-
-<blockquote>
-  <h3 id="todo-for-the-next-week">TODO for the next week:</h3>
-</blockquote>
-
-<p>Figuring out and implementing the structure theorems.</p>
-
-<blockquote>
-  <h3 id="references">References</h3>
-</blockquote>
-
-<ul>
-  <li>{1}. Simplification of real elementary functions, http://dl.acm.org/citation.cfm?id=74566</li>
-</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-29fba86e feed-" id="item-159bd78f">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -2680,6 +2266,283 @@ True
 		</div>
 	</div>
 </div></div>
+<div class="day">
+<h2 class="dayform">June 24, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-3b0ec3aa feed-" id="item-52f9635d">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/arifahmed.jpeg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://arif7blog.wordpress.com/2017/06/24/week-4-reportjune-18-24-dynamic-programming/">22:33, Saturday, 24 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/06/24/week-4-reportjune-18-24-dynamic-programming/">Arif Ahmed (ArifAhmed1995): Week 4 Report(June 18 &#8211; 24) : Dynamic Programming</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/arifahmed.jpeg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://arif7blog.wordpress.com/2017/06/24/week-4-reportjune-18-24-dynamic-programming/">22:33, Saturday, 24 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/06/24/week-4-reportjune-18-24-dynamic-programming/">Week 4 Report(June 18 &#8211; 24) : Dynamic Programming</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Note : If you&#8217;re viewing this on Planet SymPy and Latex looks weird, go to the <a href="https://arif7blog.wordpress.com/" rel="noopener" target="_blank">WordPress site</a> instead.</p>
+<p>Prof. Sukumar came up with the following optimization idea :<br />
+Consider equation 10 in <a href="http://dilbert.engr.ucdavis.edu/~suku/quadrature/cls-integration.pdf" rel="noopener" target="_blank">Chin et. al .</a> The integral of the inner product of the gradient of <img alt="f(x) " class="latex" src="https://s0.wp.com/latex.php?latex=f%28x%29+&#038;bg=ffffff&#038;fg=444444&#038;s=0" title="f(x) " /> and <img alt="{x}_{0} " class="latex" src="https://s0.wp.com/latex.php?latex=%7Bx%7D_%7B0%7D+&#038;bg=ffffff&#038;fg=444444&#038;s=0" title="{x}_{0} " /> need not be always re-calculated. This is because it might have been calculated before. Hence, the given polynomial can be broken up into a list of monomials with increasing degree. Over a certain facet, the integrals of the list of monomials can be calculated and stored for later use. Before calculation of a certain monomial we need to see if it&#8217;s gradient has&#160; already calculated and hence available for re-use.<br />
+Then again, there&#8217;s another way to implement this idea of re-use. Given the degree of the input polynomial we know all the types of monomials which can possibly exist. For example, for max_degree = 2 the monomials are : <img alt="[1, x, y, x^2, xy, y^2]" class="latex" src="https://s0.wp.com/latex.php?latex=%5B1%2C+x%2C+y%2C+x%5E2%2C+xy%2C+y%5E2%5D&#038;bg=ffffff&#038;fg=444444&#038;s=1" title="[1, x, y, x^2, xy, y^2]" />.<br />
+All the monomial integrals over all facets can be calculated and stored in a list of lists. This would be very useful for one specific use-case, that is when there are many different polynomials with max degree less than or equal to a certain global maximum to be integrated over a given polytope.</p>
+<p>I&#8217;m still working on implementing the first one. That&#8217;s cause the worst case time(when no or very few dictionary terms are re-used) turns out to much more expensive than the straightforward method. Maybe computing the standard deviation among monomial degrees would be a good way to understand which technique to use. Here is an example to show what I mean. If we have a monomial list : <img alt="[x^3, y^3, 3x^2y, 3xy^2] " class="latex" src="https://s0.wp.com/latex.php?latex=%5Bx%5E3%2C+y%5E3%2C+3x%5E2y%2C+3xy%5E2%5D+&#038;bg=ffffff&#038;fg=444444&#038;s=0" title="[x^3, y^3, 3x^2y, 3xy^2] " /> , then the dynamic programming technique becomes useless here since gradient of any term will have degree 2 and not belong in the list. Now, the corresponding list of degrees is : <img alt="[3, 3, 3, 3] " class="latex" src="https://s0.wp.com/latex.php?latex=%5B3%2C+3%2C+3%2C+3%5D+&#038;bg=ffffff&#038;fg=444444&#038;s=0" title="[3, 3, 3, 3] " />, and standard deviation is zero. Hence the normal technique is applicable here.</p>
+<p>In reality, I&#8217;ll probably have to use another measure to make the judgement of dynamic vs. normal. Currently, I&#8217;m trying to fix a bug in the implementation of the first technique. After that, I&#8217;ll try out the second one.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/516/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/516/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&#038;blog=126429718&#038;post=516&#038;subd=arif7blog&#038;ref=&#038;feed=1" width="1" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-debb4ede feed-" id="item-a9866313">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/24/GSoC17-Week3-Report.html">06:30, Saturday, 24 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/24/GSoC17-Week3-Report.html">Arihant Parsoya (parsoyaarihant): GSoC17 Week 3 Report</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/24/GSoC17-Week3-Report.html">06:30, Saturday, 24 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/06/24/GSoC17-Week3-Report.html">GSoC17 Week 3 Report</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>I ran the test suit for algebraic rules 1.2. Here is the report:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>Total number of tests: 1480
+Passed: 130
+Failed: 1350
+Time taken to run the tests: 4967.428s
+</code></pre>
+</div>
+
+<p>Very few test passed since many rules use <code class="highlighter-rouge">ExpandIntegrand[ ]</code> function to evaluate its integral. There are 37 definitions of <code class="highlighter-rouge">ExpandIntegrand[ ]</code>(for different expressions). I am trying to implement few definitions which can are used in algebraic rules. The problem is that <code class="highlighter-rouge">ExpandIntegrand[ ]</code> is defined after 50% of all the rules in the list. We have only been able to complete 10% of utility functions in SymPy. Hence, it is tricky to implement <code class="highlighter-rouge">ExpandIntegrand[ ]</code> when it depends on functions which we haven&#8217;t implemented.</p>
+
+<p>A good thing is that MatchPy was able to match almost all the patterns. Manuel said that he is going to work on incorporating <code class="highlighter-rouge">optional arguments</code> in MatchPy next week. I will rework on Rubi parser to incorporate his changes.</p>
+
+<p>I will complete my work on <code class="highlighter-rouge">ExpandIntegrand[ ]</code> and also continue my work in implementing remaining utility functions with Abdullah.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">June 23, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-b59b3a28 feed-" id="item-c42628b2">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/Abdullahjavednesar.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Abdullah Javed Nesar (Abdullahjavednesar) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://nesar2017.wordpress.com/2017/06/23/gsoc-progress-on-utility-functions/">16:27, Friday, 23 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://nesar2017.wordpress.com/2017/06/23/gsoc-progress-on-utility-functions/">Abdullah Javed Nesar (Abdullahjavednesar): GSoC: Progress on Utility Functions</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/Abdullahjavednesar.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Abdullah Javed Nesar (Abdullahjavednesar) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://nesar2017.wordpress.com/2017/06/23/gsoc-progress-on-utility-functions/">16:27, Friday, 23 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://nesar2017.wordpress.com/2017/06/23/gsoc-progress-on-utility-functions/">GSoC: Progress on Utility Functions</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Hello all!</p>
+<p>After adding Algebraic\Linear Product rules and tests Arihant and I are working on implementations of Utility Functions, there is a huge set Utility Functions that needs to be implemented before we proceed ahead with next set of rules. Once we are done with the entire set of utility functions implementing rules and adding tests would be an easy task. Understanding the Mathematica codes and analyzing its dependent functions and converting it into Python syntax is a major task.</p>
+<p>We started with implementation of only those functions which were necessary to support <strong>Algebraic rules\Linear Products</strong> but because they were dependent on the previous functions we had to start off from the very beginning of the <a href="http://www.apmaths.uwo.ca/~arich/IntegrationRules/PortableDocumentFiles/Integration%20utility%20functions.pdf">Pdf</a>. So far we have implemented more that 100 utility functions. Our priority is to implement all Utility functions capable to support Algebraic Rules as soon as possible.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/nesar2017.wordpress.com/133/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/nesar2017.wordpress.com/133/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=nesar2017.wordpress.com&#038;blog=126779945&#038;post=133&#038;subd=nesar2017&#038;ref=&#038;feed=1" width="1" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">June 20, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-5aa203d9 feed-" id="item-0cd2eb2c">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Szymon Mieszczak (szymag) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://szymag.github.io/post/week-3/">22:41, Tuesday, 20 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://szymag.github.io/post/week-3/">Szymon Mieszczak (szymag): Week 3</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Szymon Mieszczak (szymag) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://szymag.github.io/post/week-3/">22:41, Tuesday, 20 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://szymag.github.io/post/week-3/">Week 3</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>In the last week I focused mainly on finishing tasks related Lame coefficients. During this time two PR were merged. In my previous post I described how we can calculate gradient, curl and divergence in different type of coordinate system, so now I described only new thing which was already add to mainline. We decided to remove dependency between Del class and CoordSysCartesian. From mathematical point of view it makes sense, because nabla operator is just an entity which acts on vector or scalar and his behavior is independent from coordinate system.
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2707,134 +2570,134 @@ True
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
+</tr>
+<tr class="feedsrow">
+<td>https://gxyd.github.io/atom.xml</td>
+<td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
-<td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>20:00, Monday, 24 July</td>
-<td>20:15, Monday, 24 July</td>
+<td>20:20, Monday, 24 July</td>
+<td>20:35, Monday, 24 July</td>
 </tr>
 </table>
 
