@@ -89,6 +89,77 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">July 24, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-29fba86e feed-" id="item-71e6011e">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/valglad.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Valeriia Gladkova (valglad) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://valglad.github.io/2017/07/24/delays/">00:00, Monday, 24 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://valglad.github.io/2017/07/24/delays/">Valeriia Gladkova (valglad): Delays</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/valglad.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Valeriia Gladkova (valglad) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://valglad.github.io/2017/07/24/delays/">00:00, Monday, 24 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://valglad.github.io/2017/07/24/delays/">Delays</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>The rewriting PR hasn&#8217;t been merged yet. At the beginning of last week, there was still some work to be done on it. For example, the <code class="highlighter-rouge">RewritingSystem</code>&#8217;s <code class="highlighter-rouge">check_confluence()</code> method (which, unsurprisingly, checks if the system is confluent) would add new rewriting rules while it runs - definitely not something it should do. Another addition, suggested by my mentor, was the attribute <code class="highlighter-rouge">_max_exceeded</code>: this is <code class="highlighter-rouge">True</code> when the Knuth-Bendix completion method has already been attempted but the maximum number of rules allowed to be added to the system was exceeded. Trying again would be a waste of time. However, if the maximum number of rules is increased, <code class="highlighter-rouge">_max_exceeded</code> is reset so that the completion method could be run again.</p>
+
+<p>Then I worked on the multi-step version of the presentation algorithm (which was possible because the homomorphism <a href="https://github.com/sympy/sympy/pull/12827">PR</a> was merged by then). Once I wrote it up, made sure it worked and started testing against the single step one, I noticed that the multi-step version ran several times as fast for several of the groups I was using and yet was suddenly much slower for a group of higher order. This was unexpected and I spent a while trying to work out why that would be. The reason was this: the function uses <code class="highlighter-rouge">coset_enumeration_c</code> for filling in a certain coset table. <code class="highlighter-rouge">coset_enumeration_c</code> stores the deductions it makes while filling in so that it can process them later. However, if there are too many deductions, it&#8217;s not practical to go through all of them so the algorithm uses the method <code class="highlighter-rouge">look_ahead</code> that allows it to continue without looking at the deduction stack which is emptied. The critical size of the deduction stack was 500 by default. For large groups, the single step version would greatly exceed that most of the time so <code class="highlighter-rouge">look_ahead</code> was run instead, speeding it up considerably, while the multi step version would be working with a smaller coset table and the number of deductions would be large but not over 500 which made it slow. So it looked like processing close to 500 deductions was inefficient and I reduced the number to 100 to see what happens. What happened was that both version got faster but now the multi-step version was consistently faster than the single-step one. I ran the coset table tests and they seemed to be fine too so the reduction in the maximum number of deductions didn&#8217;t seem to affect anything negatively. I pushed the multi step version into the presentation <a href="https://github.com/sympy/sympy/pull/12986">PR</a> but that hasn&#8217;t started being reviewed because another problem came up.</p>
+
+<p>The homomorphisms tests from the merged PR would occasionally time out so that needed investigating. Turned out it was because the <code class="highlighter-rouge">__contains__</code> method of the <code class="highlighter-rouge">FpSubgroup</code> class couldn&#8217;t handle group elements in the conjugate form, i.e. something of the form <code class="highlighter-rouge">r**-1*w*r</code> for some words <code class="highlighter-rouge">r, w</code>. It would get into an infinite loop and the tests would only occasionally time out because the method is used during kernel computation which is randomised. So a couple of days was spent thinking about what would be the best way to eliminate the problem, whether this sort of problem would only be caused by conjugate elements and finally expanding the code accordingly. You can follow what I did in this <a href="https://github.com/sympy/sympy/pull/13028">PR</a>. Though this is still being discussed and it&#8217;s unclear whether some other solution would be called for.</p>
+
+<p>So because of all this, I couldn&#8217;t work on the other homomorphism cases (though I did sketch some things that I can use once the dependent PRs are merged). If the <code class="highlighter-rouge">FpSubgroup</code> issue is resolved soon and the rewriting PR is merged, I will implement homomorphisms to <code class="highlighter-rouge">FpGroup</code>s. The presentation PR will probably need more reviewing and I can&#8217;t implement <code class="highlighter-rouge">PermutationGroup</code> domains without it. I&#8217;m considering looking into an alternative method of doing homomorphisms specifically for the <code class="highlighter-rouge">PermutationGroup</code> to <code class="highlighter-rouge">PermutationGroup</code> case because I&#8217;ve seen a section on it in the Handbook. Or I could start working on Sylow subgroups which is another things I was thinking of doing. These things shouldn&#8217;t depend on any of the unmerged PRs so it would be a good use of time.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 23, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -2609,77 +2680,6 @@ True
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">June 24, 2017</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-3b0ec3aa feed-" id="item-52f9635d">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/arifahmed.jpeg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://arif7blog.wordpress.com/2017/06/24/week-4-reportjune-18-24-dynamic-programming/">22:33, Saturday, 24 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/06/24/week-4-reportjune-18-24-dynamic-programming/">Arif Ahmed (ArifAhmed1995): Week 4 Report(June 18 &#8211; 24) : Dynamic Programming</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/arifahmed.jpeg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://arif7blog.wordpress.com/2017/06/24/week-4-reportjune-18-24-dynamic-programming/">22:33, Saturday, 24 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/06/24/week-4-reportjune-18-24-dynamic-programming/">Week 4 Report(June 18 &#8211; 24) : Dynamic Programming</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Note : If you&#8217;re viewing this on Planet SymPy and Latex looks weird, go to the <a href="https://arif7blog.wordpress.com/" rel="noopener" target="_blank">WordPress site</a> instead.</p>
-<p>Prof. Sukumar came up with the following optimization idea :<br />
-Consider equation 10 in <a href="http://dilbert.engr.ucdavis.edu/~suku/quadrature/cls-integration.pdf" rel="noopener" target="_blank">Chin et. al .</a> The integral of the inner product of the gradient of <img alt="f(x) " class="latex" src="https://s0.wp.com/latex.php?latex=f%28x%29+&#038;bg=ffffff&#038;fg=444444&#038;s=0" title="f(x) " /> and <img alt="{x}_{0} " class="latex" src="https://s0.wp.com/latex.php?latex=%7Bx%7D_%7B0%7D+&#038;bg=ffffff&#038;fg=444444&#038;s=0" title="{x}_{0} " /> need not be always re-calculated. This is because it might have been calculated before. Hence, the given polynomial can be broken up into a list of monomials with increasing degree. Over a certain facet, the integrals of the list of monomials can be calculated and stored for later use. Before calculation of a certain monomial we need to see if it&#8217;s gradient has&#160; already calculated and hence available for re-use.<br />
-Then again, there&#8217;s another way to implement this idea of re-use. Given the degree of the input polynomial we know all the types of monomials which can possibly exist. For example, for max_degree = 2 the monomials are : <img alt="[1, x, y, x^2, xy, y^2]" class="latex" src="https://s0.wp.com/latex.php?latex=%5B1%2C+x%2C+y%2C+x%5E2%2C+xy%2C+y%5E2%5D&#038;bg=ffffff&#038;fg=444444&#038;s=1" title="[1, x, y, x^2, xy, y^2]" />.<br />
-All the monomial integrals over all facets can be calculated and stored in a list of lists. This would be very useful for one specific use-case, that is when there are many different polynomials with max degree less than or equal to a certain global maximum to be integrated over a given polytope.</p>
-<p>I&#8217;m still working on implementing the first one. That&#8217;s cause the worst case time(when no or very few dictionary terms are re-used) turns out to much more expensive than the straightforward method. Maybe computing the standard deviation among monomial degrees would be a good way to understand which technique to use. Here is an example to show what I mean. If we have a monomial list : <img alt="[x^3, y^3, 3x^2y, 3xy^2] " class="latex" src="https://s0.wp.com/latex.php?latex=%5Bx%5E3%2C+y%5E3%2C+3x%5E2y%2C+3xy%5E2%5D+&#038;bg=ffffff&#038;fg=444444&#038;s=0" title="[x^3, y^3, 3x^2y, 3xy^2] " /> , then the dynamic programming technique becomes useless here since gradient of any term will have degree 2 and not belong in the list. Now, the corresponding list of degrees is : <img alt="[3, 3, 3, 3] " class="latex" src="https://s0.wp.com/latex.php?latex=%5B3%2C+3%2C+3%2C+3%5D+&#038;bg=ffffff&#038;fg=444444&#038;s=0" title="[3, 3, 3, 3] " />, and standard deviation is zero. Hence the normal technique is applicable here.</p>
-<p>In reality, I&#8217;ll probably have to use another measure to make the judgement of dynamic vs. normal. Currently, I&#8217;m trying to fix a bug in the implementation of the first technique. After that, I&#8217;ll try out the second one.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/516/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/516/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&#038;blog=126429718&#038;post=516&#038;subd=arif7blog&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2707,134 +2707,134 @@ All the monomial integrals over all facets can be calculated and stored in a lis
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>16:20, Monday, 24 July</td>
-<td>16:35, Monday, 24 July</td>
+<td>16:40, Monday, 24 July</td>
+<td>16:55, Monday, 24 July</td>
 </tr>
 </table>
 
