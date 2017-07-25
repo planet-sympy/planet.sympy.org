@@ -7,6 +7,36 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/07/25/Trigonometric Solvers Part II</guid>
+      <author>Ranjith Kumar (ranjithkumar007)</author>
+      <title>Ranjith Kumar (ranjithkumar007): Trigonometric Solvers Part II</title>
+      <pubDate>Tue, 25 Jul 2017 00:00:00 GMT</pubDate>
+      <link>http://ranjithkumar007.github.io/2017/07/25/Trigonometric-Solvers-Part-II/</link>
+      <description>&lt;p&gt;This is the blog on progress for week-7 and week-8. It revolves around trigonometric solvers. As a side note, My progress rate has significantly dropped since the commencement of classes due to tight schedule and loaded assignments. I am working all out on weekends to compensate this time loss.&lt;/p&gt;
+
+&lt;p&gt;As I mentioned in my previous blog, I continued my work on solving simple trigonometric equations. As isuruf suggested, I breaked the PR &lt;a href="https://github.com/symengine/symengine/pull/1305"&gt;#1305&lt;/a&gt; into several small parts.&lt;/p&gt;
+
+&lt;p&gt;First one is on &lt;code class="highlighter-rouge"&gt;as_real_imag&lt;/code&gt; &lt;a href="https://github.com/symengine/symengine/pull/1310"&gt;#1310&lt;/a&gt;. Several Changes were made like adding support for TrigFunctions and HyperbolicFunctions.&lt;/p&gt;
+
+&lt;p&gt;Next PR is on &lt;code class="highlighter-rouge"&gt;rewrite_as_exp&lt;/code&gt; &lt;a href="https://github.com/symengine/symengine/pull/1309"&gt;#1309&lt;/a&gt;. For this, I Implemented a Base Transform Visitor as follows.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;class TransformVisitor : public BaseVisitor&amp;lt;TransformVisitor&amp;gt; 
+{}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;and &lt;code class="highlighter-rouge"&gt;rewrite_as_exp&lt;/code&gt; is implemented with a class overriding TransformVisitor&amp;#8217;s methods.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;class RewriteAsExp : public BaseVisitor&amp;lt;RewriteAsExp, TransformVisitor&amp;gt;
+{}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Additionally, going by srajan&amp;#8217;s suggestion, I changed introduced a new base class &lt;code class="highlighter-rouge"&gt;TrigBase&lt;/code&gt; for TrigFunctions and its inverses and similarly for HyperbolicFunctions.&lt;/p&gt;
+
+&lt;p&gt;Additionally, I made some fixes in &lt;code class="highlighter-rouge"&gt;ImageSet&lt;/code&gt; &lt;a href="https://github.com/symengine/symengine/pull/1314"&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Once, this PR gets in, I will push the remaining bits and pieces from #1305.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://valglad.github.io/2017/07/24/delays</guid>
       <author>Valeriia Gladkova (valglad)</author>
       <title>Valeriia Gladkova (valglad): Delays</title>
@@ -901,31 +931,6 @@ Out[4]: Integral(x + exp(x**2), x)
 &lt;ul&gt;
   &lt;li&gt;{1}. Simplification of real elementary functions, http://dl.acm.org/citation.cfm?id=74566&lt;/li&gt;
 &lt;/ul&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://valglad.github.io/2017/06/25/homomorphism</guid>
-      <author>Valeriia Gladkova (valglad)</author>
-      <title>Valeriia Gladkova (valglad): The homomorphism class</title>
-      <pubDate>Sun, 25 Jun 2017 00:00:00 GMT</pubDate>
-      <link>http://valglad.github.io/2017/06/25/homomorphism/</link>
-      <description>&lt;p&gt;At the beginning of the week, all of my previous PRs got merged. This is good. Also, the homomorphism class is now mostly written with the exception of the kernel computation. The kernel is the only tricky bit. I don&amp;#8217;t think there is any general method of computing it, but there is a way for finite groups. Suppose we have a homomorphism &lt;code class="highlighter-rouge"&gt;phi&lt;/code&gt; from a finite group &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt;. If &lt;code class="highlighter-rouge"&gt;g&lt;/code&gt; is an element of &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;phi.invert(h)&lt;/code&gt; returns an element of the preimage of &lt;code class="highlighter-rouge"&gt;h&lt;/code&gt; under &lt;code class="highlighter-rouge"&gt;phi&lt;/code&gt;, then &lt;code class="highlighter-rouge"&gt;g*phi.invert(phi(g))**-1&lt;/code&gt; is an element of the kernel (note that this is not necessarily the identity as the preimage of &lt;code class="highlighter-rouge"&gt;phi(g)&lt;/code&gt; can contain other elements beside &lt;code class="highlighter-rouge"&gt;g&lt;/code&gt;). With this in mind, we could start by defining &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt; to be the trivial subgroup of &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt;. If &lt;code class="highlighter-rouge"&gt;K.order()*phi.image().order() == G.order()&lt;/code&gt;, then we are done. If not, generate some random elements until &lt;code class="highlighter-rouge"&gt;g*phi.invert(phi(g))**-1&lt;/code&gt; is not the identity, and redefine &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt; to be the subgroup generated by &lt;code class="highlighter-rouge"&gt;g*phi.invert(phi(g))**-1&lt;/code&gt;. Continue adding generators like this until &lt;code class="highlighter-rouge"&gt;K.order()*phi.image().order() == G.order()&lt;/code&gt; or finite &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; this will always terminate (or rather almost always considering that the elements are generated randomly - though it would only not terminate if at least one of the elements of &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; is never generated which is practically impossible).&lt;/p&gt;
-
-&lt;p&gt;This is how I am going to implement it. I haven&amp;#8217;t already because I&amp;#8217;ve been thinking about some of the details of the implementation. One thing that could be problematic is multiple calls to &lt;code class="highlighter-rouge"&gt;reidemeister_presentation()&lt;/code&gt; to compute the presentation of &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt; at each step. As I&amp;#8217;ve discovered when I was implementing the search for finite index subgroups last week, this can be very inefficient if the index of &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt; is large (which it could well be for a small number of generators at the start). After giving it some thought, I realised that actually we could completely avoid finding the presentation because &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt;&amp;#8217;s coset table would be enough to calculate the order and check if an element belongs to it. Assuming &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; is finite, &lt;code class="highlighter-rouge"&gt;K.order()&lt;/code&gt; can be calculated as the order of &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; divided by the length of the coset table so the knowledge of the generators is enough. And for membership testing, all that&amp;#8217;s necessary is to check if a given element stabilises &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt; with the respect to the action on the cosets described by the coset table. And that should be a huge improvement over the obvious calls to the &lt;code class="highlighter-rouge"&gt;subgroup()&lt;/code&gt; method.&lt;/p&gt;
-
-&lt;p&gt;Actually, &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s doesn&amp;#8217;t currently have a &lt;code class="highlighter-rouge"&gt;__contains__()&lt;/code&gt; method so one can&amp;#8217;t check if a word &lt;code class="highlighter-rouge"&gt;w&lt;/code&gt; is in a group &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; using &lt;code class="highlighter-rouge"&gt;w in G&lt;/code&gt;. This is easy to correct. What I was wondering was if we wanted to be able to check if words over &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; belong to a subgroup of &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; created with the &lt;code class="highlighter-rouge"&gt;subgroup()&lt;/code&gt; method - that wouldn&amp;#8217;t be possible directly because &lt;code class="highlighter-rouge"&gt;subgroup()&lt;/code&gt; returns a group on a different set of generators but it wouldn&amp;#8217;t be too unreasonable to have SymPy do this:&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; F, a, b = free_group('a, b')
-&amp;gt;&amp;gt;&amp;gt; G = FpGroup(F, [a**3, b**2, (a*b)**2])
-&amp;gt;&amp;gt;&amp;gt; K = G.subgroup([a])
-&amp;gt;&amp;gt;&amp;gt; a**2 in K
-True
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;I asked &lt;a href="https://github.com/jksuom"&gt;Kalevi&lt;/a&gt; about it earlier today and they said that it would be preferable to treat &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt; in this case as a different group that happens to be linked to &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; through an injective homomorphism (essentially the canonical inclusion map). If we call this homomorphism &lt;code class="highlighter-rouge"&gt;phi&lt;/code&gt;, then the user can check if an element of &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; belongs to the subgroup represented by &lt;code class="highlighter-rouge"&gt;K&lt;/code&gt; like so: &lt;code class="highlighter-rouge"&gt;a**2 in phi.image()&lt;/code&gt;. Here &lt;code class="highlighter-rouge"&gt;phi.image()&lt;/code&gt; wouldn&amp;#8217;t be an instance of &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; but rather of a new class &lt;code class="highlighter-rouge"&gt;FpSubgroup&lt;/code&gt; that I wrote today - it is a way to represent a subgroup of a group while keeping the same generators as in the original group. It&amp;#8217;s only attributes are &lt;code class="highlighter-rouge"&gt;generators&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;parent&lt;/code&gt; (the original group) and &lt;code class="highlighter-rouge"&gt;C&lt;/code&gt; (the coset table of the original group by the subgroup) and it has a &lt;code class="highlighter-rouge"&gt;__contains__&lt;/code&gt;, an &lt;code class="highlighter-rouge"&gt;order()&lt;/code&gt; and a &lt;code class="highlighter-rouge"&gt;to_FpGroup()&lt;/code&gt; methods (the names are self-explanatory). For finite parent groups, the order is calculated as I described above for the kernel and for the infinite ones &lt;code class="highlighter-rouge"&gt;redeimeister_presentation()&lt;/code&gt; has to be called. The injective homomorphism from an instance of &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; returned by &lt;code class="highlighter-rouge"&gt;subgroup()&lt;/code&gt; would need to be worked out during the running of &lt;code class="highlighter-rouge"&gt;reidemeister_presentation()&lt;/code&gt; when the schreier generators are defined - this is still to be done.&lt;/p&gt;
-
-&lt;p&gt;Another thing I implemented this week was an improved method for generating random elements of finitely presented groups. However, when I tried it out to see how random the elements looked, I got huge words even for small groups so I didn&amp;#8217;t send a PR with it yet. Once I implement rewriting systems, these words could be reduced to much shorter ones. Speaking of rewriting systems, I think it could be good if the rewriting was applied automatically much like &lt;code class="highlighter-rouge"&gt;x*x**-1&lt;/code&gt; is removed for &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt;s. Though I suppose this could be too inefficient some times - this would need testing. This is what I&amp;#8217;ll be working on this week.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
