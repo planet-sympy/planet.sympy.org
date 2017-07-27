@@ -78,20 +78,6 @@ My current task is to use already added methods in CoordSys3D constructor.</desc
 &lt;p&gt;Once, this PR gets in, I will push the remaining bits and pieces from #1305.&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://valglad.github.io/2017/07/24/delays</guid>
-      <author>Valeriia Gladkova (valglad)</author>
-      <title>Valeriia Gladkova (valglad): Delays</title>
-      <pubDate>Mon, 24 Jul 2017 00:00:00 GMT</pubDate>
-      <link>http://valglad.github.io/2017/07/24/delays/</link>
-      <description>&lt;p&gt;The rewriting PR hasn&amp;#8217;t been merged yet. At the beginning of last week, there was still some work to be done on it. For example, the &lt;code class="highlighter-rouge"&gt;RewritingSystem&lt;/code&gt;&amp;#8217;s &lt;code class="highlighter-rouge"&gt;check_confluence()&lt;/code&gt; method (which, unsurprisingly, checks if the system is confluent) would add new rewriting rules while it runs - definitely not something it should do. Another addition, suggested by my mentor, was the attribute &lt;code class="highlighter-rouge"&gt;_max_exceeded&lt;/code&gt;: this is &lt;code class="highlighter-rouge"&gt;True&lt;/code&gt; when the Knuth-Bendix completion method has already been attempted but the maximum number of rules allowed to be added to the system was exceeded. Trying again would be a waste of time. However, if the maximum number of rules is increased, &lt;code class="highlighter-rouge"&gt;_max_exceeded&lt;/code&gt; is reset so that the completion method could be run again.&lt;/p&gt;
-
-&lt;p&gt;Then I worked on the multi-step version of the presentation algorithm (which was possible because the homomorphism &lt;a href="https://github.com/sympy/sympy/pull/12827"&gt;PR&lt;/a&gt; was merged by then). Once I wrote it up, made sure it worked and started testing against the single step one, I noticed that the multi-step version ran several times as fast for several of the groups I was using and yet was suddenly much slower for a group of higher order. This was unexpected and I spent a while trying to work out why that would be. The reason was this: the function uses &lt;code class="highlighter-rouge"&gt;coset_enumeration_c&lt;/code&gt; for filling in a certain coset table. &lt;code class="highlighter-rouge"&gt;coset_enumeration_c&lt;/code&gt; stores the deductions it makes while filling in so that it can process them later. However, if there are too many deductions, it&amp;#8217;s not practical to go through all of them so the algorithm uses the method &lt;code class="highlighter-rouge"&gt;look_ahead&lt;/code&gt; that allows it to continue without looking at the deduction stack which is emptied. The critical size of the deduction stack was 500 by default. For large groups, the single step version would greatly exceed that most of the time so &lt;code class="highlighter-rouge"&gt;look_ahead&lt;/code&gt; was run instead, speeding it up considerably, while the multi step version would be working with a smaller coset table and the number of deductions would be large but not over 500 which made it slow. So it looked like processing close to 500 deductions was inefficient and I reduced the number to 100 to see what happens. What happened was that both version got faster but now the multi-step version was consistently faster than the single-step one. I ran the coset table tests and they seemed to be fine too so the reduction in the maximum number of deductions didn&amp;#8217;t seem to affect anything negatively. I pushed the multi step version into the presentation &lt;a href="https://github.com/sympy/sympy/pull/12986"&gt;PR&lt;/a&gt; but that hasn&amp;#8217;t started being reviewed because another problem came up.&lt;/p&gt;
-
-&lt;p&gt;The homomorphisms tests from the merged PR would occasionally time out so that needed investigating. Turned out it was because the &lt;code class="highlighter-rouge"&gt;__contains__&lt;/code&gt; method of the &lt;code class="highlighter-rouge"&gt;FpSubgroup&lt;/code&gt; class couldn&amp;#8217;t handle group elements in the conjugate form, i.e. something of the form &lt;code class="highlighter-rouge"&gt;r**-1*w*r&lt;/code&gt; for some words &lt;code class="highlighter-rouge"&gt;r, w&lt;/code&gt;. It would get into an infinite loop and the tests would only occasionally time out because the method is used during kernel computation which is randomised. So a couple of days was spent thinking about what would be the best way to eliminate the problem, whether this sort of problem would only be caused by conjugate elements and finally expanding the code accordingly. You can follow what I did in this &lt;a href="https://github.com/sympy/sympy/pull/13028"&gt;PR&lt;/a&gt;. Though this is still being discussed and it&amp;#8217;s unclear whether some other solution would be called for.&lt;/p&gt;
-
-&lt;p&gt;So because of all this, I couldn&amp;#8217;t work on the other homomorphism cases (though I did sketch some things that I can use once the dependent PRs are merged). If the &lt;code class="highlighter-rouge"&gt;FpSubgroup&lt;/code&gt; issue is resolved soon and the rewriting PR is merged, I will implement homomorphisms to &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s. The presentation PR will probably need more reviewing and I can&amp;#8217;t implement &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; domains without it. I&amp;#8217;m considering looking into an alternative method of doing homomorphisms specifically for the &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; case because I&amp;#8217;ve seen a section on it in the Handbook. Or I could start working on Sylow subgroups which is another things I was thinking of doing. These things shouldn&amp;#8217;t depend on any of the unmerged PRs so it would be a good use of time.&lt;/p&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/07/23/GSoC17-Week7-Report</guid>
       <author>Arihant Parsoya (parsoyaarihant)</author>
       <title>Arihant Parsoya (parsoyaarihant): GSoC17 Week 7 Report</title>
@@ -328,18 +314,6 @@ So, from the discussion in pull request &lt;a href="https://github.com/sympy/sym
 &lt;p&gt;3. Christopher also suggested that we add a property called footprint_area, which would refer to area that a polygon covers(i.e. the hull of the polygon) and another property called hull which would refer to that very path. I was initially confusing this area with the area that depends on direction. Now I see that this footprint area isn&amp;#8217;t the one normally referred to when talking about the area of a polygon and it&amp;#8217;s actually the other one.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/677/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/677/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=677&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://valglad.github.io/2017/07/17/presentation</guid>
-      <author>Valeriia Gladkova (valglad)</author>
-      <title>Valeriia Gladkova (valglad): Presentations of Permutation Groups</title>
-      <pubDate>Mon, 17 Jul 2017 00:00:00 GMT</pubDate>
-      <link>http://valglad.github.io/2017/07/17/presentation/</link>
-      <description>&lt;p&gt;The work on finding finite presentations of permutation groups was somewhat delayed last week because I&amp;#8217;ve come across a bug in the &lt;code class="highlighter-rouge"&gt;reidemester_presentation&lt;/code&gt; code while testing the one step version of the presetation algorithm (which is essentially finished). Turned out it was caused by an unnecessary cyclic reduction on one line in the main elimination technique. See &lt;a href="https://github.com/sympy/sympy/pull/12973"&gt;PR&lt;/a&gt; for the explanation.&lt;/p&gt;
-
-&lt;p&gt;Another delay was because I realised that for the multi-step version, it would be useful to have the homomorphism &lt;a href="https://github.com/sympy/sympy/pull/12827"&gt;PR&lt;/a&gt; merged. Mostly this is because of the &lt;code class="highlighter-rouge"&gt;generator_product&lt;/code&gt; method from the &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; class - this takes an arbitrary permutation in the group and returns a list of the strong generators such that the product of the elements of the list is equal to this permutation. But the homomorphism functionality that&amp;#8217;s already there (the case of the homomorphism from an &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; to a &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;) would be helpful too. So I switched by attention to getting that PR ready for merging.&lt;/p&gt;
-
-&lt;p&gt;So this week I&amp;#8217;ll try to add the multistep version and will also start implementing homomorphisms from &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;s and to &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s, as outlined in the plan. Also, at some point when the rewriting PR is merged, I could try out the potentially improved random element generator for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s that I sketched a couple of weeks ago. This is not officially part of the plan and not in any way urgent, but could probably give better random elements which would be useful for the &lt;code class="highlighter-rouge"&gt;order()&lt;/code&gt; method and the kernel calculation for homomorphisms. Though I might not actually get around to it this week.&lt;/p&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/07/16/GSoC17-Week6-Report</guid>
       <author>Arihant Parsoya (parsoyaarihant)</author>
       <title>Arihant Parsoya (parsoyaarihant): GSoC17 Week 6 Report</title>
@@ -470,29 +444,6 @@ You can track my progress on this at &lt;a href="https://github.com/ranjithkumar
 The last issue with the 2D case was the case of implicit intersecting polygons not being handled properly.&lt;br /&gt;
 So, I submitted another pull request to resolve that matter. Of course, it will probably require a considerable number of changes which reviewers will advise. This is the link to it &amp;#8211;&amp;gt; &lt;span style="color: #00ff00;"&gt;&lt;a href="https://github.com/sympy/sympy/pull/12931" rel="noopener" target="_blank"&gt;#12931&lt;/a&gt;&lt;/span&gt;.&lt;/p&gt;
 &lt;p&gt;Now,&amp;#160; I have to begin implementing the 3D case. When making the proposal I thought of writing an entire 3-Polytope module first, but now that would seem like overkill and it isn&amp;#8217;t a simple task to do so. Of course, if such a need arises then I definitely will get down to the task and write one on similar lines as the Polygon module. Firstly, I&amp;#8217;ll have to think about the input API for 3-Polytopes. Once I have some kind of idea, I&amp;#8217;ll ask Ondrej for advice.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/650/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/650/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=650&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://valglad.github.io/2017/07/10/rewriting</guid>
-      <author>Valeriia Gladkova (valglad)</author>
-      <title>Valeriia Gladkova (valglad): The Rewriting System class</title>
-      <pubDate>Mon, 10 Jul 2017 00:00:00 GMT</pubDate>
-      <link>http://valglad.github.io/2017/07/10/rewriting/</link>
-      <description>&lt;p&gt;I sent the &lt;a href="https://github.com/sympy/sympy/pull/12893"&gt;PR&lt;/a&gt; with the rewriting system implementation on Wednesday night, i.e. by Thursday as planned. It could have been earlier if I hadn&amp;#8217;t spent one day experimenting with making the elements of &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; different from the underlying &lt;code class="highlighter-rouge"&gt;FreeGroup&lt;/code&gt;. At the moment they are the same so that, for instance:&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; F, a, b = free_group('a, b')
-&amp;gt;&amp;gt;&amp;gt; G = FpGroup(F, [a**2, a*b*a**-1*b**-1])
-&amp;gt;&amp;gt;&amp;gt; a in F
-True
-&amp;gt;&amp;gt;&amp;gt; a in G
-True
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Theoretically, since &lt;code class="highlighter-rouge"&gt;F&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; are different groups (not even isomorphic), it would make sense for their elements to be represented by different objects, e.g. the generators for &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; could be &lt;code class="highlighter-rouge"&gt;a_1, b_1&lt;/code&gt; so that &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;F&lt;/code&gt; are connected by the injective homomorphism sending &lt;code class="highlighter-rouge"&gt;a_1&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;b_1&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;a&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;b&lt;/code&gt; respectively. Though, for convenience, it could be allowed to refer to the elements of an &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; by the names of the underlying free group elements (and performing the conversion to &lt;code class="highlighter-rouge"&gt;a_1&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;b_1&lt;/code&gt; backstage before passing them onto &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;&amp;#8217;s methods).&lt;/p&gt;
-
-&lt;p&gt;Now, if this were done, it would be possible to check for equality of two elements of &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; using the &lt;code class="highlighter-rouge"&gt;==&lt;/code&gt; syntax. E.g., if the generators of &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; were made distinct from &lt;code class="highlighter-rouge"&gt;a, b&lt;/code&gt; and called &lt;code class="highlighter-rouge"&gt;a_1, b_1&lt;/code&gt;, then we could have &lt;code class="highlighter-rouge"&gt;a_1*b_1 == b_1*a_1&lt;/code&gt; (while, of course, &lt;code class="highlighter-rouge"&gt;a*b == b*a&lt;/code&gt; is not true because &lt;code class="highlighter-rouge"&gt;a&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;b&lt;/code&gt; are the elements of a &lt;code class="highlighter-rouge"&gt;FreeGroup&lt;/code&gt;). The latter was the main motivation for trying this out but in the end, after additionally discussing things with my mentor, I left everything as it is and implemented a couple new &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; methods instead. So, for example, to check if &lt;code class="highlighter-rouge"&gt;a*b&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;b*a&lt;/code&gt; are equal in &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt;, one would call &lt;code class="highlighter-rouge"&gt;G.equals(a*b, b*a)&lt;/code&gt;. The PR has more details.&lt;/p&gt;
-
-&lt;p&gt;At the moment I&amp;#8217;m in the middle of writing the function for finding finite presentations of permutation groups. I&amp;#8217;m slightly modifying the coset enumeration code to allow it to return an incomplete &lt;code class="highlighter-rouge"&gt;CosetTable&lt;/code&gt; (instead of raising a &lt;code class="highlighter-rouge"&gt;ValueError&lt;/code&gt; if, say, the maximum number of cosets is exceeded) and to start running with a partially filled table (which could be passed as a keyword argument) rather than with a new, empty instance. This is necessary as finding the presentation requires setting some of the coset table entries manually and adding relators to the future presentation while examining the undefined table entries, after which coset enumeration could be used to make more deductions. Messing with coset enumeration is the only complicated part (as far as I can see): the rest is pretty much sorted by now. I suppose, the only other thing is deciding when to find the presentation in one step and when to use the multi-step version (finding the presentation of a subgroup first and then the whole presentation based on that). The latter can be more efficient for larger groups. But I could think about that later, maybe run some tests, once the coset enumeration is set up properly.&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/07/09/GSoC17-Week5-Report</guid>
@@ -722,30 +673,6 @@ Short story of how this is implemented :&lt;/p&gt;
 &lt;p&gt;More on Trigonometric Solvers next time !!&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">http://valglad.github.io/2017/07/02/plan2</guid>
-      <author>Valeriia Gladkova (valglad)</author>
-      <title>Valeriia Gladkova (valglad): The Plan (Part II)</title>
-      <pubDate>Sun, 02 Jul 2017 00:00:00 GMT</pubDate>
-      <link>http://valglad.github.io/2017/07/02/plan2/</link>
-      <description>&lt;p&gt;At the beginning of this week I finished writing the first draft of the homomorphism class, at least as much of it as is possible without the rewriting systems for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s. Homomorphisms from &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s to &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;s are fully implemented though I&amp;#8217;m sure corrections will be made as the &lt;a href="https://github.com/sympy/sympy/pull/12827"&gt;PR&lt;/a&gt; is reviewed. I mentioned that I wasn&amp;#8217;t planning on sending the PR until after the rewriting systems but there is quite a bit there and a lot of it can be reviewed (and even merged) now.&lt;/p&gt;
-
-&lt;p&gt;It took a bit longer than I expected because the rewriting for permutation groups wasn&amp;#8217;t quite what was necessary for homomorphisms. I knew that there was a function returning the unique normal form of a permutation in the group (the &lt;code class="highlighter-rouge"&gt;coset_factor()&lt;/code&gt; method) and had assumed that that would be enough but the normal form wasn&amp;#8217;t in terms of the generators, nor was there an easy way to rewrite it in terms of the generators. So I had to modify the &lt;code class="highlighter-rouge"&gt;schreier_sims()&lt;/code&gt; method that finds the strong generating set and the elements that make up the normal form returned by &lt;code class="highlighter-rouge"&gt;coset_factor()&lt;/code&gt; to keep track of which generators in what order are multiplied to obtain them. Then I wrote a method that would write any permutation in the group as a product of the strong generators and, since I had the information about the make-up of the strong generators, this could easily be rewritten in terms of the original generators. Doing this was a bit fiddly and took a while. Though I suppose it could be counted as part of the work on rewriting systems.&lt;/p&gt;
-
-&lt;p&gt;The rewriting systems for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s are coming along. At the moment, it is a new class &lt;code class="highlighter-rouge"&gt;RewritingSystem&lt;/code&gt; which &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s will probably have an attribute for. I&amp;#8217;ve almost finished implementing the Knuth-Bendix completion algorithm and that was most of the work. Though there is also the matter of reduction. At the moment I&amp;#8217;m using the &lt;code class="highlighter-rouge"&gt;eliminate_words()&lt;/code&gt; method from the &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt; class - it takes a dictionary of substitutions (in this case a dictionary of reduction rules) and substitutes all of them into a given word, if possible. But that isn&amp;#8217;t very efficient for long words and large reduction dictionaries since &lt;code class="highlighter-rouge"&gt;eliminate_words()&lt;/code&gt; will scan the word from the start every time it tries to perform a new substitution. The approach I&amp;#8217;ve seen described in papers on rewriting systems is to construct a finite automaton to perform the reduction and modify it every time a new rule is added. This would somewhat increase the time taken to initiate the system and to make it confluent but would also make word reductions much quicker. However, it could also take a while to actually implement. I&amp;#8217;m unsure if it&amp;#8217;s worth doing it now - perhaps, I could add it later, when the rest of my project is done.&lt;/p&gt;
-
-&lt;p&gt;Anyway, I was going to use this post to outline a schedule for this month&amp;#8217;s work, like I did in the first post. Looking back at the Timeline I sketched in my &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2017-Application-Valeriia-Gladkova:-Group-Theory"&gt;proposal&lt;/a&gt;, I seem to have given myself 2 weeks for implementing the rewriting systems. This estimate wasn&amp;#8217;t unreasonable, considering the unexpected matter of rewriting in permutation groups I had to deal with in the first half of the week and the reading I had to do to get a better idea of Knuth-Bendix. But if I don&amp;#8217;t implement finite automatons for reductions right now, I think I should be able to send the rewriting PR by Thursday (probably earlier). With this in mind, my plan for the month is roughly as follows.&lt;/p&gt;
-
-&lt;h3 id="the-plan-continued"&gt;The Plan (continued)&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;3 July - 6 July: finish the &lt;code class="highlighter-rouge"&gt;RewritingSystem&lt;/code&gt; class.&lt;/li&gt;
-  &lt;li&gt;6 July - 16 July: implement finite presentations for &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;s (this should be plenty of time considering that I made a start on this during the application period)&lt;/li&gt;
-  &lt;li&gt;17 July - 23 July: complete the homomorphism implementation to allow homomorphisms from &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;s and to &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s. Implement the permutation presentation for finite &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s.&lt;/li&gt;
-  &lt;li&gt;24 July - 30 July: Set up the use of &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; methods for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s via homomorphisms.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;So by the end of the month, the homomorphism functionality should be complete, so should be the switching between &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; presentations (where it is possible, i.e. finite &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s). Making &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; methods work for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s properly could take more time but if everything goes more or less according to plan, I should have most of August to try and implement Sylow subgroups for &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;s (there is a chapter on it in &amp;#8220;The Handbook of Computational Group Theory&amp;#8221;), look into the construction of finite automatons for word reduction or automatically grouping subwords of group words, like &lt;code class="highlighter-rouge"&gt;(a*b)**2&lt;/code&gt; instead of &lt;code class="highlighter-rouge"&gt;a*b*a*b&lt;/code&gt;, or anything else project-related really. That&amp;#8217;s the optimistic scenario of course, provided no sudden terrible complications arise which can never be guaranteed.&lt;/p&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/07/01/GSoC17-Week4-Report</guid>
       <author>Arihant Parsoya (parsoyaarihant)</author>
       <title>Arihant Parsoya (parsoyaarihant): GSoC17 Week 4 Report</title>
@@ -780,6 +707,212 @@ FreeQ[{a,b,c,d,n},x] &amp;amp;&amp;amp; PolynomialQ[u,x] &amp;amp;&amp;amp; Memb
 &lt;p&gt;Francesco suggested to generate test suit for utility functions by exporting I/O of functions in Mathematica. I am trying it for functions which are very large such as &lt;code class="highlighter-rouge"&gt;ExpandIntegrand&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;FixSimplify&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;I and Abdullah are about to complete 50% of utility functions. I will continue working on utility functions and try my best to complete it by next weekend.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://shikharj.github.io//2017/06/27/GSoC-Progress-Week-4</guid>
+      <author>Shikhar Jaiswal (ShikharJ)</author>
+      <title>Shikhar Jaiswal (ShikharJ): GSoC Progress - Week 4</title>
+      <pubDate>Tue, 27 Jun 2017 00:00:00 GMT</pubDate>
+      <link>https://shikharj.github.io//2017/06/27/GSoC-Progress-Week-4/</link>
+      <description>&lt;p&gt;Hello, this post contains the fourth report of my GSoC progress. Though I had planned on writing a new blog post every Monday, seems like I&amp;#8217;m a bit late on that account.&lt;/p&gt;
+
+&lt;h2 id="report"&gt;Report&lt;/h2&gt;
+
+&lt;h3 id="symengine"&gt;SymEngine&lt;/h3&gt;
+&lt;p&gt;Last week I had mentioned that I&amp;#8217;d be finishing up my work on &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; set, however, after a talk with Isuru, it was decided to schedule it for the later part of the timeline. Instead I finished up on simplification of &lt;code class="highlighter-rouge"&gt;Add&lt;/code&gt; objects in &lt;code class="highlighter-rouge"&gt;Sign&lt;/code&gt; class through the PR &lt;a href="https://github.com/symengine/symengine/pull/1297"&gt;#1297&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Also, Isuru suggested implementing parser support for &lt;code class="highlighter-rouge"&gt;Relationals&lt;/code&gt;, which was required for &lt;code class="highlighter-rouge"&gt;PyDy&lt;/code&gt;. The work is currently in progress, through PR &lt;a href="https://github.com/symengine/symengine/pull/1298"&gt;#1298&lt;/a&gt;, after we hit an issue with dual-character operators (&lt;code class="highlighter-rouge"&gt;&amp;lt;=&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;&amp;gt;=&lt;/code&gt;), but we&amp;#8217;re working on it.&lt;/p&gt;
+
+&lt;p&gt;I sent in another PR &lt;a href="https://github.com/symengine/symengine/pull/1302"&gt;#1302&lt;/a&gt; removing some redundant includes.&lt;/p&gt;
+
+&lt;p&gt;From now my work with &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt; will probably be a little slower than usual, as I&amp;#8217;ve started off wrapping classes in &lt;code class="highlighter-rouge"&gt;SymEngine.py&lt;/code&gt;, which is supposed to continue for some time from now.&lt;/p&gt;
+
+&lt;h3 id="symenginepy"&gt;SymEngine.py&lt;/h3&gt;
+&lt;p&gt;I pushed in &lt;a href="https://github.com/symengine/symengine.py/pull/162"&gt;#162&lt;/a&gt; wrapping off a huge portion of the &lt;code class="highlighter-rouge"&gt;functions&lt;/code&gt; module in &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;I&amp;#8217;ll be working on wrapping &lt;code class="highlighter-rouge"&gt;Logic&lt;/code&gt; classes and functions in the coming week, as well as finishing off my work on the parser support in &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;See you again!&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Vale&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://bjodah.github.io/blog/posts/gsoc-week4.html</guid>
+      <author>Bj&#xF6;rn Dahlgren (bjodah)</author>
+      <title>Bj&#xF6;rn Dahlgren (bjodah): Status update week 4 GSoC</title>
+      <pubDate>Mon, 26 Jun 2017 19:39:00 GMT</pubDate>
+      <link>http://bjodah.github.io/blog/posts/gsoc-week4.html</link>
+      <description>&lt;div&gt;&lt;div class="section" id="continued-work-on-tutorial-material"&gt;
+&lt;h2&gt;Continued work on tutorial material&lt;/h2&gt;
+&lt;p&gt;During the past week I got &lt;a class="reference external" href="https://mybinder.org"&gt;binder&lt;/a&gt; to work with
+our tutorial material. Using &lt;tt class="docutils literal"&gt;environment.yml&lt;/tt&gt; did require that we had
+a conda package available. So I set up our instance of &lt;a class="reference external" href="https://drone.io"&gt;Drone IO&lt;/a&gt; to push to the &lt;tt class="docutils literal"&gt;sympy&lt;/tt&gt; conda channel. The new
+base dockerimage used in the beta version of binder (v2) does not
+contain gcc by default. This prompted me to add gcc to our
+&lt;tt class="docutils literal"&gt;environment.yml&lt;/tt&gt;, unfortunately this breaks the build process:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+Attempting to roll back.
+LinkError: post-link script failed for package defaults::gcc-4.8.5-7
+running your command again with `-v` will provide additional information
+location of failed script: /opt/conda/bin/.gcc-post-link.sh
+==&amp;gt; script messages &amp;lt;==
+&amp;lt;None&amp;gt;
+&lt;/pre&gt;
+&lt;p&gt;I've reached out on their gitter channel, we'll see if anyone knows
+what's up. If we cannot work around this we will have two options:&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;Accept that the binder version cannot compile any generated code&lt;/li&gt;
+&lt;li&gt;Try to use binder with a Dockerimage based on the one used for CI
+tests (with the difference that it will include a prebuilt conda
+environment from &lt;tt class="docutils literal"&gt;environment.yml&lt;/tt&gt;)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I hope that the second approach should work unless we hit a image size
+limitation (and perhaps we need a special base image, I haven't looked
+into those details yet).&lt;/p&gt;
+&lt;p&gt;Jason has been producing some really high quality tutorial notebooks
+and left lots of constructive feedback on my initial work. Based on
+his feedback I've started reworking the code-generation examples not
+to use classes as extensively. I've also added some introductory
+notebooks: numerical integration of ODEs in general &amp;amp; intro to SymPy's
+cryptically named &lt;tt class="docutils literal"&gt;lambdify&lt;/tt&gt; (the latter notebook is still to be
+merged into master).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="work-on-sympy-for-version-1-1"&gt;
+&lt;h2&gt;Work on SymPy for version 1.1&lt;/h2&gt;
+&lt;p&gt;After last weeks mentor meeting we decided that we would try to
+&lt;a class="reference external" href="https://github.com/sympy/sympy/pull/12805"&gt;revert&lt;/a&gt; a change to
+&lt;tt class="docutils literal"&gt;sympy.cse&lt;/tt&gt; (a function which performs common subexpression
+elimination). I did spend some time profiling the new implementation.
+However, I was not able to find any obvious bottle-necks, and given
+that it is not the main scope of my project I did not pursue this any
+further at the moment.&lt;/p&gt;
+&lt;p&gt;I also &lt;a class="reference external" href="https://github.com/sympy/sympy/pull/12808"&gt;just started&lt;/a&gt;
+looking at introducing a Python code printer. There is a
+&lt;tt class="docutils literal"&gt;PythonPrinter&lt;/tt&gt; in SymPy right now, although it assumes that
+&lt;tt class="docutils literal"&gt;SymPy&lt;/tt&gt; is available. The plan right now is to rename to old
+printer to &lt;tt class="docutils literal"&gt;SymPyCodePrinter&lt;/tt&gt; and have the new printer primarily print
+expressions, which is what the &lt;tt class="docutils literal"&gt;CodePrinter&lt;/tt&gt; class does best, even
+though it can be "coerced" into emitting statements.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="plans-for-the-upcoming-week"&gt;
+&lt;h2&gt;Plans for the upcoming week&lt;/h2&gt;
+&lt;p&gt;As the conference approaches the work intensifies both with respect to
+finishing up the tutorial material and fixing blocking issues for a
+SymPy 1.1 release. Working on the tutorial material helps finding
+things to improve code-generation wise (just today I opened a &lt;a class="reference external" href="https://github.com/sympy/sympy/issues/12810"&gt;minor
+issue&lt;/a&gt; just to realize
+that my &lt;a class="reference external" href="https://github.com/sympy/sympy/pull/12693"&gt;"work-in-progress" pull-request&lt;/a&gt; from an earlier week
+(which I intend to get back working on next week too) actually fixes
+said issue.&lt;/p&gt;
+&lt;/div&gt;&lt;/div&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://gxyd.github.io/blogs/Gsoc2017-week-3</guid>
+      <author>Gaurav Dhingra (gxyd)</author>
+      <title>Gaurav Dhingra (gxyd): GSoC Week 3</title>
+      <pubDate>Sun, 25 Jun 2017 00:00:00 GMT</pubDate>
+      <link>https://gxyd.github.io/blogs/Gsoc2017-week-3/</link>
+      <description>
+
+
+
+&lt;blockquote&gt;
+  &lt;h2 id="rischs-structure-theorems"&gt;Risch&amp;#8217;s structure theorem&amp;#8217;s&lt;/h2&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;For the next couple of weeks we will be moving to understand and implement the Risch&amp;#8217;s structure theorem and applications that we will make use of in gsoc project. One of the application is that of &amp;#8220;Simplification of real elementary functions&amp;#8221;, a paper by Manuel Bronstein (in 1989)&lt;sup&gt;[1]&lt;/sup&gt;. This paper by Bronstein uses Risch&amp;#8217;s real structure theorem, the paper determines explicitly all algebraic relations among a set of real elementary functions.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;h3 id="simplification-of-real-elementary-functions"&gt;Simplification of Real Elementary Functions&lt;/h3&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Risch in 1979 gave a theorem and an algorithm that found explicitly all algebraic relations among a set of only &amp;#8217;s and &amp;#8217;s. And to apply this algorithm required to convert trigonometric functions to &amp;#8217;s and &amp;#8217;s.&lt;/p&gt;
+
+&lt;p&gt;Consider the integrand . For this first we make use of  form of , i.e . Substituting it in the original expression we get . Now using the exponential form of  we get .
+ And substituting  in place of  we get the final expression. , which is a complex algebraic function.&lt;/p&gt;
+
+&lt;p&gt;All of this could be avoided since the original function  is a real algebraic function. The part that could be a problem to see it is , which can be seen to satisfy the algebraic equation  using the formula for . Bronstein discusses the algorithm that wouldn&amp;#8217;t require the use of complex &amp;#8217;s and &amp;#8217;s.&lt;/p&gt;
+
+&lt;p&gt;A function  is called real elementary over a differential field , if for a differential extension  () of . If either  is algebraic over  or it is , , ,  of an element of  (consider this recursively).
+For example:  is real elementary over , so is  and .&lt;/p&gt;
+
+&lt;p&gt;Point to mention here is, we have to explicitly include , , since we don&amp;#8217;t want the function to be a complex function by re-writing  as ,  form( and  can be written in form of complex  and  respectively), and we can write other trigonometric functions have real elementary relations with  and . Alone  or alone  can&amp;#8217;t do the job.&lt;/p&gt;
+
+&lt;p&gt;This way we can form the definition of a &lt;em&gt;real-elementary extension of a differential field&lt;/em&gt; .&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;h3 id="functions-currently-using-approach-of-structure-theorems-in-sympy"&gt;Functions currently using approach of structure theorems in SymPy&lt;/h3&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Moving on, let us now look at the three functions in SymPy that use the structure theorem &amp;#8220;approach&amp;#8221;:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;is_log_deriv_k_t_radical(fa, fd, DE)&lt;/code&gt;: Checks if  is the logarithmic derivative of a &lt;code class="highlighter-rouge"&gt;k(t)-radical&lt;/code&gt;. Mathematically  where , . In naive terms if . Here &lt;code class="highlighter-rouge"&gt;k(t)-radical&lt;/code&gt; means &lt;code class="highlighter-rouge"&gt;n-th&lt;/code&gt; roots of element of . Used in process of calculating DifferentialExtension of an object where &amp;#8216;case&amp;#8217; is &amp;#8216;exp&amp;#8217;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;is_log_deriv_k_t_radical_in_field(fa, fd, DE)&lt;/code&gt;: Checks if  is the logarithmic derivative of a &lt;code class="highlighter-rouge"&gt;k(t)-radical&lt;/code&gt;. Mathematically  where , . It may seem like it is just the same as above with &lt;code class="highlighter-rouge"&gt;f&lt;/code&gt; given as input instead of having to calculate , but the &amp;#8220;in_field&amp;#8221; part in function name is important.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;is_deriv_k&lt;/code&gt;: Checks if  is the derivative of a k(t), i.e.  where .&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;blockquote&gt;
+  &lt;h3 id="what-have-i-done-this-week"&gt;What have I done this week?&lt;/h3&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Moving onto what I have been doing for the last few days (at a very slow pace) went through a debugger for understanding the working of &lt;code class="highlighter-rouge"&gt;DifferentialExtension(exp(x**2/2) + exp(x**2), x)&lt;/code&gt; in which &lt;code class="highlighter-rouge"&gt;integer_powers&lt;/code&gt; function is currently used to determine the relation  and , instead of  and , since we can&amp;#8217;t handle algebraic extensions currently (that will hopefully come later in my gsoc project). Similar example for  is there in the book , though the difference is it uses the &lt;code class="highlighter-rouge"&gt;is_deriv_k&lt;/code&gt; (for &lt;code class="highlighter-rouge"&gt;case == 'primitive'&lt;/code&gt;, we have &lt;code class="highlighter-rouge"&gt;is_log_deriv_k_t_radical&lt;/code&gt; for case == &amp;#8216;exp&amp;#8217;) to reach the conclusion that ,  and .&lt;/p&gt;
+
+&lt;p&gt;I still have to understand the structure theorem, for what they are? and how exactly they are used. According to Aaron, Kalevi, I should start reading the source of &lt;code class="highlighter-rouge"&gt;is_deriv_k&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;is_log_deriv_k_t_radical&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;parametric_log_deriv&lt;/code&gt; functions in prde.py file.&lt;/p&gt;
+
+&lt;p&gt;We worked on &lt;a href="https://github.com/sympy/sympy/pull/12743"&gt;#12743 Liouvillian case for Parametric Risch Diff Eq.&lt;/a&gt; this week, it handles liouvillian cancellation cases. It enables us to handle integrands like .&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; risch_integrate(log(x/exp(x) + 1), x)
+(x*log(x*exp(-x) + 1) + NonElementaryIntegral((x**2 - x)/(x + exp(x)), x))
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;earlier it used to raise error &lt;code class="highlighter-rouge"&gt;prde_cancel()&lt;/code&gt; not implemented. After testing it a bit I realised that part of returned answer could be further integrated instead of being returned as a &lt;code class="highlighter-rouge"&gt;NonElementaryIntegral&lt;/code&gt;. Consider this&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;In [4]: risch_integrate(x + exp(x**2), x)
+Out[4]: Integral(x + exp(x**2), x)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;as can be easily seen it can be further integrated. So Aaron opened the issue &lt;a href="https://github.com/sympy/sympy/issues/12779"&gt;#12779 Risch algorithm could split out more nonelementary cases&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Though I am not sure why Kalevi has still not merged the &lt;code class="highlighter-rouge"&gt;liouvillian&lt;/code&gt; PR (only a comment needs to be fixed &lt;code class="highlighter-rouge"&gt;n=2&lt;/code&gt; -&amp;gt; &lt;code class="highlighter-rouge"&gt;n=5&lt;/code&gt; in a comment), though that PR is not blocking me from doing further work.&lt;/p&gt;
+
+&lt;p&gt;Starting tomorrow (26th) we have the first evaluation of GSoC. Anyways I don&amp;#8217;t like the idea of having 3 evaluations.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;h3 id="todo-for-the-next-week"&gt;TODO for the next week:&lt;/h3&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Figuring out and implementing the structure theorems.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;h3 id="references"&gt;References&lt;/h3&gt;
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;{1}. Simplification of real elementary functions, http://dl.acm.org/citation.cfm?id=74566&lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=516</guid>
+      <author>Arif Ahmed (ArifAhmed1995)</author>
+      <title>Arif Ahmed (ArifAhmed1995): Week 4 Report(June 18 &#x2013; 24) : Dynamic Programming</title>
+      <pubDate>Sat, 24 Jun 2017 22:33:31 GMT</pubDate>
+      <link>https://arif7blog.wordpress.com/2017/06/24/week-4-reportjune-18-24-dynamic-programming/</link>
+      <description>&lt;p&gt;Note : If you&amp;#8217;re viewing this on Planet SymPy and Latex looks weird, go to the &lt;a href="https://arif7blog.wordpress.com/" rel="noopener" target="_blank"&gt;WordPress site&lt;/a&gt; instead.&lt;/p&gt;
+&lt;p&gt;Prof. Sukumar came up with the following optimization idea :&lt;br /&gt;
+Consider equation 10 in &lt;a href="http://dilbert.engr.ucdavis.edu/~suku/quadrature/cls-integration.pdf" rel="noopener" target="_blank"&gt;Chin et. al .&lt;/a&gt; The integral of the inner product of the gradient of &lt;img alt="f(x) " class="latex" src="https://s0.wp.com/latex.php?latex=f%28x%29+&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=0" title="f(x) " /&gt; and &lt;img alt="{x}_{0} " class="latex" src="https://s0.wp.com/latex.php?latex=%7Bx%7D_%7B0%7D+&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=0" title="{x}_{0} " /&gt; need not be always re-calculated. This is because it might have been calculated before. Hence, the given polynomial can be broken up into a list of monomials with increasing degree. Over a certain facet, the integrals of the list of monomials can be calculated and stored for later use. Before calculation of a certain monomial we need to see if it&amp;#8217;s gradient has&amp;#160; already calculated and hence available for re-use.&lt;br /&gt;
+Then again, there&amp;#8217;s another way to implement this idea of re-use. Given the degree of the input polynomial we know all the types of monomials which can possibly exist. For example, for max_degree = 2 the monomials are : &lt;img alt="[1, x, y, x^2, xy, y^2]" class="latex" src="https://s0.wp.com/latex.php?latex=%5B1%2C+x%2C+y%2C+x%5E2%2C+xy%2C+y%5E2%5D&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=1" title="[1, x, y, x^2, xy, y^2]" /&gt;.&lt;br /&gt;
+All the monomial integrals over all facets can be calculated and stored in a list of lists. This would be very useful for one specific use-case, that is when there are many different polynomials with max degree less than or equal to a certain global maximum to be integrated over a given polytope.&lt;/p&gt;
+&lt;p&gt;I&amp;#8217;m still working on implementing the first one. That&amp;#8217;s cause the worst case time(when no or very few dictionary terms are re-used) turns out to much more expensive than the straightforward method. Maybe computing the standard deviation among monomial degrees would be a good way to understand which technique to use. Here is an example to show what I mean. If we have a monomial list : &lt;img alt="[x^3, y^3, 3x^2y, 3xy^2] " class="latex" src="https://s0.wp.com/latex.php?latex=%5Bx%5E3%2C+y%5E3%2C+3x%5E2y%2C+3xy%5E2%5D+&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=0" title="[x^3, y^3, 3x^2y, 3xy^2] " /&gt; , then the dynamic programming technique becomes useless here since gradient of any term will have degree 2 and not belong in the list. Now, the corresponding list of degrees is : &lt;img alt="[3, 3, 3, 3] " class="latex" src="https://s0.wp.com/latex.php?latex=%5B3%2C+3%2C+3%2C+3%5D+&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=0" title="[3, 3, 3, 3] " /&gt;, and standard deviation is zero. Hence the normal technique is applicable here.&lt;/p&gt;
+&lt;p&gt;In reality, I&amp;#8217;ll probably have to use another measure to make the judgement of dynamic vs. normal. Currently, I&amp;#8217;m trying to fix a bug in the implementation of the first technique. After that, I&amp;#8217;ll try out the second one.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/516/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/516/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=516&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>
