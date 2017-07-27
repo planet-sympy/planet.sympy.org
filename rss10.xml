@@ -7,6 +7,23 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://nesar2017.wordpress.com/?p=286</guid>
+      <author>Abdullah Javed Nesar (Abdullahjavednesar)</author>
+      <title>Abdullah Javed Nesar (Abdullahjavednesar): GSoC Progress Report</title>
+      <pubDate>Thu, 27 Jul 2017 18:51:18 GMT</pubDate>
+      <link>https://nesar2017.wordpress.com/2017/07/27/gsoc-progress-report-3/</link>
+      <description>&lt;p&gt;I have almost completed implementing all the Utility Functions just to complete few tests and few left out functions. Till now we were using&amp;#160;&lt;code class="highlighter-rouge"&gt;Rt()&lt;/code&gt; which could only handle numeric value the new definition can handle even expressions. This week I was a bit engaged with my pending academic works so I was a bit inactive. I&amp;#8217;ll be committing my changes soon. These are few tests for&amp;#160;&lt;code class="highlighter-rouge"&gt;Rt()&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;
+&lt;pre class="highlight"&gt;&lt;code&gt;def test_Rt():
+    assert Rt(x**2, 2) == x
+    assert Rt(S(2 + 3*I), S(8)) == (2 + 3*I)**(1/8)
+    assert Rt(x**2 + 4 + 4*x, 2) == x + 2
+    assert Rt(S(8), S(3)) == 2
+    assert Rt(S(16807), S(5)) == 7&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/nesar2017.wordpress.com/286/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/nesar2017.wordpress.com/286/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=nesar2017.wordpress.com&amp;#038;blog=126779945&amp;#038;post=286&amp;#038;subd=nesar2017&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=680</guid>
       <author>Arif Ahmed (ArifAhmed1995)</author>
       <title>Arif Ahmed (ArifAhmed1995): Week 8 Report(July 18 &#x2013; July 26): Beginning 3D case</title>
@@ -744,42 +761,6 @@ Short story of how this is implemented :&lt;/p&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;So by the end of the month, the homomorphism functionality should be complete, so should be the switching between &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; presentations (where it is possible, i.e. finite &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s). Making &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; methods work for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s properly could take more time but if everything goes more or less according to plan, I should have most of August to try and implement Sylow subgroups for &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;s (there is a chapter on it in &amp;#8220;The Handbook of Computational Group Theory&amp;#8221;), look into the construction of finite automatons for word reduction or automatically grouping subwords of group words, like &lt;code class="highlighter-rouge"&gt;(a*b)**2&lt;/code&gt; instead of &lt;code class="highlighter-rouge"&gt;a*b*a*b&lt;/code&gt;, or anything else project-related really. That&amp;#8217;s the optimistic scenario of course, provided no sudden terrible complications arise which can never be guaranteed.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/07/01/GSoC17-Week4-Report</guid>
-      <author>Arihant Parsoya (parsoyaarihant)</author>
-      <title>Arihant Parsoya (parsoyaarihant): GSoC17 Week 4 Report</title>
-      <pubDate>Sat, 01 Jul 2017 06:30:00 GMT</pubDate>
-      <link>https://parsoyaarihant.github.io/blog/gsoc/2017/07/01/GSoC17-Week4-Report.html</link>
-      <description>&lt;p&gt;While running the Rubi test suit I found that matching was getting slower as the test progressed. Manuel suggested to analyze the code using &lt;a href="https://jiffyclub.github.io/snakeviz/#generating-profiles"&gt;snakeviz&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Two functions which were taking significant amount of time were &lt;code class="highlighter-rouge"&gt;ExpandIntegrand&lt;/code&gt;(a utility function) and MatchPy&amp;#8217;s pattern matching. Here is the sunburst chart for 100 integrands(pink coloured arc corresponds to time taken by &lt;code class="highlighter-rouge"&gt;ExpandIntegrand&lt;/code&gt;):&lt;/p&gt;
-
-&lt;p&gt;&lt;img alt="With ExpandIntegrand" class="img-responsive" src="https://parsoyaarihant.github.io/blog/img/1.png" /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class="highlighter-rouge"&gt;ExpandIntegrand&lt;/code&gt; expands the expression into sums of smaller terms. And then each of those terms gets integrated again. This can be very time consuming if the expression is of the form &lt;code class="highlighter-rouge"&gt;(1 + x)**10/x&lt;/code&gt;. I should try to optimize &lt;code class="highlighter-rouge"&gt;ExpandIntegrand&lt;/code&gt; and use SymPy&amp;#8217;s &lt;code class="highlighter-rouge"&gt;.expand()&lt;/code&gt; function whenever possible. Manuel made some improvements to MatchPy which prevents redundant work in the matcher.&lt;/p&gt;
-
-&lt;h4 id="test-suit"&gt;Test Suit&lt;/h4&gt;
-&lt;p&gt;Rubi test suit we have gives us the optimal antiderivative, for some of the integrands, SymPy gives correct output but the answers does not match because the answer cannot be matched. Example:&lt;/p&gt;
-&lt;div class="language-python highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;r1&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;atanh&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="c"&gt;# Rubi Output&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;r2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;atanh&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="c"&gt;# Optimal answer&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;r1&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="n"&gt;r2&lt;/span&gt;
-&lt;span class="bp"&gt;False&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;In the above example both &lt;code class="highlighter-rouge"&gt;r1&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;r2&lt;/code&gt; are same(they render same graphs).&lt;/p&gt;
-
-&lt;h4 id="utility-functions"&gt;Utility Functions&lt;/h4&gt;
-&lt;p&gt;Mathematica has functionality of matching functions such as:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-Mathematica"&gt;ExpandIntegrand[u_*(a_.+b_.*F_[c_.+d_.*x_])^n_,x_Symbol] :=
-  ExpandLinearProduct[(a+b*F[c+d*x])^n,u,c,d,x] /;
-FreeQ[{a,b,c,d,n},x] &amp;amp;&amp;amp; PolynomialQ[u,x] &amp;amp;&amp;amp; MemberQ[{ArcSin,ArcCos,ArcSinh,ArcCosh},F]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In the above example, &lt;code class="highlighter-rouge"&gt;F_[ ]&lt;/code&gt; can match functions. SymPy only has single &lt;code class="highlighter-rouge"&gt;Wild&lt;/code&gt; which can match a single node. So, in order to match the above pattern(&lt;code class="highlighter-rouge"&gt;u_*(a_.+b_.*F_[c_.+d_.*x_])^n_&lt;/code&gt;), I need to do &lt;code class="highlighter-rouge"&gt;.match()&lt;/code&gt; twice in order to match the expression with the pattern.&lt;/p&gt;
-
-&lt;p&gt;Francesco suggested to generate test suit for utility functions by exporting I/O of functions in Mathematica. I am trying it for functions which are very large such as &lt;code class="highlighter-rouge"&gt;ExpandIntegrand&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;FixSimplify&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;I and Abdullah are about to complete 50% of utility functions. I will continue working on utility functions and try my best to complete it by next weekend.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
