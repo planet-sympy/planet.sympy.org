@@ -89,6 +89,85 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">July 31, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-29fba86e feed-" id="item-284a041d">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/valglad.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Valeriia Gladkova (valglad) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://valglad.github.io/2017/07/31/sylow/">00:00, Monday, 31 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://valglad.github.io/2017/07/31/sylow/">Valeriia Gladkova (valglad): The rewriting PR and Sylow Subgroups</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/valglad.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Valeriia Gladkova (valglad) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://valglad.github.io/2017/07/31/sylow/">00:00, Monday, 31 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://valglad.github.io/2017/07/31/sylow/">The rewriting PR and Sylow Subgroups</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>The <a href="https://github.com/sympy/sympy/pull/12893">rewriting PR</a> only got merged today. Firstly, it took several days to sort out the <code class="highlighter-rouge">FpSubgroup</code>&#8217;s <code class="highlighter-rouge">__contains__</code> method (in this <a href="https://github.com/sympy/sympy/pull/13028">PR</a>). Secondly, my mentor pointed out a case I overlooked in the <code class="highlighter-rouge">add_rule</code> routine, and once I corrected it, another problem presented itself. It wasn&#8217;t to do with <code class="highlighter-rouge">add_rule</code> but adding the overlooked case made it possible for the tests to pick up on it (luckily). The problem was that sometimes <code class="highlighter-rouge">make_confluent</code> would try to use a non-existent key for the dictionary of rewriting rules. This happened because <code class="highlighter-rouge">make_confluent</code> is set up in such a way that if sufficiently many rules are added, <code class="highlighter-rouge">_remove_redundancies</code> method is called, and this removes or modifies some of the existing rules, and the function didn&#8217;t account for this change properly. It took me several goes until I finally got it. And while I was at it, I noticed yet another bug which took some time to track down. Turned out that &#8220;for&#8221; loops don&#8217;t always properly iterate over lists that are changed inside the loop (spefically, they ignore newly appended elements). I didn&#8217;t think it would be a problem because I have done similar things before in python. I ended up replacing it with a &#8220;while&#8221; loop like:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;&gt;&gt; while i &lt; len(some_list):
+&gt;&gt;&gt;    some_list.append(new_element)
+&gt;&gt;&gt;    i += 1
+</code></pre>
+</div>
+
+<p>and that worked properly. Still not entirely sure what happened there: appending elements inside a for loop in the terminal shell doesn&#8217;t cause such problems - I should probably look into that more at some point, for future reference.</p>
+
+<p>So I only began working on completing the other homomorphism cases today (not counting what I have sketched in the previous couple of weeks). I&#8217;ll try to send a PR with some of it in several days. At this point, I should be able to do everything except checking that a homomorphism from a permutation group is well defined. For that I&#8217;ll need the <a href="https://github.com/sympy/sympy/pull/12986/">presentation PR</a> and it&#8217;s quite substantial so its review will almost certaintly take more than several days. I&#8217;m planning to add the keyword argument <code class="highlighter-rouge">check</code> to the <code class="highlighter-rouge">homomorphism</code> function so that if <code class="highlighter-rouge">check==False</code>, the given images are assumed to define a homomorphism. I found it useful in some of the work I was doing last week.</p>
+
+<p>I decided to work on computing sylow subgroups, and as part of it, wrote two new homomorphism functions specifically for permutation groups: <code class="highlighter-rouge">orbit_action_homomorphism</code> and <code class="highlighter-rouge">block_action_homomorphism</code> for defining homomorphisms induced by the action of the group on a union of orbits or a block system respectively. These are of course homomorphisms between permutation groups and there is no need to check if they are well-defined so it was possible to create them without the presentation PR. I don&#8217;t know if it will stay that way as it hasn&#8217;t been discussed yet but it seemed appropriate to have them as separate functions in the homomorphisms file. Also, I found a bug in the <code class="highlighter-rouge">minimal_block</code> method while testing <code class="highlighter-rouge">block_action_homomorphism</code> yesterday but it&#8217;s not anything major and the <a href="https://github.com/sympy/sympy/pull/13070">fix</a> for it will likely be merged soon. There was some trouble with Travis today though.</p>
+
+<p>The actual computation of sylow subgroups is going to be a <code class="highlighter-rouge">PermutationGroup</code> method <code class="highlighter-rouge">sylow_subgroup()</code> and it already works for some cases so it&#8217;s going well. However, I am going to pause it for now to finish homomorphisms.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 30, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -2453,89 +2532,6 @@ great catalyst for the rest of the summers work on code-generation.</p>
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-040fd9d5 feed-" id="item-961fdb60">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/ranjithkumar007.png"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Ranjith Kumar (ranjithkumar007) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://ranjithkumar007.github.io/2017/07/03/Solvers-Part-II/">00:00, Monday, 03 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://ranjithkumar007.github.io/2017/07/03/Solvers-Part-II/">Ranjith Kumar (ranjithkumar007): Solvers Part II</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/ranjithkumar007.png"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Ranjith Kumar (ranjithkumar007) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://ranjithkumar007.github.io/2017/07/03/Solvers-Part-II/">00:00, Monday, 03 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://ranjithkumar007.github.io/2017/07/03/Solvers-Part-II/">Solvers Part II</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This a combined blog for progress of week-4 and week-5.
-The <a href="https://github.com/symengine/symengine/pull/1293">PR</a> on ImageSet is merged in. As mentioned in my previous blog, I continued my work on implementing solvers for lower degree polynomials <a href="https://github.com/symengine/symengine/pull/1296">here</a>.</p>
-
-<p>We can now solve polynomials even with symbolic coefficients.
-When FLINT is not supported,
-if the order of the polynomial is &lt;=4, then Solve Poly returns a FiniteSet of roots calculated using the known algorithms as described in detail <a href="https://github.com/symengine/symengine/pull/1296#issuecomment-310926613">here</a>
-When FLINT is supported, <code class="highlighter-rouge">solve_poly</code> tries to fit the given input as a Flint Polynomial.
-If it fails, then it will use the method described above. or else, It factorises the polynomial using the wrappers developed during community bonding period and returns the solutions found for each factor.</p>
-
-<p>For solving inputs, if we already know that input is a kind of polynomial, initially i designed a different function <a href="https://github.com/symengine/symengine/pull/1296/commits/da814699e7b4488f0c63a6386c3d8be98ff01368#diff-9feeb2259dbd2a97efd7a1c71d8eaf6cR94">here</a>, But later upon <a href="https://github.com/srajangarg">Srajan&#8217;s</a> suggestion, I went on to modify <code class="highlighter-rouge">from_basic&lt;&gt;()</code> <a href="https://github.com/symengine/symengine/pull/1296/commits/3acad80079e45b30cc5c694e56062aa9b225d454">here</a> to directly call <code class="highlighter-rouge">from_poly&lt;&gt;()</code> if the input is a <code class="highlighter-rouge">poly</code>.</p>
-
-<p>I started working on implementing solvers for trigonometric equations. You can track its progress on <a href="https://github.com/ranjithkumar007/symengine/tree/trigsolve">trigsolve</a> branch of my repo. I will make a PR once <a href="https://github.com/symengine/symengine/pull/1296">#1296</a> gets in. <br />
-Short story of how this is implemented :</p>
-<ul>
-  <li>First, we figure out if given input is of type trigonometric/hyperbolic(excluding inverses). What I mean by <code class="highlighter-rouge">type</code> is whether if given input
-  comprises functions of trigonometric/hyperbolic classes which are multiplied by or added to expressions independent of the symbol and the arguments of all these functions are linear in symbol.</li>
-  <li>Then using <code class="highlighter-rouge">expand_as_exp()</code>, we write all trigs/hyperbolics in the given equation in terms of <code class="highlighter-rouge">exp</code>, then <code class="highlighter-rouge">exp(I*x)</code> is substituted with a dummy and solved using polynomial solver. using <code class="highlighter-rouge">invertComplex</code> on the solutions thus found, we find the actual solutions of the given input.</li>
-</ul>
-
-<p>For this^, I implemented a new function <code class="highlighter-rouge">as_real_imag()</code> using visitor pattern for getting the real and imaginary parts. This was needed for implementing <code class="highlighter-rouge">invertComplex</code> routine. Also, earlier subs was incapable of handling cases as described in the second point above. It is handled correctly now.</p>
-
-<p>More on Trigonometric Solvers next time !!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -2564,134 +2560,134 @@ Short story of how this is implemented :</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>21:40, Monday, 31 July</td>
-<td>21:55, Monday, 31 July</td>
+<td>22:00, Monday, 31 July</td>
+<td>22:15, Monday, 31 July</td>
 </tr>
 </table>
 

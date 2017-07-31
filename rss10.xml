@@ -7,6 +7,28 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://valglad.github.io/2017/07/31/sylow</guid>
+      <author>Valeriia Gladkova (valglad)</author>
+      <title>Valeriia Gladkova (valglad): The rewriting PR and Sylow Subgroups</title>
+      <pubDate>Mon, 31 Jul 2017 00:00:00 GMT</pubDate>
+      <link>http://valglad.github.io/2017/07/31/sylow/</link>
+      <description>&lt;p&gt;The &lt;a href="https://github.com/sympy/sympy/pull/12893"&gt;rewriting PR&lt;/a&gt; only got merged today. Firstly, it took several days to sort out the &lt;code class="highlighter-rouge"&gt;FpSubgroup&lt;/code&gt;&amp;#8217;s &lt;code class="highlighter-rouge"&gt;__contains__&lt;/code&gt; method (in this &lt;a href="https://github.com/sympy/sympy/pull/13028"&gt;PR&lt;/a&gt;). Secondly, my mentor pointed out a case I overlooked in the &lt;code class="highlighter-rouge"&gt;add_rule&lt;/code&gt; routine, and once I corrected it, another problem presented itself. It wasn&amp;#8217;t to do with &lt;code class="highlighter-rouge"&gt;add_rule&lt;/code&gt; but adding the overlooked case made it possible for the tests to pick up on it (luckily). The problem was that sometimes &lt;code class="highlighter-rouge"&gt;make_confluent&lt;/code&gt; would try to use a non-existent key for the dictionary of rewriting rules. This happened because &lt;code class="highlighter-rouge"&gt;make_confluent&lt;/code&gt; is set up in such a way that if sufficiently many rules are added, &lt;code class="highlighter-rouge"&gt;_remove_redundancies&lt;/code&gt; method is called, and this removes or modifies some of the existing rules, and the function didn&amp;#8217;t account for this change properly. It took me several goes until I finally got it. And while I was at it, I noticed yet another bug which took some time to track down. Turned out that &amp;#8220;for&amp;#8221; loops don&amp;#8217;t always properly iterate over lists that are changed inside the loop (spefically, they ignore newly appended elements). I didn&amp;#8217;t think it would be a problem because I have done similar things before in python. I ended up replacing it with a &amp;#8220;while&amp;#8221; loop like:&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; while i &amp;lt; len(some_list):
+&amp;gt;&amp;gt;&amp;gt;    some_list.append(new_element)
+&amp;gt;&amp;gt;&amp;gt;    i += 1
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;and that worked properly. Still not entirely sure what happened there: appending elements inside a for loop in the terminal shell doesn&amp;#8217;t cause such problems - I should probably look into that more at some point, for future reference.&lt;/p&gt;
+
+&lt;p&gt;So I only began working on completing the other homomorphism cases today (not counting what I have sketched in the previous couple of weeks). I&amp;#8217;ll try to send a PR with some of it in several days. At this point, I should be able to do everything except checking that a homomorphism from a permutation group is well defined. For that I&amp;#8217;ll need the &lt;a href="https://github.com/sympy/sympy/pull/12986/"&gt;presentation PR&lt;/a&gt; and it&amp;#8217;s quite substantial so its review will almost certaintly take more than several days. I&amp;#8217;m planning to add the keyword argument &lt;code class="highlighter-rouge"&gt;check&lt;/code&gt; to the &lt;code class="highlighter-rouge"&gt;homomorphism&lt;/code&gt; function so that if &lt;code class="highlighter-rouge"&gt;check==False&lt;/code&gt;, the given images are assumed to define a homomorphism. I found it useful in some of the work I was doing last week.&lt;/p&gt;
+
+&lt;p&gt;I decided to work on computing sylow subgroups, and as part of it, wrote two new homomorphism functions specifically for permutation groups: &lt;code class="highlighter-rouge"&gt;orbit_action_homomorphism&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;block_action_homomorphism&lt;/code&gt; for defining homomorphisms induced by the action of the group on a union of orbits or a block system respectively. These are of course homomorphisms between permutation groups and there is no need to check if they are well-defined so it was possible to create them without the presentation PR. I don&amp;#8217;t know if it will stay that way as it hasn&amp;#8217;t been discussed yet but it seemed appropriate to have them as separate functions in the homomorphisms file. Also, I found a bug in the &lt;code class="highlighter-rouge"&gt;minimal_block&lt;/code&gt; method while testing &lt;code class="highlighter-rouge"&gt;block_action_homomorphism&lt;/code&gt; yesterday but it&amp;#8217;s not anything major and the &lt;a href="https://github.com/sympy/sympy/pull/13070"&gt;fix&lt;/a&gt; for it will likely be merged soon. There was some trouble with Travis today though.&lt;/p&gt;
+
+&lt;p&gt;The actual computation of sylow subgroups is going to be a &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; method &lt;code class="highlighter-rouge"&gt;sylow_subgroup()&lt;/code&gt; and it already works for some cases so it&amp;#8217;s going well. However, I am going to pause it for now to finish homomorphisms.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/07/30/GSoC17-Week8-Report</guid>
       <author>Arihant Parsoya (parsoyaarihant)</author>
       <title>Arihant Parsoya (parsoyaarihant): GSoC17 Week 8 Report</title>
@@ -757,35 +779,6 @@ material (and hopefully iron out any related issues in the rc).&lt;/p&gt;
 SciPy 2017. I have high expectations and believe that it will be a
 great catalyst for the rest of the summers work on code-generation.&lt;/p&gt;
 &lt;/div&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/07/03/Solvers Part II</guid>
-      <author>Ranjith Kumar (ranjithkumar007)</author>
-      <title>Ranjith Kumar (ranjithkumar007): Solvers Part II</title>
-      <pubDate>Mon, 03 Jul 2017 00:00:00 GMT</pubDate>
-      <link>http://ranjithkumar007.github.io/2017/07/03/Solvers-Part-II/</link>
-      <description>&lt;p&gt;This a combined blog for progress of week-4 and week-5.
-The &lt;a href="https://github.com/symengine/symengine/pull/1293"&gt;PR&lt;/a&gt; on ImageSet is merged in. As mentioned in my previous blog, I continued my work on implementing solvers for lower degree polynomials &lt;a href="https://github.com/symengine/symengine/pull/1296"&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;We can now solve polynomials even with symbolic coefficients.
-When FLINT is not supported,
-if the order of the polynomial is &amp;lt;=4, then Solve Poly returns a FiniteSet of roots calculated using the known algorithms as described in detail &lt;a href="https://github.com/symengine/symengine/pull/1296#issuecomment-310926613"&gt;here&lt;/a&gt;
-When FLINT is supported, &lt;code class="highlighter-rouge"&gt;solve_poly&lt;/code&gt; tries to fit the given input as a Flint Polynomial.
-If it fails, then it will use the method described above. or else, It factorises the polynomial using the wrappers developed during community bonding period and returns the solutions found for each factor.&lt;/p&gt;
-
-&lt;p&gt;For solving inputs, if we already know that input is a kind of polynomial, initially i designed a different function &lt;a href="https://github.com/symengine/symengine/pull/1296/commits/da814699e7b4488f0c63a6386c3d8be98ff01368#diff-9feeb2259dbd2a97efd7a1c71d8eaf6cR94"&gt;here&lt;/a&gt;, But later upon &lt;a href="https://github.com/srajangarg"&gt;Srajan&amp;#8217;s&lt;/a&gt; suggestion, I went on to modify &lt;code class="highlighter-rouge"&gt;from_basic&amp;lt;&amp;gt;()&lt;/code&gt; &lt;a href="https://github.com/symengine/symengine/pull/1296/commits/3acad80079e45b30cc5c694e56062aa9b225d454"&gt;here&lt;/a&gt; to directly call &lt;code class="highlighter-rouge"&gt;from_poly&amp;lt;&amp;gt;()&lt;/code&gt; if the input is a &lt;code class="highlighter-rouge"&gt;poly&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;I started working on implementing solvers for trigonometric equations. You can track its progress on &lt;a href="https://github.com/ranjithkumar007/symengine/tree/trigsolve"&gt;trigsolve&lt;/a&gt; branch of my repo. I will make a PR once &lt;a href="https://github.com/symengine/symengine/pull/1296"&gt;#1296&lt;/a&gt; gets in. &lt;br /&gt;
-Short story of how this is implemented :&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;First, we figure out if given input is of type trigonometric/hyperbolic(excluding inverses). What I mean by &lt;code class="highlighter-rouge"&gt;type&lt;/code&gt; is whether if given input
-  comprises functions of trigonometric/hyperbolic classes which are multiplied by or added to expressions independent of the symbol and the arguments of all these functions are linear in symbol.&lt;/li&gt;
-  &lt;li&gt;Then using &lt;code class="highlighter-rouge"&gt;expand_as_exp()&lt;/code&gt;, we write all trigs/hyperbolics in the given equation in terms of &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt;, then &lt;code class="highlighter-rouge"&gt;exp(I*x)&lt;/code&gt; is substituted with a dummy and solved using polynomial solver. using &lt;code class="highlighter-rouge"&gt;invertComplex&lt;/code&gt; on the solutions thus found, we find the actual solutions of the given input.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;For this^, I implemented a new function &lt;code class="highlighter-rouge"&gt;as_real_imag()&lt;/code&gt; using visitor pattern for getting the real and imaginary parts. This was needed for implementing &lt;code class="highlighter-rouge"&gt;invertComplex&lt;/code&gt; routine. Also, earlier subs was incapable of handling cases as described in the second point above. It is handled correctly now.&lt;/p&gt;
-
-&lt;p&gt;More on Trigonometric Solvers next time !!&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
