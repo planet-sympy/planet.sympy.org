@@ -18,6 +18,16 @@ p2 = [([-1, 0, 0], 0), ([1, 1, 0], 1), ([0, -1, 0], 0)]&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The code should be able to figure out what the points are and then pass on that list of points representation to the rest of the other functions. I should be done with this in a day or two. To finish up the work for GSoC I&amp;#8217;ll get the &lt;span style="color: #00ff00;"&gt;&lt;a href="https://github.com/sympy/sympy/pull/12931" rel="noopener" target="_blank"&gt;PR on intersecting polygons&lt;/a&gt;&lt;/span&gt; sorted out. After that, remaining documentation will have to be written and requisite clean-up to be done.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/711/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/711/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=711&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://szymag.github.io/post/week-10/</guid>
+      <author>Szymon Mieszczak (szymag)</author>
+      <title>Szymon Mieszczak (szymag): Week 10</title>
+      <pubDate>Thu, 10 Aug 2017 19:41:21 GMT</pubDate>
+      <link>https://szymag.github.io/post/week-10/</link>
+      <description>&lt;p&gt;During week 10 with my mentor, we finished creation of new CoordSys3D constructor. We can set now transformation while coordinate system is created. We&amp;rsquo;ve moved functionality from _connect_to_standard_cartesian to constructor so we support the same type of transformation as previously.
+Now I demonstrate shorty how coordinate system different that Caertsian can be created in SymPy:
+a = CoordSys3D('a', transformation='spherical', variable_names=["r", "theta", "phi"]) a.lame_coefficients() a.transformation_to_parent() b = CoordSys3D('b', lambda r, theta, phi: (r*sin(theta)*cos(phi), r*sin(theta)*sin(phi), r*cos(theta)), variable_names=["</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://valglad.github.io/2017/08/08/complete</guid>
       <author>Valeriia Gladkova (valglad)</author>
       <title>Valeriia Gladkova (valglad): Completing homomorphisms</title>
@@ -658,45 +668,6 @@ Currently, in SymPy we have transformation equations but they&amp;rsquo;re respo
 &lt;p&gt;Till Next Time!&lt;/p&gt;
 
 &lt;p&gt;&lt;strong&gt;Ad&amp;#233;u&lt;/strong&gt;&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/07/11/Trigonometric Solvers</guid>
-      <author>Ranjith Kumar (ranjithkumar007)</author>
-      <title>Ranjith Kumar (ranjithkumar007): Trigonometric Solvers</title>
-      <pubDate>Tue, 11 Jul 2017 00:00:00 GMT</pubDate>
-      <link>http://ranjithkumar007.github.io/2017/07/11/Trigonometric-Solvers/</link>
-      <description>&lt;p&gt;This is the blog on progress for week-6. It revolves around solvers for trigonometric equations. 
-The &lt;a href="https://github.com/symengine/symengine/pull/1296"&gt;PR&lt;/a&gt; on polynomial solvers is merged in.&lt;/p&gt;
-
-&lt;p&gt;As I mentioned in my previous blog, I continued my work on solving simple trigonometric equations. I made a &lt;a href="https://github.com/symengine/symengine/pull/1305"&gt;PR&lt;/a&gt;. See the commit messages for more details. Currently, this PR doesn&amp;#8217;t pass the whole test suit. Specifically, the below case.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt; auto y = symbol("y");
- eqn = sub(sin(add(x, y)), sin(x));
- soln = solve(eqn, y);
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;It currently returns a ConditionSet(means it is unable to find any solution). The reason for this traces to problem in &lt;code class="highlighter-rouge"&gt;expand()&lt;/code&gt;. &lt;code class="highlighter-rouge"&gt;expand(exp(I*(x + y)))&lt;/code&gt; stays as &lt;code class="highlighter-rouge"&gt;exp(I*(x+y))&lt;/code&gt;. It should be returning &lt;code class="highlighter-rouge"&gt;exp(I*x)*exp(I*y)&lt;/code&gt;. This is needed because &lt;code class="highlighter-rouge"&gt;subs&lt;/code&gt; are not robust enough to handle inputs like &lt;code class="highlighter-rouge"&gt;exp(x + I*y)-&amp;gt;subs(exp(I*y) = z)&lt;/code&gt;. Even SymPy subs are not robust enough(see example below).&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; a=sin(x+y).rewrite('exp')
-&amp;gt;&amp;gt;&amp;gt; a.subs(exp(I*y),z)
-   &amp;#9115;   &amp;#8520;&amp;#8901;(-x - y)    &amp;#8520;&amp;#8901;(x + y)&amp;#9118; 
--&amp;#8520;&amp;#8901;&amp;#9117;- &amp;#8495;           + &amp;#8495;         &amp;#9120; 
-&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;
-               2                
-&amp;gt;&amp;gt;&amp;gt; a=expand(sin(x+y).rewrite('exp'))
-&amp;gt;&amp;gt;&amp;gt; a.subs(exp(I*y),z)
-       &amp;#8520;&amp;#8901;x      -&amp;#8520;&amp;#8901;x
-  &amp;#8520;&amp;#8901;z&amp;#8901;&amp;#8495;      &amp;#8520;&amp;#8901;&amp;#8495;    
-- &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472; + &amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;
-     2         2&amp;#8901;z  
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Apart from this, I fixed a bug in &lt;code class="highlighter-rouge"&gt;dummy::compare&lt;/code&gt; &lt;a href="https://github.com/symengine/symengine/pull/1304"&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Next immediate goal is to implement trigonometric simplification using &lt;code class="highlighter-rouge"&gt;fu&lt;/code&gt; and integrate it with current &lt;code class="highlighter-rouge"&gt;trig_solve&lt;/code&gt;. I will add as many rules as possible. Hopefully, we would be able to solve not so simple equations as well after it is successfully integrated.
-You can track my progress on this at &lt;a href="https://github.com/ranjithkumar007/symengine/commits/fu"&gt;&lt;code class="highlighter-rouge"&gt;fu&lt;/code&gt;&lt;/a&gt; branch.&lt;/p&gt;
-
-&lt;p&gt;That&amp;#8217;s it for now. See you next week. Until then, Goodbye !&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
