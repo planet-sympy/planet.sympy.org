@@ -7,6 +7,172 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://valglad.github.io/2017/08/25/report</guid>
+      <author>Valeriia Gladkova (valglad)</author>
+      <title>Valeriia Gladkova (valglad): Final Report</title>
+      <pubDate>Fri, 25 Aug 2017 00:00:00 GMT</pubDate>
+      <link>http://valglad.github.io/2017/08/25/report/</link>
+      <description>&lt;p&gt;GSoC is coming to an end, and it&amp;#8217;s time for the final report (which is not to say that I won&amp;#8217;t make a couple more posts after this). In this post I will summarise the work I&amp;#8217;ve done so far with links to PRs in approximately the order they were submitted.&lt;/p&gt;
+
+&lt;p&gt;First of all, looking at my &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2017-Application-Valeriia-Gladkova:-Group-Theory"&gt;proposal&lt;/a&gt;, I&amp;#8217;d say that I have done all that was planned plus some minor additional things here and there (discovering and fixing bugs, modifying existing functions and occasionally adding new ones beyond what was planned). However, there is certainly room for improvement, and I will mention where the work could continue as I go through the PRs. So here it is.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/12658"&gt;The &lt;code class="highlighter-rouge"&gt;subgroup&lt;/code&gt; method PR&lt;/a&gt;. Here I added &lt;code class="highlighter-rouge"&gt;subgroup()&lt;/code&gt; methods to the &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; classes. There were some discussions as I wondered if &lt;code class="highlighter-rouge"&gt;FreeGroup&lt;/code&gt; class could be implemented differently, but it was mostly straightforward. Perhaps, it would be useful to add a keyword argument or something like that to &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;&amp;#8217;s &lt;code class="highlighter-rouge"&gt;subgroup()&lt;/code&gt; to allow the user to get hold of the injective homomorphism from the subgroup to the parent group.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/12681"&gt;Improvements to simplifying subgroup presentations.&lt;/a&gt; I didn&amp;#8217;t look at &lt;code class="highlighter-rouge"&gt;_elimination_technique_2&lt;/code&gt; because it is not used anywhere in the code at the moment but it could probably be improved as well, especially now
+that some new &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt; methods are available: one of them is the general substitution of words that I implemented in this PR and, as I recall, I modified a few other &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt; methods there, as I discovered that some of them were buggy or not general enough. In a later PR (#9), I united the main elimination technique (which removes redundant generators) and the simplification of relators into one function &lt;code class="highlighter-rouge"&gt;simplify_presentation&lt;/code&gt; that can be applied to any group, not just as part of &lt;code class="highlighter-rouge"&gt;reidemeister_presentation&lt;/code&gt; (used for finding presentations of subgroups).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/12705"&gt;The Smith Normal form PR.&lt;/a&gt; This is the only time I did work somewhere other than the &lt;code class="highlighter-rouge"&gt;combinatorics&lt;/code&gt; module during the project. I implemented the Smith Normal form for principal ideal domains because it could be used to test if a group is infinite (not a definitive test, as if the test is negative, we can&amp;#8217;t conclude the group isn&amp;#8217;t infinite). It&amp;#8217;s a bit awkward to use at the moment because the user has to add manually a certain attribute to their matrix and it won&amp;#8217;t be resolved until some further work is done on matrices. I wrote a bit more about it in the &lt;a href="https://valglad.github.io/2017/06/05/smith/"&gt;relevant post&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/12761"&gt;Changing the order method&lt;/a&gt;. The previous PR allowed returning &lt;code class="highlighter-rouge"&gt;S.Infinity&lt;/code&gt; as the order of the group in some cases where in the past the &lt;code class="highlighter-rouge"&gt;order()&lt;/code&gt; method wouldn&amp;#8217;t terminate. This PR extended it even further by calculating the order in stages. First, it attempts to find a finite index subgroup and, if it succeeds, it finds the presentation of this subgroup and applies &lt;code class="highlighter-rouge"&gt;order()&lt;/code&gt; to it. In some cases, other methods can determine that this subgroup is infinite in which case, of course, the whole group is infinite. If it&amp;#8217;s finite, then the order of the group is the index times the order of the subgroup. It is still possible that this never terminates if a finite index subgroup is not found, but it&amp;#8217;s an improvement. It can be faster than direct coset enumeration on the trivial subgroup (that was used before) but occasionally it seems too slow for even smallish groups. Usually, the slowest part is finding the subgroup&amp;#8217;s presentation but sometimes it&amp;#8217;s the search for this subgroup that takes up the time. I feel that more work should be done here to make it more efficient.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/12827"&gt;The homomorphism PR.&lt;/a&gt; This was a substantial PR: not only did it introduce two new classes (&lt;code class="highlighter-rouge"&gt;GroupHomomorphism&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;FpSubgroup&lt;/code&gt;), it also involved quite a lot of work in the &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; class in order to implement the method that expresses a given permutation in terms of the group&amp;#8217;s strong generators. At this stage only homomorphisms from &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; to &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; were fully implemented. The kernel computation can&amp;#8217;t handle infinite domains - maybe, this could be addressed in the future.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/12893"&gt;The Rewriting System PR.&lt;/a&gt; This was probably the hardest thing in the project and it probably took the longest to get merged after its review started (or at least it felt the longest). Even after it did, some problems kept coming up. It seems stable at the moment but it could certainly do with more work. One thing that comes to mind is the reduction method: it is possible to do it more efficiently with an automaton which is built and modified as more reduction rules are added to the system. Also, perhaps, the completion algorithm could be made more efficient in some way.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/12973"&gt;Fixing a bug in &lt;code class="highlighter-rouge"&gt;reidemester_presentation&lt;/code&gt;.&lt;/a&gt; Discovered by accident, there was a small bug in &lt;code class="highlighter-rouge"&gt;reidemeister_presentation&lt;/code&gt; that led to &lt;code class="highlighter-rouge"&gt;order()&lt;/code&gt; returning wrong answers in some specific cases.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/13028"&gt;FpSubgroup&amp;#8217;s &lt;code class="highlighter-rouge"&gt;__contains__&lt;/code&gt; method.&lt;/a&gt; After the homomorphism PR was merged, it was discovered that occasionally the tests involving kernels would time out. This was because FpSubgroup&amp;#8217;s &lt;code class="highlighter-rouge"&gt;__contains__&lt;/code&gt; method would go into an infinite loop on encountering elements of the conjugate form &lt;code class="highlighter-rouge"&gt;a**-1*w*a&lt;/code&gt;. It took some time to work out a way of dealing with it.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/12986"&gt;Finite presentation of permutation groups.&lt;/a&gt; This is something I keep working on. The general algorithm is implemented and merged, however, the efficiency could potentially be improved by using a different method based on the group&amp;#8217;s strong generating set. I have tried one implementation but it&amp;#8217;s not clear when exactly it is more efficient. Currently, I am trying to implement a different, hopefully more consistently efficient, algorithm.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/13070"&gt;Fixing a bug in &lt;code class="highlighter-rouge"&gt;minimal_block&lt;/code&gt;.&lt;/a&gt; A small bug in &lt;code class="highlighter-rouge"&gt;minimal_block&lt;/code&gt; was discovered during the implementation of sylow subgroups.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/1307"&gt;Adding the other homomorphism cases.&lt;/a&gt; This PR enabled homomorphisms with &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; as codomain (became possible after merging the rewriting PR) and &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; as domain (provided the keyword argument &lt;code class="highlighter-rouge"&gt;check&lt;/code&gt; was set to &lt;code class="highlighter-rouge"&gt;False&lt;/code&gt;).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/13104"&gt;Sylow subgroups PR.&lt;/a&gt; This one also took a while. The main function is fairly long and it required implementation of two types of action homomorphisms and a method for finding all minimal block systems of a group. At the moment another related PR (#16) is being reviewed: it treats symmetric and alternating groups separately as the generators of their Sylow subgroups can be written down.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/13119"&gt;PermutationGroup methods for FpGroup.&lt;/a&gt; This is something that gave me the idea for the project in the first place: many methods for permutation groups are already available while finitely presented groups have limited functionality. However, it&amp;#8217;s possible to use an isomorphism between a finite FpGroup and a relevant permutation group to perform computations in the latter and then go back to the former. This is precisely what this PR does for many permutation group methods. It is still being reviewed.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/13138"&gt;Storing coset tables in &lt;code class="highlighter-rouge"&gt;_finite_index_subgroup&lt;/code&gt;.&lt;/a&gt; Until the presentation PR, it wasn&amp;#8217;t possible to get hold of an incomplete coset table for which coset enumeration returned with an error (for example if the maximum number of entries was exceeded). After it was merged, I made use of this new feature in the search for a finite index subgroup (used by &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;&amp;#8217;s &lt;code class="highlighter-rouge"&gt;order()&lt;/code&gt; method). This somewhat decreased the required time as coset tables didn&amp;#8217;t have to be recomputed.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/13151/"&gt;Checking that a homomorphism from PermutationGroup is well defined.&lt;/a&gt; After the presentation PR was merged, it became possible to complete the homomorphism class by enabling the check for whether given generator images define a homomorphism when the domain is a permutation group. Not merged yet.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/13150"&gt;Sylow subgroups for Sym(n) and Alt(n).&lt;/a&gt; A separate method for computing Sylow subgroups of alternating and symmetric groups, to be used as part of the main &lt;code class="highlighter-rouge"&gt;sylow_subgroup&lt;/code&gt; method. This hugely improves the performance in the case of alternating and symmetric groups. Still being reviewed.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;A couple other PRs had to do with renaming attributes (&lt;a href="https://github.com/sympy/sympy/pull/12732"&gt;this one&lt;/a&gt; and &lt;a href="https://github.com/sympy/sympy/pull/12719"&gt;this one&lt;/a&gt;) or moving code around (for example, moving all of the coset table and coset enumeration functions to the file &lt;code class="highlighter-rouge"&gt;coset_table.py&lt;/code&gt; in &lt;a href="https://github.com/sympy/sympy/pull/12947"&gt;this PR&lt;/a&gt;). These didn&amp;#8217;t include any actual work so I didn&amp;#8217;t include them in the main list.&lt;/p&gt;
+
+&lt;p&gt;Hopefully, this report will be of use to whoever else might be interested in developing the group theory module. I plan to continue working on it myself for some time, though probably less productively as the new academic year starts soon.&lt;/p&gt;
+
+&lt;p&gt;Overall, this was a fun summer and I enjoyed working on this project. I&amp;#8217;d like to thank Google for sponsoring it, SymPy for giving me the opportunity to participate and my mentor &lt;a href="https://github.com/jksuom"&gt;Kalevi (jksuom)&lt;/a&gt; for giving me guidance and useful suggestions on my code and generally being very helpful. :)&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://shikharj.github.io//2017/08/22/GSoC-Progress-Week-11-12</guid>
+      <author>Shikhar Jaiswal (ShikharJ)</author>
+      <title>Shikhar Jaiswal (ShikharJ): GSoC Progress - Week 11 and Week 12</title>
+      <pubDate>Tue, 22 Aug 2017 00:00:00 GMT</pubDate>
+      <link>https://shikharj.github.io//2017/08/22/GSoC-Progress-Week-11-12/</link>
+      <description>&lt;p&gt;Greetings!&lt;/p&gt;
+
+&lt;p&gt;This is the combined post for weeks 11 and 12. As mentioned earlier, Isuru had been unavailable for the last week, during which my focus was entirely fixed on getting the countless assertion failures in &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt; fixed while using &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt; as a core.&lt;/p&gt;
+
+&lt;p&gt;I was also able to get all the pending work merged in, namely the Singleton pattern and a host of other miscellaneous additions.&lt;/p&gt;
+
+&lt;p&gt;After that, we had to update the &lt;code class="highlighter-rouge"&gt;conda&lt;/code&gt; binaries for both &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;SymEngine.py&lt;/code&gt; for through &lt;a href="https://github.com/symengine/symengine-feedstock/pull/3"&gt;#3&lt;/a&gt; and &lt;a href="https://github.com/symengine/python-symengine-feedstock/pull/2"&gt;#2&lt;/a&gt; respectively. Currently, we&amp;#8217;re good to go for porting over the changes made over the summers for different directories in &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;This is officially the last week of GSoC 2017. I&amp;#8217;ll push all my work as separate PRs on &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt;, and try to get them merged before the deadline on 29th August.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Mirupafshim&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://valglad.github.io/2017/08/22/strong-present</guid>
+      <author>Valeriia Gladkova (valglad)</author>
+      <title>Valeriia Gladkova (valglad): Strong Presentation problems</title>
+      <pubDate>Tue, 22 Aug 2017 00:00:00 GMT</pubDate>
+      <link>http://valglad.github.io/2017/08/22/strong-present/</link>
+      <description>&lt;p&gt;The final evaluation period has started, and I&amp;#8217;ll be writing a post with the list of all submitted PRs and some summarising comments later this week (perhaps, tomorrow). Overall, I have done all that was planned though there is room for improvement as is the case with the finite presentation of permutation groups algorithm.&lt;/p&gt;
+
+&lt;p&gt;I have tried out computing a presentation on basic stabilizers, i.e. starting with the presentation of the smallest basic stabilizer and building up from it. This should probably be available in any case because it gives a strong presentation which could be desirable (it has more generators but on the other hand, fewer relators; theoretically, if known, these relators could be used to check if a homomorphism is well-defined a bit quicker). However, I was looking to see if this would be faster than the general version. What I found was that in some cases it&amp;#8217;s considerably faster and in others much slower, with no clear pattern. For example, it doesn&amp;#8217;t perfectly correlate with the size of the group or the number of strong generators. The slowest part is filling in the coset tables for intermediate presentations so I looked if the difference correlates with the index of the subgroup on which a presentation is built, or the difference between the generators of the subgroup and the original group, or their multiple (i.e. the size of the unfilled part of the table) and none of it properly accounts for the difference. There would seem to be a number of factors at play. I&amp;#8217;m thinking of writing a simple function that generates a random group with a fixed degree and use it to collect data for the various parameters of many different groups. That might give me more to go on than the examples I make up myself. Not sure how successful this would be though. At the moment, I&amp;#8217;m not certain I&amp;#8217;d be able to figure it out by the end of this week. I&amp;#8217;ll probably carry on the work until after the end of GSoC.&lt;/p&gt;
+
+&lt;p&gt;I sent a couple of small PRs last week. &lt;a href="https://github.com/sympy/sympy/pull/13151/"&gt;One&lt;/a&gt; for checking homomorphisms with permutation group domains (using the general presentation method for now) and &lt;a href="https://github.com/sympy/sympy/pull/13150"&gt;the other&lt;/a&gt; is with the more efficient method of computing Sylow subgroups of alternating and symmetric groups that I mentioned in the previous post. These two and the PR implementing permutation group methods for finitely presented groups are still being reviewed.&lt;/p&gt;
+
+&lt;p&gt;On a different note, lately I&amp;#8217;ve been thinking of extending the &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt; class to handle group words with symbolic powers, e.g. &lt;code class="highlighter-rouge"&gt;a**n&lt;/code&gt; where &lt;code class="highlighter-rouge"&gt;n&lt;/code&gt; is an instance of &lt;code class="highlighter-rouge"&gt;Symbol&lt;/code&gt;. I don&amp;#8217;t see any reason why it shouldn&amp;#8217;t be available in general (though we&amp;#8217;d have to be careful to raise errors where appropriate when someone tries to use this in methods; or to modify some methods to handle them if possible) and I was thinking of using something like this when implementing the &lt;code class="highlighter-rouge"&gt;FpSubgroup&lt;/code&gt; class so it can probably be put to use in some situations. One would also need to have a &lt;code class="highlighter-rouge"&gt;subs&lt;/code&gt; method for substituting desirable powers. This, along with the earlier idea of grouping things like &lt;code class="highlighter-rouge"&gt;a*b*a*b&lt;/code&gt; into &lt;code class="highlighter-rouge"&gt;(a*b)**2&lt;/code&gt;, could be another thing I could work on after GSoC.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://valglad.github.io/2017/08/16/perm-to-fp</guid>
+      <author>Valeriia Gladkova (valglad)</author>
+      <title>Valeriia Gladkova (valglad): PermutationGroup methods for FpGroups</title>
+      <pubDate>Wed, 16 Aug 2017 00:00:00 GMT</pubDate>
+      <link>http://valglad.github.io/2017/08/16/perm-to-fp/</link>
+      <description>&lt;p&gt;The &lt;a href="https://github.com/sympy/sympy/pull/12986"&gt;presentation PR&lt;/a&gt; got merged fairly quickly last week. Now I could try using the new functionality of resuming coset enumeration with incomplete coset tables in the &lt;code class="highlighter-rouge"&gt;_finite_index_subgroup&lt;/code&gt; function. I expect it should speed it up since at the moment the coset tables inside the function have to be recomputed every time the maximum number of allowed entries is increased. I could also implement a faster version of the presentation algortihm that makes use of strong generators.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/13104"&gt;Sylow subgroups&lt;/a&gt; required a bit more attention. One thing that we were discussing on the &lt;a href="https://gitter.im/sympy/GroupTheory"&gt;Group Theory channel&lt;/a&gt; the other day was that symmetric and alternating groups should be treated separately as the generators for their Sylow subgroups can be written down. It took some thinking to work out the details and justify the algorithm. In fact, the alternating group case still doesn&amp;#8217;t have a formal proof; but it seems clear that it should work and, indeed, it does as I discovered yesterday on implementing the function. It was a bit fiddly to lay out the code so that it works properly and isn&amp;#8217;t too complicated so it took a long time. Now all that remains is to tidy it up and add comments. I briefly described the algorithm in the docstring and hopefully it will make the code clear to whoever might need to work with it in the future. I think this can be added in a separate PR once the current one is merged, though if I have to make any more corrections to the current one, I might push this as well.&lt;/p&gt;
+
+&lt;p&gt;The title of the post is to do with the &lt;a href="https://github.com/sympy/sympy/pull/13119"&gt;new PR&lt;/a&gt; I sent this week in which I added some of the &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; methods to the &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; class so that they can work with finite instances of &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;. I didn&amp;#8217;t actually need the presentation PR for it, homomorphisms were enough. At the moment, when a permutation group method returns a group, the equivalent fp group method returns its generators. An alternative to it would be to return an instance of &lt;code class="highlighter-rouge"&gt;FpSubgroup&lt;/code&gt; on the generators from where its &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; presentation can be found via &lt;code class="highlighter-rouge"&gt;to_fp_group&lt;/code&gt; method. Or, now that the presentation PR is merged, another possibility would be to run &lt;code class="highlighter-rouge"&gt;presentation&lt;/code&gt; on the permutation group returned by the permutation method and return the result together with a homomorphism from it to the original group - though that would probably be too time-consuming so shouldn&amp;#8217;t be the default.&lt;/p&gt;
+
+&lt;p&gt;For the rest of this week, I&amp;#8217;m going to keep working on the Sylow PR and the permutation group methods one if its review starts this week. I&amp;#8217;ll also try to speed up the &lt;code class="highlighter-rouge"&gt;_finite_index_subgroup&lt;/code&gt; method and look into the strong generator algorithm for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; presentations.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/08/15/Week-12</guid>
+      <author>Ranjith Kumar (ranjithkumar007)</author>
+      <title>Ranjith Kumar (ranjithkumar007): Week-12</title>
+      <pubDate>Tue, 15 Aug 2017 00:00:00 GMT</pubDate>
+      <link>http://ranjithkumar007.github.io/2017/08/15/Week-12/</link>
+      <description>&lt;p&gt;Travis errors were finally resolved, thanks to Isuru for digging deep into these errors. 
+The problem was with the coverage info generated with Piranha. So, as per Isuru&amp;#8217;s suggestions, I went on to move piranha on to a different test where CODECOV was disabled.&lt;/p&gt;
+
+&lt;p&gt;PRs ready for a review -&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/symengine/symengine/pull/1305"&gt;#1305&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/symengine/symengine/pull/1317"&gt;#1317&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/symengine/symengine/pull/1319"&gt;#1319&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I will continue working on improving &lt;code class="highlighter-rouge"&gt;fu&lt;/code&gt; so that once #1305 gets in, I can send a PR of that as well.&lt;/p&gt;
+
+&lt;p&gt;End of GSoC-2017 : &lt;br /&gt;
+This is officially the final week of GSoC 2017. It has been a great journey where I learnt a lot of new stuff. My mentors helped me throughout, Special Thanks to them. There are still some pending works wrt to the proposal as listed below.&lt;/p&gt;
+
+&lt;p&gt;Remaining work :&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Getting the above 3 PRs merged.&lt;/li&gt;
+  &lt;li&gt;completing &lt;code class="highlighter-rouge"&gt;fu&lt;/code&gt; and the PR &lt;a href="https://github.com/symengine/symengine/pull/1058"&gt;#1058&lt;/a&gt; on interop of polynomials.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;GoodBye !!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://ranjithkumar007.github.io/2017/08/15/Week-10 &amp; 11</guid>
+      <author>Ranjith Kumar (ranjithkumar007)</author>
+      <title>Ranjith Kumar (ranjithkumar007): Week-10 &amp; 11</title>
+      <pubDate>Tue, 15 Aug 2017 00:00:00 GMT</pubDate>
+      <link>http://ranjithkumar007.github.io/2017/08/15/Week-10-&amp;-11/</link>
+      <description>&lt;p&gt;This post contains progress in week-10 and week-11.&lt;/p&gt;
+
+&lt;p&gt;Most of the focus was on trying to get the earlier PRs merged. In improving &lt;a href="https://github.com/symengine/symengine/pull/1305"&gt;#1305&lt;/a&gt;, Isuru suggested to implement &lt;code class="highlighter-rouge"&gt;xreplace&lt;/code&gt;. I completed this in &lt;a href="https://github.com/symengine/symengine/pull/1320"&gt;#1320&lt;/a&gt;. I got it merged recently.&lt;/p&gt;
+
+&lt;p&gt;Other than this, I worked on implementing a function for computing eigen values of a given matrix. It is implemented in &lt;a href="https://github.com/symengine/symengine/pull/1319"&gt;#1319&lt;/a&gt;. &lt;a href="https://github.com/symengine/symengine/pull/1317"&gt;#1317&lt;/a&gt;PR on system of equations is done and it needs a review.&lt;/p&gt;
+
+&lt;p&gt;Travis is bothering from quite some time with some unusual errors. I will try to fix them.&lt;/p&gt;
+
+&lt;p&gt;Thats all !&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://nesar2017.wordpress.com/?p=342</guid>
       <author>Abdullah Javed Nesar (Abdullahjavednesar)</author>
       <title>Abdullah Javed Nesar (Abdullahjavednesar): GSoC Progress Report</title>
@@ -558,113 +724,6 @@ None
       <pubDate>Tue, 18 Jul 2017 19:41:21 GMT</pubDate>
       <link>https://szymag.github.io/post/week-7/</link>
       <description>&lt;p&gt;During week 7 I continued my work on transformation equations for rotation. One PR #12960 which obtains transformation equations from rotation matrix was merged. I have prepared also method for composition of transformation equation but I didn&amp;rsquo;t push them. I need to still think how to arrange the whole structure. My mentor suggest that we can just use transformation equations instead of rotation matrix, because it&amp;rsquo;s just general concept. After that we could modify constructor in CoordSys3D class and put them transformation equation instead of rotation matrix.</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://shikharj.github.io//2017/07/18/GSoC-Progress-Week-7</guid>
-      <author>Shikhar Jaiswal (ShikharJ)</author>
-      <title>Shikhar Jaiswal (ShikharJ): GSoC Progress - Week 7</title>
-      <pubDate>Tue, 18 Jul 2017 00:00:00 GMT</pubDate>
-      <link>https://shikharj.github.io//2017/07/18/GSoC-Progress-Week-7/</link>
-      <description>&lt;p&gt;My seventh report on my GSoC progress. It&amp;#8217;s been quite a journey so far, full of challenges and rewards. This week, apart from the work, I took some time to write a proposal for a full fledged talk at the upcoming &lt;code class="highlighter-rouge"&gt;PyCon India 2017&lt;/code&gt; Conference, titled &lt;code class="highlighter-rouge"&gt;SymEngine: Leveraging The Power Of A Computer Algebra System (CAS) To Another&lt;/code&gt; to be held during the first week of &lt;code class="highlighter-rouge"&gt;November 2017&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;New Delhi&lt;/code&gt;. What&amp;#8217;s more exciting is that Sumith and Ranjith would be there as well, hopefully if it gets selected.&lt;/p&gt;
-
-&lt;h2 id="report"&gt;Report&lt;/h2&gt;
-
-&lt;h3 id="symengine"&gt;SymEngine&lt;/h3&gt;
-&lt;p&gt;I pushed in &lt;a href="https://github.com/symengine/symengine.py/pull/1308"&gt;#1308&lt;/a&gt; fixing a minor &lt;code class="highlighter-rouge"&gt;Travis&lt;/code&gt; irregularity.&lt;/p&gt;
-
-&lt;h3 id="symenginepy"&gt;SymEngine.py&lt;/h3&gt;
-&lt;p&gt;I pushed in &lt;a href="https://github.com/symengine/symengine.py/pull/176"&gt;#176&lt;/a&gt;, a minor PR for skipping some of the tests where &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt; wasn&amp;#8217;t being used.&lt;/p&gt;
-
-&lt;p&gt;Most of my time this week was spent on finding inconsistencies between &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt; objects which arise while using &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt;. I&amp;#8217;m currently maitaining a log of all the issues that are occuring and their possible solutions. As such, I have decided to make a small change in our strategy. For the coming week, I&amp;#8217;ll try and complete the issue log, and implement the possible missing functionalities and attributes in &lt;code class="highlighter-rouge"&gt;SymEngine.py&lt;/code&gt;, after which a minor release in &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;SymEngine.py&lt;/code&gt; would be made to make these changes available for &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Till Next Time!&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Ciao&lt;/strong&gt;&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=677</guid>
-      <author>Arif Ahmed (ArifAhmed1995)</author>
-      <title>Arif Ahmed (ArifAhmed1995): Week 7 Report(July 11 &#x2013; July 17) : Implicit Intersections</title>
-      <pubDate>Mon, 17 Jul 2017 19:24:49 GMT</pubDate>
-      <link>https://arif7blog.wordpress.com/2017/07/17/week-7-reportjuly-11-july-17-implicit-intersections/</link>
-      <description>&lt;p&gt;I had initially planned to begin implementing the 3D case this week. But I wanted closure for the 2D case. Currently there is no support for implicit intersections for polygons. One could make the failing tests pass by not raising an error when such a polygon is encountered, but obviously that wouldn&amp;#8217;t be a good solution.&lt;br /&gt;
-So, from the discussion in pull request &lt;a href="https://github.com/sympy/sympy/pull/12931" rel="noopener" target="_blank"&gt;#12931&amp;#160;&lt;/a&gt;:&lt;/p&gt;
-&lt;p&gt;1. Fleury&amp;#8217;s algorithm is not required. A better approach to calculate area would be to simply flip the sides after crossing an intersection point and come back to initial direction of traversal once that point is encountered again. I have implemented this technique locally. It has worked fine for the following polygons but still seems to have some minor bugs which I&amp;#8217;ll fix really soon. Once that&amp;#8217;s done I&amp;#8217;ll update the pull request.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; p1 = Polygon((0,-3), (-1,-2), (2,0), (-1,2), (0,3))
-&amp;gt;&amp;gt;&amp;gt; p1.area
--13/3
-&amp;gt;&amp;gt;&amp;gt; p2 = Polygon((0,0), (1,0), (0,1), (1,1))
-&amp;gt;&amp;gt;&amp;gt; p2.area
-1/2&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;All of this was because of the material &lt;span style="color: #99cc00;"&gt;&lt;a href="https://codegolf.stackexchange.com/questions/47638/area-of-a-self-intersecting-polygon/47640" rel="noopener" target="_blank"&gt;here&lt;/a&gt;&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;2. The intersections are currently being found by a slow technique which I designed. A much better one by the name of Bentley-Ottmann algorithm exists for the same purpose. Once I get the area working for all the test cases on the &lt;span style="color: #99cc00;"&gt;&lt;a href="https://codegolf.stackexchange.com/questions/47638/area-of-a-self-intersecting-polygon/47640" rel="noopener" target="_blank"&gt;codegolf link&lt;/a&gt;&lt;/span&gt;, I&amp;#8217;ll work on implementing this.&lt;/p&gt;
-&lt;p&gt;3. Christopher also suggested that we add a property called footprint_area, which would refer to area that a polygon covers(i.e. the hull of the polygon) and another property called hull which would refer to that very path. I was initially confusing this area with the area that depends on direction. Now I see that this footprint area isn&amp;#8217;t the one normally referred to when talking about the area of a polygon and it&amp;#8217;s actually the other one.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/677/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/677/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=677&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://valglad.github.io/2017/07/17/presentation</guid>
-      <author>Valeriia Gladkova (valglad)</author>
-      <title>Valeriia Gladkova (valglad): Presentations of Permutation Groups</title>
-      <pubDate>Mon, 17 Jul 2017 00:00:00 GMT</pubDate>
-      <link>http://valglad.github.io/2017/07/17/presentation/</link>
-      <description>&lt;p&gt;The work on finding finite presentations of permutation groups was somewhat delayed last week because I&amp;#8217;ve come across a bug in the &lt;code class="highlighter-rouge"&gt;reidemester_presentation&lt;/code&gt; code while testing the one step version of the presetation algorithm (which is essentially finished). Turned out it was caused by an unnecessary cyclic reduction on one line in the main elimination technique. See &lt;a href="https://github.com/sympy/sympy/pull/12973"&gt;PR&lt;/a&gt; for the explanation.&lt;/p&gt;
-
-&lt;p&gt;Another delay was because I realised that for the multi-step version, it would be useful to have the homomorphism &lt;a href="https://github.com/sympy/sympy/pull/12827"&gt;PR&lt;/a&gt; merged. Mostly this is because of the &lt;code class="highlighter-rouge"&gt;generator_product&lt;/code&gt; method from the &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; class - this takes an arbitrary permutation in the group and returns a list of the strong generators such that the product of the elements of the list is equal to this permutation. But the homomorphism functionality that&amp;#8217;s already there (the case of the homomorphism from an &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt; to a &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;) would be helpful too. So I switched by attention to getting that PR ready for merging.&lt;/p&gt;
-
-&lt;p&gt;So this week I&amp;#8217;ll try to add the multistep version and will also start implementing homomorphisms from &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt;s and to &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s, as outlined in the plan. Also, at some point when the rewriting PR is merged, I could try out the potentially improved random element generator for &lt;code class="highlighter-rouge"&gt;FpGroup&lt;/code&gt;s that I sketched a couple of weeks ago. This is not officially part of the plan and not in any way urgent, but could probably give better random elements which would be useful for the &lt;code class="highlighter-rouge"&gt;order()&lt;/code&gt; method and the kernel calculation for homomorphisms. Though I might not actually get around to it this week.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/07/16/GSoC17-Week6-Report</guid>
-      <author>Arihant Parsoya (parsoyaarihant)</author>
-      <title>Arihant Parsoya (parsoyaarihant): GSoC17 Week 6 Report</title>
-      <pubDate>Sun, 16 Jul 2017 06:30:00 GMT</pubDate>
-      <link>https://parsoyaarihant.github.io/blog/gsoc/2017/07/16/GSoC17-Week6-Report.html</link>
-      <description>&lt;p&gt;Manuel has implemented Optional arguments in MatchPy. I am currently working on modifying our current parser to accommodate the changes. Optional arguments in MatchPy will enable us to add all rules to &lt;code class="highlighter-rouge"&gt;ManyToOneReplacer&lt;/code&gt; without increasing the number of rules. Manuel has been helping us a lot in making Rubi work in SymPy. He has also found a way to add MatchPy expressions in SymPy. I will try to use it to implement &lt;a href="http://reference.wolfram.com/language/ref/MatchQ.html.en"&gt;MatchQ&lt;/a&gt; in SymPy.&lt;/p&gt;
-
-&lt;h3 id="expandintegrand"&gt;ExpandIntegrand&lt;/h3&gt;
-&lt;p&gt;ExpandIntegrand takes up majority of time while integration. I have implemented &lt;code class="highlighter-rouge"&gt;ExpandIntegrand&lt;/code&gt; using SymPy&amp;#8217;s &lt;code class="highlighter-rouge"&gt;.match()&lt;/code&gt;. However, &lt;code class="highlighter-rouge"&gt;.match()&lt;/code&gt; can give unwanted results such as:&lt;/p&gt;
-&lt;div class="language-python highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;match&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;c_&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;d_&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;n_&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;d_&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;c_&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n_&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;In the above example, it assumes that c_ is an optional variable when we don&amp;#8217;t want it to be. To orevent these situations, I used &lt;code class="highlighter-rouge"&gt;exclude&lt;/code&gt; attribute to avoid these situations:&lt;/p&gt;
-&lt;div class="language-python highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;c_&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Wild&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'c'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;exclude&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;d_&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Wild&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'d'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;exclude&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;n_&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Wild&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'n'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;exclude&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;match&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;c_&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;d_&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;n_&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="bp"&gt;None&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;I have used the above trick to prevent unnecessary matches in &lt;code class="highlighter-rouge"&gt;ExpandIntegrand&lt;/code&gt; and made it a bit faster.&lt;/p&gt;
-
-&lt;h3 id="todo"&gt;TODO&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Implement parser without &lt;code class="highlighter-rouge"&gt;powerset&lt;/code&gt; and parse all Rubi rules.&lt;/li&gt;
-  &lt;li&gt;Fix failing tests.&lt;/li&gt;
-  &lt;li&gt;Add all algebraic tests in Rubi.&lt;/li&gt;
-&lt;/ul&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nesar2017.wordpress.com/?p=217</guid>
-      <author>Abdullah Javed Nesar (Abdullahjavednesar)</author>
-      <title>Abdullah Javed Nesar (Abdullahjavednesar): GSoC Progess Report</title>
-      <pubDate>Wed, 12 Jul 2017 12:05:27 GMT</pubDate>
-      <link>https://nesar2017.wordpress.com/2017/07/12/gsoc-progess-report/</link>
-      <description>&lt;p&gt;So far we have covered almost all the Utility Functions to support &lt;strong&gt;Algebraic Rules/Linear Products rules&lt;/strong&gt;, Arihant had given the entire details of the first test set in his recent blog post&amp;#160;once we are successfully done with the first set we have the other two test sets for Linear Products ready to work on.&lt;/p&gt;
-&lt;p&gt;Currently I&amp;#8217;m work on implementation of &lt;strong&gt;Normalization functions&lt;/strong&gt;, although I have implemented &lt;code class="highlighter-rouge"&gt;NormalizeIntegrandFactorBase&lt;/code&gt;&amp;#160;using SymPy&amp;#8217;s pattern matcher but that needs a bit improvisation. After that I&amp;#8217;ll complete implementation of &lt;code class="highlighter-rouge"&gt;SimpHelp&lt;/code&gt;.&lt;br /&gt;
-May be a couple of weeks more and we&amp;#8217;ll be done with the implementation of all the Utility Functions.&lt;/p&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/nesar2017.wordpress.com/217/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/nesar2017.wordpress.com/217/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=nesar2017.wordpress.com&amp;#038;blog=126779945&amp;#038;post=217&amp;#038;subd=nesar2017&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://gxyd.github.io/blogs/Gsoc2017-week-5</guid>
-      <author>Gaurav Dhingra (gxyd)</author>
-      <title>Gaurav Dhingra (gxyd): GSoC 2017: Week 5</title>
-      <pubDate>Wed, 12 Jul 2017 00:00:00 GMT</pubDate>
-      <link>https://gxyd.github.io/blogs/Gsoc2017-week-5/</link>
-      <description>&lt;p&gt;We started working on implementation of &lt;a href="https://github.com/sympy/sympy/pull/12885"&gt;parametric logarithmic derivative problem using Risch structure Theorem&lt;/a&gt;. First we implemented the function &lt;code class="highlighter-rouge"&gt;basis_Q&lt;/code&gt;, which seems like we wouldn&amp;#8217;t be needing no-more. While doing that it seemed like there was problem with the &lt;code class="highlighter-rouge"&gt;.is_algebraic&lt;/code&gt; property, as it was returning &lt;code class="highlighter-rouge"&gt;(pi**3).is_algebraic&lt;/code&gt; as True. This bug was fixed in the pull request &lt;a href="https://github.com/sympy/sympy/pull/12924"&gt;#12924&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Also a few improvements to the &lt;a href="https://gxyd.github.io/:/github.com/sympy/sympy/pull/12925"&gt;integral module pull request #12925&lt;/a&gt; was also merged.&lt;/p&gt;
-
-&lt;p&gt;I don&amp;#8217;t have much to say for now, until I complete the parametric logarithmic derivate PR.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
