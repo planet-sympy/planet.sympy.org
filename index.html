@@ -89,6 +89,108 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">August 28, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-debb4ede feed-" id="item-8493c60d">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/08/28/GSoC17-Final-Report.html">06:30, Monday, 28 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/08/28/GSoC17-Final-Report.html">Arihant Parsoya (parsoyaarihant): GSoC17 Final Report</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/08/28/GSoC17-Final-Report.html">06:30, Monday, 28 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/08/28/GSoC17-Final-Report.html">GSoC17 Final Report</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<h1 id="gsoc-2017-rule-based-integration-report">GSoC 2017 Rule Based Integration Report</h1>
+
+<h2 id="about-me">About Me</h2>
+<p>My name is Arihant Parsoya. I am a junior undergraduate student at Indian Institute of Technology Bombay. My GSoC project was to implement rule based integration module in SymPy.</p>
+
+<h2 id="community-bonding-period">Community Bonding Period</h2>
+<p>My original plan was to implement <a href="https://github.com/parsoyaarihant/gsoc/wiki/GSoC-2017-Application-Arihant-Parsoya:-Rubi-Integrator#match-object">pattern matching module</a> in SymPy which would be optimised for our project and then create a decision tree by parsing Mathematica rules.</p>
+
+<p>After my selection for GSoC, we came across <a href="https://github.com/HPAC/matchpy">MatchPy</a>(which has good pattern matching capabilities) and decided to use it for implementation of our module. However, MatchPy is only implemented in Python3.6 because of which we could not use MatchPy for Python&lt;3.6 versions of SymPy. I tried to use <a href="https://pypi.python.org/pypi/3to2">3to2</a> to make MatchPy code compatible with Python&lt;3.6 but it turns out that MatchPy also has few external dependencies and they also had to be added into SymPy.</p>
+
+<h2 id="coding-period">Coding Period</h2>
+<p>We decided to implement the module only for Python3.6 using MatchPy hoping that we could do code-generation of rules once we added all the rules to MatchPy&#8217;s <code class="highlighter-rouge">ManyToOneReplacer</code>. Manuel Kebber helped us a lot in adding support for optional arguments and code-generation in MatchPy. Unfortunately, the code generation still has the dependency on MatchPy.</p>
+
+<h3 id="implementations--work-done">Implementations / work done</h3>
+<ul>
+  <li>Utility functions</li>
+  <li>Python parser for rules written in Mathematica.</li>
+  <li>Added rules in MatchPy&#8217;s <code class="highlighter-rouge">ManyToOneReplacer</code>.
+The work done could not be merged since it has dependency on MatchPy and is not fully tested.</li>
+</ul>
+
+<h3 id="future-work">Future Work</h3>
+<p>The module so far is not really usable due to its high loading time and dependency on MatchPy. In my opinion, to add Rubi to SymPy, we need to implement MatchPy capabilities into SymPy(along with code generation) so SymPy doesn&#8217;t have dependency on MatchPy. There is some work left in the current module which could not be completed since they require longer time than available:</p>
+
+<ul>
+  <li>Testing all the rules. There are thousands of tests in Rubi test suit. All the tests should be tested properly. I have done majority of tests in <code class="highlighter-rouge">linear_products</code>. Testing takes lot of time since Rubi takes time to load. Every failure needs to be investigated individually. For debugging purposes, Francesco helped us create <code class="highlighter-rouge">get_matching_rule_definition</code> function which helps us identify the rule which is getting matched.</li>
+  <li>Code generation of rules. In my opinion, it is important to complete the test suit of Rubi. Code generation can be done after that.</li>
+  <li>Adding support for <code class="highlighter-rouge">Piecewise</code> functions.</li>
+</ul>
+
+<h2 id="post-gsoc">Post GSoC</h2>
+<p>I plan to continue working with SymPy to help it grow by adding more functionalities. I may even apply again in a future year to implement some other thing in SymPy, or maybe apply as a mentor for SymPy to help someone else improve it.</p>
+
+<h2 id="references">References</h2>
+<ul>
+  <li>Link to pull request: <a href="https://github.com/sympy/sympy/pull/12978">https://github.com/sympy/sympy/pull/12978</a></li>
+  <li>Weekly blog link: <a href="https://parsoyaarihant.github.io/blog/">https://parsoyaarihant.github.io/blog/</a></li>
+</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">August 25, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -2425,71 +2527,6 @@ None
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">July 18, 2017</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-5aa203d9 feed-" id="item-f9a99d03">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Szymon Mieszczak (szymag) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://szymag.github.io/post/week-7/">19:41, Tuesday, 18 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://szymag.github.io/post/week-7/">Szymon Mieszczak (szymag): Week 7</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Szymon Mieszczak (szymag) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://szymag.github.io/post/week-7/">19:41, Tuesday, 18 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://szymag.github.io/post/week-7/">Week 7</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>During week 7 I continued my work on transformation equations for rotation. One PR #12960 which obtains transformation equations from rotation matrix was merged. I have prepared also method for composition of transformation equation but I didn&rsquo;t push them. I need to still think how to arrange the whole structure. My mentor suggest that we can just use transformation equations instead of rotation matrix, because it&rsquo;s just general concept. After that we could modify constructor in CoordSys3D class and put them transformation equation instead of rotation matrix.
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2517,134 +2554,134 @@ None
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>11:40, Monday, 28 August</td>
-<td>11:55, Monday, 28 August</td>
+<td>12:00, Monday, 28 August</td>
+<td>12:15, Monday, 28 August</td>
 </tr>
 </table>
 
