@@ -120,6 +120,16 @@ that some new &lt;code class="highlighter-rouge"&gt;FreeGroupElement&lt;/code&gt
 &lt;p&gt;Overall, this was a fun summer and I enjoyed working on this project. I&amp;#8217;d like to thank Google for sponsoring it, SymPy for giving me the opportunity to participate and my mentor &lt;a href="https://github.com/jksuom"&gt;Kalevi (jksuom)&lt;/a&gt; for giving me guidance and useful suggestions on my code and generally being very helpful. :)&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://szymag.github.io/post/week-11/</guid>
+      <author>Szymon Mieszczak (szymag)</author>
+      <title>Szymon Mieszczak (szymag): Week 11</title>
+      <pubDate>Wed, 23 Aug 2017 19:41:21 GMT</pubDate>
+      <link>https://szymag.github.io/post/week-11/</link>
+      <description>&lt;p&gt;During week 11 I extended differential operator to handle mixed coordinate system.
+Mixed means that scalar or vector which we&amp;rsquo;re using as argument has elements coming from several different coordinate systems. Not necessarily connected. These work were split into three PR&amp;rsquo;s, one for every differential operator, gradient#13118 , divergence#13128 and curl#13154.
+To implement this, we need to only take care about product rule for scalar and vector, but they are well defined.</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://shikharj.github.io//2017/08/22/GSoC-Progress-Week-11-12</guid>
       <author>Shikhar Jaiswal (ShikharJ)</author>
       <title>Shikhar Jaiswal (ShikharJ): GSoC Progress - Week 11 and Week 12</title>
@@ -705,62 +715,6 @@ until the speed issue gets fixed. I will focus on the following this week:&lt;/p
  assert TrigReduce(2*sin(x)*cos(x) + 2*cos(x)**2) == sin(2*x) + cos(2*x) + 1&lt;/pre&gt;
 &lt;p&gt;I have taken some help from a reply in &lt;a href="https://stackoverflow.com/questions/30541734/how-to-rewrite-sinx2-to-cos2x-form-in-sympy"&gt;stackoverflow&lt;/a&gt;&amp;#160;and may be now we can answer that question much better.&lt;/p&gt;
 &lt;p&gt;My next week&amp;#8217;s target would be to complete all the utility functions and fix bugs as much as possible.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/nesar2017.wordpress.com/237/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/nesar2017.wordpress.com/237/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=nesar2017.wordpress.com&amp;#038;blog=126779945&amp;#038;post=237&amp;#038;subd=nesar2017&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://gxyd.github.io/blogs/Gsoc2017-week-6</guid>
-      <author>Gaurav Dhingra (gxyd)</author>
-      <title>Gaurav Dhingra (gxyd): GSoC 2017: Week 6</title>
-      <pubDate>Wed, 19 Jul 2017 00:00:00 GMT</pubDate>
-      <link>https://gxyd.github.io/blogs/Gsoc2017-week-6/</link>
-      <description>
-
-
-
-&lt;p&gt;We worked on &lt;a href="https://github.com/sympy/sympy/pull/12885"&gt;Parametric logarithmic derivative PR #12885&lt;/a&gt; only this week. So now I will get to a few mathematical points regarding the problem of &amp;#8220;parametric logarithmic derivative&amp;#8221; problem (will shortly write it as &lt;code class="highlighter-rouge"&gt;PLD&lt;/code&gt; problem).&lt;/p&gt;
-
-&lt;p&gt;The &lt;code class="highlighter-rouge"&gt;PLD&lt;/code&gt; problem is, for a given hyperexponential monomial  over a differential field  and , to decide whether there exists  with , for the equation: , and to find one such solution.&lt;/p&gt;
-
-&lt;p&gt;There are two versions of it, the first one being the heursitic version which is quite simple (with available pseudo code) and is already implemented in SymPy, but since it doesn&amp;#8217;t handle all the cases, it becomes necessary to have the deterministic version of it. The deterministic version is sort of used as a fallback i.e in case the heuristic version fails (raises &lt;code class="highlighter-rouge"&gt;NotImplementedError&lt;/code&gt;) which isn&amp;#8217;t quite often.&lt;/p&gt;
-
-&lt;p&gt;We already have done the basic programming of it in SymPy, so before I say any further let&amp;#8217;s see an example.&lt;/p&gt;
-
-&lt;p&gt;A simple example of where the heuristic version fails is:&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; fa, fd = Poly(1, x), Poly(1, x)
-&amp;gt;&amp;gt;&amp;gt; wa, wd = Poly(1, x), Poly(1, x)
-&amp;gt;&amp;gt;&amp;gt; DE = DifferentialExtension(extension={'D': [Poly(1, x, domain='ZZ'), Poly(t, t, domain='ZZ')], 'exts': [None, 'exp']})
-&amp;gt;&amp;gt;&amp;gt; parametric_log_deriv_heu(fa, fd, wa, wd, DE)
-None
-
-# while the deterministic version, runs fine
-
-&amp;gt;&amp;gt;&amp;gt; parametric_log_deriv(fa, fd, wa, wd, DE)
-[Matrix([[-1, 1, 0]]), Matrix([[-1, 0, 1]])] # don't worry about output type
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;h2 id="internals-of-deterministic-version"&gt;Internals of deterministic version&lt;/h2&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;In the deterministic version we use the Risch&amp;#8217;s structure theorem, i.e&lt;/p&gt;
-
-&lt;p&gt; ( equation 1)&lt;/p&gt;
-
-&lt;p&gt;where we solve for each .&lt;/p&gt;
-
-&lt;p&gt;This result of structure theorem is quite useful, this same theorem can be used in the process of &lt;code class="highlighter-rouge"&gt;DifferentialExtension&lt;/code&gt; construction, as can be seen the section 5.2 in book (Outline and Scope of Integration Algorithm, search by section name if you have a different version of the book).&lt;/p&gt;
-
-&lt;p&gt;In &lt;code class="highlighter-rouge"&gt;PLD&lt;/code&gt; (deterministic) we first obtain the  and  parts depending on &amp;#8216;log&amp;#8217;/&amp;#8217;exp&amp;#8217; extension respectively and store them in a list &lt;code class="highlighter-rouge"&gt;F&lt;/code&gt; (the order wouldn&amp;#8217;t matter).&lt;/p&gt;
-
-&lt;p&gt;We reorganize this problem in a way somewhat similar to &lt;code class="highlighter-rouge"&gt;limited_integrate&lt;/code&gt; problem, i.e  , we solve the problem  and chose the one where .&lt;/p&gt;
-
-&lt;p&gt;The same thing we do here in this problem, but that does cause some problem as  may not necesarily be contained in the extension , and currently we are working on solving this part of the problem, Kalevi suggests to take the unfinished &lt;code class="highlighter-rouge"&gt;DE&lt;/code&gt; object and the extension containing  could be built on that.(No need to start from scratch.)&lt;/p&gt;
-
-&lt;p&gt;I haven&amp;#8217;t mentioned much regarding the function that does the working for converting the relation in eq (1) over a field  to one over . It contains &lt;code class="highlighter-rouge"&gt;Poly&lt;/code&gt; manipulation methods to do that. It does mathematically the same thing as &amp;#8220;to obtain a system with coefficients in C and the same constant solutions.&amp;#8221;&lt;/p&gt;
-
-&lt;p&gt;I&amp;#8217;ll complete the &lt;code class="highlighter-rouge"&gt;parametric_log_deriv&lt;/code&gt; before the next week starts.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
