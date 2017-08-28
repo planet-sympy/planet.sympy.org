@@ -7,6 +7,28 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://arif7blog.wordpress.com/?p=753</guid>
+      <author>Arif Ahmed (ArifAhmed1995)</author>
+      <title>Arif Ahmed (ArifAhmed1995): Final Report : End of GSoC 2017</title>
+      <pubDate>Mon, 28 Aug 2017 13:26:55 GMT</pubDate>
+      <link>https://arif7blog.wordpress.com/2017/08/28/final-report-end-of-gsoc-2017/</link>
+      <description>&lt;p&gt;Final evaluations are due in a day and GSoC 2017 will soon come to an end.&lt;br /&gt;
+Here is the link I submitted for the final report -&amp;gt; &lt;a href="https://github.com/sympy/sympy/wiki/GSoC-2017-Report-Arif-Ahmed-:-Integration-over-Polytopes" rel="noopener" target="_blank"&gt;GSoC 2017 Report&lt;/a&gt;. The last three weeks I have been wrapping up the 3D use case, writing its test cases and documentation.&lt;/p&gt;
+&lt;p&gt;The only deliverables which remain :&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Computing all monomials given a max_degree for the 3D case.&lt;/li&gt;
+&lt;li&gt;Handling implicit intersecting polygons.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I would have loved to at least have the first one merged before SoC deadline but unfortunately I have two tests and two lab sessions in the span of three days hence will have to implement after the 30th.&lt;/p&gt;
+&lt;p&gt;Let us discuss how close the above issues are to being resolved :&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;For the 2D case it was simple to just generate a list of all monomials up to a given max degree. I wanted to do a similar thing for the 3D case, but was having problems with having to find out the correct indices for &lt;img alt="&amp;#92;delta (monom)/&amp;#92;delta x" class="latex" src="https://s0.wp.com/latex.php?latex=%5Cdelta+%28monom%29%2F%5Cdelta+x&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=0" title="&amp;#92;delta (monom)/&amp;#92;delta x" /&gt;,&amp;#160;&lt;img alt="&amp;#92;delta (monom)/&amp;#92;delta y" class="latex" src="https://s0.wp.com/latex.php?latex=%5Cdelta+%28monom%29%2F%5Cdelta+y&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=0" title="&amp;#92;delta (monom)/&amp;#92;delta y" /&gt; and&amp;#160;&lt;img alt="&amp;#92;delta (monom)/&amp;#92;delta z" class="latex" src="https://s0.wp.com/latex.php?latex=%5Cdelta+%28monom%29%2F%5Cdelta+z&amp;#038;bg=ffffff&amp;#038;fg=444444&amp;#038;s=0" title="&amp;#92;delta (monom)/&amp;#92;delta z" /&gt; in the flat_list. But then I remembered a certain PR in SymPy which two SymPy members and me had worked on(&lt;a href="https://github.com/sympy/sympy/pull/12490" rel="noopener" target="_blank"&gt;PR#12490&lt;/a&gt;). It seems that creating a flat list out a given matrix is a compiler optimization, therefore it would be a lot of work with quite less benefit if a flat_list is attempted to be made(in the code itself) for the 3D case as well.&lt;br /&gt;
+Therefore, a list of lists can be used for the 3D case which makes indexing for the partial derivatives much easier. After this all that needs to be done is to simply take up of the faces of the polygon and compute the left_integral of 1 over it and then that value would be re-used. This is partly implemented and should be a part of the module soon but unfortunately after the 30th.&lt;/li&gt;
+&lt;li&gt;As mentioned in the Report, the intersection algorithm needs to be replaced and the case for more than two intersecting sides needs to be dealt with. The first problem isn&amp;#8217;t that hard to be dealt with but I haven&amp;#8217;t thought about the second one yet.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;GSoC has been a great learning experience and I look forward to porting this module to symengine after the loose ends in SymPy are tied up. Grateful to both my mentors Ondrej and Prof.Sukumar for their guidance.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/753/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/753/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&amp;#038;blog=126429718&amp;#038;post=753&amp;#038;subd=arif7blog&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/08/28/GSoC17-Final-Report</guid>
       <author>Arihant Parsoya (parsoyaarihant)</author>
       <title>Arihant Parsoya (parsoyaarihant): GSoC17 Final Report</title>
@@ -648,73 +670,6 @@ until the speed issue gets fixed. I will focus on the following this week:&lt;/p
   &lt;li&gt;Rename &lt;code class="highlighter-rouge"&gt;Integer&lt;/code&gt; in rubi.symbols to &lt;code class="highlighter-rouge"&gt;matchpyInteger&lt;/code&gt;&lt;/li&gt;
   &lt;li&gt;Add support for code generation in Rubi if it gets implemented in MatchPy(Manuel said he was working on it last week)&lt;/li&gt;
 &lt;/ul&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nesar2017.wordpress.com/?p=237</guid>
-      <author>Abdullah Javed Nesar (Abdullahjavednesar)</author>
-      <title>Abdullah Javed Nesar (Abdullahjavednesar): GSoC Progress Report</title>
-      <pubDate>Wed, 19 Jul 2017 18:21:17 GMT</pubDate>
-      <link>https://nesar2017.wordpress.com/2017/07/19/gsoc-progress-report-2/</link>
-      <description>&lt;p&gt;I&amp;#8217;ve been working on the last set of Utility functions and after that I&amp;#8217;ll complete some left over functions yet to be implemented. Along with it we have been fixing some bugs which we could notice.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;TrigReduce()&lt;/code&gt; is an inbuilt function in &lt;a href="http://reference.wolfram.com/language/ref/TrigReduce.html.en"&gt;Mathematica&lt;/a&gt;, following is its code in Python.&lt;/p&gt;
-&lt;pre&gt;def TrigReduce(i):
-    if SumQ(i):
-    t = 0
-        for k in i.args:
-            t += TrigReduce(k)
-        return t
-    if ProductQ(i):
-        if any(PowerQ(k) for k in i.args):
-            if (i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin)).has(I):
-                return i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin).simplify()
-            else:
-                return i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin)
-        else:
-            a = Wild('a')
-            b = Wild('b')
-            v = Wild('v')
-            Match = i.match(v*sin(a)*cos(b))
-            if Match:
-                a = Match[a]
-                b = Match[b]
-                v = Match[v]
-                # 2 sin A cos B = sin(A + B) + sin(A &amp;#8722; B)
-                return i.subs(v*sin(a)*cos(b), v*S(1)/2*(sin(a + b) + sin(a - b)))
-            Match = i.match(v*sin(a)*sin(b))
-            if Match:
-                a = Match[a]
-                b = Match[b]
-                v = Match[v]
-                # 2 sin A sin B = cos(A &amp;#8722; B) &amp;#8722; cos(A + B)
-                return i.subs(v*sin(a)*sin(b), v*S(1)/2*cos(a - b) - cos(a + b))
-            Match = i.match(v*cos(a)*cos(b))
-            if Match:
-                a = Match[a]
-                b = Match[b]
-                v = Match[v]
-                # 2 cos A cos B = cos(A + B) + cos(A &amp;#8722; B)
-                return i.subs(v*cos(a)*cos(b), v*S(1)/2*cos(a + b) + cos(a - b)) 
-    if PowerQ(i):
-        if i.has(sin):
-            if (i.rewrite(sin, exp).expand().rewrite(exp, sin)).has(I):
-                return i.rewrite(sin, exp).expand().rewrite(exp, sin).simplify()
-            else:
-                return i.rewrite(sin, exp).expand().rewrite(exp, sin)
-        if i.has(cos):
-            if (i.rewrite(cos, exp).expand().rewrite(exp, cos)).has(I):
-                return i.rewrite(cos, exp).expand().rewrite(exp, cos).simplify()
-            else:
-                return i.rewrite(cos, exp).expand().rewrite(exp, cos)
-    else:
-        return i&lt;/pre&gt;
-&lt;p&gt;Some tests for &lt;code&gt;TrigReduce()&lt;/code&gt;&lt;/p&gt;
-&lt;pre&gt; assert TrigReduce(cos(x)**2) == cos(2*x)/2 + 1/2
- assert TrigReduce(cos(x)**2*sin(x)) == sin(x)/4 + sin(3*x)/4
- assert TrigReduce(cos(x)**2+sin(x)) == sin(x) + cos(2*x)/2 + 1/2
- assert TrigReduce(cos(x)**2*sin(x)**5) == 5*sin(x)/64 + sin(3*x)/64 - 3*sin(5*x)/64 + sin(7*x)/64
- assert TrigReduce(2*sin(x)*cos(x) + 2*cos(x)**2) == sin(2*x) + cos(2*x) + 1&lt;/pre&gt;
-&lt;p&gt;I have taken some help from a reply in &lt;a href="https://stackoverflow.com/questions/30541734/how-to-rewrite-sinx2-to-cos2x-form-in-sympy"&gt;stackoverflow&lt;/a&gt;&amp;#160;and may be now we can answer that question much better.&lt;/p&gt;
-&lt;p&gt;My next week&amp;#8217;s target would be to complete all the utility functions and fix bugs as much as possible.&lt;/p&gt;&lt;br /&gt;  &lt;a href="http://feeds.wordpress.com/1.0/gocomments/nesar2017.wordpress.com/237/" rel="nofollow"&gt;&lt;img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/nesar2017.wordpress.com/237/" /&gt;&lt;/a&gt; &lt;img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=nesar2017.wordpress.com&amp;#038;blog=126779945&amp;#038;post=237&amp;#038;subd=nesar2017&amp;#038;ref=&amp;#038;feed=1" width="1" /&gt;</description>
     </item>
   </channel>
 </rss>

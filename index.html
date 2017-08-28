@@ -93,6 +93,82 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-3b0ec3aa feed-" id="item-2927c4b4">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/arifahmed.jpeg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://arif7blog.wordpress.com/2017/08/28/final-report-end-of-gsoc-2017/">13:26, Monday, 28 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/08/28/final-report-end-of-gsoc-2017/">Arif Ahmed (ArifAhmed1995): Final Report : End of GSoC 2017</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/arifahmed.jpeg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Arif Ahmed (ArifAhmed1995) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://arif7blog.wordpress.com/2017/08/28/final-report-end-of-gsoc-2017/">13:26, Monday, 28 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://arif7blog.wordpress.com/2017/08/28/final-report-end-of-gsoc-2017/">Final Report : End of GSoC 2017</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Final evaluations are due in a day and GSoC 2017 will soon come to an end.<br />
+Here is the link I submitted for the final report -&gt; <a href="https://github.com/sympy/sympy/wiki/GSoC-2017-Report-Arif-Ahmed-:-Integration-over-Polytopes" rel="noopener" target="_blank">GSoC 2017 Report</a>. The last three weeks I have been wrapping up the 3D use case, writing its test cases and documentation.</p>
+<p>The only deliverables which remain :</p>
+<ol>
+<li>Computing all monomials given a max_degree for the 3D case.</li>
+<li>Handling implicit intersecting polygons.</li>
+</ol>
+<p>I would have loved to at least have the first one merged before SoC deadline but unfortunately I have two tests and two lab sessions in the span of three days hence will have to implement after the 30th.</p>
+<p>Let us discuss how close the above issues are to being resolved :</p>
+<ol>
+<li>For the 2D case it was simple to just generate a list of all monomials up to a given max degree. I wanted to do a similar thing for the 3D case, but was having problems with having to find out the correct indices for <img alt="&#92;delta (monom)/&#92;delta x" class="latex" src="https://s0.wp.com/latex.php?latex=%5Cdelta+%28monom%29%2F%5Cdelta+x&#038;bg=ffffff&#038;fg=444444&#038;s=0" title="&#92;delta (monom)/&#92;delta x" />,&#160;<img alt="&#92;delta (monom)/&#92;delta y" class="latex" src="https://s0.wp.com/latex.php?latex=%5Cdelta+%28monom%29%2F%5Cdelta+y&#038;bg=ffffff&#038;fg=444444&#038;s=0" title="&#92;delta (monom)/&#92;delta y" /> and&#160;<img alt="&#92;delta (monom)/&#92;delta z" class="latex" src="https://s0.wp.com/latex.php?latex=%5Cdelta+%28monom%29%2F%5Cdelta+z&#038;bg=ffffff&#038;fg=444444&#038;s=0" title="&#92;delta (monom)/&#92;delta z" /> in the flat_list. But then I remembered a certain PR in SymPy which two SymPy members and me had worked on(<a href="https://github.com/sympy/sympy/pull/12490" rel="noopener" target="_blank">PR#12490</a>). It seems that creating a flat list out a given matrix is a compiler optimization, therefore it would be a lot of work with quite less benefit if a flat_list is attempted to be made(in the code itself) for the 3D case as well.<br />
+Therefore, a list of lists can be used for the 3D case which makes indexing for the partial derivatives much easier. After this all that needs to be done is to simply take up of the faces of the polygon and compute the left_integral of 1 over it and then that value would be re-used. This is partly implemented and should be a part of the module soon but unfortunately after the 30th.</li>
+<li>As mentioned in the Report, the intersection algorithm needs to be replaced and the case for more than two intersecting sides needs to be dealt with. The first problem isn&#8217;t that hard to be dealt with but I haven&#8217;t thought about the second one yet.</li>
+</ol>
+<p>GSoC has been a great learning experience and I look forward to porting this module to symengine after the loose ends in SymPy are tied up. Grateful to both my mentors Ondrej and Prof.Sukumar for their guidance.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/arif7blog.wordpress.com/753/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/arif7blog.wordpress.com/753/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=arif7blog.wordpress.com&#038;blog=126429718&#038;post=753&#038;subd=arif7blog&#038;ref=&#038;feed=1" width="1" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-debb4ede feed-" id="item-8493c60d">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -2360,130 +2436,6 @@ until the speed issue gets fixed. I will focus on the following this week:</p>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">July 19, 2017</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-b59b3a28 feed-" id="item-9e544d7e">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Abdullahjavednesar.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Abdullah Javed Nesar (Abdullahjavednesar) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://nesar2017.wordpress.com/2017/07/19/gsoc-progress-report-2/">18:21, Wednesday, 19 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://nesar2017.wordpress.com/2017/07/19/gsoc-progress-report-2/">Abdullah Javed Nesar (Abdullahjavednesar): GSoC Progress Report</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Abdullahjavednesar.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Abdullah Javed Nesar (Abdullahjavednesar) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://nesar2017.wordpress.com/2017/07/19/gsoc-progress-report-2/">18:21, Wednesday, 19 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://nesar2017.wordpress.com/2017/07/19/gsoc-progress-report-2/">GSoC Progress Report</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>I&#8217;ve been working on the last set of Utility functions and after that I&#8217;ll complete some left over functions yet to be implemented. Along with it we have been fixing some bugs which we could notice.</p>
-<p><code>TrigReduce()</code> is an inbuilt function in <a href="http://reference.wolfram.com/language/ref/TrigReduce.html.en">Mathematica</a>, following is its code in Python.</p>
-<pre>def TrigReduce(i):
-    if SumQ(i):
-    t = 0
-        for k in i.args:
-            t += TrigReduce(k)
-        return t
-    if ProductQ(i):
-        if any(PowerQ(k) for k in i.args):
-            if (i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin)).has(I):
-                return i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin).simplify()
-            else:
-                return i.rewrite(sin, exp).rewrite(cos, exp).expand().rewrite(exp, sin)
-        else:
-            a = Wild('a')
-            b = Wild('b')
-            v = Wild('v')
-            Match = i.match(v*sin(a)*cos(b))
-            if Match:
-                a = Match[a]
-                b = Match[b]
-                v = Match[v]
-                # 2 sin A cos B = sin(A + B) + sin(A &#8722; B)
-                return i.subs(v*sin(a)*cos(b), v*S(1)/2*(sin(a + b) + sin(a - b)))
-            Match = i.match(v*sin(a)*sin(b))
-            if Match:
-                a = Match[a]
-                b = Match[b]
-                v = Match[v]
-                # 2 sin A sin B = cos(A &#8722; B) &#8722; cos(A + B)
-                return i.subs(v*sin(a)*sin(b), v*S(1)/2*cos(a - b) - cos(a + b))
-            Match = i.match(v*cos(a)*cos(b))
-            if Match:
-                a = Match[a]
-                b = Match[b]
-                v = Match[v]
-                # 2 cos A cos B = cos(A + B) + cos(A &#8722; B)
-                return i.subs(v*cos(a)*cos(b), v*S(1)/2*cos(a + b) + cos(a - b)) 
-    if PowerQ(i):
-        if i.has(sin):
-            if (i.rewrite(sin, exp).expand().rewrite(exp, sin)).has(I):
-                return i.rewrite(sin, exp).expand().rewrite(exp, sin).simplify()
-            else:
-                return i.rewrite(sin, exp).expand().rewrite(exp, sin)
-        if i.has(cos):
-            if (i.rewrite(cos, exp).expand().rewrite(exp, cos)).has(I):
-                return i.rewrite(cos, exp).expand().rewrite(exp, cos).simplify()
-            else:
-                return i.rewrite(cos, exp).expand().rewrite(exp, cos)
-    else:
-        return i</pre>
-<p>Some tests for <code>TrigReduce()</code></p>
-<pre> assert TrigReduce(cos(x)**2) == cos(2*x)/2 + 1/2
- assert TrigReduce(cos(x)**2*sin(x)) == sin(x)/4 + sin(3*x)/4
- assert TrigReduce(cos(x)**2+sin(x)) == sin(x) + cos(2*x)/2 + 1/2
- assert TrigReduce(cos(x)**2*sin(x)**5) == 5*sin(x)/64 + sin(3*x)/64 - 3*sin(5*x)/64 + sin(7*x)/64
- assert TrigReduce(2*sin(x)*cos(x) + 2*cos(x)**2) == sin(2*x) + cos(2*x) + 1</pre>
-<p>I have taken some help from a reply in <a href="https://stackoverflow.com/questions/30541734/how-to-rewrite-sinx2-to-cos2x-form-in-sympy">stackoverflow</a>&#160;and may be now we can answer that question much better.</p>
-<p>My next week&#8217;s target would be to complete all the utility functions and fix bugs as much as possible.</p><br />  <a href="http://feeds.wordpress.com/1.0/gocomments/nesar2017.wordpress.com/237/" rel="nofollow"><img alt="" border="0" src="http://feeds.wordpress.com/1.0/comments/nesar2017.wordpress.com/237/" /></a> <img alt="" border="0" height="1" src="https://pixel.wp.com/b.gif?host=nesar2017.wordpress.com&#038;blog=126779945&#038;post=237&#038;subd=nesar2017&#038;ref=&#038;feed=1" width="1" />
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2511,134 +2463,134 @@ until the speed issue gets fixed. I will focus on the following this week:</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>13:20, Monday, 28 August</td>
-<td>13:35, Monday, 28 August</td>
+<td>13:40, Monday, 28 August</td>
+<td>13:55, Monday, 28 August</td>
 </tr>
 </table>
 
