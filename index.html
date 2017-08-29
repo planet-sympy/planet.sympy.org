@@ -93,6 +93,424 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-4db58090 feed-" id="item-774ffbe6">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/bjodah.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://bjodah.github.io/blog/posts/gsoc-report.html">19:15, Monday, 28 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-report.html">Bj&#246;rn Dahlgren (bjodah): GSoC 2017 Report</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/bjodah.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://bjodah.github.io/blog/posts/gsoc-report.html">19:15, Monday, 28 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-report.html">GSoC 2017 Report</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<div><div class="section" id="introduction">
+<h2>Introduction</h2>
+<p>My project was to enhance the code-generation facilities of SymPy.
+You can read my <a class="reference external" href="https://github.com/sympy/sympy/wiki/GSoC-2017-Application-Bj%C3%B6rn-Dahlgren:-Improved-code-generation-facilities">proposal</a>
+for the motivation behind this work. The overall goals were the
+following:</p>
+<ul class="simple">
+<li>Allow to render code targeting a specific precision (e.g. binary32
+vs. binary64 floating point numbers). Prior to this project the
+printers would sometimes generate code containing a mixture of single,
+double and extended precision, and there were no way to change this
+short of subclassing the printers and overriding the methods.</li>
+<li>Allow to render blocks of code and not only expressions. There was
+an initial effort to support this in the submodule
+<tt class="docutils literal">sympy.codegen</tt>.</li>
+<li>Improve the <tt class="docutils literal">Lambdify</tt> functionality in SymEngine's python
+wrapper. Before this project it did not handle outputs of mixed
+shape, and it also had considerable overhead.</li>
+</ul>
+</div>
+<div class="section" id="summary-of-the-final-work-product">
+<h2>Summary of the final work product</h2>
+<p>A whole new repository with code and notebooks for code-generation was
+created during the first part of GSoC:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial">https://github.com/sympy/scipy-2017-codegen-tutorial</a></li>
+</ul>
+<p>Jason Moore, Kenneth Lyons, Aaron Meurer and I (my <a class="reference external" href="https://github.com/sympy/scipy-2017-codegen-tutorial/commits/master?author=bjodah">commits</a>) created this for the
+tutorial in code generation with SymPy at the SciPy 2017 conference.</p>
+<p>The majority of the work are contained in these pull-requests:</p>
+<ul class="simple">
+<li>symengine.py, <a class="reference external" href="https://github.com/symengine/symengine.py/pull/112">#112</a> (merged):
+Heterogeneous output in Lambdify.</li>
+<li>symengine.py, <a class="reference external" href="https://github.com/symengine/symengine.py/pull/171">#171</a> (merged):
+Bug fix for heterogeneous output in Lambdify.</li>
+<li>sympy, <a class="reference external" href="https://github.com/sympy/sympy/pull/12693">#12693</a>
+(merged): Extending the <tt class="docutils literal">sympy.codegen.ast</tt> module with new
+classes (for generating ASTs).</li>
+<li>sympy, <a class="reference external" href="https://github.com/sympy/sympy/pull/12808">#12808</a>
+&amp; <a class="reference external" href="https://github.com/sympy/sympy/pull/13046">#13046</a> (merged):
+PythonCodePrinter, MpmathPrinter, SymPyPrinter NumPyPrinter, SciPyPrinter.</li>
+<li>sympy, <a class="reference external" href="https://github.com/sympy/sympy/pull/13063">#13194</a> (open):
+Add <tt class="docutils literal">.codegen.rewriting</tt> module.</li>
+<li>sympy, <a class="reference external" href="https://github.com/sympy/sympy/pull/13200">#13200</a> (merged):
+Add <tt class="docutils literal">.codegen.approximations</tt> module.</li>
+<li>sympy, <a class="reference external" href="https://github.com/sympy/sympy/pull/13100">#13100</a> (open):
+More AST nodes. Building on #12693, this is the biggest PR. In
+addition to improving the AST nodes it introduces
+<tt class="docutils literal">.codegen.algorithms</tt> as well as an internal testing module
+<tt class="docutils literal">.utilities._compilation</tt> which allows to compile and import/run
+strings of C/C++/Fortran code.</li>
+</ul>
+<p>In addition there were smaller pull-requests made &amp; merged:</p>
+<ul class="simple">
+<li>sympy_benchmarks: <a class="reference external" href="https://github.com/sympy/sympy_benchmarks/pull/37">#37</a>,
+<a class="reference external" href="https://github.com/sympy/sympy_benchmarks/pull/38">#38</a>,
+<a class="reference external" href="https://github.com/sympy/sympy_benchmarks/pull/39">#39</a>,
+<a class="reference external" href="https://github.com/sympy/sympy_benchmarks/pull/40">#40</a>:
+Benchmarks for lambidfy and common sub-expression elimination.</li>
+<li>sympy: <a class="reference external" href="https://github.com/sympy/sympy/pull/12686">#12686</a>
+(Support for __abs__ in SymPy matrices),
+<a class="reference external" href="https://github.com/sympy/sympy/pull/12692">#12692</a> (subclass support for
+SymPy's deprecation decorator), <a class="reference external" href="https://github.com/sympy/sympy/pull/12762">#12762</a> (Fix floating point
+error under windows),
+<a class="reference external" href="https://github.com/sympy/sympy/pull/12805">#12805</a> Revert change to
+cse (performance regression), <a class="reference external" href="https://github.com/sympy/sympy/pull/12764">#12764</a> environment variable use,
+<a class="reference external" href="https://github.com/sympy/sympy/pull/12883">#12833</a> string formatting,
+<a class="reference external" href="https://github.com/sympy/sympy/pull/12944">#12944</a> allow relative
+path in autowrap,
+<a class="reference external" href="https://github.com/sympy/sympy/pull/13063">#13063</a> fix test timing script
+(and updated timings),
+<a class="reference external" href="https://github.com/sympy/sympy/pull/12833">#12833 (some of the commits)</a> Allow custom class
+in autowrap &amp; codegen,
+<a class="reference external" href="https://github.com/sympy/sympy/pull/12843">#12843 (one of the commits)</a> allow changing compile
+arguments in <tt class="docutils literal">CythonCodeWrapper</tt>.</li>
+</ul>
+</div>
+<div class="section" id="detailed-review-of-the-work">
+<h2>Detailed review of the work</h2>
+<p>The first weeks of the summer was mostly spent on the code generation
+material presented at the SciPy conference tutorial, in parallel with
+that work was done to handle different choices of data types in the
+printers. And new AST nodes were introduced to represent type.</p>
+<div class="section" id="code-for-the-tutorial">
+<h3>Code for the tutorial</h3>
+<p>During the writing of this code improvements were made to the existing
+code-generation facilities and SymPy (and experience with their
+shortcomings were gained). One of the challenges in this work was that
+the attendees at the conference would be using all major platforms
+(Linux/macOS/Windows) and different Python versions, we needed to
+ensure that generating code, compiling, linking and importing worked
+all combinations.</p>
+</div>
+<div class="section" id="lambdify-in-symengine-s-python-wrapper">
+<h3>Lambdify in SymEngine's python wrapper</h3>
+<p>Writing the code for the tutorial provided great test cases for the
+code-generation capabilities of SymPy. The motivation of doing code
+generation is usually that of speed (but sometimes it may be motivated
+by wanting to work with some library written in another language). An
+alternative to generating high level code which then gets compiled, is
+to go toward assembly (or some intermediate representation). SymEnigne
+had support for doing this via LLVM's JIT compiler. The Python
+bindings however needed an overhaul (something I had included in the
+time-line in my proposal), and now I wanted to use <tt class="docutils literal">Lambdify</tt> (the
+SymEngine version of <tt class="docutils literal">sympy.lambdify</tt>), and together with the help
+of Isuru Fernando we got it to work (and benchmarks for <a class="reference external" href="https://pydy.org">pydy</a> show that it is even faster than using the cython
+backend).</p>
+</div>
+<div class="section" id="ast-nodes">
+<h3>AST nodes</h3>
+<p>I had made AST nodes in my prototype for my proposal, right at the
+start of the project I ported those to SymPy. It took some rewriting
+and discussion with Aaron (both during our weekly meetings and at the
+conference) to get it to a point where we were confident enough to
+merge it into SymPy's codebase.</p>
+<p>One of the major challanges when designing the new classes for
+<tt class="docutils literal">sympy.codegen.ast</tt> was dealing with optional arguments in our
+subclasses of <tt class="docutils literal">symyp.core.basic.Basic</tt>. The solutions which worked
+best was to have a subclass <tt class="docutils literal">sympy.codegen.Node</tt> which stored such
+optinoal information as instances in a SymPy <tt class="docutils literal">Tuple</tt> as its last
+argument (accessible as <tt class="docutils literal"><span class="pre">.attrs`).</span> This allowed the code
+printers for Python, C and Fortran to support the same ``Variable</tt> class
+for instance, where the C printer would also look for attributes
+"value_const", "volatile" etc. and the Fortran printer would look for
+e.g. "intent".</p>
+<p>Language specific nodes have been added under their own submodules in
+<tt class="docutils literal">sympy.codegen</tt> (e.g. <tt class="docutils literal">sympy.codegen.fnodes</tt> for Fortran and
+<tt class="docutils literal">sympy.codegen.cnodes</tt> for C). The most common statements are now
+implmeneted, but the nodes are by far not exhaustive. There are now
+also helper functions for generating e.g. modules in
+<tt class="docutils literal">sympy.codegen.pyutils</tt> &amp; <tt class="docutils literal">sympy.codegen.futils</tt> (for Python and
+Fortran respectively).</p>
+</div>
+<div class="section" id="code-printers">
+<h3>Code printers</h3>
+<p>Dealing with floating point types is
+tricky since one want to be pragmatic in order for the types to be
+helpful (IEEE 754 conformance is assumed), but general enough that
+people targeting hardware with non-standard conformance can still
+generate useful code using SymPy. For example, one can now choose
+the targeted precision:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; from sympy import ccode, symbols, Rational
+&gt;&gt;&gt; x, tau = symbols("x, tau")
+&gt;&gt;&gt; expr = (2*tau)**Rational(7, 2)
+&gt;&gt;&gt; from sympy.codegen.ast import real, float80
+&gt;&gt;&gt; ccode(expr, type_aliases={real: float80})
+'8*M_SQRT2l*powl(tau, 7.0L/2.0L)'
+</pre>
+<p>Here we have assumed that the targeted architechture has x87 FPU (long
+double is a 10 byte extended precision floating point data type). But
+it is fully possible to generate code for some other targeted
+precision, e.g. GCC's software implemented float128:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; from sympy.printing.ccode import C99CodePrinter
+&gt;&gt;&gt; from sympy.codegen.ast import FloatType
+&gt;&gt;&gt; f128 = FloatType('_Float128', 128, nmant=112, nexp=15)
+&gt;&gt;&gt; p128 = C99CodePrinter(dict(
+...     type_aliases={real: f128},
+...     type_literal_suffixes={f128: 'Q'},
+...     type_func_suffixes={f128: 'f128'},
+...     type_math_macro_suffixes={
+...         real: 'f128',
+...         f128: 'f128'
+...     },
+...     type_macros={
+...         f128: ('__STDC_WANT_IEC_60559_TYPES_EXT__',)
+...     },
+...     math_macros={}
+... ))
+&gt;&gt;&gt; p128.doprint(tau**Rational(7, 2))
+'powf128(tau, 7.0Q/2.0Q)'
+</pre>
+<p>For generating Python code there was previosuly one function
+(<tt class="docutils literal">sympy.printing.python</tt>) which generated code dependent on SymPy.
+During the project a proper code printer for Python was introduced
+(an example of its output is shown later). The much used function
+<tt class="docutils literal">lambdify</tt> was also changed to use this new printer. Introducing
+such a big change without breaking backward compatibility was
+certainly a challenge, but the benefit is that the user may now
+subclass the printers to override their default behaviour and use
+their custom printer in <tt class="docutils literal">lambdify</tt>.</p>
+</div>
+<div class="section" id="rewriting">
+<h3>Rewriting</h3>
+<p>One usual challenge when working with symbolic expressions is that
+there are many ways to write the same expresisons. For code-generation
+purposes we want to write it in a manner which maximizes performance
+and minimizes significance loss (or let the user make that choice when
+the two are at odds). Since SymPy already has a great tools for
+traversing the expression tree and applying quite advanced pattern
+matching based replacements using <tt class="docutils literal">Wild</tt> it was reasonably
+straightforward to implement rewriting rules for transforming e.g.
+<tt class="docutils literal"><span class="pre">2**x</span></tt> to <tt class="docutils literal">exp2(x)</tt> etc. Using the same structure, rules for
+rewriting expressions to drop small elements in sums (based on a
+user-predefined bounds).</p>
+</div>
+<div class="section" id="algorithms">
+<h3>Algorithms</h3>
+<p>One of the great benefitst from being able to represent abstract
+syntax trees as (largetly) language agnostic SymPy obejcts is that we
+can create functions for building these trees. Simpler numerical
+algorithms (which are ubiquitous in scientific codes) can be collected
+under <tt class="docutils literal">sympy.codegen.algorithms</tt>. As a first case Newton's
+algortihm was implemented:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; from sympy import cos
+&gt;&gt;&gt; from sympy.codegen.algorithms import newtons_method_function
+&gt;&gt;&gt; ast = newtons_method_function(cos(x) - x**3, x)
+&gt;&gt;&gt; print(ccode(ast))
+double newton(double x){
+   double d_x = INFINITY;
+   while (fabs(d_x) &gt; 9.9999999999999998e-13) {
+      d_x = (pow(x, 3) - cos(x))/(-3*pow(x, 2) - sin(x));
+      x += d_x;
+   }
+   return x;
+}
+</pre>
+<p>once we have the AST we can print it using the python code printer as well:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; from sympy.printing import pycode
+&gt;&gt;&gt; print(pycode(ast))
+def newton(x):
+    d_x = float('inf')
+    while abs(d_x) &gt; 1.0e-12:
+        d_x = (x**3 - math.cos(x))/(-3*x**2 - math.sin(x))
+        x += d_x
+    return x
+</pre>
+<p>or the Fortran code printer:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; from sympy.printing import fcode
+&gt;&gt;&gt; print(fcode(ast, source_format='free', standard=2003))
+real*8 function newton(x)
+real*8 :: x
+real*8 :: d_x = (huge(0d0) + 1)
+do while (abs(d_x) &gt; 1.0d-12)
+   d_x = (x**3 - cos(x))/(-3*x**2 - sin(x))
+   x = x + d_x
+end do
+newton = x
+end function
+</pre>
+<p>Newton's method is quite simple, but what makes SymPy suitable for
+this is that it needs the ratio between the function and its
+derivative.</p>
+</div>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion</h2>
+<p>I think that I managed to address all parts of my proposal. That being
+said, there is still a lot of potential to expand the
+<tt class="docutils literal">sympy.codegen</tt> module. But now there are purposefully made base
+classes for creating AST node classes (<tt class="docutils literal">sympy.codegen.ast.Token</tt> &amp;
+<tt class="docutils literal">sympy.codegen.ast.Node</tt>), the language agnostic ones are general enough
+that an algorithm represented as a single AST can be printed as
+Python/C/Fortran. At some level code will still be needed to be
+written manually (presumably as templates), but the amount of template
+rendering logic can be significantly reduced. Having algorithm AST
+factories such as the one for Newton's method in
+<tt class="docutils literal">sympy.codegen.ast.algorithms</tt> is also exciting since those
+algorithms can be unit-tested as part of SymPy. Ideas for furthor work
+on code-generation with SymPy have been added to <a class="reference external" href="https://github.com/sympy/sympy/wiki/GSoC-2018-Ideas#code-generation">the list</a>
+of potential ideas for next years GSoC.</p>
+</div>
+<div class="section" id="post-gsoc">
+<h2>Post-GSoC</h2>
+<p>I plan to continue to contribute to the SymPy project, and start using
+the new resources in my own research. Working with the new classes
+should also allow us to refine them if needed (preferably before the
+next release is tagged in order to avoid having to introduce
+deprecation cycles). SymPy is an amazing project with
+a great community. I'm really grateful to Google for funding me (and
+others) to do a full summers work on this project.</p>
+</div></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-4db58090 feed-" id="item-55700dc1">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/bjodah.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://bjodah.github.io/blog/posts/gsoc-week13.html">19:15, Monday, 28 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-week13.html">Bj&#246;rn Dahlgren (bjodah): Status update week 13 GSoC</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/bjodah.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://bjodah.github.io/blog/posts/gsoc-week13.html">19:15, Monday, 28 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-week13.html">Status update week 13 GSoC</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<div><p>This was the last week of work on GSoC. I have been hard at work
+improving documentation and examples for the code.</p>
+<div class="section" id="adding-much-needed-documentaiton">
+<h2>Adding much needed documentaiton</h2>
+<p>I've spent the weekend adding examples and writing up documentation
+for my big PR <a class="reference external" href="https://github.com/sympy/sympy/pull/13100">#13100</a>
+which is not yet merged. I am quite excited how this PR turned out and
+I am happy with the design of the underlying AST nodes.</p>
+</div>
+<div class="section" id="rewriting">
+<h2>Rewriting</h2>
+<p>A new submodule <tt class="docutils literal">.codegen.rewriting</tt> was added (in <a class="reference external" href="https://github.com/sympy/sympy/pull/13194">#13194</a>), this allows a user to
+rewrite expressions using special math functions. The provided rules
+are those to rewrite to C99's special math functions (<tt class="docutils literal">expm1</tt>,
+<tt class="docutils literal">log1p</tt> etc.). I think it will be a useful addition (I have myself
+had the need for exactly this in my own research). The design is quite
+simple thanks to the excellt <tt class="docutils literal">replace</tt> function in SymPy. There are
+still some corner cases (I have an "xfailed" test checked in for
+example).</p>
+</div></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-3b0ec3aa feed-" id="item-2927c4b4">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -608,6 +1026,108 @@ To implement this, we need to only take care about product rule for scalar and v
 	</div>
 </div></div>
 <div class="day">
+<h2 class="dayform">August 21, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-4db58090 feed-" id="item-63d6cee5">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/bjodah.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://bjodah.github.io/blog/posts/gsoc-week12.html">17:30, Monday, 21 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-week12.html">Bj&#246;rn Dahlgren (bjodah): Status update week 12 GSoC</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/bjodah.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://bjodah.github.io/blog/posts/gsoc-week12.html">17:30, Monday, 21 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-week12.html">Status update week 12 GSoC</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<div><div class="section" id="working-on-new-ast-nodes">
+<h2>Working on new AST nodes</h2>
+<p><a class="reference external" href="https://github.com/sympy/sympy/pull/13100">#13100</a> is shaping up to
+be the largest PR of my GSoC project. The design of the new AST nodes
+especially (<tt class="docutils literal">Token</tt>) is really helpful. But there is still a design
+issue: some nodes would naturally take different arguments depending
+on what language is being targeted. So I came to the conclusion that I
+needed some way of representing attributes. The solution I came up
+with would be to have a slightly more capable <tt class="docutils literal">Node</tt> class
+(subclassing <tt class="docutils literal">Token</tt>) which would in turn be subclassed from for
+nodes that need attributes.</p>
+<p>I also enhanced the printing of both of these classes and introduced a
+<tt class="docutils literal">String</tt> class, which in contrast to <tt class="docutils literal">Symbol</tt> does not accept
+assumptions in its constructor, and does not have implied printing
+rules of sub- &amp; superscript etc.</p>
+</div>
+<div class="section" id="adding-codegen-algorithms">
+<h2>Adding <tt class="docutils literal">.codegen.algorithms</tt></h2>
+<p>A new submodule <tt class="docutils literal">.codegen.algorithms</tt> was added, containing a AST
+generating function for Newton's method. This makes a nice design
+target for both the printers and AST nodes: being able to express the
+same AST in differnt languages is definitely an indication that we
+have a versatile printing system.</p>
+</div>
+<div class="section" id="compiling-code-on-the-fly">
+<h2>Compiling code on the fly</h2>
+<p>Introducing the <tt class="docutils literal">.codegen.algorithms</tt> module also made the need to
+test generated code during CI runs clear. Jason Moore has previously
+mentioned that he thinks one of my python packages (<a class="reference external" href="https://github.com/bjodah/pycompilation">pycompilation</a>) would fit nicely into
+SymPy. I've been a bit relucatant to port it over since I have felt
+that it has not seen enough testing (and only under Linux). But now
+there was a need and we could start by making it an internal package
+only used by our own tests. That way it will get to mature without
+having to worry about deprecation cycles. And once more platforms are
+added to SymPy's CI configuration it would also see testing on other
+platforms (using AppVeyor for SymPy has been discussed for a long
+while now).</p>
+</div></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">August 16, 2017</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -835,6 +1355,96 @@ This is officially the final week of GSoC 2017. It has been a great journey wher
 <p>Travis is bothering from quite some time with some unusual errors. I will try to fix them.</p>
 
 <p>Thats all !</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">August 14, 2017</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-4db58090 feed-" id="item-946ed3e6">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/bjodah.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://bjodah.github.io/blog/posts/gsoc-week11.html">18:17, Monday, 14 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-week11.html">Bj&#246;rn Dahlgren (bjodah): Status update week 11 GSoC</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/bjodah.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://bjodah.github.io/blog/posts/gsoc-week11.html">18:17, Monday, 14 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-week11.html">Status update week 11 GSoC</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<div><div class="section" id="checking-in-the-new-ast-node-types">
+<h2>Checking in the new AST node types</h2>
+<p><a class="reference external" href="https://github.com/sympy/sympy/pull/12693">#12693</a> got merged &#127881;.
+It took a few rewrites essentially but I fell that the design of the
+new nodes will allow us to scale with reasonable maintance cost when
+adding new language specific nodes. The base class for new AST nodes
+(<tt class="docutils literal">Token</tt>) to sublcass from allows one to implement nodes in an
+expressive manner by setting <tt class="docutils literal">__slots__</tt>. The constructor of
+<tt class="docutils literal">Token</tt> then sets the <tt class="docutils literal">.args</tt> of <tt class="docutils literal">Basic</tt> based on <tt class="docutils literal">__slots__</tt>
+this has the benefit that you need not write setters and getters using
+<tt class="docutils literal">@property</tt> decorators (which quickly becomes tiresome when you have
+many classes).</p>
+</div>
+<div class="section" id="checking-in-the-refactored-pythonprinter-and-changes-to-lambdify">
+<h2>Checking in the refactored PythonPrinter and changes to lambdify</h2>
+<p>Finally the challenging work of refactoring <tt class="docutils literal">lambdify</tt> got merged
+into SymPy's master branch: <a class="reference external" href="https://github.com/sympy/sympy/pull/13046">#13046</a>. We eventually decided
+to drop the contents of the old translations dictionaries but leave
+them be (in an empty state) in case users were modifying those in
+their code. Hopefully this approach doesn't break any code out
+there. Given how popular <tt class="docutils literal">lambdify</tt> is among SymPy's users, it is a
+bit worrying that the test suite is not that extensive. I do remember
+a google engineer mentioning that the follow the "Beyonce principle":
+"I you liked it you should have put a test on it". Funny at is may be
+I hope I don't need to defend these changes with that arguement.</p>
+</div></div>
 					</div>
 				</div>
 			</div>
@@ -1191,6 +1801,89 @@ a = CoordSys3D('a', transformation='spherical', variable_names=["r", "theta", "p
 <div class="day">
 <h2 class="dayform">August 07, 2017</h2>
 <div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-4db58090 feed-" id="item-c696f937">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/bjodah.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://bjodah.github.io/blog/posts/gsoc-week10.html">19:03, Monday, 07 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-week10.html">Bj&#246;rn Dahlgren (bjodah): Status update week 10 GSoC</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/bjodah.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Bj&#246;rn Dahlgren (bjodah) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://bjodah.github.io/blog/posts/gsoc-week10.html">19:03, Monday, 07 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://bjodah.github.io/blog/posts/gsoc-week10.html">Status update week 10 GSoC</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<div><div class="section" id="refactoring-lambdify">
+<h2>Refactoring lambdify</h2>
+<p>In my work to refactor <tt class="docutils literal">lambdify</tt> I had come up with a solution
+where I would dynamically subclass the CodePrinters in <tt class="docutils literal">lambdify</tt> to
+add translations from the old translation dictionaries. I was not
+happy with the solution and I don't think Aaron was either, we decided
+to keep the old import mechanism of lambdify which populated the
+namespace (instead of trying to generate code for the used imports
+which I had been trying).</p>
+<p>So the work on refactoring <tt class="docutils literal">lambdify</tt> has continued in <a class="reference external" href="https://github.com/sympy/sympy/pull/13046">#13046</a>. And with <cite>this
+&lt;https://github.com/sympy/sympy/commit/265314fa63f5a662a7a187913d51d55a852b503c&gt;</cite>
+commit I hope we are close to getting the new version of <tt class="docutils literal">lambdify</tt>
+out the door.</p>
+</div>
+<div class="section" id="new-floattype-representation">
+<h2>New FloatType representation</h2>
+<p>With some underlying assumptions about floating point representation
+(two's complement etc.) I have now a <a class="reference external" href="https://github.com/sympy/sympy/commit/18ea9a583509f28bc88102e73ebff8e0443d7988">new representation</a>
+of <tt class="docutils literal">FloatType</tt>. I'm much happier with this representation and I
+think with it <a class="reference external" href="https://github.com/sympy/sympy/pull/12693">#12693</a> is
+much closer to getting merged.</p>
+</div></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-f175fea9 feed-" id="item-87e7da0c">
@@ -2023,425 +2716,6 @@ I baked all remaining pieces within <a href="https://github.com/symengine/symeng
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">July 25, 2017</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-5aa203d9 feed-" id="item-6d71dfe4">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Szymon Mieszczak (szymag) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://szymag.github.io/post/week-8/">19:41, Tuesday, 25 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://szymag.github.io/post/week-8/">Szymon Mieszczak (szymag): Week 8</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Szymon Mieszczak (szymag) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://szymag.github.io/post/week-8/">19:41, Tuesday, 25 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://szymag.github.io/post/week-8/">Week 8</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>During week 8 I added several methods which calculate transformation equations for some specific situation. We&rsquo;ve finished step, where transformation equations are obtained for rotation, translation, and changing the type of coordinate system. This all transitions are handled in vector module. We&rsquo;ve also prepared the method for composition of any two kind of transformations, because coordinate system can be rotated and translated at the same time.
-My current task is to use already added methods in CoordSys3D constructor.
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-f175fea9 feed-" id="item-b798e1e6">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/ShikharJ.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Shikhar Jaiswal (ShikharJ) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://shikharj.github.io//2017/07/25/GSoC-Progress-Week-8/">00:00, Tuesday, 25 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://shikharj.github.io//2017/07/25/GSoC-Progress-Week-8/">Shikhar Jaiswal (ShikharJ): GSoC Progress - Week 8</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/ShikharJ.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Shikhar Jaiswal (ShikharJ) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://shikharj.github.io//2017/07/25/GSoC-Progress-Week-8/">00:00, Tuesday, 25 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://shikharj.github.io//2017/07/25/GSoC-Progress-Week-8/">GSoC Progress - Week 8</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>My first two months under <code class="highlighter-rouge">GSoC</code> have finally ended, and we are right on track towards the completion of the project. I finished up on my log of <code class="highlighter-rouge">SymPy</code>&#8217;s directories and have analysed everything that needs to be further implemented or improved upon.</p>
-
-<h2 id="report">Report</h2>
-
-<h3 id="symengine">SymEngine</h3>
-<p>I pushed in <a href="https://github.com/symengine/symengine.py/pull/1313">#1313</a>, implementing <code class="highlighter-rouge">row_insert</code> and <code class="highlighter-rouge">column_insert</code> functions in <code class="highlighter-rouge">DenseMatrix</code> class and <code class="highlighter-rouge">row_del</code> and <code class="highlighter-rouge">col_del</code> functions in <code class="highlighter-rouge">C</code> wrappers, while making <code class="highlighter-rouge">row_join</code>, <code class="highlighter-rouge">col_join</code>, <code class="highlighter-rouge">row_del</code> and <code class="highlighter-rouge">col_del</code> in-place member functions.</p>
-
-<h3 id="sympy">SymPy</h3>
-<p>After testing all the viable directories that could use <code class="highlighter-rouge">SymEngine</code> as a backend, only the <code class="highlighter-rouge">LieAlgebras</code> module worked completely out of the box, with no major issues. As such, we were able to achieve the same through <a href="https://github.com/sympy/sympy/pull/13023">#13023</a>, which now marks the beginning of Phase III of my proposal. I have also pushed the work done on other directories as separate branches on my local repository, to be finished upon gradually.</p>
-
-<h3 id="symenginepy">SymEngine.py</h3>
-<p>I worked on implementing the <code class="highlighter-rouge">Singleton</code> pattern in the wrappers through <a href="https://github.com/symengine/symengine.py/pull/178">#178</a>, though the work is currently in progress. More on this next week.</p>
-
-<p>That&#8217;s all I have for now.</p>
-
-<p><strong>Bid&#257;&#7823;a</strong></p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-040fd9d5 feed-" id="item-98349e2d">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/ranjithkumar007.png"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Ranjith Kumar (ranjithkumar007) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://ranjithkumar007.github.io/2017/07/25/Trigonometric-Solvers-Part-II/">00:00, Tuesday, 25 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://ranjithkumar007.github.io/2017/07/25/Trigonometric-Solvers-Part-II/">Ranjith Kumar (ranjithkumar007): Trigonometric Solvers Part II</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/ranjithkumar007.png"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Ranjith Kumar (ranjithkumar007) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://ranjithkumar007.github.io/2017/07/25/Trigonometric-Solvers-Part-II/">00:00, Tuesday, 25 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://ranjithkumar007.github.io/2017/07/25/Trigonometric-Solvers-Part-II/">Trigonometric Solvers Part II</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This is the blog on progress for week-7 and week-8. It revolves around trigonometric solvers. As a side note, My progress rate has significantly dropped since the commencement of classes due to tight schedule and loaded assignments. I am working all out on weekends to compensate this time loss.</p>
-
-<p>As I mentioned in my previous blog, I continued my work on solving simple trigonometric equations. As isuruf suggested, I breaked the PR <a href="https://github.com/symengine/symengine/pull/1305">#1305</a> into several small parts.</p>
-
-<p>First one is on <code class="highlighter-rouge">as_real_imag</code> <a href="https://github.com/symengine/symengine/pull/1310">#1310</a>. Several Changes were made like adding support for TrigFunctions and HyperbolicFunctions.</p>
-
-<p>Next PR is on <code class="highlighter-rouge">rewrite_as_exp</code> <a href="https://github.com/symengine/symengine/pull/1309">#1309</a>. For this, I Implemented a Base Transform Visitor as follows.</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>class TransformVisitor : public BaseVisitor&lt;TransformVisitor&gt; 
-{}
-</code></pre>
-</div>
-
-<p>and <code class="highlighter-rouge">rewrite_as_exp</code> is implemented with a class overriding TransformVisitor&#8217;s methods.</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>class RewriteAsExp : public BaseVisitor&lt;RewriteAsExp, TransformVisitor&gt;
-{}
-</code></pre>
-</div>
-
-<p>Additionally, going by srajan&#8217;s suggestion, I changed introduced a new base class <code class="highlighter-rouge">TrigBase</code> for TrigFunctions and its inverses and similarly for HyperbolicFunctions.</p>
-
-<p>Additionally, I made some fixes in <code class="highlighter-rouge">ImageSet</code> <a href="https://github.com/symengine/symengine/pull/1314">here</a>.</p>
-
-<p>Once, this PR gets in, I will push the remaining bits and pieces from #1305.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">July 24, 2017</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-29fba86e feed-" id="item-71e6011e">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/valglad.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Valeriia Gladkova (valglad) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://valglad.github.io/2017/07/24/delays/">00:00, Monday, 24 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://valglad.github.io/2017/07/24/delays/">Valeriia Gladkova (valglad): Delays</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/valglad.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Valeriia Gladkova (valglad) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://valglad.github.io/2017/07/24/delays/">00:00, Monday, 24 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://valglad.github.io/2017/07/24/delays/">Delays</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>The rewriting PR hasn&#8217;t been merged yet. At the beginning of last week, there was still some work to be done on it. For example, the <code class="highlighter-rouge">RewritingSystem</code>&#8217;s <code class="highlighter-rouge">check_confluence()</code> method (which, unsurprisingly, checks if the system is confluent) would add new rewriting rules while it runs - definitely not something it should do. Another addition, suggested by my mentor, was the attribute <code class="highlighter-rouge">_max_exceeded</code>: this is <code class="highlighter-rouge">True</code> when the Knuth-Bendix completion method has already been attempted but the maximum number of rules allowed to be added to the system was exceeded. Trying again would be a waste of time. However, if the maximum number of rules is increased, <code class="highlighter-rouge">_max_exceeded</code> is reset so that the completion method could be run again.</p>
-
-<p>Then I worked on the multi-step version of the presentation algorithm (which was possible because the homomorphism <a href="https://github.com/sympy/sympy/pull/12827">PR</a> was merged by then). Once I wrote it up, made sure it worked and started testing against the single step one, I noticed that the multi-step version ran several times as fast for several of the groups I was using and yet was suddenly much slower for a group of higher order. This was unexpected and I spent a while trying to work out why that would be. The reason was this: the function uses <code class="highlighter-rouge">coset_enumeration_c</code> for filling in a certain coset table. <code class="highlighter-rouge">coset_enumeration_c</code> stores the deductions it makes while filling in so that it can process them later. However, if there are too many deductions, it&#8217;s not practical to go through all of them so the algorithm uses the method <code class="highlighter-rouge">look_ahead</code> that allows it to continue without looking at the deduction stack which is emptied. The critical size of the deduction stack was 500 by default. For large groups, the single step version would greatly exceed that most of the time so <code class="highlighter-rouge">look_ahead</code> was run instead, speeding it up considerably, while the multi step version would be working with a smaller coset table and the number of deductions would be large but not over 500 which made it slow. So it looked like processing close to 500 deductions was inefficient and I reduced the number to 100 to see what happens. What happened was that both version got faster but now the multi-step version was consistently faster than the single-step one. I ran the coset table tests and they seemed to be fine too so the reduction in the maximum number of deductions didn&#8217;t seem to affect anything negatively. I pushed the multi step version into the presentation <a href="https://github.com/sympy/sympy/pull/12986">PR</a> but that hasn&#8217;t started being reviewed because another problem came up.</p>
-
-<p>The homomorphisms tests from the merged PR would occasionally time out so that needed investigating. Turned out it was because the <code class="highlighter-rouge">__contains__</code> method of the <code class="highlighter-rouge">FpSubgroup</code> class couldn&#8217;t handle group elements in the conjugate form, i.e. something of the form <code class="highlighter-rouge">r**-1*w*r</code> for some words <code class="highlighter-rouge">r, w</code>. It would get into an infinite loop and the tests would only occasionally time out because the method is used during kernel computation which is randomised. So a couple of days was spent thinking about what would be the best way to eliminate the problem, whether this sort of problem would only be caused by conjugate elements and finally expanding the code accordingly. You can follow what I did in this <a href="https://github.com/sympy/sympy/pull/13028">PR</a>. Though this is still being discussed and it&#8217;s unclear whether some other solution would be called for.</p>
-
-<p>So because of all this, I couldn&#8217;t work on the other homomorphism cases (though I did sketch some things that I can use once the dependent PRs are merged). If the <code class="highlighter-rouge">FpSubgroup</code> issue is resolved soon and the rewriting PR is merged, I will implement homomorphisms to <code class="highlighter-rouge">FpGroup</code>s. The presentation PR will probably need more reviewing and I can&#8217;t implement <code class="highlighter-rouge">PermutationGroup</code> domains without it. I&#8217;m considering looking into an alternative method of doing homomorphisms specifically for the <code class="highlighter-rouge">PermutationGroup</code> to <code class="highlighter-rouge">PermutationGroup</code> case because I&#8217;ve seen a section on it in the Handbook. Or I could start working on Sylow subgroups which is another things I was thinking of doing. These things shouldn&#8217;t depend on any of the unmerged PRs so it would be a good use of time.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">July 23, 2017</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-debb4ede feed-" id="item-f1f41214">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/07/23/GSoC17-Week7-Report.html">06:30, Sunday, 23 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/07/23/GSoC17-Week7-Report.html">Arihant Parsoya (parsoyaarihant): GSoC17 Week 7 Report</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/parsoyaarihant.jpeg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Arihant Parsoya (parsoyaarihant) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://parsoyaarihant.github.io/blog/gsoc/2017/07/23/GSoC17-Week7-Report.html">06:30, Sunday, 23 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://parsoyaarihant.github.io/blog/gsoc/2017/07/23/GSoC17-Week7-Report.html">GSoC17 Week 7 Report</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Francesco opened the <a href="https://github.com/sympy/sympy/pull/12978">PR</a> to merge the Rubi module in SymPy. I made the code compatible for python&lt;3.6 to pass the Travis tests. I used <code class="highlighter-rouge">@doctest_depends_on</code> function decorator to stop the doctest for python&lt;3.6 and defined dummy classes to pass the tests. We are keeping the PR open for now since it will allow me to run tests on Travis and I expect significant change in code after code generation functionality is added in MatchPy.</p>
-
-<h4 id="parser">Parser</h4>
-<p>I have updated the parser to accommodate for <code class="highlighter-rouge">Wildcard.optional()</code>. Previously, I sympified the expression and substituted the optional values to create new patterns. The current parser does not use sympy and is very fast compared to previous version.</p>
-
-<h4 id="tests">Tests</h4>
-<p>I ran the test suit for algebraic rules 1.2 previously and ~1250/1500 tests were passing. The tests are really slow since they use <code class="highlighter-rouge">simplify</code> and <code class="highlighter-rouge">expand</code> functions. I tried using numerical evaluation at random points and it turned out to be faster than evaluating tests symbolically. Test suits are grouped by the type of expression:</p>
-<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="c"># Integrands of the form a</span>
-
-<span class="p">[</span><span class="n">S</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">0</span><span class="p">)],</span>
-<span class="p">[</span><span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">x</span><span class="p">],</span>
-<span class="p">[</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="p">],</span>
-<span class="p">[</span> <span class="o">-</span> <span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="o">-</span> <span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="p">],</span>
-
-<span class="c"># Integrands of the form x**m</span>
-<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">m</span><span class="p">)],</span>
-<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="n">S</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="n">S</span><span class="p">(</span><span class="mi">101</span><span class="p">)],</span>
-<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="n">S</span><span class="p">(</span><span class="mi">4</span><span class="p">)],</span>
-
-<span class="c"># Integrands of the form x**(m/S(2))</span>
-<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">))],</span>
-<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">))],</span>
-<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">))],</span>
-
-<span class="c"># Integrands of the form x**(m/S(3))</span>
-<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">))],</span>
-<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">))],</span>
-<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">3</span><span class="p">))],</span>
-</code></pre>
-</div>
-
-<p>Adding thousands of tests could lead to slowdown of tests. So far my plan is to add 1-2 test from each expression type:</p>
-
-<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="p">[</span><span class="n">S</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">0</span><span class="p">)],</span>
-<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="n">m</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">m</span><span class="p">)],</span>
-<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="n">S</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="n">S</span><span class="p">(</span><span class="mi">101</span><span class="p">)],</span>
-<span class="p">[</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> <span class="n">x</span><span class="p">,</span> <span class="n">S</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">S</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">/</span><span class="n">S</span><span class="p">(</span><span class="mi">2</span><span class="p">))],</span>
-</code></pre>
-</div>
-
-<p>While inspecting the failed tests, I figured out that the failing tests depend on rules from other modules(such as binomials). Hence, they could not be integrated currently.</p>
-
-<h4 id="adding-more-rules">Adding more rules</h4>
-<p>I have added all algebriac rules to the matcher(~1700). But, it led to significant decrease in speed. In some cases, the matcher take so much time that I have to stop the program itself. I have <a href="https://github.com/HPAC/matchpy/issues/13">opened</a> an issue for this. Hope this get fixed asap.</p>
-
-<p>I have added all Algebriac rules to the matcher.</p>
-
-<h4 id="todo">Todo</h4>
-<p>I have already added all algebraic rules which is 1/5 of all the rules. I cannot really test all those rules
-until the speed issue gets fixed. I will focus on the following this week:</p>
-
-<ul>
-  <li>Once speed is fixed, start testing other modules</li>
-  <li>Prepare test for remaining rubi modules (add tests from each expression type)</li>
-  <li>Rename <code class="highlighter-rouge">Integer</code> in rubi.symbols to <code class="highlighter-rouge">matchpyInteger</code></li>
-  <li>Add support for code generation in Rubi if it gets implemented in MatchPy(Manuel said he was working on it last week)</li>
-</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2469,134 +2743,134 @@ until the speed issue gets fixed. I will focus on the following this week:</p>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="http://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td>http://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sartajsingh.me/feeds/sympy.xml</td>
 <td><a class="xmlbutton" href="http://sartajsingh.me/feeds/sympy.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ranjithkumar007.github.io/">Ranjith Kumar</a></td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://ShikharJ.github.io/feed.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">XY (solving the x's and y's of math, programming and life )</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>12:20, Tuesday, 29 August</td>
-<td>12:35, Tuesday, 29 August</td>
+<td>12:40, Tuesday, 29 August</td>
+<td>12:55, Tuesday, 29 August</td>
 </tr>
 </table>
 
