@@ -39,18 +39,21 @@ Therefore, a list of lists can be used for the 3D case which makes indexing for 
 &lt;h2 id="about-me"&gt;About Me&lt;/h2&gt;
 &lt;p&gt;My name is Arihant Parsoya. I am a junior undergraduate student at Indian Institute of Technology Bombay. My GSoC project was to implement rule based integration module in SymPy.&lt;/p&gt;
 
+&lt;h2 id="rule-based-integration"&gt;Rule Based Integration&lt;/h2&gt;
+&lt;p&gt;Rule based integration (Rubi) consists of ~10,000 transformation rules. Computer Algebra System(CAS) can match the integrand with the right rule to directly solve the integration without using general integration algorithms. Adding Rubi frees developers of algorithms from having to worry about the annoying and trivial problems and the special cases, and instead focus on the genuinely hard and interesting problems.&lt;/p&gt;
+
 &lt;h2 id="community-bonding-period"&gt;Community Bonding Period&lt;/h2&gt;
 &lt;p&gt;My original plan was to implement &lt;a href="https://github.com/parsoyaarihant/gsoc/wiki/GSoC-2017-Application-Arihant-Parsoya:-Rubi-Integrator#match-object"&gt;pattern matching module&lt;/a&gt; in SymPy which would be optimised for our project and then create a decision tree by parsing Mathematica rules.&lt;/p&gt;
 
-&lt;p&gt;After my selection for GSoC, we came across &lt;a href="https://github.com/HPAC/matchpy"&gt;MatchPy&lt;/a&gt;(which has good pattern matching capabilities) and decided to use it for implementation of our module. However, MatchPy is only implemented in Python3.6 because of which we could not use MatchPy for Python&amp;lt;3.6 versions of SymPy. I tried to use &lt;a href="https://pypi.python.org/pypi/3to2"&gt;3to2&lt;/a&gt; to make MatchPy code compatible with Python&amp;lt;3.6 but it turns out that MatchPy also has few external dependencies and they also had to be added into SymPy.&lt;/p&gt;
+&lt;p&gt;After my selection for GSoC, we came across &lt;a href="https://github.com/HPAC/matchpy"&gt;MatchPy&lt;/a&gt;(which has good pattern matching capabilities) and decided to use it for implementation of our module. MatchPy is a pattern matching library which has matching capabilities similar to Mathematica. MatchPy compiles many patterns into a discrimination-net which is efficient for matching an expression with multiple patterns. Detailed disctiption on the algorithm MatchPy uses can be found &lt;a href="https://arxiv.org/abs/1705.00907"&gt;here&lt;/a&gt;. However, MatchPy is only implemented in Python3.6 because of which we could not use MatchPy for Python&amp;lt;3.6 versions of SymPy. I tried to use &lt;a href="https://pypi.python.org/pypi/3to2"&gt;3to2&lt;/a&gt; to make MatchPy code compatible with Python&amp;lt;3.6 but it turns out that MatchPy also has few external dependencies and they also had to be added into SymPy.&lt;/p&gt;
 
 &lt;h2 id="coding-period"&gt;Coding Period&lt;/h2&gt;
-&lt;p&gt;We decided to implement the module only for Python3.6 using MatchPy hoping that we could do code-generation of rules once we added all the rules to MatchPy&amp;#8217;s &lt;code class="highlighter-rouge"&gt;ManyToOneReplacer&lt;/code&gt;. Manuel Kebber helped us a lot in adding support for optional arguments and code-generation in MatchPy. Unfortunately, the code generation still has the dependency on MatchPy.&lt;/p&gt;
+&lt;p&gt;We decided to implement the module only for Python3.6 using MatchPy hoping that we could do code-generation of rules once we added all the rules to MatchPy&amp;#8217;s &lt;code class="highlighter-rouge"&gt;ManyToOneReplacer&lt;/code&gt;. Manuel Kebber helped us a lot in adding support for optional arguments and code-generation in MatchPy. Our plan was to generate code of discrimination-net which was compiled by MatchPy. Code generation of rules would help us to remove the dependency on MatchPy and make the module useable for Python&amp;lt;3.6. Unfortunately, the code generation still has the dependency on MatchPy.&lt;/p&gt;
 
 &lt;h3 id="implementations--work-done"&gt;Implementations / work done&lt;/h3&gt;
 &lt;ul&gt;
-  &lt;li&gt;Utility functions&lt;/li&gt;
-  &lt;li&gt;Python parser for rules written in Mathematica.&lt;/li&gt;
+  &lt;li&gt;Utility functions. These are helper functions for the module for integration. The functions are written in Mathematica. We have re-written those rules into SymPy.&lt;/li&gt;
+  &lt;li&gt;Python parser for rules written in Mathematica. The parser takes &lt;code class="highlighter-rouge"&gt;FullForm[DownValues[]]&lt;/code&gt; of the rules as input and convert them into Python format. The parsed output are MatchPy &lt;code class="highlighter-rouge"&gt;Patterns&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;ReplacementRules&lt;/code&gt; which can be used to compiled as a discrimination-net using MatchPy.&lt;/li&gt;
   &lt;li&gt;Added rules in MatchPy&amp;#8217;s &lt;code class="highlighter-rouge"&gt;ManyToOneReplacer&lt;/code&gt;.
 The work done could not be merged since it has dependency on MatchPy and is not fully tested.&lt;/li&gt;
 &lt;/ul&gt;
