@@ -7,6 +7,102 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://gxyd.github.io/blogs/os_day2</guid>
+      <author>Gaurav Dhingra (gxyd)</author>
+      <title>Gaurav Dhingra (gxyd): Operating Systems - Day 2</title>
+      <pubDate>Wed, 30 May 2018 00:00:00 GMT</pubDate>
+      <link>https://gxyd.github.io/blogs/os_day2/</link>
+      <description>&lt;p&gt;Patch policy:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Patch should have a &lt;i&gt;&lt;b&gt;Subject&lt;/b&gt;: [PATCH] Docs: Add info on supported kernels to REPORTING-BUGS.&lt;/i&gt;. Here clearly &lt;i&gt;Docs&lt;/i&gt; indicate that it that the patch makes changes to the documentation section.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;i&gt;Why&amp;#8217;s&lt;/i&gt; are more important than &lt;i&gt;What&lt;/i&gt; in body of patch (aka commit message?).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;It seems like a lot of drivers subfolder have a separate file &amp;#8220;TODO&amp;#8221; listing the work that needs to be done. For example, currently there is a file drivers/dma/TODO which lists a few tasks that needs to be done, here is the list of task mentioned in that file:&lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Move remaining drivers to use new slave interface&lt;/li&gt;
+      &lt;li&gt;Remove old slave pointer machansim&lt;/li&gt;
+      &lt;li&gt;Check other subsystems for dma drivers and merge/move to dmaengine&lt;/li&gt;
+      &lt;li&gt;Remove &lt;code class="highlighter-rouge"&gt;dma_slave_config&lt;/code&gt;&amp;#8217;s dma direction.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;h3 id="include-guard"&gt;Include guard&lt;/h3&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;a href="https://en.wikipedia.org/wiki/Include_guard"&gt;Include guard&lt;/a&gt; is one of the topics I went through since seeing header file, it seems to be appearing at the top. Since I am also using CodeBlocks for coding in C these days, Codeblocks provides with automatic inclusion of &lt;i&gt;include guard&lt;/i&gt;(aka &lt;i&gt;macro guard&lt;/i&gt;) when we start a new header file.&lt;/p&gt;
+
+&lt;p&gt;In a C/C++ program if a function/struct/&amp;#8230; is defined more than once, then it raises an error (&lt;b&gt;one definition rule&lt;/b&gt;). To avoid this problem include guards are used.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;#ifndef FILE_NAME_H
+#define FILE_NAME_H
+
+
+/* code goes here */
+
+
+#endif /* end of include guard
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;for complete understandstanding, see &lt;a href="https://en.wikipedia.org/wiki/Include_guard#Use_of_#include_guards"&gt;this example&lt;/a&gt;. Though I still need to figure out why on this line &lt;a href="https://elixir.bootlin.com/linux/latest/source/drivers/staging/board/board.h#L2"&gt;drivers/staging/board/board.h#line2&lt;/a&gt; we have use of &lt;code class="highlighter-rouge"&gt;__&lt;/code&gt; around the file name.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;h3 id="static-keyword-in-c"&gt;static keyword in C&lt;/h3&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This &lt;a href="https://stackoverflow.com/a/572550/3396379"&gt;stackoverflow answer suffices&lt;/a&gt;, actually &lt;code class="highlighter-rouge"&gt;static&lt;/code&gt; is used quite a lot in kernel code, which made me to have a look at its meaning.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;h3 id="difference-between-header-and-source-file-in-c-also-in-c"&gt;difference between header and source file in C (also in C++)&lt;/h3&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This &lt;a href="https://gxyd.github.io/answer on stackoverflow"&gt;https://stackoverflow.com/questions/3482948/any-fundamental-difference-between-source-and-header-files-in-c&lt;/a&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;h2 id="typedef-in-c"&gt;typedef in C&lt;/h2&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;typedef&lt;/code&gt; is a reserved keyword in C. It creates an alias name for another datatype. Example (from wikipedia):&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;typedef int length;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Let&amp;#8217;s see an example from linux kernel source code:&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;typedef unsigned char  uch;
+typedef unsigned short  ush;
+typedef unsigned long  ulg;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;From this, it is very clear what purpose does &lt;code class="highlighter-rouge"&gt;typedef&lt;/code&gt; does have. But, I beilieve I saw someuse of &lt;code class="highlighter-rouge"&gt;typedef&lt;/code&gt; related to &lt;code class="highlighter-rouge"&gt;struct&lt;/code&gt; in linux kernel code but I don&amp;#8217;t remember where, but will write about it when I come across it.&lt;/p&gt;
+
+&lt;p&gt;USEFUL INFO: I found this website which hosts the kernel source online &lt;a href="https://elixir.bootlin.com/linux/latest/source"&gt;https://elixir.bootlin.com/linux/latest/source&lt;/a&gt;, I found it to be pretty handy to use. It&amp;#8217;s better than github&amp;#8217;s online source code viewer I&amp;#8217;d say.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;h3 id="code-analysing-section"&gt;code analysing section&lt;/h3&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Let&amp;#8217;s see this codeblock taken from []&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;struct ashmem_area {
+    char name[ASHMEM_FULL_NAME_LEN];
+    struct list_head_unpinned_list;
+    struct file *file;
+    size_t size;
+    unsigned long prot_mask;
+};
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;h3 id="hexadecimal-representation-of-address"&gt;Hexadecimal representation of address&lt;/h3&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Often used is the hexadecimal representation for address (saw that in lecture by Prof. Jakob Eriksson). For ex, convert 10,995 into hexadecimal value would be 2AF3. The prefix &lt;code class="highlighter-rouge"&gt;0x&lt;/code&gt; is used in C (and probably also in assembly) to denote this in hexadecimal system, which would denote this value by &lt;code class="highlighter-rouge"&gt;0x2AF3&lt;/code&gt;.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://gxyd.github.io/blogs/os_day1</guid>
       <author>Gaurav Dhingra (gxyd)</author>
       <title>Gaurav Dhingra (gxyd): Operating Systems - Day 1</title>
@@ -1052,55 +1148,6 @@ I&amp;#8217;ll finish it up by Saturday and then proceed to completing PR &lt;a 
 &lt;p&gt;I decided to work on computing sylow subgroups, and as part of it, wrote two new homomorphism functions specifically for permutation groups: &lt;code class="highlighter-rouge"&gt;orbit_action_homomorphism&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;block_action_homomorphism&lt;/code&gt; for defining homomorphisms induced by the action of the group on a union of orbits or a block system respectively. These are of course homomorphisms between permutation groups and there is no need to check if they are well-defined so it was possible to create them without the presentation PR. I don&amp;#8217;t know if it will stay that way as it hasn&amp;#8217;t been discussed yet but it seemed appropriate to have them as separate functions in the homomorphisms file. Also, I found a bug in the &lt;code class="highlighter-rouge"&gt;minimal_block&lt;/code&gt; method while testing &lt;code class="highlighter-rouge"&gt;block_action_homomorphism&lt;/code&gt; yesterday but it&amp;#8217;s not anything major and the &lt;a href="https://github.com/sympy/sympy/pull/13070"&gt;fix&lt;/a&gt; for it will likely be merged soon. There was some trouble with Travis today though.&lt;/p&gt;
 
 &lt;p&gt;The actual computation of sylow subgroups is going to be a &lt;code class="highlighter-rouge"&gt;PermutationGroup&lt;/code&gt; method &lt;code class="highlighter-rouge"&gt;sylow_subgroup()&lt;/code&gt; and it already works for some cases so it&amp;#8217;s going well. However, I am going to pause it for now to finish homomorphisms.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://parsoyaarihant.github.io/blog/gsoc/2017/07/30/GSoC17-Week8-Report</guid>
-      <author>Arihant Parsoya (parsoyaarihant)</author>
-      <title>Arihant Parsoya (parsoyaarihant): GSoC17 Week 8 Report</title>
-      <pubDate>Sun, 30 Jul 2017 06:30:00 GMT</pubDate>
-      <link>https://parsoyaarihant.github.io/blog/gsoc/2017/07/30/GSoC17-Week8-Report.html</link>
-      <description>&lt;h2 id="work-done"&gt;Work Done&lt;/h2&gt;
-&lt;p&gt;Manuel found a way to use MatchPy &lt;code class="highlighter-rouge"&gt;Symbol&lt;/code&gt; with SymPy &lt;code class="highlighter-rouge"&gt;Symbol&lt;/code&gt;(&lt;a href="https://gist.github.com/wheerd/b57efd0dba2dbdba4bc10ff6e71cf5ab"&gt;sample code&lt;/a&gt;). Implementing rules using SymPy symbols would increase the speed of module since we don&amp;#8217;t have to convert the expressions back and forth (sympy-matchpy).&lt;/p&gt;
-
-&lt;p&gt;I am removing constraint(&lt;code class="highlighter-rouge"&gt;cons()&lt;/code&gt;) defined for the patterns and started using &lt;code class="highlighter-rouge"&gt;CustomConstraint&lt;/code&gt; in &lt;code class="highlighter-rouge"&gt;Patterns&lt;/code&gt;. I wasn&amp;#8217;t able to do this previously since &lt;code class="highlighter-rouge"&gt;ManyToOneReplacer&lt;/code&gt; was only able to handle MatchPy expressions. Now that I can use &lt;code class="highlighter-rouge"&gt;CustomConstraint&lt;/code&gt;, I have divided the constraint into smaller &lt;code class="highlighter-rouge"&gt;CustomConstraint&lt;/code&gt;. Example:&lt;/p&gt;
-&lt;h4 id="old-way-to-define-constraint"&gt;Old way to define constraint:&lt;/h4&gt;
-&lt;div class="language-python highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;pattern3&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Pattern&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Pow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Wildcard&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;optional&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'m'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;mpyInt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'1'&lt;/span&gt;&lt;span class="p"&gt;))),&lt;/span&gt; &lt;span class="n"&gt;x_&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;cons&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;And&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;FreeQ&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;NonzeroQ&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;m_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;matchpyInteger&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)))),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;h4 id="new-way-to-define-constraint"&gt;New way to define constraint:&lt;/h4&gt;
-&lt;div class="language-python highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;pattern3&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Pattern&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Pow&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Wildcard&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;optional&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'m'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;mpyInt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'1'&lt;/span&gt;&lt;span class="p"&gt;))),&lt;/span&gt; &lt;span class="n"&gt;x_&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;CustomConstraint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;FreeQ&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt; &lt;span class="n"&gt;CustomConstraint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;lambda&lt;/span&gt; &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;NonzeroQ&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;m_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;mpyInt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)))))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;Defining the Constraints in this way will help the &lt;code class="highlighter-rouge"&gt;ManyToOneReplacer&lt;/code&gt; to backtrack easily and thereby improving the overall speed of the module. There is a &lt;a href="https://github.com/HPAC/matchpy/issues/20"&gt;bug&lt;/a&gt; in MatchPy related to this, I hope it will be fixed soon.&lt;/p&gt;
-
-&lt;p&gt;I have updated the parser to make the above changes. It divides the constraint into different constraints if the &lt;code class="highlighter-rouge"&gt;head&lt;/code&gt; of expression tree is &lt;code class="highlighter-rouge"&gt;And&lt;/code&gt;:&lt;/p&gt;
-&lt;div class="language-python highlighter-rouge"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;_divide_constriant&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="c"&gt;# Creates a CustomConstraint of the form `CustomConstraint(lambda a, x: FreeQ(a, x))`&lt;/span&gt;
-    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;'FreeQ'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s"&gt;''&lt;/span&gt;
-    &lt;span class="n"&gt;lambda_symbols&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;get_free_symbols&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[])))&lt;/span&gt;
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s"&gt;'CustomConstraint(lambda {}: {})'&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;format&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;','&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;lambda_symbols&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;generate_sympy_from_parsed&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-
-&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;divide_constraint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
-    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;'And'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;_divide_constriant&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:]]&lt;/span&gt;
-    &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;_divide_constriant&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-    &lt;span class="n"&gt;r&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s"&gt;''&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-        &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="s"&gt;''&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-            &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;append&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s"&gt;', '&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;join&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;h2 id="todo"&gt;Todo&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Parse all the rules using SymPy &lt;code class="highlighter-rouge"&gt;Symbol&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;Remove sympy-matchpy converters and matchpy &lt;code class="highlighter-rouge"&gt;Operations&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;</description>
     </item>
   </channel>
 </rss>
