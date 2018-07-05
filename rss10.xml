@@ -15,6 +15,37 @@
       <description>&lt;div dir="ltr" style="text-align: left;"&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;Hello everyone. Here is the brief summary of my work in the seventh week of GSoC period.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;Last week, we found a solution for matching `exp` as `Pow`. This week major part was spent in testing exponential rules. Here are some problem faced.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;1. UnevaluatedExpr is quite untested and results in recursion errors in many places.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;like `u = UnevaluatedExpr(E)` now when we want to find imaginary and real part of `u`, using `im(u)`. It causes recursion error. There were other instances too. So in those functions, I replaced them back to `exp`.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;2. There was a lot of index error because length of args of a `Pow` object is 2. Whereas for `exp` it's 1. Utility functions used in lot of places `.args[1]`. I found all possible places where arguments of a `Pow` object was accessed using `.args[0] and .args[1]` . I replaced them with `.base` and `.exp`.&amp;nbsp;This solved the problem&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;There were more minor changes in many utility functions. Currently, I have finished the exponential testing and almost all are passing. I have pushed all changes in this &lt;/span&gt;&lt;a href="https://github.com/sympy/sympy/pull/14756" style="font-family: Arial, Helvetica, sans-serif;"&gt;PR&lt;/a&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;.&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;I have tested a small part of logarithmic tests. I will try to finish them in 2 days and next move on to either special functions on trigonometric rules.&lt;/div&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;/div&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-7</guid>
+      <author>Yathartha Joshi (Yathartha22)</author>
+      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 7 - Continuing with transolve Part-IV</title>
+      <pubDate>Sun, 01 Jul 2018 00:00:00 GMT</pubDate>
+      <link>https://Yathartha22.github.io//gsoc-week-7</link>
+      <description>&lt;p&gt;This week I continued to work on finalising the design of the &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt;. Following were the things discussed and implemented:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;The loop over the &lt;code class="highlighter-rouge"&gt;rhs_s&lt;/code&gt; was removed because &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; already has a loop and since &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; is called within the loop therefore there won&amp;#8217;t be a case where there would be more than one argument in &lt;code class="highlighter-rouge"&gt;rhs_s&lt;/code&gt; inside &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;pow_type()&lt;/code&gt; was created to handle power type equations in &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; but it turns out that power type equations will be handled in the &lt;code class="highlighter-rouge"&gt;_invert()&lt;/code&gt; itself, so it was repetitive to add again.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;The names of the solving helpers were improved to &lt;code class="highlighter-rouge"&gt;_solve_class&lt;/code&gt; from the previous &lt;code class="highlighter-rouge"&gt;_class_solver&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Discussions with Amit and Chris led to the conclusion that &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; should be completely made an internal function of &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;, i.e. it should not be used as an independent function. At first the thought was that it can be used as an independent function, but this created a problem of the code being repeated as that of &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;, so Chris suggested that &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; should raise an error for equations that &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; can handle, but again this created problem, it would make unnnecessary complications in the code as we need to be very specific as to when and where raise an error.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;We decided to have same arguments for all the helpers. Be it identification or solving helper, both will take the equation and the variable as their arguments, with the choice that the helper can ignore to use any of the argument if not needed.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;There were a lot of improvement in the documentation as the design changed.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Apart from these changes work in implementing &lt;code class="highlighter-rouge"&gt;log solver&lt;/code&gt; is going on in parallel.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://singhjashan.wordpress.com/?p=63</guid>
       <author>Jashanpreet Singh Sraw (jashan498)</author>
       <title>Jashanpreet Singh Sraw (jashan498): Week 6 (23 June &#x2013; 29 June)</title>
@@ -129,12 +160,70 @@
 &lt;/ul&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-6</guid>
+      <author>Yathartha Joshi (Yathartha22)</author>
+      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 6 - Continuing with transolve Part-III</title>
+      <pubDate>Sat, 23 Jun 2018 00:00:00 GMT</pubDate>
+      <link>https://Yathartha22.github.io//gsoc-week-6</link>
+      <description>&lt;p&gt;For the sixth week, I started working on a few things as per the discussions with Amit:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Improving the API of &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;As &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; grew over the past few weeks the API became a bit messy, which was against the plan. So Amit suggested on to work on it to make it look clean. For this I added two internal functions &lt;code class="highlighter-rouge"&gt;add_type()&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;pow_type()&lt;/code&gt;, to handle expressions having &lt;code class="highlighter-rouge"&gt;add&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;power&lt;/code&gt; terms respectively. This could help us in achieving what we planned of: making the API extensible without it getting affected from the changes done in the function itself. If new solvers are to be added the modifcation has to be done in either of the internal functions.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Improved the working of &lt;code class="highlighter-rouge"&gt;_check_expo&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The implementation of the &lt;code class="highlighter-rouge"&gt;check_expo&lt;/code&gt; had a probelm, of not being generalised, only equations having two terms were checked. So the task was to make it generalised, so I implemented it using &lt;a href="http://docs.sympy.org/latest/modules/core.html#atom"&gt;atoms&lt;/a&gt;, filtered the equations having &lt;code class="highlighter-rouge"&gt;Pow&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; with the help of &lt;code class="highlighter-rouge"&gt;.atoms()&lt;/code&gt; and then checked whether the variable that needs to be solved is present in the exponent or not but this too possesed a problem: asking for atoms was not a great choice as they can come from anywhere like &lt;code class="highlighter-rouge"&gt;cos(2**x).atoms(Pow, exp)&lt;/code&gt; would give &lt;code class="highlighter-rouge"&gt;2**x&lt;/code&gt; and consequently the helper would return &lt;code class="highlighter-rouge"&gt;True&lt;/code&gt;, which is wrong. For this &lt;a href="https://github.com/smichr"&gt;smichr&lt;/a&gt; suggested even better method of using &lt;a href="https://github.com/sympy/sympy/blob/master/sympy/core/operations.py#L344"&gt;.make_args()&lt;/a&gt;. We will seperate out all the &lt;code class="highlighter-rouge"&gt;Add&lt;/code&gt; arguments and then in each of them we will look for &lt;code class="highlighter-rouge"&gt;Mul&lt;/code&gt; arguments which will give us the atomic argument of the expression, now this term can be tested to have variable in the exponent.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Changes in the documentation&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Also there were a few things that needed to fixed in the documentation. The docstring of &lt;code class="highlighter-rouge"&gt;expo_solver&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;check_expo&lt;/code&gt; were improved. Few changes were also done in &lt;code class="highlighter-rouge"&gt;transolve's&lt;/code&gt; documentation.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Worked on improvement of &lt;code class="highlighter-rouge"&gt;log solver&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Apart from this I did some improvement in &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt; to handle corner cases. As per the current logic &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt; would return a &amp;#8220;&lt;em&gt;logcombined&lt;/em&gt;&amp;#8221; equation to be further solved by &lt;code class="highlighter-rouge"&gt;log_solver&lt;/code&gt;, but this lead to a problem that the some equation (&lt;code class="highlighter-rouge"&gt;log(x**y) - y*log(x)&lt;/code&gt;) might get reduced to &lt;code class="highlighter-rouge"&gt;0&lt;/code&gt; and the check would fail, therefore this was handled by improving the condition as &lt;code class="highlighter-rouge"&gt;if condition not False&lt;/code&gt;. Apart from this single term expression needs to be properly handled.&lt;/p&gt;
+
+&lt;p&gt;Also I started getting familiar with &lt;code class="highlighter-rouge"&gt;lambert&lt;/code&gt; equations.&lt;/p&gt;
+
+&lt;p&gt;So these were the things that I worked on this week. The PR needs a bit more improvement to get merged, I will try to get it finished by mid of the coming week and start working on implementation of other solvers.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">tag:blogger.com,1999:blog-1036447522835236737.post-5483137592484274057</guid>
       <author>Ashish Kumar Gaurav (ashishkg0022)</author>
       <title>Ashish Kumar Gaurav (ashishkg0022): GSoC 2018: Week 5</title>
       <pubDate>Sun, 17 Jun 2018 17:12:20 GMT</pubDate>
       <link>http://ashishkg0022.blogspot.com/2018/06/gsoc-2018-week-5.html</link>
       <description>&lt;div dir="ltr" style="text-align: left;"&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;Hello everyone. Here is the brief summary of my work in the 5th week of GSoC period.&lt;/span&gt;&lt;/div&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;I started this week with testing miscellaneous algebraic test cases. Soon it was found that most test cases depend on rules of `Miscellaneous integration`. So I loaded those rules. There were few new structure in constraints. So parser too was updated for incorporating those.&amp;nbsp;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;While testing, `ExpandIntegrand` did not function well. Matcher used in ExpandIntegrand was of sympy. I changed ExpandIntegrand using replace_all of matchpy. In few more functions I changed the structure using matchpy. In this week, a major part of the time was spent in utility functions. There are many changes. Also some of the test cases of last year was wrong. It gave different result in mathematica. The test cases which I have updated matches with Mathematica's output. I have pushed all changes of utility function in this &lt;a href="https://github.com/sympy/sympy/pull/14756/files"&gt;PR&lt;/a&gt;.&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;Parallely I have also tested around 70 % of miscellaneous algebraic. I will complete the testing within one or two days. After this I will move on to exponential rules and exponential test cases.&lt;/div&gt;&lt;/span&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;/div&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-5</guid>
+      <author>Yathartha Joshi (Yathartha22)</author>
+      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 5 - Implementing log solver</title>
+      <pubDate>Sun, 17 Jun 2018 00:00:00 GMT</pubDate>
+      <link>https://Yathartha22.github.io//gsoc-week-5</link>
+      <description>&lt;p&gt;So this is the last week of the first evaluation. I started with implementing log solver as part of &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt;. As per the documentation of the &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; we will need two helpers for implementing log solver, &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt; that will check whether the equation is logarithmic or not and &lt;code class="highlighter-rouge"&gt;log_solver&lt;/code&gt; that will solve the equation. Here&amp;#8217;s the &lt;a href="https://github.com/sympy/sympy/pull/14792"&gt;PR&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Idea behind &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Heuristic is implemented to determine whether the equation is logarithmic or not. According to it the logarithmic equations can be reduced to simpler form using log identities. For this purpose we use SymPy&amp;#8217;s function &lt;a href="http://docs.sympy.org/latest/tutorial/simplification.html#logcombine"&gt;logcombine&lt;/a&gt;. If the equation is logarithmic it will be reduced and hence the number of log in the original and modified equation may differ. This will ensure that the equation is logarithmic.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Idea behind the log solver&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The idea is simple, the reduced form from the &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt; is used as the new target equation and is sent to &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; to handle. Solutions are retuned from &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;, but it may contain values that won&amp;#8217;t satisfy the equation (log does not take negative values in real domain). Therfore to remove unwanted values we use &lt;a href="http://docs.sympy.org/latest/modules/solvers/solvers.html#sympy.solvers.solvers.checksol"&gt;checksol&lt;/a&gt; function of solve module which substitutes each solution in the equation and returns &lt;code class="highlighter-rouge"&gt;True&lt;/code&gt; if it satisfies otherwise &lt;code class="highlighter-rouge"&gt;False&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Apart from implementing helpers, I have added their documentation. Certain things needs to be done before the PR is ready for review: Tests needs to be added for the helpers and &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt; needs to be improved a bit to handle corner cases.&lt;/p&gt;
+
+&lt;p&gt;In parallel I am also working on improving &lt;code class="highlighter-rouge"&gt;transolve's&lt;/code&gt; PR to make it merge as soon as possible. After these two gets completely fixed we will be focusing on implementing &lt;code class="highlighter-rouge"&gt;lambert equation solver&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;In the coming week I will be focussing on finishing off the work of these two PR.&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://singhjashan.wordpress.com/?p=56</guid>
@@ -276,6 +365,56 @@ Piecewise((&lt;span class="pl-c1"&gt;1.5&lt;/span&gt;&lt;span class="pl-k"&gt;*&
 &lt;p&gt;Looking forward to next week, where I will be implementing XOR convolution using &lt;code class="highlighter-rouge"&gt;fwht&lt;/code&gt;.&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-4</guid>
+      <author>Yathartha Joshi (Yathartha22)</author>
+      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 4 - Continuing with transolve Part-II</title>
+      <pubDate>Sat, 09 Jun 2018 00:00:00 GMT</pubDate>
+      <link>https://Yathartha22.github.io//gsoc-week-4</link>
+      <description>&lt;p&gt;By the end of the previous week I had completed majority of the TODO&amp;#8217;s of the &lt;a href="https://github.com/sympy/sympy/pull/14736/"&gt;PR #14736&lt;/a&gt;.
+This week I started on minor improvements suggested by Amit. This included:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Minor Documentation changes&lt;br /&gt;
+Included proof of correctness, typo fixes, rephrasing lines etc.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Removing &lt;code class="highlighter-rouge"&gt;flag&lt;/code&gt; variable from transolve.&lt;br /&gt;
+&lt;code class="highlighter-rouge"&gt;flag&lt;/code&gt; variable was passed as a function parameter in &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; and was used to check on the recursive call. The thought was that there might be a case when equation could not be solved by any of the helpers but during the process the equation might get modified, so we wanted to double check whether the modified equation could be solved again, thats why we used &lt;code class="highlighter-rouge"&gt;flag&lt;/code&gt; but Amit suggested on removing it as there wasn&amp;#8217;t a case as of now and it will only make things unnecessarily complicated.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Also worked on XFAILS, mainly on solving equations containing only symbols. There was an exception raised in &lt;code class="highlighter-rouge"&gt;_invert_real&lt;/code&gt;, because of a relational comparison made with &lt;code class="highlighter-rouge"&gt;0&lt;/code&gt; which caused the faiure of the tests. It has been fixed by handling the exception.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Imported tests of log and lambert.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Another thing we discussed was about log solver. The helpers for solving logarithmic equations will be implemented in a seperated PR, to make the review and implementing task easy and independent.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;After this I started a working on solving exponential equations in complex domain, though it turns out that we will be focussing on only the real domain as of now. But I have added tests for it as XFAIL.&lt;br /&gt;
+To make exponents work in complex domain, we require the &lt;a href="https://en.wikipedia.org/wiki/Complex_logarithm"&gt;complex logarithm&lt;/a&gt;.
+If we have equation as&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;	z = e**w,
+	where w is complex number and z is non-zero complex number,
+	then 
+	Ln(z) = ln|z| + I*(Arg(z) + 2*n*pi)
+	where Ln(z) is the complex logarithm and ln|z| is the
+        logarithm evaluated with real number argument.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Apart from this we also had a meeting yesterday in which we discussed about how we will be wrapping up things before the first evaluation.&lt;br /&gt;
+I will be completing few leftovers of the current PR to make it merge and start working on implementing log solver (making a commit probably by tomorrow).&lt;/p&gt;
+
+&lt;p&gt;Amit also suggested on creating a coverage report so as to get an idea about the amount of tests covered by the code. The current coverage report can be found &lt;a href="https://yathartha22.github.io/covhtml/sympy_solvers_solveset_py.html"&gt;here&lt;/a&gt;. Other than this he also advised on reading &lt;a href="https://www.investigatii.md/uploads/resurse/Clean_Code.pdf"&gt;Clean Code&lt;/a&gt; by &lt;code class="highlighter-rouge"&gt;Robert C. Martin&lt;/code&gt; which will help me improve in writing clean and efficient code.&lt;/p&gt;
+
+&lt;p&gt;The main target for the coming week will be merging &lt;code class="highlighter-rouge"&gt;PR #14736&lt;/code&gt;, implementing &lt;code class="highlighter-rouge"&gt;log solver&lt;/code&gt; (will try to merge this as well), starting with implementing &lt;code class="highlighter-rouge"&gt;lambert solver&lt;/code&gt; (try to add atleast a WIP PR) and reading the book.&lt;/p&gt;
+
+&lt;p&gt;Hope things go as planned!!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">tag:blogger.com,1999:blog-1036447522835236737.post-6327049288703125321</guid>
       <author>Ashish Kumar Gaurav (ashishkg0022)</author>
       <title>Ashish Kumar Gaurav (ashishkg0022): GSoC 2018: Week 3</title>
@@ -299,6 +438,30 @@ Piecewise((&lt;span class="pl-c1"&gt;1.5&lt;/span&gt;&lt;span class="pl-k"&gt;*&
 &lt;p&gt;Late this week, I pushed commits to &lt;a href="https://github.com/sympy/sympy/pull/14712"&gt;PR #14712&lt;/a&gt; with the aim of fixing failing tests in &lt;code class="highlighter-rouge"&gt;test_util.py&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;test_inequalities.py&lt;/code&gt; due to &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;. The remaining tests are failing as &lt;code class="highlighter-rouge"&gt;solvers&lt;/code&gt; can not currently solve the transcendental equations when rewritten in exponential form.&lt;/p&gt;
 
 &lt;p&gt;Looking forward to next week, where I will be working on the Fast Walsh Hadamard Transform (&lt;code class="highlighter-rouge"&gt;fwht&lt;/code&gt;).&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-3</guid>
+      <author>Yathartha Joshi (Yathartha22)</author>
+      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 3 - Continuing with transolve</title>
+      <pubDate>Sat, 02 Jun 2018 00:00:00 GMT</pubDate>
+      <link>https://Yathartha22.github.io//gsoc-week-3</link>
+      <description>&lt;p&gt;I continued my work of week 2 in this week as well. Though I was travelling for 2-3 days, I was able to give most of the hours to the work dedicated for this week. I had to add a detailed descriptive documentation for &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt;, for this I read documentation of the &lt;code class="highlighter-rouge"&gt;ode&lt;/code&gt; module as Amit and Harsh suggested, apart from this I read several other documentation of sympy modules. Made a commit regarding this in the &lt;a href="https://github.com/sympy/sympy/pull/14736/"&gt;PR&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;As of now transolve supports solving majority of exponential equations.
+I have also imported exponential tests of solve and added a few of mine. Some of them needs another look, I have added them to &lt;code class="highlighter-rouge"&gt;XFAIL&lt;/code&gt; as of now. I am working on these tests to pass. Also done minor changes in the function, like removed &lt;code class="highlighter-rouge"&gt;force=True&lt;/code&gt; option from &lt;code class="highlighter-rouge"&gt;expand_log&lt;/code&gt; because using this option is not a healthy choice as the function expands logarithm without considering the assumptions (for exponents the variable should be real) which may sometime get a wrong result.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Idea behind &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The idea is simple, we are mainly focusing on making it modular and extensible. So to achieve this different identifying and solving helpers will be implemented that will identify the type of equation and then solve it. For detailed information refer to the &lt;a href="https://github.com/sympy/sympy/pull/14736/"&gt;PR&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Idea behind &lt;code class="highlighter-rouge"&gt;exponential solver&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Exponential equations are solved by using logarithms. Currently the &lt;code class="highlighter-rouge"&gt;expo_solver&lt;/code&gt; reduces the equation to log form which can further be handled by solveset itself. For this purpose &lt;a href="http://docs.sympy.org/latest/tutorial/simplification.html#expand-log"&gt;expand_log&lt;/a&gt; function of sympy is used which reduces the equation using log identities.
+Take for example a simple exponential equation &lt;code class="highlighter-rouge"&gt;3**(2*x) - 2**(x + 3)&lt;/code&gt;, this equation can be reduced to &lt;code class="highlighter-rouge"&gt;2*x*log(3) - (x+3)*log(2)&lt;/code&gt;, this type of equation is easily solvable by &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Once we approve on the documentation and the working of exponential solver I will proceed to implement logarithmic solver (probably in the coming week).&lt;/p&gt;
+
+&lt;p&gt;Hope things go as planned!!&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://singhjashan.wordpress.com/?p=45</guid>
@@ -459,6 +622,56 @@ I had a detailed discussion with &lt;a href="https://github.com/jksuom"&gt;Kalev
 &lt;p&gt;Looking forward to another exciting week.&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-2</guid>
+      <author>Yathartha Joshi (Yathartha22)</author>
+      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 2 - Getting started with transolve</title>
+      <pubDate>Sun, 27 May 2018 00:00:00 GMT</pubDate>
+      <link>https://Yathartha22.github.io//gsoc-week-2</link>
+      <description>&lt;p&gt;So this is the end of the second week of GSoC and I am still working on implementing and improving &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt;. In the previous week Amit and I discussed about the things that are necessary for implementing &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt;. I have covered it in the previous &lt;a href="https://yathartha22.github.io//gsoc-week-1"&gt;blog post&lt;/a&gt;. Based on the discussions I have a submitted a WIP PR &lt;a href="https://github.com/sympy/sympy/pull/14736"&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In the second meeting we had &lt;a href="https://github.com/hargup"&gt;Harsh&lt;/a&gt; joining us to the discussion.&lt;/p&gt;
+
+&lt;p&gt;Amit and Harsh stressed on making transolve modular and extensilbe, unlike &lt;code class="highlighter-rouge"&gt;_tsolve&lt;/code&gt; which lacks these features (though it is very powerful).&lt;/p&gt;
+
+&lt;p&gt;So there are few things that &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; should have:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Proper documentation&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Documentation is always a very important aspect of any software. Therefore to make it easy to understand to the users, transolve needs to have a proper descriptive documentation that should explain why, what and how of transolve. Amit suggested on covering every detail of the working of function. It should cover the following:&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;- What is transolve.
+- How to use transolve.
+- Why it is better than `_tsolve`.
+- How equations are solved.
+- How to add a new class of equations.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Extensibility&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; should be extensible, i.e. the design of the API should be such that it becomes easy to add a new class of equation solver without affecting the structure of the function.
+The idea to make this happen is to have a two step procedure of equation solving. &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; will solve any equation by first identifying the class of the equations (a helper will do that) and then calling another helper to solve that equation. So in this way one needs to figure out how to identify the equation and how to solve it. Once this is done he just needs to invoke the helpers at the proper location in transolve.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Modularity&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;As it is clear from the above point, &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; will have two step procedure for solving different classes of equations. Helper function needs to be implemented for identification and solving equations. This will make &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; modular as solving equations will not depend on the main function.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Proof of correctness&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Since identification and solving equations will be achieved with few heuristics/algorithms. There should be a proper document of its prof of correctness. I will be adding proper documentation with examples explaining its authenticity.&lt;/p&gt;
+
+&lt;p&gt;Apart from this Amit also adviced on reading documentation of &lt;a href="https://github.com/sympy/sympy/blob/master/sympy/solvers/ode.py"&gt;ode&lt;/a&gt; module so as to get an idea, also importing tests from solve, making it atleast as powerful as _tsolve will be other things that needs care.&lt;/p&gt;
+
+&lt;p&gt;I will be focussing on completing it by this week!!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">tag:blogger.com,1999:blog-1036447522835236737.post-2627530986362511513</guid>
       <author>Ashish Kumar Gaurav (ashishkg0022)</author>
       <title>Ashish Kumar Gaurav (ashishkg0022): GSoC 2018: Week 2</title>
@@ -499,6 +712,47 @@ Successive reviews helped in the following changes to PR:&lt;/p&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;Looking forward to another exciting week.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-1</guid>
+      <author>Yathartha Joshi (Yathartha22)</author>
+      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 1 - Starting up</title>
+      <pubDate>Sun, 20 May 2018 00:00:00 GMT</pubDate>
+      <link>https://Yathartha22.github.io//gsoc-week-1</link>
+      <description>&lt;p&gt;So the coding period started from 14 May 2018. So most of the days of the first week I spent was giving final exams and travelling. But now everything is over and I will be spending most of the time implementing what I have proposed for the first evaluations. I had a meeting with Amit during the community bonding period where we discussed :&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Schedule and frequency of meetings.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;How to proceed with implementing transolve, documenting and writing tests for it.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;As of now I have looked few things:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;How &lt;code class="highlighter-rouge"&gt;_tsolve&lt;/code&gt; works in &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;How exponential and logarithmic equations are solved.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Filtering out the tests for the above.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Figuring out how the API would look like.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;What will be the flow of &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The last two points needs more discussions and planning. In the coming week I will try to figure it out by dicussing it with Amit and by the end I will try to make an initial commit to &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Hope I execute the plan well!!&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">tag:blogger.com,1999:blog-1036447522835236737.post-1227858324235625174</guid>
@@ -583,313 +837,6 @@ Successive reviews helped in the following changes to PR:&lt;/p&gt;
       <pubDate>Fri, 11 May 2018 18:59:02 GMT</pubDate>
       <link>http://ashishkg0022.blogspot.com/2018/05/gsoc-2017-proposal-acceptance-and.html</link>
       <description>&lt;div dir="ltr" style="text-align: left;"&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;Hello, I'm Ashish Kumar Gaurav a undergraduate student at Indian Institute of Technology, Kharagpur. My proposal for completing rule based integration(RUBI) in sympy has been accepted as a part of Google Summer of Code.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;RUBI consists of about 10,000 rules. Sympy can use these rules rather than various algorithms to perform efficient integration. RUBI had been a GSoC project last year but it could not be completed. I hope that I will be able to bring RUBI in a working state.&lt;/span&gt;&lt;br /&gt;&lt;span&gt;&lt;br /&gt;&lt;/span&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="background-color: #fdfdfd; text-align: start;"&gt;&lt;span&gt;Community bonding period is near end and coding period will be starting on 14th May. In this period I have done the following improvements:&lt;/span&gt;&lt;/span&gt;&lt;/div&gt;&lt;ul style="text-align: left;"&gt;&lt;li style="text-align: left;"&gt;&lt;span&gt;Fixed a bug in parsetool, which raised exceptions while sympifying the code.&lt;/span&gt;&lt;/li&gt;&lt;li style="text-align: left;"&gt;&lt;span&gt;Removed repeated definition of same constraints. All constraints are present in a single file &lt;span style="background-color: #cccccc;"&gt;constraints.py&lt;/span&gt; , in which each constraint is defined uniquely. Earlier same constraints were defined multiple times. An issue had also been created &lt;a href="https://github.com/HPAC/matchpy/issues/27"&gt;here&lt;/a&gt;.&lt;/span&gt;&lt;/li&gt;&lt;li style="text-align: left;"&gt;&lt;span&gt;Removed dependencies of lambda function from &lt;span style="background-color: #cccccc;"&gt;constraints&lt;/span&gt;. lamdas are now replaced ny normal function.&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;span&gt;In the upcoming week, I will remove dependencies of lambda from &lt;span style="background-color: #cccccc;"&gt;ReplacementRule &lt;/span&gt;. I will then start testing the integrals and fixing bugs.&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://singhjashan.wordpress.com/?p=3</guid>
-      <author>Jashanpreet Singh Sraw (jashan498)</author>
-      <title>Jashanpreet Singh Sraw (jashan498): Google Summer of Code with SymPy</title>
-      <pubDate>Mon, 30 Apr 2018 14:03:57 GMT</pubDate>
-      <link>https://singhjashan.wordpress.com/2018/04/30/google-summer-of-code-with-sympy/</link>
-      <description>&lt;p&gt;About a week ago, Google announced the projects selected for this year&amp;#8217;s Summer of Code. I am glad to inform that my project, &lt;strong&gt;&lt;a href="https://summerofcode.withgoogle.com/projects/#4687503924133888"&gt;Create a Rich Beam Solving System&lt;/a&gt;&lt;/strong&gt;, for&amp;#160;SymPy got selected for GSoC 2018.&lt;/p&gt;
-&lt;h2&gt;&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;h3&gt;&lt;em&gt;&lt;span style="color: #339966;"&gt;&amp;#160;SymPy&amp;#160;&lt;/span&gt;&lt;/em&gt;&lt;/h3&gt;
-&lt;h3&gt;&lt;em&gt;&lt;span style="color: #000000;"&gt;&lt;strong&gt;SymPy&lt;/strong&gt;&lt;/span&gt;&amp;#160; is a Python library for symbolic mathematics. It aims to become a full-featured&amp;#160;&lt;span style="color: #339966;"&gt;&lt;span style="color: #000000;"&gt;&lt;strong&gt;Computer Algebra System&lt;/strong&gt;&lt;/span&gt;&amp;#160;&lt;/span&gt;(CAS) while keeping the code as simple as possible in order to be comprehensible and easily extensible.&lt;/em&gt;&lt;/h3&gt;
-&lt;p&gt;&lt;img alt="Sympy_logo.svg" class=" wp-image-13 aligncenter" height="246" src="https://singhjashan.files.wordpress.com/2018/04/sympy_logo-svg.png?w=310&amp;#038;h=246" width="310" /&gt;&lt;/p&gt;&lt;/blockquote&gt;
-&lt;p&gt;I entered the world of Open Source a few months back and journey since then was full of learning curves, which I enjoyed the most. You learn something new every time you try to contribute. Your code getting reviewed by other contributors, who are usually packed with more experience than you got, is an added advantage. All this inspired me to spend my summer writing code for open source projects and made me apply for GSoC 2018.&lt;/p&gt;
-&lt;p&gt;Coding period for this year&amp;#8217;s GSoC would start on May 14 and should end by August 6. Prior to the coding period is &lt;strong&gt;Community Bonding period&lt;/strong&gt; (April 23 &amp;#8211; May 14) which usually is used for&amp;#160;learning more about the organization&amp;#8217;s community.&lt;/p&gt;
-&lt;p&gt;I would be updating this blog every week, keeping track of all the progress I make towards the completion of my project.&lt;/p&gt;
-&lt;h1 class="vertical-timeline__block-title"&gt;Community Bonding&lt;/h1&gt;
-&lt;p&gt;The first month of GSoC is the Community Bonding period.&amp;#160;In practice, the community bonding period is all about, well, community bonding. Rather than jumping straight into coding, you&amp;#8217;ve got some time to learn about your organization&amp;#8217;s processes.&lt;/p&gt;
-&lt;p&gt;During this period I am expected to&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Discuss the work plan, we would be following this summer, with my mentors and get to know all the tools required for my project.&lt;/li&gt;
-&lt;li&gt;Start a Blog to keep a track of my weekly progress. The Blog is required to have an RSS feed. We are expected to have at least&amp;#160;one blog post a week, describing our progress for that week.&lt;/li&gt;
-&lt;li&gt;Sending a pull request with my blog RSS feed to&amp;#160;&lt;a href="https://github.com/sympy/planet-sympy"&gt;https://github.com/sympy/planet-sympy&lt;/a&gt;. For now, I have created this Blog on WordPress but I would be shifting soon to GitHub pages as they look cleaner and show no ads.&lt;/li&gt;
-&lt;li&gt;Review pull requests created by other contributors.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;As I am having exams at my university from May 14 until May 26, I would start coding early to cover up for those days. Hopefully, I would be creating my pull request in a day or two.&lt;/p&gt;
-&lt;p&gt;Till now I have&amp;#160;been reviewing&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/14681"&gt;#14681&lt;/a&gt;,&amp;#160;which&amp;#160;coincidentally implements one of the points&amp;#160;I proposed in my GSoC proposal. Hopefully, I would be creating my first pull request in a day or two.&lt;/p&gt;
-&lt;h1 class="vertical-timeline__block-title"&gt;&lt;/h1&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sidhantnagpal.github.io/2018/04/gsoc-selection</guid>
-      <author>Sidhant Nagpal (sidhantnagpal)</author>
-      <title>Sidhant Nagpal (sidhantnagpal): Selected for GSoC: SymPy</title>
-      <pubDate>Tue, 24 Apr 2018 00:00:00 GMT</pubDate>
-      <link>https://sidhantnagpal.github.io/2018/04/gsoc-selection.html</link>
-      <description>&lt;p&gt;&lt;img src="https://sidhantnagpal.github.io/files/gsoc-sympy.png" style="width: 80%; height: 80%; float: left; margin-left: 50px;" /&gt;
-&lt;br clear="all" /&gt;&lt;/p&gt;
-
-&lt;p&gt;I am extremely glad to inform that my &lt;a href="https://summerofcode.withgoogle.com/dashboard/project/5222530349006848/overview"&gt;proposal&lt;/a&gt; &amp;#8216;Transforms, Convolution &amp;amp; Linear Recurrence Evaluation&amp;#8217; has been accepted by SymPy for Google Summer of Code 2018.&lt;/p&gt;
-
-&lt;p&gt;For the unitiated, SymPy is a Computer Algebra System (CAS) written entirely in Python. SymPy was started as a project by Ondrej Certik (&lt;a href="https://github.com/certik"&gt;certik&lt;/a&gt;) in 2006. SymPy has participated in every Google Summer of Code since 2007.&lt;/p&gt;
-
-&lt;p&gt;My official mentors are Aaron Meurer (&lt;a href="https://github.com/asmeurer"&gt;asmeurer&lt;/a&gt;) and Kalevi Suominen (&lt;a href="https://github.com/jksuom"&gt;jksuom&lt;/a&gt;). Aaron Meurer (who also joined from GSoC) is the lead developer of SymPy since 2011. Kalevi Suominen (SymPy Member) has mentored for Google Summer of Code in 2016 and 2017. I am extremely lucky to have gotten an opportunity to work with such experienced developers.&lt;/p&gt;
-
-&lt;p&gt;During the Community Bonding Period, I will complete the following tasks:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Setting up the blog with RSS feed for GSoC posts (for &lt;a href="http://planet.sympy.org"&gt;planet.sympy.org&lt;/a&gt;).&lt;/li&gt;
-  &lt;li&gt;Discussing the possible modes of communication, and getting information for timings and weekly meetings.&lt;/li&gt;
-  &lt;li&gt;Resolving any other issues that might arise during the Coding Period.&lt;/li&gt;
-  &lt;li&gt;Getting the details for expected work to be done, discussing the API of the modules to be implemented and studying the existing modules which might be used.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;I would like to thank the SymPy team, especially my mentors - Aaron Meurer and Kalevi Suominen.&lt;/p&gt;
-
-&lt;p&gt;Looking forward to a great summer.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://gxyd.github.io/blogs/os_day1</guid>
-      <author>Gaurav Dhingra (gxyd)</author>
-      <title>Gaurav Dhingra (gxyd): Operating Systems - Day 1</title>
-      <pubDate>Sun, 01 Apr 2018 00:00:00 GMT</pubDate>
-      <link>https://gxyd.github.io/blogs/os_day1/</link>
-      <description>&lt;p&gt;Looking at linux kernel&lt;/p&gt;
-
-&lt;p&gt;I am currently reading the book &lt;i&gt;Operating System Concepts&lt;/i&gt; by &lt;i&gt;Galvin&lt;/i&gt; and &lt;i&gt;Galge&lt;/i&gt;.&lt;/p&gt;
-
-&lt;p&gt;What purpose does an operating system serve?&lt;/p&gt;
-
-&lt;p&gt;Actually an operating system is similar to the government, operating system doesn&amp;#8217;t
-do anything useful for the user in its own right but rather creates an environment
-in which a variety of programs, apps can be function properly by making use of the
-hardware resources (CPU, main memory, I/O devices etc.) properly.&lt;/p&gt;
-
-&lt;p&gt;An operating system is a control program, i.e. it manages the execution of user
-programs to prevent errors and improper use of the computer.&lt;/p&gt;
-
-&lt;p&gt;&lt;b&gt;Moore&amp;#8217;s law&lt;/b&gt; (not important though): every 18 months the number of transistors
-                                        on integrated circuit would double.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;h2 id="computer-system-operation"&gt;Computer system operation&lt;/h2&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;There are a number of device controllers connected through a common bus, each
-device controller is in-charge of specific type of devices. For ex, for usb devices
-we have usb-controllers, for audio devices we have audio controllers and so on.&lt;/p&gt;
-
-&lt;p&gt;https://unix.stackexchange.com/q/268340&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;h2 id="subscribing-to-linux-kernel-mailing-list"&gt;Subscribing to linux kernel mailing list&lt;/h2&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I subscribed to the main linux kernel mailing list, which is supposed to be a
-list of people having major discussions about the kernel and posting bugs there.&lt;/p&gt;
-
-&lt;p&gt;I have been trying to figure out some easy to fix issue on linux kernel. Even
-though I don&amp;#8217;t even have a good understanding of the basics of C language nor
-of the operating system, but I want to make an attempt at getting my first patch
-submitted to the kernel. I can see that there is https://bugzilla.kernel.org/
-but from it getting to recently non-fixed easy to fix issues might not be easy
-, probably I need something like an (regularly) updated wiki containing such
-bugs listing.&lt;/p&gt;
-
-&lt;p&gt;That&amp;#8217;s it for now.
-See ya!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shekharrajak.github.io/blog/Talks/SymPy/PyConIndia-Delhi-2017</guid>
-      <author>Shekhar Prasad Rajak (shekharrajak)</author>
-      <title>Shekhar Prasad Rajak (shekharrajak): PyCon India - Delhi 2017</title>
-      <pubDate>Thu, 02 Nov 2017 00:00:00 GMT</pubDate>
-      <link>http://shekharrajak.github.io/blog/Talks/SymPy/PyConIndia-Delhi-2017</link>
-      <description>&lt;h4 id="pycon-india-delhi-2017--proposal-for-workshop"&gt;PyCon India Delhi 2017 : Proposal for Workshop&lt;/h4&gt;
-
-&lt;p&gt;I am very much interested for conferences and talks/workshops and had submitted the workshop
-proposal last year(2016) as well for PyCon India. So this year
-I started the discussion for the workshop proposal earlier, in the
-&lt;a href="https://groups.google.com/forum/#!searchin/sympy/pycon$20india%7Csort:date/sympy/s6IOYvHnHxU/xiiY0vdlAQAJ" target="_blank"&gt;SymPy Google mailing thread&lt;/a&gt;
-to make the workshop proposal
-interesting and to improve the tutorial contents.&lt;/p&gt;
-
-&lt;p&gt;Since on 2016 proposal, we got the suggestion for adding SymEngine as well into the tutorial content.
-So we started discussion for the same. SymEngine project GSoCers, worked for the SymEngine tutorial part.&lt;/p&gt;
-
-&lt;p&gt;People who took part for writting the proposal were :&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Amit Kumar, Core Developer &amp;amp; GSoC-cer at SymPy&lt;/li&gt;
-  &lt;li&gt;Shekhar Prasad Rajak : Core Developer at SymPy GSoC 2016 - Solvers, Sets&lt;/li&gt;
-  &lt;li&gt;Shikhar Jaiswal : Student Developer at SymPy GSoC 2017 - SymPy - SymEngine Integration and Python Wrappers&lt;/li&gt;
-  &lt;li&gt;Ranjith Kumar : Student Developer at SymPy GSoC 2017 - Solvers and Sets in SymEngine&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Thanks for contributing on the proposal.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h4 id="computer-aided-algebra-system-cas-for-different-programming-languages-using-symengine-and-sympy"&gt;Computer aided algebra system (CAS) for different programming languages using SymEngine and SymPy&lt;/h4&gt;
-
-&lt;p&gt;&lt;strong&gt;Github repo&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;I extended the previous year PyCon repo : &lt;a href="https://github.com/Shekharrajak/PyCon-SymPy-SymEngine" target="_blank"&gt;(Github repo for the tutorial &amp;amp; resources)&lt;/a&gt;  and modified it. We added some new contents and SymEngine tutorials added as well.&lt;/p&gt;
-
-&lt;p&gt;We followed the previous year conferences.Mainly these links:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://in.pycon.org/cfp/pycon-india-2015/proposals/symbolic-computation-with-python-sympy~bqYrb/"&gt;PyCon India 2015&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://cfp.pydelhi.org/pydelhi-conference-2016/proposals/symbolic-computation-with-python-using-sympy/"&gt;PyDelhi Conference 2016&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://www.youtube.com/watch?v=f4cXX0wa9VM&amp;amp;t=599s"&gt;Pycon UK 2016&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Mechanics : &lt;a href="https://www.moorepants.info/blog/npendulum.html"&gt;https://www.moorepants.info/blog/npendulum.html&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://www.youtube.com/watch?v=EG9uOGPBkvQ"&gt;plotting example&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="http://mattpap.github.io/scipy-2011-tutorial/html/basics.html"&gt;http://mattpap.github.io/scipy-2011-tutorial/html/basics.html&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/wiki/Tutorial"&gt;Basic tutorial&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;Contents&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;We divided the tutorial part into SymPy and SymEngine.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/Shekharrajak/PyCon-SymPy-SymEngine/tree/master/SymPy_material"&gt;SymPy material we used&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/Shekharrajak/PyCon-SymPy-SymEngine/tree/master/SymEngine_material"&gt;SymEngine material we used&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://shekharrajak.github.io/PyCon-SymPy-SymEngine/slides-pyconindia2017"&gt;Link for the presentation for the workshop day&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Interested people can download the IPython noteboook for the tutorial from &lt;a href="https://github.com/Shekharrajak/PyConIndiaSymPyTutorial/archive/master.zip"&gt;this link&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;If people want to see the examples online , it is avaiable &lt;a href="http://nbviewer.jupyter.org/github/Shekharrajak/PyCon-SymPy-SymEngine/tree/master/SymPy_material/tutorial_exercises/"&gt;here&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;h4 id="2nd-nov-2017-the-workshop-day"&gt;2nd Nov 2017: The workshop day&lt;/h4&gt;
-
-&lt;p&gt;I reached to the delhi Airport on 2nd Nov around 1AM. Somehow I was able to get room nearby the PyCon center at 5AM :p.&lt;/p&gt;
-
-&lt;div class="post_pic"&gt; &lt;img src="http://shekharrajak.github.io/images/pyconIndiaDelhi/cloud2.jpg" /&gt;  &lt;/div&gt;
-
-&lt;p&gt;I reached to PyCon center at around 9:00AM via cab. Amit and Ranjith were not able to join the PyCon India 2017.
-So me and Shikhar were present on time as the Speaker for the workshop.&lt;/p&gt;
-
-&lt;div class="post_pic"&gt; &lt;img src="http://shekharrajak.github.io/images/pyconIndiaDelhi/speaker.jpg" /&gt;  &lt;/div&gt;
-
-&lt;p&gt;We faced some projector issue but fine, we were able to present the slides and tutorial went well. I started the
-presentation and slowly went to the tutorial part from beginning to some advance examples.&lt;/p&gt;
-
-&lt;div class="post_pic"&gt; &lt;img src="http://shekharrajak.github.io/images/pyconIndiaDelhi/stage.jpg" /&gt;  &lt;/div&gt;
-
-&lt;p&gt;Shikhar took the mic and covered the SymEngine presentation and basic examples.&lt;/p&gt;
-
-&lt;div class="post_pic"&gt; &lt;img src="http://shekharrajak.github.io/images/pyconIndiaDelhi/stage2.jpg" /&gt;  &lt;/div&gt;
-
-&lt;p&gt;Audience had some good questions and they keep questioning during the workshop. It was a pretty good
-experience. It was our first talk/workshop, so we were satisfied with our performance. Hope we will have
-better talks/workshops in upcoming conferences, which will transfer the knowledge.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h4 id="after-the-workshop-"&gt;After the workshop :&lt;/h4&gt;
-
-&lt;p&gt;During the lunch, me and shikhar interacted with fellow speakers and GSoCers. We joined some other
-workshops as well. I left earlier, since I was sleepy because of night journey from the Banglore.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h4 id="conclusion"&gt;Conclusion&lt;/h4&gt;
-
-&lt;p&gt;Overall it was good experience. Since I started preparing the proposal much before the deadline. So we were
-able to finish it up on time. I was busy in the month of August, Sept, Oct but we were able to finish the resources and slides on time.
-I was expecting some more things to be covered, but it&amp;#8217;s fine. I had written few things in the &lt;a href="https://github.com/Shekharrajak/PyCon-SymPy-SymEngine/wiki" target="_blank"&gt;Github repo wiki page&lt;/a&gt;, it may help for future speakers.
-Thanks to PyCon India community for giving us this opportunity.
-I hope in future we will have more interesting topics to talk on SymPy and SymEngine and audience
-will enjoy to learn SymPy and SymEngine along with us.&lt;/p&gt;
-
-&lt;hr /&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nesar2017.wordpress.com/?p=371</guid>
-      <author>Abdullah Javed Nesar (Abdullahjavednesar)</author>
-      <title>Abdullah Javed Nesar (Abdullahjavednesar): GSoC 2017: RUBI INTEGRATOR: Final Report</title>
-      <pubDate>Fri, 01 Sep 2017 18:35:31 GMT</pubDate>
-      <link>https://nesar2017.wordpress.com/2017/09/01/gsoc-2017-rubi-integrator-final-report/</link>
-      <description>&lt;p&gt;&lt;span style="text-decoration: underline;"&gt;&lt;strong&gt;About Me&lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;My name is Abdullah Javed Nesar, I am an undergraduate student at Indian Institute of Technology, Kharagpur.&lt;/p&gt;
-&lt;p&gt;&lt;span style="text-decoration: underline;"&gt;&lt;strong&gt;About the Project&lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;A&amp;#160;&lt;strong&gt;Ru&lt;/strong&gt;le&amp;#160;&lt;strong&gt;b&lt;/strong&gt;ased&amp;#160;&lt;strong&gt;i&lt;/strong&gt;ntegrator nicknamed&amp;#160;&lt;strong&gt;Rubi&lt;/strong&gt;&amp;#160;is an entirely new module in SymPy, Integrals. It is an implementation of more than 10,000 rules to cover a wide variety of indefinite integration. Currently SymPy uses algorithms for indefinite integration which are too slow and presents results which are not simplified. Rubi utilizes a set of well defined rules which makes it smart to present the results in a more symmetric and simplified manner.&lt;/p&gt;
-&lt;p&gt;&lt;span style="text-decoration: underline;"&gt;&lt;strong&gt;The Plan&lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;The plan earlier was to implement a completely new pattern matcher with multiple functionalities which was as efficient as Mathematica&amp;#8217;s pattern matcher. As the pattern matcher would be the back bone of Rubi. But later we came across matchpy and we planned to implement it in our module. But because it is implemented in Python3.6 Rubi isn&amp;#8217;t capable to support Python version less then 3.6.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&lt;span style="text-decoration: underline;"&gt;Work Done&lt;/span&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Utility functions: We have managed to cover majority of the utility functions. Our job was to re-write functions from mathematica to Python.&lt;/li&gt;
-&lt;li&gt;Added rules into SymPy using Python parser.&lt;/li&gt;
-&lt;li&gt;Added tests cases. But unfortunately we could not include all the tests due to performance issue in Python. Tests was taking too long so we decided to include only a few of them.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span style="text-decoration: underline;"&gt;&lt;strong&gt;Future Work&lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Although we have implemented all the rules, but we could not work much on the performance and so it takes too long for Python to compute results. Because of this issue we could not add all the test cases.&lt;/li&gt;
-&lt;li&gt;Working on left out Utility functions. Few of the utility functions were a bit tricky like &lt;code class="highlighter-rouge"&gt;Dist&lt;/code&gt;, &amp;#160;&lt;code class="highlighter-rouge"&gt;FixRhsIntRule&lt;/code&gt;&amp;#160;etc are yet to be implemented.&lt;/li&gt;
-&lt;li&gt;Extending rules set for a smarter computation and better results.&lt;/li&gt;
-&lt;li&gt;Replacing the SymPy&amp;#8217;s pattern matcher with matchpy in utility functions.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span style="text-decoration: underline;"&gt;&lt;strong&gt;Conclusion&lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;I would like to thank my mentor &lt;a href="https://github.com/certik"&gt;Ond&amp;#345;ej &amp;#268;ert&amp;#237;k&lt;/a&gt;&amp;#160;for this project idea and helping me understand the project, I am also thankful to &lt;a href="https://github.com/Upabjojr"&gt;Francesco Bonazzi&lt;/a&gt;&amp;#160;and &lt;a href="https://github.com/asmeurer"&gt;Aaron Meurer&lt;/a&gt;&amp;#160;for helping me from the very beginning at every stage whenever I needed help.&lt;/p&gt;
-&lt;p&gt;&lt;span style="text-decoration: underline;"&gt;&lt;strong&gt;References&lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Link to pull request:&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/12978"&gt;https://github.com/sympy/sympy/pull/12978&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Weekly blog link:&amp;#160;&lt;a href="https://nesar2017.wordpress.com/"&gt;https://nesar2017.wordpress.com/&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://szymag.github.io/post/report/</guid>
-      <author>Szymon Mieszczak (szymag)</author>
-      <title>Szymon Mieszczak (szymag): GSoC 2017 Report, Implementation of multiple types of coordinate systems for vectors</title>
-      <pubDate>Tue, 29 Aug 2017 19:41:21 GMT</pubDate>
-      <link>https://szymag.github.io/post/report/</link>
-      <description>&lt;p&gt;This page summarizes the work which I&amp;rsquo;ve done this summer.
-About me My name is Szymon Mieszczak and I&amp;rsquo;m master student at Adam Mickiewicz University in Pozna&amp;#324;, Poland.
-The goals The aim of my work was to introduce different kind of orthogonal curvilinear coordinate systems to vector package in SymPy. Previously coordinate system could be only rotated or/and translated with respect to other coordinate systems.
-My work can be split into tasks.</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://shikharj.github.io//2017/08/29/Wrapping-Up-GSoC</guid>
-      <author>Shikhar Jaiswal (ShikharJ)</author>
-      <title>Shikhar Jaiswal (ShikharJ): Wrapping Up GSoC</title>
-      <pubDate>Tue, 29 Aug 2017 00:00:00 GMT</pubDate>
-      <link>https://shikharj.github.io//2017/08/29/Wrapping-Up-GSoC/</link>
-      <description>&lt;p&gt;As I&amp;#8217;m writing this post, the deadline for code submission has finally arrived. It has been a wonderful journey, and the experience has certainly left me as a much better programmer than I originally thought I was. From my first &lt;a href="https://github.com/symengine/symengine/pull/1100"&gt;bug fix&lt;/a&gt;, which despite being a minor issue, took up so much of my time, I wasn&amp;#8217;t even sure that I&amp;#8217;d be associated with the &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;SymEngine&lt;/code&gt; team for so long.&lt;/p&gt;
-
-&lt;p&gt;Google Summer of Code &amp;#8216;17 has officially ended. It had its own ups and downs, though both being rewarding to say the least. Currently all my work is pushed up to the respective repositories, and should be ready to merge soon. Thanks to Isuru, for allowing me to work on this even after the official period ends.&lt;/p&gt;
-
-&lt;h2 id="report"&gt;Report&lt;/h2&gt;
-
-&lt;h3 id="symenginepy"&gt;SymEngine.py&lt;/h3&gt;
-
-&lt;p&gt;I pushed in &lt;a href="https://github.com/symengine/symengine.py/pull/182"&gt;#182&lt;/a&gt; implementing &lt;code class="highlighter-rouge"&gt;Expr&lt;/code&gt; class and fixing the inheritance of various other classes. Some minor changes still might be required in this repository in the time to come, since it might require some more tweaks to finally get everything running in &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h3 id="sympy"&gt;SymPy&lt;/h3&gt;
-
-&lt;p&gt;Here is a &lt;a href="https://github.com/sympy/sympy/pulls/ShikharJ"&gt;list&lt;/a&gt; of all my PRs currently pending in &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt;. I pushed a lot of them in the last few hours to spare some time before the deadline. These will consequently be worked upon and merged.&lt;/p&gt;
-
-&lt;p&gt;I had a great summer, much more exhilarating than I had expected it to be. A more detailed work report can be found &lt;a href="https://github.com/ShikharJ/GSoC-2017-Work-Report"&gt;here&lt;/a&gt;. A final thanks to the &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt; community, &lt;code class="highlighter-rouge"&gt;Google&lt;/code&gt;, and my mentors Isuru Fernando and Sumith Kulal, for giving me the opportunity to be a part of this. I hope to stay around for a while.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;&amp;#2346;&amp;#2369;&amp;#2344;&amp;#2352;&amp;#2381;&amp;#2342;&amp;#2352;&amp;#2381;&amp;#2358;&amp;#2344;&amp;#2366;&amp;#2351;&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
