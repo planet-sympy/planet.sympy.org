@@ -7,6 +7,34 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://sidhantnagpal.github.io/2018/07/gsoc-week8</guid>
+      <author>Sidhant Nagpal (sidhantnagpal)</author>
+      <title>Sidhant Nagpal (sidhantnagpal): GSoC: SymPy - Week 8</title>
+      <pubDate>Fri, 06 Jul 2018 00:00:00 GMT</pubDate>
+      <link>https://sidhantnagpal.github.io/2018/07/gsoc-week8.html</link>
+      <description>&lt;p&gt;&lt;img src="https://sidhantnagpal.github.io/files/gsoc-sympy.png" style="width: 80%; height: 80%; float: left; margin-left: 50px;" /&gt;
+&lt;br clear="all" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This week I started working on adding M&amp;#246;bius Transform to the &lt;code class="highlighter-rouge"&gt;discrete&lt;/code&gt; module using Yate&amp;#8217;s DP (Dynamic Programming) method for implementation as part of PR &lt;a href="https://github.com/sympy/sympy/pull/14853"&gt;#14853&lt;/a&gt;. The proposed transforms are part of &lt;code class="highlighter-rouge"&gt;sympy.discrete.transforms&lt;/code&gt; module.&lt;/p&gt;
+
+&lt;p&gt;After discussing with &lt;a href="https://github.com/jksuom"&gt;Kalevi&lt;/a&gt;, the methods implementing this transform were added with appropriate names. The keyword &lt;code class="highlighter-rouge"&gt;subset&lt;/code&gt; is used as a boolean to choose whether enumeration is done over subsets or supersets. The usage for the transform is:&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;mobius_transform&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;inverse_mobius_transform&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;seq&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'w x y z'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;mobius_transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;seq&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;inverse_mobius_transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;inverse_mobius_transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;seq&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;subset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;mobius_transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;subset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The PR was merged successfully, after inclusion of docstring and unit tests for the transform.&lt;/p&gt;
+
+&lt;p&gt;Looking forward to another exciting week.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://nkhlpappu.wordpress.com/?p=7</guid>
       <author>Nikhil Pappu (NikhilPappu)</author>
       <title>Nikhil Pappu (NikhilPappu): Autolev Parser: Status Update</title>
@@ -827,23 +855,6 @@ Successive reviews helped in the following changes to PR:&lt;/p&gt;
 &lt;p&gt;I have written code to parse the basic mathematical variable declarations such as constants, variables, specifieds etc.&amp;#160; I have also written code for expression reconstruction and assignment. I will now work all the math commands, reserved names and matrices. I will be handling vectors and dyadics in the physics part as sympy.physics.vector is more appropriate in the sense of Autolev and symbolic dynamics. Go over &lt;a href="https://github.com/NikhilPappu/autolev-parser/blob/master/pydy_for_autolev_users.rst" rel="noopener" target="_blank"&gt;pydy_for_autolev_users.rst&lt;/a&gt;&amp;#160;to get an idea of the different mathematical commands and physical entities. You can have a look at input1.txt and the parsed output in output1.txt in the test_files directory of &lt;a href="https://github.com/NikhilPappu/autolev-parser" rel="noopener" target="_blank"&gt;autolev-parser&lt;/a&gt;&amp;#160;on my Github.&lt;/p&gt;
 &lt;p&gt;I will get started with the symbolic dynamics part next once I am done with the mathematical entities.&lt;/p&gt;
 &lt;p&gt;Do you think I am headed in the right direction with the project? Please let me know what you think. Any feedback is much appreciated.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sidhantnagpal.github.io/2018/05/gsoc-community-bonding</guid>
-      <author>Sidhant Nagpal (sidhantnagpal)</author>
-      <title>Sidhant Nagpal (sidhantnagpal): GSoC: SymPy - Community Bonding</title>
-      <pubDate>Wed, 16 May 2018 00:00:00 GMT</pubDate>
-      <link>https://sidhantnagpal.github.io/2018/05/gsoc-community-bonding.html</link>
-      <description>&lt;p&gt;&lt;img src="https://sidhantnagpal.github.io/files/gsoc-sympy.png" style="width: 80%; height: 80%; float: left; margin-left: 50px;" /&gt;
-&lt;br clear="all" /&gt;&lt;/p&gt;
-
-&lt;p&gt;The community bonding period has concluded. As proposed, I have gone through the existing modules and have thought about various aspects of the implementation which needed to be taken care of. The discussion for the project will take place on &lt;code class="highlighter-rouge"&gt;gitter&lt;/code&gt; under &lt;code class="highlighter-rouge"&gt;sympy/discrete&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Discussion for API is premature but it will shape as the Coding Period commences. Meanwhile, I have control of what all needs to be done in accordance with the proposed timeline.&lt;/p&gt;
-
-&lt;p&gt;Being familiar with the development workflow and having contributed to SymPy, I assisted new contributors and also helped review existing PRs - &lt;a href="https://github.com/sympy/sympy/pull/14679"&gt;#14678&lt;/a&gt;, &lt;a href="https://github.com/sympy/sympy/pull/14698"&gt;#14698&lt;/a&gt; and &lt;a href="https://github.com/sympy/sympy/pull/14707"&gt;#14707&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Looking forward to Coding Period.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
