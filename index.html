@@ -89,6 +89,135 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">July 08, 2018</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-ce1ecf29 feed-" id="item-f9c8ac2a">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/yathartha.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Yathartha Joshi (Yathartha22) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://Yathartha22.github.io//gsoc-week-8">00:00, Sunday, 08 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://Yathartha22.github.io//gsoc-week-8">Yathartha Joshi (Yathartha22): GSoC 2018 - Week 8 - Improving solving of logarithmic equations</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/yathartha.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Yathartha Joshi (Yathartha22) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://Yathartha22.github.io//gsoc-week-8">00:00, Sunday, 08 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://Yathartha22.github.io//gsoc-week-8">GSoC 2018 - Week 8 - Improving solving of logarithmic equations</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Before the start of the week Amit and I discussed on a few points on:</p>
+
+<p><strong>Note</strong>: <code class="highlighter-rouge">is_logarithmic()</code> is an identifier helper for <code class="highlighter-rouge">_transolve</code> to determine whether the expression is logarithmic or not.
+      and <code class="highlighter-rouge">_solve_log()</code> is a solving helper that returns the equation in a tractable form for <code class="highlighter-rouge">solveset</code> to better handle.</p>
+
+<ul>
+  <li>What should <code class="highlighter-rouge">is_logarithmic()</code> return?</li>
+</ul>
+
+<p>While designing the method at first it returned a <code class="highlighter-rouge">logcombined</code> equation if found to be logarithmic, but we agreed upon having consistency among all the identifying helpers to return either <code class="highlighter-rouge">True</code> or <code class="highlighter-rouge">False</code>.</p>
+
+<ul>
+  <li>How <code class="highlighter-rouge">_is_logarithmic()</code> should work?</li>
+</ul>
+
+<p>Next question was how it should work. We can implement it in two ways either to make the <code class="highlighter-rouge">logcombined</code> equation, if the expression reduces, it is obviously a logarithmic equation otherwise not. We also need to check whether the equation reduced has the variable to be solved in its <code class="highlighter-rouge">free_symbols</code>
+But <code class="highlighter-rouge">logcombine</code> possessed a problem that it unknowingly manipulates the equation, like <code class="highlighter-rouge">log(x) - log(2*x)</code> would reduce to <code class="highlighter-rouge">log(1/2)</code> for which the routine would return <code class="highlighter-rouge">False</code> as there are no symbol involved. So a more better way needs to be implemented.</p>
+
+<ul>
+  <li>How <code class="highlighter-rouge">_solve_log()</code> will handle removing unwanted solutions?</li>
+</ul>
+
+<p>Simply reducing the logarithmic equation to a tractable form for <code class="highlighter-rouge">solveset</code> to handle would cause spurious solutions in the result. Therefore it becomes necessary to remove them. Take for example: <code class="highlighter-rouge">solveset</code> gives the result of <code class="highlighter-rouge">log(x - 3) + log(x + 3)</code> as <code class="highlighter-rouge">{-sqrt(10), sqrt(10)}</code>, but <code class="highlighter-rouge">-sqrt(10)</code> is not the solution in <code class="highlighter-rouge">Real</code> domain. Therefore one way to remove it was using <code class="highlighter-rouge">checksol</code>. Amit suggested on to have a look over the singularities and try incorporating the check in <code class="highlighter-rouge">_solveset</code>.</p>
+
+<p>Things that I did during the week:</p>
+
+<ul>
+  <li>improved <code class="highlighter-rouge">is_logarithmic()</code></li>
+</ul>
+
+<p>Removed the <code class="highlighter-rouge">logcombine</code> way of checking the equation. As of now the <code class="highlighter-rouge">_is_logarithm</code> checks for every term to be logarithmic in terms of the variable to be solved, if so it returns <code class="highlighter-rouge">True</code> otherwise <code class="highlighter-rouge">False</code></p>
+
+<ul>
+  <li>improved the <code class="highlighter-rouge">_solve_log()</code></li>
+</ul>
+
+<p>As per the current documentation of <code class="highlighter-rouge">_transolve</code> this routine is improved to return a modified form of the equation that <code class="highlighter-rouge">solveset</code> could better handle. Checking of the spurious solutions will take place in <code class="highlighter-rouge">solveset</code> itself.</p>
+
+<ul>
+  <li>Way to remove spurious solutions</li>
+</ul>
+
+<p>To handle this scenario I have added a <a href="https://github.com/sympy/sympy/pull/14792/files#diff-eec0422923e8f100745c015cd8fdd6cfR985">check</a> in <code class="highlighter-rouge">_solveset</code> specifically for logarithmic equations to remove spurious solutions.
+The idea is based on the fact that natural log in undefined for negative and zero value, therefore this method gets each term of the expression, substitutes each solution to every term one by one and if for any term the value isn&#8217;t real that solution will not be included.</p>
+
+<p>Why <code class="highlighter-rouge">checksol()</code> is not the appropriate way?</p>
+
+<p>At first I thought of using the <code class="highlighter-rouge">checksol()</code>, but it possessed a problem. <code class="highlighter-rouge">checksol</code> unintensionally allows wrong solution to creep in. Take for example <code class="highlighter-rouge">log(3*x) - log(-x + 1) - log(4*x + 1)</code>, <code class="highlighter-rouge">solveset</code> would give <code class="highlighter-rouge">-1/2 and 1/2</code> as the solutions but the former isn&#8217;t a solution in real domain. Using <code class="highlighter-rouge">checksol</code> would not remove this as <code class="highlighter-rouge">I*pi</code> gets cancelled out during evaluating the expression therefore it returns <code class="highlighter-rouge">True</code>, which is not correct.</p>
+
+<ul>
+  <li>Addressing comments</li>
+</ul>
+
+<p>Apart from this few changes have been done in the <code class="highlighter-rouge">_transolve</code> <a href="https://github.com/sympy/sympy/pull/14736">PR</a>:</p>
+
+<ul>
+  <li>
+    <p>I have added a method that would return all the terms present in the expression: <a href="https://github.com/sympy/sympy/pull/14736/files#diff-eec0422923e8f100745c015cd8fdd6cfR988">make_expr_args()</a></p>
+  </li>
+  <li>
+    <p>Made the expresssion remain unevaluated when doing <a href="https://github.com/sympy/sympy/pull/14736/files#diff-eec0422923e8f100745c015cd8fdd6cfR1299">lhs - rhs</a> within <code class="highlighter-rouge">_transolve</code>.</p>
+  </li>
+</ul>
+
+<p>Read this <a href="http://localhost:4000/gsoc-week-5">blog</a> for better understanding of logarithmic solving.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 06, 2018</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -2462,114 +2591,6 @@ Successive reviews helped in the following changes to PR:</p>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">May 16, 2018</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-3f37b6d1 feed-" id="item-41786614">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/NikhilPappu.jpeg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Nikhil Pappu (NikhilPappu) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://nkhlpappu.wordpress.com/2018/05/16/autolev-parser-using-antlr-v4/">20:05, Wednesday, 16 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://nkhlpappu.wordpress.com/2018/05/16/autolev-parser-using-antlr-v4/">Nikhil Pappu (NikhilPappu): Autolev Parser (using ANTLR v4)</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/NikhilPappu.jpeg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Nikhil Pappu (NikhilPappu) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://nkhlpappu.wordpress.com/2018/05/16/autolev-parser-using-antlr-v4/">20:05, Wednesday, 16 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://nkhlpappu.wordpress.com/2018/05/16/autolev-parser-using-antlr-v4/">Autolev Parser (using ANTLR v4)</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>In this post, I shall discuss my project: Autolev Parser (using ANTLR v4). This is the timeline I am proposing. Please suggest any changes if required.</p>
-<h3><b>Timeline:</b></h3>
-<p><span style="font-weight: 400;">Finalize this after discussing things with the mentors.</span></p>
-<p><b>Phase 1:</b></p>
-<p><b>Weeks 1 and 2 (May 15 &#8211; May 28): </b><span style="font-weight: 400;">Refactor the grammar and the preprocessing steps. Finish parsing the mathematical entities of Autolev.&#160;&#160;</span><span style="font-weight: 400;">Start off with parsing the symbolic dynamics part of Autolev. (</span><b>Pull request #1)</b></p>
-<p><b>Weeks 3 and 4 (May 29 &#8211; Jun 11): </b><span style="font-weight: 400;">Work on parsing the symbolic dynamics part of Autolev using sympy.physics.vector and sympy.physics.mechanics. </span><b>(Pull request #2)</b></p>
-<p>&nbsp;</p>
-<p><b>Phase 2:</b></p>
-<p><b>Weeks 5 (Jun 12 &#8211; Jun 18): </b><span style="font-weight: 400;">Work further on the symbolic dynamics part. Work on the more difficult parts of the parser ie translations which are quite indirect and require more code and tweaking as opposed to calling equivalent SymPy commands. </span><b>(Pull request #3)</b></p>
-<p><b>Weeks 6, 7 and 8 (Jun 19 &#8211; Jul 9): </b><span style="font-weight: 400;">Work on parsing the solvers and visualization parts. Use sympy.solvers and numerical solvers from the SciPy stack to translate the algebraic, nonlinear and ODE solvers. Use pydy.codegen to solve the equations of motion numerically and use sympy.physics.units to manipulate the units before plugging the values in. Use matplotlib and pydy.viz to translate the plotting parts. </span><b>(Pull request #4)</b></p>
-<p>&nbsp;</p>
-<h4><b>Phase 3:</b></h4>
-<p><b>Weeks 9, 10 and 11 (Jul 17 &#8211; Aug 6): </b><span style="font-weight: 400;">Refactor and tie up all the things done earlier and work on writing lots of test cases and well documented examples. Run benchmarking tests and make sure the results obtained are correct. </span><b>(Pull request #5)</b></p>
-<p><b>Week 12: (Jul 10 &#8211; Jul 16) </b><span style="font-weight: 400;">Implement the error handling and recovery mechanism discussed in the Design section.</span></p>
-<p><b>Week 13 (Aug 6 &#8211; Aug 14): </b><span style="font-weight: 400;">Wrap everything up. Refactor the code, tests and examples and do a cleanup. </span><b>(Pull request #6)</b></p>
-<p>&nbsp;</p>
-<h3>Code Setup:</h3>
-<p>Now I shall discuss some of the technical details about how my code is setup. You can find the code on my Github <a href="https://github.com/NikhilPappu/autolev-parser" rel="noopener" target="_blank">here</a>.</p>
-<ol>
-<li>The antlr_essentials directory contains the antlr&#160;jar file and some bat files. If you want to run antlr commands, first specify the classpath of this jar file in the commands prompt.</li>
-<li>The test files directory contains the example test files on which I run the code. The files example5.1-example5.9 are examples of the same names in the <a href="http://ems.guc.edu.eg/Download.ashx?id=239&amp;file=Autolev%20tutorial_143_239.pdf" rel="noopener" target="_blank">Autolev&#160;Tutorial</a>.&#160; I have also included whipple.txt which is the bicycle model Autolev code. The directory also contains png image files of the parse trees generated when the grammar is run on these test files.</li>
-<li>Autolev.g4 is the grammar file. AutolevLexer.py, AutolevParser.py and AutolevListener.py are files automatically generated by ANTLR. A listener is basically a tree walker which triggers events when it enters and exits a rule. One can use this mechanism by subclassing AutolevListener.</li>
-<li>The file myListener.py contains the myListener class which simply subclasses AutolevListener. This is where I will be putting the majority of the parser code.</li>
-<li>The file autolev.py initializes the parser, lexer and listener and is the file you would want to run. Running &#8216;python autolev.py input.txt&#8217; on the file input.txt which contains Autolev code would generate the parsed SymPy output in an output file of choice.</li>
-<li>The <a href="https://github.com/NikhilPappu/autolev-parser/blob/master/pydy_for_autolev_users.rst" rel="noopener" target="_blank">pydy_for_autolev_users.rst</a> is a guide and I will keep updating it as I keep parsing more of the Autolev language.</li>
-</ol>
-<p>I haven&#8217;t put much of an emphasis on code readability. Should this be an aspect to focus on? I am thinking the parsed output and the results are of primary concern. One reason I feel this way is because this isn&#8217;t core SymPy code and the project is niche and that the majority of code is based in ANTLR. Please tell me if you don&#8217;t think the same.</p>
-<p>&nbsp;</p>
-<h3>Status of the Project:</h3>
-<p>I have finished writing the grammar for the Autolev language. I am now partway through parsing the mathematical entities.</p>
-<p>Parsing Mathematical Entities :<br />
-# Constants &#10003;<br />
-# Variables &#10003;<br />
-# Imaginary &#10003;<br />
-# MotionVariables &#10003;<br />
-# Specifieds &#10003;<br />
-# Expression reconstruction&#160;&#10003;<br />
-# Assignments&#160;&#10003;<br />
-# Math commands (deal with function calls) and expressions<br />
-# Reserved names and constants (T, Pi etc)<br />
-# Matrices</p>
-<p>I have written code to parse the basic mathematical variable declarations such as constants, variables, specifieds etc.&#160; I have also written code for expression reconstruction and assignment. I will now work all the math commands, reserved names and matrices. I will be handling vectors and dyadics in the physics part as sympy.physics.vector is more appropriate in the sense of Autolev and symbolic dynamics. Go over <a href="https://github.com/NikhilPappu/autolev-parser/blob/master/pydy_for_autolev_users.rst" rel="noopener" target="_blank">pydy_for_autolev_users.rst</a>&#160;to get an idea of the different mathematical commands and physical entities. You can have a look at input1.txt and the parsed output in output1.txt in the test_files directory of <a href="https://github.com/NikhilPappu/autolev-parser" rel="noopener" target="_blank">autolev-parser</a>&#160;on my Github.</p>
-<p>I will get started with the symbolic dynamics part next once I am done with the mathematical entities.</p>
-<p>Do you think I am headed in the right direction with the project? Please let me know what you think. Any feedback is much appreciated.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2597,164 +2618,164 @@ Successive reviews helped in the following changes to PR:</p>
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://shikharj.github.io/feed.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td>Sidhant Nagpal - GSoC</td>
 <td><a class="xmlbutton" href="https://sidhantnagpal.github.io/rss-gsoc.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/{{ site.url }}">{{ site.name | xml_escape }} - Miscellaneous</a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.sympy.xml">XML</a></td>
-<td>05:40, Sunday, 08 July</td>
-<td>05:55, Sunday, 08 July</td>
+<td>06:00, Sunday, 08 July</td>
+<td>06:15, Sunday, 08 July</td>
 </tr>
 </table>
 

@@ -7,6 +7,78 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-8</guid>
+      <author>Yathartha Joshi (Yathartha22)</author>
+      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 8 - Improving solving of logarithmic equations</title>
+      <pubDate>Sun, 08 Jul 2018 00:00:00 GMT</pubDate>
+      <link>https://Yathartha22.github.io//gsoc-week-8</link>
+      <description>&lt;p&gt;Before the start of the week Amit and I discussed on a few points on:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: &lt;code class="highlighter-rouge"&gt;is_logarithmic()&lt;/code&gt; is an identifier helper for &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; to determine whether the expression is logarithmic or not.
+      and &lt;code class="highlighter-rouge"&gt;_solve_log()&lt;/code&gt; is a solving helper that returns the equation in a tractable form for &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; to better handle.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;What should &lt;code class="highlighter-rouge"&gt;is_logarithmic()&lt;/code&gt; return?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;While designing the method at first it returned a &lt;code class="highlighter-rouge"&gt;logcombined&lt;/code&gt; equation if found to be logarithmic, but we agreed upon having consistency among all the identifying helpers to return either &lt;code class="highlighter-rouge"&gt;True&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;False&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;How &lt;code class="highlighter-rouge"&gt;_is_logarithmic()&lt;/code&gt; should work?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Next question was how it should work. We can implement it in two ways either to make the &lt;code class="highlighter-rouge"&gt;logcombined&lt;/code&gt; equation, if the expression reduces, it is obviously a logarithmic equation otherwise not. We also need to check whether the equation reduced has the variable to be solved in its &lt;code class="highlighter-rouge"&gt;free_symbols&lt;/code&gt;
+But &lt;code class="highlighter-rouge"&gt;logcombine&lt;/code&gt; possessed a problem that it unknowingly manipulates the equation, like &lt;code class="highlighter-rouge"&gt;log(x) - log(2*x)&lt;/code&gt; would reduce to &lt;code class="highlighter-rouge"&gt;log(1/2)&lt;/code&gt; for which the routine would return &lt;code class="highlighter-rouge"&gt;False&lt;/code&gt; as there are no symbol involved. So a more better way needs to be implemented.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;How &lt;code class="highlighter-rouge"&gt;_solve_log()&lt;/code&gt; will handle removing unwanted solutions?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Simply reducing the logarithmic equation to a tractable form for &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; to handle would cause spurious solutions in the result. Therefore it becomes necessary to remove them. Take for example: &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; gives the result of &lt;code class="highlighter-rouge"&gt;log(x - 3) + log(x + 3)&lt;/code&gt; as &lt;code class="highlighter-rouge"&gt;{-sqrt(10), sqrt(10)}&lt;/code&gt;, but &lt;code class="highlighter-rouge"&gt;-sqrt(10)&lt;/code&gt; is not the solution in &lt;code class="highlighter-rouge"&gt;Real&lt;/code&gt; domain. Therefore one way to remove it was using &lt;code class="highlighter-rouge"&gt;checksol&lt;/code&gt;. Amit suggested on to have a look over the singularities and try incorporating the check in &lt;code class="highlighter-rouge"&gt;_solveset&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Things that I did during the week:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;improved &lt;code class="highlighter-rouge"&gt;is_logarithmic()&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Removed the &lt;code class="highlighter-rouge"&gt;logcombine&lt;/code&gt; way of checking the equation. As of now the &lt;code class="highlighter-rouge"&gt;_is_logarithm&lt;/code&gt; checks for every term to be logarithmic in terms of the variable to be solved, if so it returns &lt;code class="highlighter-rouge"&gt;True&lt;/code&gt; otherwise &lt;code class="highlighter-rouge"&gt;False&lt;/code&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;improved the &lt;code class="highlighter-rouge"&gt;_solve_log()&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;As per the current documentation of &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; this routine is improved to return a modified form of the equation that &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; could better handle. Checking of the spurious solutions will take place in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; itself.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Way to remove spurious solutions&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;To handle this scenario I have added a &lt;a href="https://github.com/sympy/sympy/pull/14792/files#diff-eec0422923e8f100745c015cd8fdd6cfR985"&gt;check&lt;/a&gt; in &lt;code class="highlighter-rouge"&gt;_solveset&lt;/code&gt; specifically for logarithmic equations to remove spurious solutions.
+The idea is based on the fact that natural log in undefined for negative and zero value, therefore this method gets each term of the expression, substitutes each solution to every term one by one and if for any term the value isn&amp;#8217;t real that solution will not be included.&lt;/p&gt;
+
+&lt;p&gt;Why &lt;code class="highlighter-rouge"&gt;checksol()&lt;/code&gt; is not the appropriate way?&lt;/p&gt;
+
+&lt;p&gt;At first I thought of using the &lt;code class="highlighter-rouge"&gt;checksol()&lt;/code&gt;, but it possessed a problem. &lt;code class="highlighter-rouge"&gt;checksol&lt;/code&gt; unintensionally allows wrong solution to creep in. Take for example &lt;code class="highlighter-rouge"&gt;log(3*x) - log(-x + 1) - log(4*x + 1)&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; would give &lt;code class="highlighter-rouge"&gt;-1/2 and 1/2&lt;/code&gt; as the solutions but the former isn&amp;#8217;t a solution in real domain. Using &lt;code class="highlighter-rouge"&gt;checksol&lt;/code&gt; would not remove this as &lt;code class="highlighter-rouge"&gt;I*pi&lt;/code&gt; gets cancelled out during evaluating the expression therefore it returns &lt;code class="highlighter-rouge"&gt;True&lt;/code&gt;, which is not correct.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Addressing comments&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Apart from this few changes have been done in the &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; &lt;a href="https://github.com/sympy/sympy/pull/14736"&gt;PR&lt;/a&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;I have added a method that would return all the terms present in the expression: &lt;a href="https://github.com/sympy/sympy/pull/14736/files#diff-eec0422923e8f100745c015cd8fdd6cfR988"&gt;make_expr_args()&lt;/a&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Made the expresssion remain unevaluated when doing &lt;a href="https://github.com/sympy/sympy/pull/14736/files#diff-eec0422923e8f100745c015cd8fdd6cfR1299"&gt;lhs - rhs&lt;/a&gt; within &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Read this &lt;a href="http://localhost:4000/gsoc-week-5"&gt;blog&lt;/a&gt; for better understanding of logarithmic solving.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://sidhantnagpal.github.io/2018/07/gsoc-week8</guid>
       <author>Sidhant Nagpal (sidhantnagpal)</author>
       <title>Sidhant Nagpal (sidhantnagpal): GSoC: SymPy - Week 8</title>
@@ -804,57 +876,6 @@ Successive reviews helped in the following changes to PR:&lt;/p&gt;
       <pubDate>Fri, 18 May 2018 20:09:36 GMT</pubDate>
       <link>http://ashishkg0022.blogspot.com/2018/05/gsoc-2018-week-1_18.html</link>
       <description>&lt;div dir="ltr" style="text-align: left;"&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;Hi everyone. Here is the brief summary of my works completed and works which are in progress in the first week.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;For proper implementation of RUBI in sympy, we have a high dependence on&amp;nbsp;&lt;a href="https://github.com/HPAC/matchpy"&gt;matchpy&lt;/a&gt;. This might limit the performance of RUBI in sympy. I am currently targeting to have a correct set of rules and utility functions.&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;This week I opened this PR&amp;nbsp;&lt;a href="https://github.com/sympy/sympy/pull/14724"&gt;#14724&lt;/a&gt;,&amp;nbsp; from which progress in my work can be tracked. While testing the code, sometimes there were recursion errors because the same set of rule continuously were applied to the expression and there was no simplification. This worked in Mathematica because a order of matching(specificity order) is maintained in Mathematica. We use downvalues to parse the code in matchpy format. So we know the order. I found a way to fix the order in matchpy. I used&amp;nbsp;&lt;i&gt;ManyToOneMatcher&lt;/i&gt;&amp;nbsp;to find all rules being matched to an expression. Then pickup the most prior rule and then perform replacement. It is little slow but we can debug our rules (parsetools) and utility functions.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;In this week I have done the following improvements:&lt;/span&gt;&lt;/div&gt;&lt;br /&gt;&lt;ul&gt;&lt;li style="text-align: justify;"&gt;&lt;span&gt;Replaced lambdas with proper functions in replacement rule.&lt;/span&gt;&lt;/li&gt;&lt;li style="text-align: justify;"&gt;&lt;span&gt;Implemented a new structure of rule matching&lt;/span&gt;&lt;/li&gt;&lt;li style="text-align: justify;"&gt;&lt;span&gt;Partially loaded&amp;nbsp;&lt;i&gt;integrand_simplification&lt;/i&gt;&lt;/span&gt;&lt;/li&gt;&lt;li style="text-align: justify;"&gt;&lt;span&gt;Fixed few minor issues in parsetools and utility_functions&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;Next, I am targeting to completely load&amp;nbsp;&lt;i&gt;integrand_simplification&lt;/i&gt;&amp;nbsp;and perform complete testing of algebraic rules.&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://nkhlpappu.wordpress.com/?p=2</guid>
-      <author>Nikhil Pappu (NikhilPappu)</author>
-      <title>Nikhil Pappu (NikhilPappu): Autolev Parser (using ANTLR v4)</title>
-      <pubDate>Wed, 16 May 2018 20:05:08 GMT</pubDate>
-      <link>https://nkhlpappu.wordpress.com/2018/05/16/autolev-parser-using-antlr-v4/</link>
-      <description>&lt;p&gt;In this post, I shall discuss my project: Autolev Parser (using ANTLR v4). This is the timeline I am proposing. Please suggest any changes if required.&lt;/p&gt;
-&lt;h3&gt;&lt;b&gt;Timeline:&lt;/b&gt;&lt;/h3&gt;
-&lt;p&gt;&lt;span style="font-weight: 400;"&gt;Finalize this after discussing things with the mentors.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Phase 1:&lt;/b&gt;&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Weeks 1 and 2 (May 15 &amp;#8211; May 28): &lt;/b&gt;&lt;span style="font-weight: 400;"&gt;Refactor the grammar and the preprocessing steps. Finish parsing the mathematical entities of Autolev.&amp;#160;&amp;#160;&lt;/span&gt;&lt;span style="font-weight: 400;"&gt;Start off with parsing the symbolic dynamics part of Autolev. (&lt;/span&gt;&lt;b&gt;Pull request #1)&lt;/b&gt;&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Weeks 3 and 4 (May 29 &amp;#8211; Jun 11): &lt;/b&gt;&lt;span style="font-weight: 400;"&gt;Work on parsing the symbolic dynamics part of Autolev using sympy.physics.vector and sympy.physics.mechanics. &lt;/span&gt;&lt;b&gt;(Pull request #2)&lt;/b&gt;&lt;/p&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Phase 2:&lt;/b&gt;&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Weeks 5 (Jun 12 &amp;#8211; Jun 18): &lt;/b&gt;&lt;span style="font-weight: 400;"&gt;Work further on the symbolic dynamics part. Work on the more difficult parts of the parser ie translations which are quite indirect and require more code and tweaking as opposed to calling equivalent SymPy commands. &lt;/span&gt;&lt;b&gt;(Pull request #3)&lt;/b&gt;&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Weeks 6, 7 and 8 (Jun 19 &amp;#8211; Jul 9): &lt;/b&gt;&lt;span style="font-weight: 400;"&gt;Work on parsing the solvers and visualization parts. Use sympy.solvers and numerical solvers from the SciPy stack to translate the algebraic, nonlinear and ODE solvers. Use pydy.codegen to solve the equations of motion numerically and use sympy.physics.units to manipulate the units before plugging the values in. Use matplotlib and pydy.viz to translate the plotting parts. &lt;/span&gt;&lt;b&gt;(Pull request #4)&lt;/b&gt;&lt;/p&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;
-&lt;h4&gt;&lt;b&gt;Phase 3:&lt;/b&gt;&lt;/h4&gt;
-&lt;p&gt;&lt;b&gt;Weeks 9, 10 and 11 (Jul 17 &amp;#8211; Aug 6): &lt;/b&gt;&lt;span style="font-weight: 400;"&gt;Refactor and tie up all the things done earlier and work on writing lots of test cases and well documented examples. Run benchmarking tests and make sure the results obtained are correct. &lt;/span&gt;&lt;b&gt;(Pull request #5)&lt;/b&gt;&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Week 12: (Jul 10 &amp;#8211; Jul 16) &lt;/b&gt;&lt;span style="font-weight: 400;"&gt;Implement the error handling and recovery mechanism discussed in the Design section.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;Week 13 (Aug 6 &amp;#8211; Aug 14): &lt;/b&gt;&lt;span style="font-weight: 400;"&gt;Wrap everything up. Refactor the code, tests and examples and do a cleanup. &lt;/span&gt;&lt;b&gt;(Pull request #6)&lt;/b&gt;&lt;/p&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;
-&lt;h3&gt;Code Setup:&lt;/h3&gt;
-&lt;p&gt;Now I shall discuss some of the technical details about how my code is setup. You can find the code on my Github &lt;a href="https://github.com/NikhilPappu/autolev-parser" rel="noopener" target="_blank"&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;The antlr_essentials directory contains the antlr&amp;#160;jar file and some bat files. If you want to run antlr commands, first specify the classpath of this jar file in the commands prompt.&lt;/li&gt;
-&lt;li&gt;The test files directory contains the example test files on which I run the code. The files example5.1-example5.9 are examples of the same names in the &lt;a href="http://ems.guc.edu.eg/Download.ashx?id=239&amp;amp;file=Autolev%20tutorial_143_239.pdf" rel="noopener" target="_blank"&gt;Autolev&amp;#160;Tutorial&lt;/a&gt;.&amp;#160; I have also included whipple.txt which is the bicycle model Autolev code. The directory also contains png image files of the parse trees generated when the grammar is run on these test files.&lt;/li&gt;
-&lt;li&gt;Autolev.g4 is the grammar file. AutolevLexer.py, AutolevParser.py and AutolevListener.py are files automatically generated by ANTLR. A listener is basically a tree walker which triggers events when it enters and exits a rule. One can use this mechanism by subclassing AutolevListener.&lt;/li&gt;
-&lt;li&gt;The file myListener.py contains the myListener class which simply subclasses AutolevListener. This is where I will be putting the majority of the parser code.&lt;/li&gt;
-&lt;li&gt;The file autolev.py initializes the parser, lexer and listener and is the file you would want to run. Running &amp;#8216;python autolev.py input.txt&amp;#8217; on the file input.txt which contains Autolev code would generate the parsed SymPy output in an output file of choice.&lt;/li&gt;
-&lt;li&gt;The &lt;a href="https://github.com/NikhilPappu/autolev-parser/blob/master/pydy_for_autolev_users.rst" rel="noopener" target="_blank"&gt;pydy_for_autolev_users.rst&lt;/a&gt; is a guide and I will keep updating it as I keep parsing more of the Autolev language.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;I haven&amp;#8217;t put much of an emphasis on code readability. Should this be an aspect to focus on? I am thinking the parsed output and the results are of primary concern. One reason I feel this way is because this isn&amp;#8217;t core SymPy code and the project is niche and that the majority of code is based in ANTLR. Please tell me if you don&amp;#8217;t think the same.&lt;/p&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;
-&lt;h3&gt;Status of the Project:&lt;/h3&gt;
-&lt;p&gt;I have finished writing the grammar for the Autolev language. I am now partway through parsing the mathematical entities.&lt;/p&gt;
-&lt;p&gt;Parsing Mathematical Entities :&lt;br /&gt;
-# Constants &amp;#10003;&lt;br /&gt;
-# Variables &amp;#10003;&lt;br /&gt;
-# Imaginary &amp;#10003;&lt;br /&gt;
-# MotionVariables &amp;#10003;&lt;br /&gt;
-# Specifieds &amp;#10003;&lt;br /&gt;
-# Expression reconstruction&amp;#160;&amp;#10003;&lt;br /&gt;
-# Assignments&amp;#160;&amp;#10003;&lt;br /&gt;
-# Math commands (deal with function calls) and expressions&lt;br /&gt;
-# Reserved names and constants (T, Pi etc)&lt;br /&gt;
-# Matrices&lt;/p&gt;
-&lt;p&gt;I have written code to parse the basic mathematical variable declarations such as constants, variables, specifieds etc.&amp;#160; I have also written code for expression reconstruction and assignment. I will now work all the math commands, reserved names and matrices. I will be handling vectors and dyadics in the physics part as sympy.physics.vector is more appropriate in the sense of Autolev and symbolic dynamics. Go over &lt;a href="https://github.com/NikhilPappu/autolev-parser/blob/master/pydy_for_autolev_users.rst" rel="noopener" target="_blank"&gt;pydy_for_autolev_users.rst&lt;/a&gt;&amp;#160;to get an idea of the different mathematical commands and physical entities. You can have a look at input1.txt and the parsed output in output1.txt in the test_files directory of &lt;a href="https://github.com/NikhilPappu/autolev-parser" rel="noopener" target="_blank"&gt;autolev-parser&lt;/a&gt;&amp;#160;on my Github.&lt;/p&gt;
-&lt;p&gt;I will get started with the symbolic dynamics part next once I am done with the mathematical entities.&lt;/p&gt;
-&lt;p&gt;Do you think I am headed in the right direction with the project? Please let me know what you think. Any feedback is much appreciated.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
