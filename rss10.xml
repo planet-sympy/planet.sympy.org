@@ -7,6 +7,50 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-9</guid>
+      <author>Yathartha Joshi (Yathartha22)</author>
+      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 9 - Starting up with Lambert equations</title>
+      <pubDate>Fri, 13 Jul 2018 00:00:00 GMT</pubDate>
+      <link>https://Yathartha22.github.io//gsoc-week-9</link>
+      <description>&lt;p&gt;At the start of the week I worked on the leftovers of week 8:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;added &lt;code class="highlighter-rouge"&gt;log_singularities()&lt;/code&gt; that will help in determining logarithmic singularities,&lt;/li&gt;
+  &lt;li&gt;improved documentation of all helpers as suggested by Amit to maintain consistency&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Status of the PR&amp;#8217;s:&lt;/p&gt;
+
+&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/14736"&gt;#14736&lt;/a&gt; is ready to be merged.&lt;/p&gt;
+
+&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/14792"&gt;#14792&lt;/a&gt; is being worked on. Major tasks has been completed, just review and refining has to be done.&lt;/p&gt;
+
+&lt;p&gt;Apart from this I started working on the way Lambert type equations can be solved through &lt;code class="highlighter-rouge"&gt;_transolve()&lt;/code&gt;. I looked into &lt;code class="highlighter-rouge"&gt;_tsolve's&lt;/code&gt; way of handling such equations.
+For solving Lambert type equations &lt;code class="highlighter-rouge"&gt;_tsolve()&lt;/code&gt; largely depends on &lt;code class="highlighter-rouge"&gt;bivariate.py&lt;/code&gt;. It takes help of the different utility functions implemented there.
+Of them two important are &lt;code class="highlighter-rouge"&gt;_solve_lambert()&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;bivariate_type()&lt;/code&gt;. These two helpers help in getting the equations evaluated.&lt;/p&gt;
+
+&lt;p&gt;Equations that can be written in the standard form as: &lt;code class="highlighter-rouge"&gt;A + B*x + C*log(D + E*x) = 0&lt;/code&gt; has the solutions in terms of &lt;code class="highlighter-rouge"&gt;Lambert&lt;/code&gt; function as:&lt;/p&gt;
+
+&lt;p&gt;&lt;code class="highlighter-rouge"&gt;D/E + C*B*W(t) with (B/C*E)*exp((BD - AE)/CE)&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;This is what &lt;code class="highlighter-rouge"&gt;_solve_lambert()&lt;/code&gt; determines and accordingly returns the solutions, otherwise returns a &lt;code class="highlighter-rouge"&gt;NotImplementedError&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;If &lt;code class="highlighter-rouge"&gt;_solve_lambert()&lt;/code&gt; is unable to handle &lt;code class="highlighter-rouge"&gt;bivariate_type()&lt;/code&gt; is tried. This function first tries to identify the type of composite bivariate and then substitutes &lt;code class="highlighter-rouge"&gt;Dummy&lt;/code&gt; in place of them. For eq: &lt;code class="highlighter-rouge"&gt;(x + y)**2 - 3&lt;/code&gt; would become &lt;code class="highlighter-rouge"&gt;_u**2 - 3&lt;/code&gt; where &lt;code class="highlighter-rouge"&gt;_u&lt;/code&gt; is the dummy variable. The idea is that solving the latter equation for &lt;code class="highlighter-rouge"&gt;u&lt;/code&gt; and then equating the solutions to the former equation is equivalent for solving the original one.&lt;/p&gt;
+
+&lt;p&gt;While implementing in &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; this philosophy needs to be applied. As of now I have looked into different tests on how they behave. I will start implementing it next.&lt;/p&gt;
+
+&lt;p&gt;Next week&amp;#8217;s plan:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Finishing with the logsolver&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Implementing lambert solver.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">tag:blogger.com,1999:blog-1036447522835236737.post-7572262454034848939</guid>
       <author>Ashish Kumar Gaurav (ashishkg0022)</author>
       <title>Ashish Kumar Gaurav (ashishkg0022): GSoC 2018: Week 8</title>
@@ -786,56 +830,6 @@ I had a detailed discussion with &lt;a href="https://github.com/jksuom"&gt;Kalev
       <pubDate>Mon, 28 May 2018 00:00:00 GMT</pubDate>
       <link>https://ravicharann.github.io/blog//Word-Reduction/</link>
       <description>&lt;p&gt;GSoC'18 Week 1 and 2</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-2</guid>
-      <author>Yathartha Joshi (Yathartha22)</author>
-      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 2 - Getting started with transolve</title>
-      <pubDate>Sun, 27 May 2018 00:00:00 GMT</pubDate>
-      <link>https://Yathartha22.github.io//gsoc-week-2</link>
-      <description>&lt;p&gt;So this is the end of the second week of GSoC and I am still working on implementing and improving &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt;. In the previous week Amit and I discussed about the things that are necessary for implementing &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt;. I have covered it in the previous &lt;a href="https://yathartha22.github.io//gsoc-week-1"&gt;blog post&lt;/a&gt;. Based on the discussions I have a submitted a WIP PR &lt;a href="https://github.com/sympy/sympy/pull/14736"&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;In the second meeting we had &lt;a href="https://github.com/hargup"&gt;Harsh&lt;/a&gt; joining us to the discussion.&lt;/p&gt;
-
-&lt;p&gt;Amit and Harsh stressed on making transolve modular and extensilbe, unlike &lt;code class="highlighter-rouge"&gt;_tsolve&lt;/code&gt; which lacks these features (though it is very powerful).&lt;/p&gt;
-
-&lt;p&gt;So there are few things that &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; should have:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Proper documentation&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Documentation is always a very important aspect of any software. Therefore to make it easy to understand to the users, transolve needs to have a proper descriptive documentation that should explain why, what and how of transolve. Amit suggested on covering every detail of the working of function. It should cover the following:&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;- What is transolve.
-- How to use transolve.
-- Why it is better than `_tsolve`.
-- How equations are solved.
-- How to add a new class of equations.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Extensibility&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; should be extensible, i.e. the design of the API should be such that it becomes easy to add a new class of equation solver without affecting the structure of the function.
-The idea to make this happen is to have a two step procedure of equation solving. &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; will solve any equation by first identifying the class of the equations (a helper will do that) and then calling another helper to solve that equation. So in this way one needs to figure out how to identify the equation and how to solve it. Once this is done he just needs to invoke the helpers at the proper location in transolve.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Modularity&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;As it is clear from the above point, &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; will have two step procedure for solving different classes of equations. Helper function needs to be implemented for identification and solving equations. This will make &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; modular as solving equations will not depend on the main function.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Proof of correctness&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Since identification and solving equations will be achieved with few heuristics/algorithms. There should be a proper document of its prof of correctness. I will be adding proper documentation with examples explaining its authenticity.&lt;/p&gt;
-
-&lt;p&gt;Apart from this Amit also adviced on reading documentation of &lt;a href="https://github.com/sympy/sympy/blob/master/sympy/solvers/ode.py"&gt;ode&lt;/a&gt; module so as to get an idea, also importing tests from solve, making it atleast as powerful as _tsolve will be other things that needs care.&lt;/p&gt;
-
-&lt;p&gt;I will be focussing on completing it by this week!!&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

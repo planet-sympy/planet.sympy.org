@@ -89,6 +89,107 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">July 13, 2018</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-ce1ecf29 feed-" id="item-35f426fb">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/yathartha.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Yathartha Joshi (Yathartha22) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://Yathartha22.github.io//gsoc-week-9">00:00, Friday, 13 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://Yathartha22.github.io//gsoc-week-9">Yathartha Joshi (Yathartha22): GSoC 2018 - Week 9 - Starting up with Lambert equations</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/yathartha.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Yathartha Joshi (Yathartha22) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://Yathartha22.github.io//gsoc-week-9">00:00, Friday, 13 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://Yathartha22.github.io//gsoc-week-9">GSoC 2018 - Week 9 - Starting up with Lambert equations</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>At the start of the week I worked on the leftovers of week 8:</p>
+
+<ul>
+  <li>added <code class="highlighter-rouge">log_singularities()</code> that will help in determining logarithmic singularities,</li>
+  <li>improved documentation of all helpers as suggested by Amit to maintain consistency</li>
+</ul>
+
+<p>Status of the PR&#8217;s:</p>
+
+<p>PR <a href="https://github.com/sympy/sympy/pull/14736">#14736</a> is ready to be merged.</p>
+
+<p>PR <a href="https://github.com/sympy/sympy/pull/14792">#14792</a> is being worked on. Major tasks has been completed, just review and refining has to be done.</p>
+
+<p>Apart from this I started working on the way Lambert type equations can be solved through <code class="highlighter-rouge">_transolve()</code>. I looked into <code class="highlighter-rouge">_tsolve's</code> way of handling such equations.
+For solving Lambert type equations <code class="highlighter-rouge">_tsolve()</code> largely depends on <code class="highlighter-rouge">bivariate.py</code>. It takes help of the different utility functions implemented there.
+Of them two important are <code class="highlighter-rouge">_solve_lambert()</code> and <code class="highlighter-rouge">bivariate_type()</code>. These two helpers help in getting the equations evaluated.</p>
+
+<p>Equations that can be written in the standard form as: <code class="highlighter-rouge">A + B*x + C*log(D + E*x) = 0</code> has the solutions in terms of <code class="highlighter-rouge">Lambert</code> function as:</p>
+
+<p><code class="highlighter-rouge">D/E + C*B*W(t) with (B/C*E)*exp((BD - AE)/CE)</code></p>
+
+<p>This is what <code class="highlighter-rouge">_solve_lambert()</code> determines and accordingly returns the solutions, otherwise returns a <code class="highlighter-rouge">NotImplementedError</code></p>
+
+<p>If <code class="highlighter-rouge">_solve_lambert()</code> is unable to handle <code class="highlighter-rouge">bivariate_type()</code> is tried. This function first tries to identify the type of composite bivariate and then substitutes <code class="highlighter-rouge">Dummy</code> in place of them. For eq: <code class="highlighter-rouge">(x + y)**2 - 3</code> would become <code class="highlighter-rouge">_u**2 - 3</code> where <code class="highlighter-rouge">_u</code> is the dummy variable. The idea is that solving the latter equation for <code class="highlighter-rouge">u</code> and then equating the solutions to the former equation is equivalent for solving the original one.</p>
+
+<p>While implementing in <code class="highlighter-rouge">_transolve</code> this philosophy needs to be applied. As of now I have looked into different tests on how they behave. I will start implementing it next.</p>
+
+<p>Next week&#8217;s plan:</p>
+
+<ul>
+  <li>
+    <p>Finishing with the logsolver</p>
+  </li>
+  <li>
+    <p>Implementing lambert solver.</p>
+  </li>
+</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 08, 2018</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -2498,113 +2599,6 @@ I had a detailed discussion with <a href="https://github.com/jksuom">Kalevi</a> 
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">May 27, 2018</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-ce1ecf29 feed-" id="item-6fa361a8">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/yathartha.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Yathartha Joshi (Yathartha22) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://Yathartha22.github.io//gsoc-week-2">00:00, Sunday, 27 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://Yathartha22.github.io//gsoc-week-2">Yathartha Joshi (Yathartha22): GSoC 2018 - Week 2 - Getting started with transolve</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/yathartha.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Yathartha Joshi (Yathartha22) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://Yathartha22.github.io//gsoc-week-2">00:00, Sunday, 27 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://Yathartha22.github.io//gsoc-week-2">GSoC 2018 - Week 2 - Getting started with transolve</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>So this is the end of the second week of GSoC and I am still working on implementing and improving <code class="highlighter-rouge">transolve</code>. In the previous week Amit and I discussed about the things that are necessary for implementing <code class="highlighter-rouge">transolve</code>. I have covered it in the previous <a href="https://yathartha22.github.io//gsoc-week-1">blog post</a>. Based on the discussions I have a submitted a WIP PR <a href="https://github.com/sympy/sympy/pull/14736">here</a>.</p>
-
-<p>In the second meeting we had <a href="https://github.com/hargup">Harsh</a> joining us to the discussion.</p>
-
-<p>Amit and Harsh stressed on making transolve modular and extensilbe, unlike <code class="highlighter-rouge">_tsolve</code> which lacks these features (though it is very powerful).</p>
-
-<p>So there are few things that <code class="highlighter-rouge">transolve</code> should have:</p>
-
-<ul>
-  <li>Proper documentation</li>
-</ul>
-
-<p>Documentation is always a very important aspect of any software. Therefore to make it easy to understand to the users, transolve needs to have a proper descriptive documentation that should explain why, what and how of transolve. Amit suggested on covering every detail of the working of function. It should cover the following:</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- What is transolve.
-- How to use transolve.
-- Why it is better than `_tsolve`.
-- How equations are solved.
-- How to add a new class of equations.
-</code></pre></div></div>
-
-<ul>
-  <li>Extensibility</li>
-</ul>
-
-<p><code class="highlighter-rouge">transolve</code> should be extensible, i.e. the design of the API should be such that it becomes easy to add a new class of equation solver without affecting the structure of the function.
-The idea to make this happen is to have a two step procedure of equation solving. <code class="highlighter-rouge">transolve</code> will solve any equation by first identifying the class of the equations (a helper will do that) and then calling another helper to solve that equation. So in this way one needs to figure out how to identify the equation and how to solve it. Once this is done he just needs to invoke the helpers at the proper location in transolve.</p>
-
-<ul>
-  <li>Modularity</li>
-</ul>
-
-<p>As it is clear from the above point, <code class="highlighter-rouge">transolve</code> will have two step procedure for solving different classes of equations. Helper function needs to be implemented for identification and solving equations. This will make <code class="highlighter-rouge">transolve</code> modular as solving equations will not depend on the main function.</p>
-
-<ul>
-  <li>Proof of correctness</li>
-</ul>
-
-<p>Since identification and solving equations will be achieved with few heuristics/algorithms. There should be a proper document of its prof of correctness. I will be adding proper documentation with examples explaining its authenticity.</p>
-
-<p>Apart from this Amit also adviced on reading documentation of <a href="https://github.com/sympy/sympy/blob/master/sympy/solvers/ode.py">ode</a> module so as to get an idea, also importing tests from solve, making it atleast as powerful as _tsolve will be other things that needs care.</p>
-
-<p>I will be focussing on completing it by this week!!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2632,164 +2626,164 @@ The idea to make this happen is to have a two step procedure of equation solving
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://shikharj.github.io/feed.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td>Sidhant Nagpal - GSoC</td>
 <td><a class="xmlbutton" href="https://sidhantnagpal.github.io/rss-gsoc.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>01:40, Saturday, 14 July</td>
-<td>01:55, Saturday, 14 July</td>
+<td>02:00, Saturday, 14 July</td>
+<td>02:15, Saturday, 14 July</td>
 </tr>
 </table>
 
