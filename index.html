@@ -152,6 +152,99 @@
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-ce1ecf29 feed-" id="item-65bbbc96">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/yathartha.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Yathartha Joshi (Yathartha22) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://Yathartha22.github.io//gsoc-week-10">00:00, Sunday, 22 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://Yathartha22.github.io//gsoc-week-10">Yathartha Joshi (Yathartha22): GSoC 2018 - Week 10 - Continuing with logarithmic solver</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/yathartha.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Yathartha Joshi (Yathartha22) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://Yathartha22.github.io//gsoc-week-10">00:00, Sunday, 22 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://Yathartha22.github.io//gsoc-week-10">GSoC 2018 - Week 10 - Continuing with logarithmic solver</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>This week started with the merge of the PR <a href="https://github.com/sympy/sympy/pull/14736">#14736</a>. Yehhhh!!!!!. So now <code class="highlighter-rouge">solveset</code> will be able to solve a varied type of exponential equations.  Next work is going on to build the logarithmic and lambert solver.</p>
+
+<p>A lot of discussion has been taken place over the implementation of the logarithmic solver, there were mainly two points to consider:</p>
+
+<ul>
+  <li>How the logarithmic equation gets evaluated, i.e., should we consider solutions that would make the log term negative.</li>
+</ul>
+
+<p>Take for instance a logarithmic equation <code class="highlighter-rouge">log(x - 3) + log(x + 3) = 0</code>, when solved the solutions would be <code class="highlighter-rouge">-sqrt(10) and sqrt(10)</code>, but <code class="highlighter-rouge">-sqrt(10)</code> make the log term negative. So the question was what should we do for such a scenario? Should we add a check to remove these solution or just accept. it.</p>
+
+<p>As of now as suggested by <a href="https://github.com/jksuom">Kalevi</a> and <a href="https://github.com/asmeurer">Aaron</a> we should focus on the liberal interpratation for evaluating equations: if an expression can be written in its equivalent form and makes sense then we can consider solutions of this equivalent form. Therefore both the above solutions are acceptable.</p>
+
+<ul>
+  <li>How the identification of the logarithmic equations would take place.</li>
+</ul>
+
+<p>The identification of logarithmic type is another question and is still yet to be agreed upon. At first the implementation was done by extracting each term of the expression and see if it has <code class="highlighter-rouge">log</code> terms in it, this wasn&#8217;t the best of the method as we are trying to identify a large class of logarithmic equation while solving is done only for a subset of those equations (only those that can be reduced by <code class="highlighter-rouge">logcombine</code>). So Amit and Chris stressed upon making the logarithmic identification for equations that its solver would solve. So as of now I have made changes accordingly.</p>
+
+<p>Another problem that this PR is facing is of the infinite recursion. The equations that both exponential and logarithmic can&#8217;t solve but still their respective solver try to handle gets into infinite recursion. One way (though not appropriate) is to use <code class="highlighter-rouge">flags</code> like in <code class="highlighter-rouge">solve</code>, using this would remove the infinite recursion but is not the best way to  handle, therefore I am looking into ways on how to get this fixed.</p>
+
+<p>Apart from the work on log solver, I did some work on lambert solver- how the implementation would go, ran all the tests of <code class="highlighter-rouge">solve</code>, differentiated the tests that <code class="highlighter-rouge">_solve_lambert</code> could solve and that <code class="highlighter-rouge">bivariate_type</code> would. I will be adding a PR for this in a day or so.</p>
+
+<p>Next week goals:</p>
+
+<ul>
+  <li>
+    <p>Finish things with logarithmic solver</p>
+  </li>
+  <li>
+    <p>Sending a PR for lambert solver and try to finish its work as quickly as possible.</p>
+  </li>
+</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">July 21, 2018</h2>
@@ -2408,110 +2501,6 @@ Piecewise((<span class="pl-c1">1.5</span><span class="pl-k">*</span>I, x <span c
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-ce1ecf29 feed-" id="item-1239222b">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/yathartha.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Yathartha Joshi (Yathartha22) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://Yathartha22.github.io//gsoc-week-4">00:00, Saturday, 09 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://Yathartha22.github.io//gsoc-week-4">Yathartha Joshi (Yathartha22): GSoC 2018 - Week 4 - Continuing with transolve Part-II</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/yathartha.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Yathartha Joshi (Yathartha22) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://Yathartha22.github.io//gsoc-week-4">00:00, Saturday, 09 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://Yathartha22.github.io//gsoc-week-4">GSoC 2018 - Week 4 - Continuing with transolve Part-II</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>By the end of the previous week I had completed majority of the TODO&#8217;s of the <a href="https://github.com/sympy/sympy/pull/14736/">PR #14736</a>.
-This week I started on minor improvements suggested by Amit. This included:</p>
-
-<ul>
-  <li>
-    <p>Minor Documentation changes<br />
-Included proof of correctness, typo fixes, rephrasing lines etc.</p>
-  </li>
-  <li>
-    <p>Removing <code class="highlighter-rouge">flag</code> variable from transolve.<br />
-<code class="highlighter-rouge">flag</code> variable was passed as a function parameter in <code class="highlighter-rouge">transolve</code> and was used to check on the recursive call. The thought was that there might be a case when equation could not be solved by any of the helpers but during the process the equation might get modified, so we wanted to double check whether the modified equation could be solved again, thats why we used <code class="highlighter-rouge">flag</code> but Amit suggested on removing it as there wasn&#8217;t a case as of now and it will only make things unnecessarily complicated.</p>
-  </li>
-  <li>
-    <p>Also worked on XFAILS, mainly on solving equations containing only symbols. There was an exception raised in <code class="highlighter-rouge">_invert_real</code>, because of a relational comparison made with <code class="highlighter-rouge">0</code> which caused the faiure of the tests. It has been fixed by handling the exception.</p>
-  </li>
-  <li>
-    <p>Imported tests of log and lambert.</p>
-  </li>
-  <li>
-    <p>Another thing we discussed was about log solver. The helpers for solving logarithmic equations will be implemented in a seperated PR, to make the review and implementing task easy and independent.</p>
-  </li>
-</ul>
-
-<p>After this I started a working on solving exponential equations in complex domain, though it turns out that we will be focussing on only the real domain as of now. But I have added tests for it as XFAIL.<br />
-To make exponents work in complex domain, we require the <a href="https://en.wikipedia.org/wiki/Complex_logarithm">complex logarithm</a>.
-If we have equation as</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>	z = e**w,
-	where w is complex number and z is non-zero complex number,
-	then 
-	Ln(z) = ln|z| + I*(Arg(z) + 2*n*pi)
-	where Ln(z) is the complex logarithm and ln|z| is the
-        logarithm evaluated with real number argument.
-</code></pre></div></div>
-
-<p>Apart from this we also had a meeting yesterday in which we discussed about how we will be wrapping up things before the first evaluation.<br />
-I will be completing few leftovers of the current PR to make it merge and start working on implementing log solver (making a commit probably by tomorrow).</p>
-
-<p>Amit also suggested on creating a coverage report so as to get an idea about the amount of tests covered by the code. The current coverage report can be found <a href="https://yathartha22.github.io/covhtml/sympy_solvers_solveset_py.html">here</a>. Other than this he also advised on reading <a href="https://www.investigatii.md/uploads/resurse/Clean_Code.pdf">Clean Code</a> by <code class="highlighter-rouge">Robert C. Martin</code> which will help me improve in writing clean and efficient code.</p>
-
-<p>The main target for the coming week will be merging <code class="highlighter-rouge">PR #14736</code>, implementing <code class="highlighter-rouge">log solver</code> (will try to merge this as well), starting with implementing <code class="highlighter-rouge">lambert solver</code> (try to add atleast a WIP PR) and reading the book.</p>
-
-<p>Hope things go as planned!!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -2540,164 +2529,164 @@ I will be completing few leftovers of the current PR to make it merge and start 
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://shikharj.github.io/feed.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
 <td><a class="xmlbutton" href="https://sidhantnagpal.github.io/rss-gsoc.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>03:40, Monday, 23 July</td>
-<td>03:55, Monday, 23 July</td>
+<td>04:00, Monday, 23 July</td>
+<td>04:15, Monday, 23 July</td>
 </tr>
 </table>
 
