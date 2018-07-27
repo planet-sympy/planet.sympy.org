@@ -668,7 +668,7 @@ applied throughout the span of a beam.</li>
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-f8771404 feed-" id="item-5ad6a063">
+		    <div class="box" class="item feed-f8771404 feed-" id="item-f5312924">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -731,7 +731,7 @@ PR <a href="https://github.com/sympy/sympy/pull/14878">#14878</a> was opened for
 
 <p>After discussing the implementation details and references with <a href="https://github.com/jksuom">Kalevi</a>, the approach was finalized. The PR has been merged successfully. The usage for the same is:</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sympy.discrete.convolution</span> <span class="kn">import</span> <span class="p">(</span><span class="n">convolution</span><span class="p">,</span> <span class="n">convolution_subset</span><span class="p">)</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sympy.discrete.convolutions</span> <span class="kn">import</span> <span class="p">(</span><span class="n">convolution</span><span class="p">,</span> <span class="n">convolution_subset</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s">'u v x y z'</span><span class="p">)</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">convolution_subset</span><span class="p">([</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">],</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
@@ -1595,7 +1595,7 @@ x*(8*newton + y, 1)</code></pre>
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-f8771404 feed-" id="item-4fa4cba9">
+		    <div class="box" class="item feed-f8771404 feed-" id="item-c408ca0f">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -1653,11 +1653,12 @@ x*(8*newton + y, 1)</code></pre>
 
 <p>The second phase of Coding Period has started.</p>
 
-<p>I started this phase working on <code class="highlighter-rouge">sympy.discrete.recurrence</code> module. After having an initial discussion with <a href="https://github.com/jksuom">Kalevi</a> regarding the functionality to be implemented, I did the proof-of-concept for the same on a remote branch.</p>
+<p>I started this phase working on recurrence submodule under <code class="highlighter-rouge">discrete</code>. After having an initial discussion with <a href="https://github.com/jksuom">Kalevi</a> regarding the functionality to be implemented, I did the proof-of-concept for the same on a remote branch.</p>
 
 <p>After the approach was finalized, the implementation was polished before opening the PR. The PR <a href="https://github.com/sympy/sympy/pull/14816">#14816</a> also included documentation, doctests, and unit tests for the module.</p>
 
 <p>The method <code class="highlighter-rouge">linrec(coeffs, init, n)</code> takes coefficients, initial values and point of evaluation for the linear recurrence. Usage for a recurrence like <code class="highlighter-rouge">f(n) = f(n - 7) + f(n - 13) + f(n - 17)</code> (having order <code class="highlighter-rouge">17</code>) would be:</p>
+
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">In</span> <span class="p">[]:</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">17</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">17</span>
 <span class="n">In</span> <span class="p">[]:</span> <span class="n">coeffs</span><span class="p">[</span><span class="mi">7</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeffs</span><span class="p">[</span><span class="mi">13</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeffs</span><span class="p">[</span><span class="mi">17</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">In</span> <span class="p">[]:</span> <span class="p">[</span><span class="n">linrec</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">)]</span>
@@ -2228,7 +2229,7 @@ x*(8*newton + y, 1)</code></pre>
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-f8771404 feed-" id="item-42e69f1a">
+		    <div class="box" class="item feed-f8771404 feed-" id="item-e2062cd5">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -2294,8 +2295,8 @@ The <code class="highlighter-rouge">convolution</code> method uses <code class="
 <p>Successive reviews helped in refining the PR, before the final merge later in the week.</p>
 
 <p>The usage for the same is:</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sympy.discrete.convolution</span> <span class="kn">import</span> <span class="n">convolution</span><span class="p">,</span> <span class="n">convolution_fwht</span>
-
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sympy.discrete.convolutions</span> <span class="kn">import</span> <span class="p">(</span><span class="n">convolution</span><span class="p">,</span> <span class="n">convolution_fwht</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="n">symbols</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s">'u v x y'</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">convolution</span><span class="p">([</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">],</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">dyadic</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="p">[</span><span class="n">u</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">u</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">x</span><span class="p">]</span>
@@ -2554,164 +2555,164 @@ Piecewise((<span class="pl-c1">1.5</span><span class="pl-k">*</span>I, x <span c
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://shikharj.github.io/feed.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
 <td><a class="xmlbutton" href="https://sidhantnagpal.github.io/rss-gsoc.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>09:00, Friday, 27 July</td>
-<td>09:15, Friday, 27 July</td>
+<td>09:21, Friday, 27 July</td>
+<td>09:36, Friday, 27 July</td>
 </tr>
 </table>
 
