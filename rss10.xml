@@ -7,6 +7,42 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://sidhantnagpal.github.io/2018/07/gsoc-week11</guid>
+      <author>Sidhant Nagpal (sidhantnagpal)</author>
+      <title>Sidhant Nagpal (sidhantnagpal): GSoC: SymPy - Week 11</title>
+      <pubDate>Sat, 28 Jul 2018 00:00:00 GMT</pubDate>
+      <link>https://sidhantnagpal.github.io/2018/07/gsoc-week11.html</link>
+      <description>&lt;p&gt;&lt;img src="https://sidhantnagpal.github.io/files/gsoc-sympy.png" style="width: 80%; height: 80%; float: left; margin-left: 50px;" /&gt;
+&lt;br clear="all" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This week, I started working on adding the final method to convolution module for Intersecting Product. PR &lt;a href="https://github.com/sympy/sympy/pull/14954"&gt;#14954&lt;/a&gt; dealt with the addition of &lt;code class="highlighter-rouge"&gt;intersection_product&lt;/code&gt; method. Intersecting Product was implemented using M&amp;#246;bius Transform with superset enumeration (&lt;code class="highlighter-rouge"&gt;mobius_transform(..., subset=False)&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;inverse_mobius_transform(..., subset=False)&lt;/code&gt;). After minor documentation improvements, the PR was merged successfully. The proposed transforms and convolutions are now part of &lt;code class="highlighter-rouge"&gt;sympy.discrete&lt;/code&gt;. The basic usage for the method is:&lt;/p&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;I&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;intersecting_product&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'u v x y z'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;intersecting_product&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;intersecting_product&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Late this week, I started working on improving the documentaion for SymPy&amp;#8217;s Sphinx docs (&lt;a href="http://docs.sympy.org/dev/index.html"&gt;http://docs.sympy.org/dev/index.html&lt;/a&gt;) and other minor changes in the PR &lt;a href="https://github.com/sympy/sympy/pull/14969"&gt;#14969&lt;/a&gt;. Also, issue &lt;a href="https://github.com/sympy/sympy/issues/14964"&gt;#14964&lt;/a&gt; was opened to discuss the possibility of using LaTeX in docstrings for SymPy documentation. The following changes were part of the PR:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Use LaTeX for docstrings in functions.combinatorial (reference to &lt;a href="https://github.com/sympy/sympy/issues/14964"&gt;#14964&lt;/a&gt;)&lt;/li&gt;
+  &lt;li&gt;Include genocchi and partition numbers in sphinx docs&lt;/li&gt;
+  &lt;li&gt;Improve docstrings with single and double backticks for sphinx docs&lt;/li&gt;
+  &lt;li&gt;Use plural module names under discrete (discrete.convolutions and discrete.recurrences)&lt;/li&gt;
+  &lt;li&gt;Add graphviz as a prerequisite in sympy/doc/README.rst for Debian/Ubuntu&lt;/li&gt;
+  &lt;li&gt;Fix links in references containing rounded braces and unicode chars for sphinx docs&lt;/li&gt;
+  &lt;li&gt;Miscellaneous improvements to documentation&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Successive reviews and discussions were helpful in finalizing the Pull Requests.&lt;/p&gt;
+
+&lt;p&gt;Looking forward to the final week of Coding Period.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://nkhlpappu.wordpress.com/?p=13</guid>
       <author>Nikhil Pappu (NikhilPappu)</author>
       <title>Nikhil Pappu (NikhilPappu): Autolev Parser: Status Update</title>
@@ -101,7 +137,7 @@
 
 &lt;p&gt;Late this week, I started working on the convolution module for inclusion of &lt;code class="highlighter-rouge"&gt;covering_product&lt;/code&gt;.
 The &lt;a href="https://github.com/sympy/sympy/pull/14928"&gt;PR #14298&lt;/a&gt; included the same with documentation, doctests and unit tests.
-The implementation of &lt;code class="highlighter-rouge"&gt;covering_product&lt;/code&gt; uses M&amp;#246;bius transform with subset enumeration (&lt;code class="highlighter-rouge"&gt;mobius_transform(..., subset=True)&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;inverse_mobius_transform(..., subset=True)&lt;/code&gt;). As included in the PR, the usage for the same is:&lt;/p&gt;
+The implementation of &lt;code class="highlighter-rouge"&gt;covering_product&lt;/code&gt; uses M&amp;#246;bius Transform with subset enumeration (&lt;code class="highlighter-rouge"&gt;mobius_transform(..., subset=True)&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;inverse_mobius_transform(..., subset=True)&lt;/code&gt;). As included in the PR, the usage for the same is:&lt;/p&gt;
 
 &lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;covering_product&lt;/span&gt;
 &lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'u v x y z'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
@@ -745,14 +781,6 @@ The &lt;code class="highlighter-rouge"&gt;convolution&lt;/code&gt; method uses &
 &lt;p&gt;Plan for this phase has executed according to the timeline, and the first evaluation has been successful.&lt;/p&gt;
 
 &lt;p&gt;Looking forward to the next phase of Coding Period.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://ravicharann.github.io/blog//Isomorphism/</guid>
-      <author>Ravicharan (RavicharanN)</author>
-      <title>Ravicharan (RavicharanN): Computation of Isomorpism between 2 groups</title>
-      <pubDate>Mon, 11 Jun 2018 00:00:00 GMT</pubDate>
-      <link>https://ravicharann.github.io/blog//Isomorphism/</link>
-      <description>&lt;p&gt;Week 3-4 and Week 6</description>
     </item>
   </channel>
 </rss>
