@@ -236,6 +236,99 @@ Equations that these identifiers can&#8217;t identify will be further solved as 
 	</div>
 </div></div>
 <div class="day">
+<h2 class="dayform">July 28, 2018</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-da559060 feed-" id="item-b3a373fe">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/sidhantnagpal.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Sidhant Nagpal (sidhantnagpal) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://sidhantnagpal.github.io/2018/07/gsoc-week11.html">00:00, Saturday, 28 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://sidhantnagpal.github.io/2018/07/gsoc-week11.html">Sidhant Nagpal (sidhantnagpal): GSoC: SymPy - Week 11</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/sidhantnagpal.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Sidhant Nagpal (sidhantnagpal) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://sidhantnagpal.github.io/2018/07/gsoc-week11.html">00:00, Saturday, 28 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://sidhantnagpal.github.io/2018/07/gsoc-week11.html">GSoC: SymPy - Week 11</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p><img src="http://sidhantnagpal.com/files/gsoc-sympy.png" style="width: 80%; height: 80%; float: left; margin-left: 50px;" />
+<br clear="all" /></p>
+
+<p>This week, I started working on adding the final method to convolution module for Intersecting Product. PR <a href="https://github.com/sympy/sympy/pull/14954">#14954</a> dealt with the addition of <code class="highlighter-rouge">intersection_product</code> method. Intersecting Product was implemented using M&#246;bius Transform with superset enumeration (<code class="highlighter-rouge">mobius_transform(..., subset=False)</code> and <code class="highlighter-rouge">inverse_mobius_transform(..., subset=False)</code>). After minor documentation improvements, the PR was merged successfully. The proposed transforms and convolutions are now part of <code class="highlighter-rouge">sympy.discrete</code>. The basic usage for the method is:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="n">symbols</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">intersecting_product</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s">'u v x y z'</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">intersecting_product</span><span class="p">([</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">],</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+<span class="p">[</span><span class="n">u</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">u</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">x</span><span class="p">,</span> <span class="n">v</span><span class="o">*</span><span class="n">y</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">intersecting_product</span><span class="p">([</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">x</span><span class="p">],</span> <span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">])</span>
+<span class="p">[</span><span class="n">u</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">u</span><span class="o">*</span><span class="n">z</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">x</span><span class="o">*</span><span class="n">z</span><span class="p">,</span> <span class="n">v</span><span class="o">*</span><span class="n">z</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Late this week, I started working on improving the documentaion for SymPy&#8217;s Sphinx docs (<a href="http://docs.sympy.org/dev/index.html">http://docs.sympy.org/dev/index.html</a>) and other minor changes in the PR <a href="https://github.com/sympy/sympy/pull/14969">#14969</a>. Also, issue <a href="https://github.com/sympy/sympy/issues/14964">#14964</a> was opened to discuss the possibility of using LaTeX in docstrings for SymPy documentation. The following changes were part of the PR:</p>
+
+<ul>
+  <li>Use LaTeX for docstrings in functions.combinatorial (reference to <a href="https://github.com/sympy/sympy/issues/14964">#14964</a>)</li>
+  <li>Include genocchi and partition numbers in sphinx docs</li>
+  <li>Improve docstrings with single and double backticks for sphinx docs</li>
+  <li>Use plural module names under discrete (discrete.convolutions and discrete.recurrences)</li>
+  <li>Add graphviz as a prerequisite in sympy/doc/README.rst for Debian/Ubuntu</li>
+  <li>Fix links in references containing rounded braces and unicode chars for sphinx docs</li>
+  <li>Miscellaneous improvements to documentation</li>
+</ul>
+
+<p>Successive reviews and discussions were helpful in finalizing the Pull Requests.</p>
+
+<p>Looking forward to the final week of Coding Period.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 27, 2018</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -534,6 +627,92 @@ Equations that these identifiers can&#8217;t identify will be further solved as 
     <p>Sending a PR for lambert solver and try to finish its work as quickly as possible.</p>
   </li>
 </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">July 21, 2018</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-da559060 feed-" id="item-d02503c3">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/sidhantnagpal.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Sidhant Nagpal (sidhantnagpal) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://sidhantnagpal.github.io/2018/07/gsoc-week10.html">00:00, Saturday, 21 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://sidhantnagpal.github.io/2018/07/gsoc-week10.html">Sidhant Nagpal (sidhantnagpal): GSoC: SymPy - Week 10</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/sidhantnagpal.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Sidhant Nagpal (sidhantnagpal) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://sidhantnagpal.github.io/2018/07/gsoc-week10.html">00:00, Saturday, 21 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://sidhantnagpal.github.io/2018/07/gsoc-week10.html">GSoC: SymPy - Week 10</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p><img src="http://sidhantnagpal.com/files/gsoc-sympy.png" style="width: 80%; height: 80%; float: left; margin-left: 50px;" />
+<br clear="all" /></p>
+
+<p>This week SymPy 1.2 was released, which included the <code class="highlighter-rouge">discrete</code> module. The complete changelog for the SymPy 1.2 is <a href="https://github.com/sympy/sympy/wiki/Release-Notes-for-1.2">here</a>. I started the week by cleaning up <code class="highlighter-rouge">discrete</code> module, improving the API of public <code class="highlighter-rouge">convolution</code> method by attending to reviews by <a href="https://github.com/asmeurer">Aaron</a> and <a href="https://github.com/jksuom">Kalevi</a> and fixing issue <a href="https://github.com/sympy/sympy/issues/14901">#14901</a> reported by <a href="https://github.com/asmeurer">Aaron</a> in <a href="https://github.com/sympy/sympy/pull/14907">PR #14907</a>.</p>
+
+<p>The <a href="https://github.com/sympy/sympy/pull/14907">PR #14907</a> has been merged successfully and will be part of SymPy 1.2.1.</p>
+
+<p>Late this week, I started working on the convolution module for inclusion of <code class="highlighter-rouge">covering_product</code>.
+The <a href="https://github.com/sympy/sympy/pull/14928">PR #14298</a> included the same with documentation, doctests and unit tests.
+The implementation of <code class="highlighter-rouge">covering_product</code> uses M&#246;bius Transform with subset enumeration (<code class="highlighter-rouge">mobius_transform(..., subset=True)</code> and <code class="highlighter-rouge">inverse_mobius_transform(..., subset=True)</code>). As included in the PR, the usage for the same is:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="n">symbols</span><span class="p">,</span> <span class="n">covering_product</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s">'u v x y z'</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">covering_product</span><span class="p">([</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">],</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+<span class="p">[</span><span class="n">u</span><span class="o">*</span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">x</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">y</span><span class="p">]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">covering_product</span><span class="p">([</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">x</span><span class="p">],</span> <span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">])</span>
+<span class="p">[</span><span class="n">u</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">u</span><span class="o">*</span><span class="n">z</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">z</span><span class="p">,</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">*</span><span class="n">z</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Looking forward to the next week, where I will be implementing <code class="highlighter-rouge">intersecting_product</code> as the final method for the convolution module.</p>
 					</div>
 				</div>
 			</div>
@@ -865,6 +1044,96 @@ applied throughout the span of a beam.</li>
 				<div class="row">
 					<div class="col-md-12 col-xs-12 descript">
 						<div dir="ltr" style="text-align: left;"><br /><div style="text-align: justify;"><span style="font-family: Arial, Helvetica, sans-serif;">Hello everyone. Here is the progress of </span>rubi<span style="font-family: Arial, Helvetica, sans-serif;"> module in the 9th week of GSoC period.</span></div><span style="font-family: Arial, Helvetica, sans-serif;"><div style="text-align: justify;"><br /></div><div style="text-align: justify;">In the very beginning of the week, the PR for appelf1 was merged. My aim for this week was to load all rules and test at least&nbsp;a small part for each type of rule. Due to the time factor, its not possible to test all. Moreover, rubi needs to be updated to the latest version, so the test suite too will be updated.&nbsp;&nbsp;</div><div style="text-align: justify;"><br /></div><div style="text-align: justify;">I started with trigo rules. They are huge in number. They were never tested before, so some utility_functions like `<i>TrigReduce</i>`, `<i>KnownTrigIntegrandQ</i>`, `<i>FunctionOfTrig</i>` etc were wrong. They were corrected. Soon I realised a difference between sympy and Mathematica. In mathematica, `<i>1/Cot[x]`</i> is automatically transformed to `<i>Tan[x]</i>` and `<i>1/Tan[x]</i>` too was transformed to `<i>Cot[x]`</i>. But in sympy, these are different. So, `<i>tan(x)</i>` didn't match to `<i>cot(x)</i>` . Francesco suggested to replace all `<i>cot</i>` with `<i>1/tan</i>`&nbsp; and similarly for `<i>sec</i>` and `<i>csc`</i> (in the code generator too).&nbsp;</div><div style="text-align: justify;"><br /></div><div style="text-align: justify;">Next, I moved to `<i>inverse_trigo</i>`, `<i>hyperbolic</i>` and `<i>inverse_hyperbolic</i>`. I tested some test cases for all these rules. I also tested `<i>error_functions</i>` completely to make sure `<i>special_functions</i>` are working properly.&nbsp;</div><div style="text-align: justify;"><br /></div><div style="text-align: justify;">After all this, I feel rubi is in a stable and working condition. The loading time is around `<i>10 minutes`</i>. Except for the loading time, the performance of rubi is good.&nbsp;</div><div style="text-align: justify;"><br /></div><div style="text-align: justify;">I have left `<i>DerivativeIntegration</i>` and `<i>Piecewise</i>` rules. We will be discussing it.&nbsp;</div></span></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">July 14, 2018</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-da559060 feed-" id="item-04fa84ad">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/sidhantnagpal.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Sidhant Nagpal (sidhantnagpal) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://sidhantnagpal.github.io/2018/07/gsoc-week9.html">00:00, Saturday, 14 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://sidhantnagpal.github.io/2018/07/gsoc-week9.html">Sidhant Nagpal (sidhantnagpal): GSoC: SymPy - Week 9</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/sidhantnagpal.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Sidhant Nagpal (sidhantnagpal) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://sidhantnagpal.github.io/2018/07/gsoc-week9.html">00:00, Saturday, 14 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://sidhantnagpal.github.io/2018/07/gsoc-week9.html">GSoC: SymPy - Week 9</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p><img src="http://sidhantnagpal.com/files/gsoc-sympy.png" style="width: 80%; height: 80%; float: left; margin-left: 50px;" />
+<br clear="all" /></p>
+
+<p>The second phase of Coding Period has concluded.</p>
+
+<p>This week I worked on implementing Subset Convolution for <code class="highlighter-rouge">discrete</code> module.
+PR <a href="https://github.com/sympy/sympy/pull/14878">#14878</a> was opened for the same. The PR included unit tests, documentation, and correspondingly <code class="highlighter-rouge">subset</code> keyword was added for public <code class="highlighter-rouge">convolution</code> method.</p>
+
+<p>After discussing the implementation details and references with <a href="https://github.com/jksuom">Kalevi</a>, the approach was finalized. The PR has been merged successfully. The usage for the same is:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sympy.discrete.convolutions</span> <span class="kn">import</span> <span class="p">(</span><span class="n">convolution</span><span class="p">,</span> <span class="n">convolution_subset</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">symbols</span><span class="p">(</span><span class="s">'u v x y z'</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">convolution_subset</span><span class="p">([</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">],</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+<span class="p">[</span><span class="n">u</span><span class="o">*</span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">x</span><span class="p">]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">convolution</span><span class="p">([</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">x</span><span class="p">],</span> <span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span> <span class="n">subset</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="p">[</span><span class="n">u</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">u</span><span class="o">*</span><span class="n">z</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">*</span><span class="n">z</span><span class="p">]</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">convolution</span><span class="p">([</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">x</span><span class="p">],</span> <span class="p">[</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">],</span> <span class="n">subset</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">cycle</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="p">[</span><span class="n">u</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="n">x</span><span class="o">*</span><span class="n">z</span><span class="p">,</span> <span class="n">u</span><span class="o">*</span><span class="n">z</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Plan for this phase has executed well, and the second evaluation has been successful.</p>
+
+<p>Looking forward to the final phase of Coding Period.</p>
 					</div>
 				</div>
 			</div>
@@ -1305,6 +1574,91 @@ x*(8*newton + y, 1)</code></pre>
 	</div>
 </div></div>
 <div class="day">
+<h2 class="dayform">July 06, 2018</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-da559060 feed-" id="item-8fefa535">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/sidhantnagpal.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Sidhant Nagpal (sidhantnagpal) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://sidhantnagpal.github.io/2018/07/gsoc-week8.html">00:00, Friday, 06 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://sidhantnagpal.github.io/2018/07/gsoc-week8.html">Sidhant Nagpal (sidhantnagpal): GSoC: SymPy - Week 8</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/sidhantnagpal.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Sidhant Nagpal (sidhantnagpal) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://sidhantnagpal.github.io/2018/07/gsoc-week8.html">00:00, Friday, 06 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://sidhantnagpal.github.io/2018/07/gsoc-week8.html">GSoC: SymPy - Week 8</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p><img src="http://sidhantnagpal.com/files/gsoc-sympy.png" style="width: 80%; height: 80%; float: left; margin-left: 50px;" />
+<br clear="all" /></p>
+
+<p>This week I started working on adding M&#246;bius Transform to the <code class="highlighter-rouge">discrete</code> module using Yate&#8217;s DP (Dynamic Programming) method for implementation as part of PR <a href="https://github.com/sympy/sympy/pull/14853">#14853</a>. The proposed transforms are part of <code class="highlighter-rouge">sympy.discrete.transforms</code> module.</p>
+
+<p>After discussing with <a href="https://github.com/jksuom">Kalevi</a>, the methods implementing this transform were added with appropriate names. The keyword <code class="highlighter-rouge">subset</code> is used as a boolean to choose whether enumeration is done over subsets or supersets. The usage for the transform is:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="n">mobius_transform</span><span class="p">,</span> <span class="n">inverse_mobius_transform</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">seq</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">symbols</span><span class="p">(</span><span class="s">'w x y z'</span><span class="p">))</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mobius_transform</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
+<span class="p">[</span><span class="n">w</span><span class="p">,</span> <span class="n">w</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="n">w</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="n">z</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">inverse_mobius_transform</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
+<span class="p">[</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">inverse_mobius_transform</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="p">[</span><span class="n">w</span> <span class="o">-</span> <span class="n">x</span> <span class="o">-</span> <span class="n">y</span> <span class="o">+</span> <span class="n">z</span><span class="p">,</span> <span class="n">x</span> <span class="o">-</span> <span class="n">z</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="n">z</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mobius_transform</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="p">[</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>The PR was merged successfully, after inclusion of docstring and unit tests for the transform.</p>
+
+<p>Looking forward to another exciting week.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 05, 2018</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -1617,6 +1971,99 @@ x*(8*newton + y, 1)</code></pre>
 <li>Beam class gives ValueError if passed value contains unit. So I would focus on fixing it.</li>
 <li>Read relevant theory for implementation of 3dBeam class.</li>
 </ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">June 28, 2018</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-da559060 feed-" id="item-0074c951">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/sidhantnagpal.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Sidhant Nagpal (sidhantnagpal) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://sidhantnagpal.github.io/2018/06/gsoc-week6and7.html">00:00, Thursday, 28 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://sidhantnagpal.github.io/2018/06/gsoc-week6and7.html">Sidhant Nagpal (sidhantnagpal): GSoC: SymPy - Week 6 &amp; 7</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/sidhantnagpal.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Sidhant Nagpal (sidhantnagpal) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://sidhantnagpal.github.io/2018/06/gsoc-week6and7.html">00:00, Thursday, 28 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://sidhantnagpal.github.io/2018/06/gsoc-week6and7.html">GSoC: SymPy - Week 6 &amp; 7</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p><img src="http://sidhantnagpal.com/files/gsoc-sympy.png" style="width: 80%; height: 80%; float: left; margin-left: 50px;" />
+<br clear="all" /></p>
+
+<p>The second phase of Coding Period has started.</p>
+
+<p>I started this phase working on recurrence submodule under <code class="highlighter-rouge">discrete</code>. After having an initial discussion with <a href="https://github.com/jksuom">Kalevi</a> regarding the functionality to be implemented, I did the proof-of-concept for the same on a remote branch.</p>
+
+<p>After the approach was finalized, the implementation was polished before opening the PR. The PR <a href="https://github.com/sympy/sympy/pull/14816">#14816</a> also included documentation, doctests, and unit tests for the module.</p>
+
+<p>The method <code class="highlighter-rouge">linrec(coeffs, init, n)</code> takes coefficients, initial values and point of evaluation for the linear recurrence. Usage for a recurrence like <code class="highlighter-rouge">f(n) = f(n - 7) + f(n - 13) + f(n - 17)</code> (having order <code class="highlighter-rouge">17</code>) would be:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">In</span> <span class="p">[]:</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">init</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">17</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">17</span>
+<span class="n">In</span> <span class="p">[]:</span> <span class="n">coeffs</span><span class="p">[</span><span class="mi">7</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeffs</span><span class="p">[</span><span class="mi">13</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">coeffs</span><span class="p">[</span><span class="mi">17</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">In</span> <span class="p">[]:</span> <span class="p">[</span><span class="n">linrec</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">)]</span>
+<span class="n">Out</span><span class="p">[]:</span> <span class="p">[</span><span class="mi">17</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">41</span><span class="p">]</span>
+
+<span class="n">In</span> <span class="p">[]:</span> <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+  <span class="o">...</span><span class="p">:</span>     <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">17</span><span class="p">:</span>
+  <span class="o">...</span><span class="p">:</span>         <span class="k">return</span> <span class="mi">1</span>
+  <span class="o">...</span><span class="p">:</span>     <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">7</span><span class="p">)</span> <span class="o">+</span> <span class="n">f</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">13</span><span class="p">)</span> <span class="o">+</span> <span class="n">f</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">17</span><span class="p">)</span>
+  <span class="o">...</span><span class="p">:</span>
+
+<span class="n">In</span> <span class="p">[]:</span> <span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">)]</span>
+<span class="n">Out</span><span class="p">[]:</span> <span class="p">[</span><span class="mi">17</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">29</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">41</span><span class="p">,</span> <span class="mi">41</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>As suggested by <a href="https://github.com/asmeurer">Aaron</a>, it will be good to have a user-facing method that calls <code class="highlighter-rouge">linrec</code> internally for performing the computation.</p>
+
+<p>Looking forward to another exciting week.</p>
 					</div>
 				</div>
 			</div>
@@ -2072,420 +2519,6 @@ x*(8*newton + y, 1)</code></pre>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">June 15, 2018</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-cd0b75e7 feed-" id="item-80942f6a">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/jashan498.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Jashanpreet Singh Sraw (jashan498) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://singhjashan.wordpress.com/2018/06/15/week-4-9-june-15-june/">11:00, Friday, 15 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://singhjashan.wordpress.com/2018/06/15/week-4-9-june-15-june/">Jashanpreet Singh Sraw (jashan498): Week 4: Solving hinged beams</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/jashan498.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Jashanpreet Singh Sraw (jashan498) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://singhjashan.wordpress.com/2018/06/15/week-4-9-june-15-june/">11:00, Friday, 15 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://singhjashan.wordpress.com/2018/06/15/week-4-9-june-15-june/">Week 4: Solving hinged beams</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This week I worked on adding support for beams connected via hinge in <a href="https://github.com/sympy/sympy/pull/14773">#14773</a>. Support for axially fixed beams and its API was implemented last week.</p>
-<p><code>_solve_hinge_beams</code>&#160;was added as a helper function to solve such Beams.&#160;<span class="pl-s">This method resolves the composite Beam into its sub-beams and then&#160;equations of shear force, bending moment, slope and deflection are&#160;evaluated for both of them separately. These equations are then solved&#160;for unknown reactions and integration constants using the boundary&#160;conditions applied on the Beam. Equal deflection of both sub-beams&#160;at the hinge joint gives us another equation to solve the system.</span></p>
-<p>So the final API looks like:</p>
-<p><img alt="hinge_hinge_blog" class=" size-full wp-image-57 aligncenter" src="https://singhjashan.files.wordpress.com/2018/06/hinge_hinge_blog.png?w=730" /></p>
-<pre><code>&gt;&gt;&gt; from sympy.physics.continuum_mechanics.beam import Beam
-&gt;&gt;&gt; from sympy import symbols
-&gt;&gt;&gt; l = symbols('l', positive=True)
-&gt;&gt;&gt; R1, M1, R2, R3, P = symbols('R1 M1 R2 R3 P')
-&gt;&gt;&gt; b1 = Beam(2*l, E, I)
-&gt;&gt;&gt; b2 = Beam(2*l, E, I)
-&gt;&gt;&gt; b = b1.join(b2,"hinge")
-&gt;&gt;&gt; b.apply_load(M1, 0, -2)
-&gt;&gt;&gt; b.apply_load(R1, 0, -1)
-&gt;&gt;&gt; b.apply_load(R2, l, -1)
-&gt;&gt;&gt; b.apply_load(R3, 4*l, -1
-&gt;&gt;&gt; b.apply_load(P, 3*l, -1)
-&gt;&gt;&gt; b.bc_slope = [(0, 0)]
-&gt;&gt;&gt; b.bc_deflection = [(0, 0), (l, 0), (4*l, 0)]
-&gt;&gt;&gt; b.solve_for_reaction_loads(M1, R1, R2, R3)
-&gt;&gt;&gt; b.reaction_loads
-{R3: -P/2, R2: -5*P/4, M1: -P*l/4, R1: 3*P/4}
-&gt;&gt;&gt; b.slope().subs(x, 3*l)
--7*P*l**2/(48*E*I)
-&gt;&gt;&gt; b.deflection().subs(x, 2*l)
-7*P*l**3/(24*E*I)</code></pre>
-<h2><em><strong>Next Week</strong></em></h2>
-<ul>
-<li>See for changes in&#160;<a href="https://github.com/sympy/sympy/pull/14786">#14786</a>&#160;to get it merged.</li>
-<li>Add support for non-horizontal beams.</li>
-<li>See for any remaining implementation from first two stages of my proposal.</li>
-</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">June 11, 2018</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-3136565a feed-" id="item-bc502374">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/ravicharan.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Ravicharan (RavicharanN) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://ravicharann.github.io/blog//Isomorphism/">00:00, Monday, 11 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://ravicharann.github.io/blog//Isomorphism/">Ravicharan (RavicharanN): Computation of Isomorpism between 2 groups</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/ravicharan.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Ravicharan (RavicharanN) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://ravicharann.github.io/blog//Isomorphism/">00:00, Monday, 11 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://ravicharann.github.io/blog//Isomorphism/">Computation of Isomorpism between 2 groups</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Week 3-4 and Week 6
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">June 10, 2018</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-3fff17e0 feed-" id="item-15cd7e4c">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/ashishkg0022.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Ashish Kumar Gaurav (ashishkg0022) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://ashishkg0022.blogspot.com/2018/06/gsoc-2018-week-4.html">16:47, Sunday, 10 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://ashishkg0022.blogspot.com/2018/06/gsoc-2018-week-4.html">Ashish Kumar Gaurav (ashishkg0022): GSoC 2018: Week 4</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/ashishkg0022.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Ashish Kumar Gaurav (ashishkg0022) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://ashishkg0022.blogspot.com/2018/06/gsoc-2018-week-4.html">16:47, Sunday, 10 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://ashishkg0022.blogspot.com/2018/06/gsoc-2018-week-4.html">GSoC 2018: Week 4</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<div dir="ltr" style="text-align: left;">Hello everyone. Here is the brief work done in the 4th week.<br /><br />In this week I have completed the testing of <i>trinomial products. </i>There are around 2700 test cases. I have tested them all in sympy. I have updated the <a href="https://github.com/sympy/sympy/pull/14756">PR&nbsp;</a>.<br /><br />Currently, a few tests are failing because of 2 major issues :<br /><ol style="text-align: left;"><li>Apart - Some features are unimplemented in apart of sympy. So expressions are not simplified.</li><li>appellf1 - There is a missing implementation of appellf1 in sympy.</li></ol><div>If the above two issues are solved, almost all tests will pass.</div><div><br /></div><div>Utility functions have been improved a lot this week. The <i>is_polynomial </i>of sympy&nbsp;has certain issues and so the constraints were affected. I have re-written PolynomialQ. It&nbsp;is not full proof, but it handles most of the cases. There are many small changes in utility functions. They can be seen in the <a href="https://github.com/sympy/sympy/pull/14756">PR</a>.</div><div><br /></div><div>I am lagging behind my proposed timeline. But the work in rubi is time-consuming. When a test fails, finding the same rule in Mathematica, finding whether all constraints return the same result in Mathematica and sympy and finding whether utility functions are working in a different way takes time. I apologise for the same. I will try to speed up my work as much as possible.<br /></div><div>In this week, I will be testing Miscellaneous algebra and Exponential tests.</div></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">June 09, 2018</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-cd0b75e7 feed-" id="item-52775d22">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/jashan498.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Jashanpreet Singh Sraw (jashan498) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://singhjashan.wordpress.com/2018/06/09/week-3-2-june-8-june/">23:40, Saturday, 09 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://singhjashan.wordpress.com/2018/06/09/week-3-2-june-8-june/">Jashanpreet Singh Sraw (jashan498): Week 3: Composite beams</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/jashan498.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Jashanpreet Singh Sraw (jashan498) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://singhjashan.wordpress.com/2018/06/09/week-3-2-june-8-june/">23:40, Saturday, 09 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://singhjashan.wordpress.com/2018/06/09/week-3-2-june-8-june/">Week 3: Composite beams</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This week me, Arihant and Jason discussed the API for creating composite Beam objects. Initially, we used <code>Piecewise</code>&#160;and&#160;<code>SingularityFunction</code>&#160;to represent our changing second_moment but then we agreed upon&#160;<code>.join</code> method to represent such beams. So the final API was like:</p>
-<pre><code>&gt;&gt;&gt; b1 = Beam(2, E, 1.5*I)
-&gt;&gt;&gt; b2 = Beam(2, E, I)
-&gt;&gt;&gt; b = b1.join(b2, "fixed")
-&gt;&gt;&gt; b.length
-<span class="pl-c1">4</span>
-&gt;&gt;&gt; b.second_moment
-Piecewise((<span class="pl-c1">1.5</span><span class="pl-k">*</span>I, x <span class="pl-k">&lt;=</span> <span class="pl-c1">2</span>), (I, x <span class="pl-k">&lt;=</span> <span class="pl-c1">4</span>))
-</code></pre>
-<p>Here&#160;<code>b1.join(b2, "fixed")</code>&#160;joins b2 at the right end of b1 via a fixed connection.All this was implemented in&#160;<a href="https://github.com/sympy/sympy/pull/14773">#14773</a>&#160;and hopefully it would be merged in coming few days.</p>
-<p>I also created&#160;<a href="https://github.com/sympy/sympy/pull/14786">#14786</a>&#160;at the end of this week implementing&#160;<code>apply_support</code>&#160;and&#160;<code>max_deflection</code>&#160;methods.</p>
-<p><code>apply_support</code>&#160;is an easier way to apply support structures on our Beam object rather than adding all the reaction loads and moments and constraints on it by yourself. Its API is not finalised yet but for now it is something like:</p>
-<pre><code>&gt;&gt;&gt;b.apply_support(position, type='hinge')</code></pre>
-<p>where <code>position</code>&#160;represents the position at which support was applied</p>
-<p>and type is type of support structure. It can be either&#160;<code>hinge</code>, <code>roller</code>&#160;or <code>cantilever</code>.</p>
-<h2><em><strong>Next Week</strong></em></h2>
-<ul>
-<li>Add support for composite beams connected via hinge.</li>
-<li>Add support for non-horizontal beams.</li>
-<li>See for any remaining implementation from first two stages of my proposal.</li>
-</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-ce1ecf29 feed-" id="item-1239222b">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/yathartha.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Yathartha Joshi (Yathartha22) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://Yathartha22.github.io//gsoc-week-4">00:00, Saturday, 09 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://Yathartha22.github.io//gsoc-week-4">Yathartha Joshi (Yathartha22): GSoC 2018 - Week 4 - Continuing with transolve Part-II</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/yathartha.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Yathartha Joshi (Yathartha22) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://Yathartha22.github.io//gsoc-week-4">00:00, Saturday, 09 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://Yathartha22.github.io//gsoc-week-4">GSoC 2018 - Week 4 - Continuing with transolve Part-II</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>By the end of the previous week I had completed majority of the TODO&#8217;s of the <a href="https://github.com/sympy/sympy/pull/14736/">PR #14736</a>.
-This week I started on minor improvements suggested by Amit. This included:</p>
-
-<ul>
-  <li>
-    <p>Minor Documentation changes<br />
-Included proof of correctness, typo fixes, rephrasing lines etc.</p>
-  </li>
-  <li>
-    <p>Removing <code class="highlighter-rouge">flag</code> variable from transolve.<br />
-<code class="highlighter-rouge">flag</code> variable was passed as a function parameter in <code class="highlighter-rouge">transolve</code> and was used to check on the recursive call. The thought was that there might be a case when equation could not be solved by any of the helpers but during the process the equation might get modified, so we wanted to double check whether the modified equation could be solved again, thats why we used <code class="highlighter-rouge">flag</code> but Amit suggested on removing it as there wasn&#8217;t a case as of now and it will only make things unnecessarily complicated.</p>
-  </li>
-  <li>
-    <p>Also worked on XFAILS, mainly on solving equations containing only symbols. There was an exception raised in <code class="highlighter-rouge">_invert_real</code>, because of a relational comparison made with <code class="highlighter-rouge">0</code> which caused the faiure of the tests. It has been fixed by handling the exception.</p>
-  </li>
-  <li>
-    <p>Imported tests of log and lambert.</p>
-  </li>
-  <li>
-    <p>Another thing we discussed was about log solver. The helpers for solving logarithmic equations will be implemented in a seperated PR, to make the review and implementing task easy and independent.</p>
-  </li>
-</ul>
-
-<p>After this I started a working on solving exponential equations in complex domain, though it turns out that we will be focussing on only the real domain as of now. But I have added tests for it as XFAIL.<br />
-To make exponents work in complex domain, we require the <a href="https://en.wikipedia.org/wiki/Complex_logarithm">complex logarithm</a>.
-If we have equation as</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>	z = e**w,
-	where w is complex number and z is non-zero complex number,
-	then 
-	Ln(z) = ln|z| + I*(Arg(z) + 2*n*pi)
-	where Ln(z) is the complex logarithm and ln|z| is the
-        logarithm evaluated with real number argument.
-</code></pre></div></div>
-
-<p>Apart from this we also had a meeting yesterday in which we discussed about how we will be wrapping up things before the first evaluation.<br />
-I will be completing few leftovers of the current PR to make it merge and start working on implementing log solver (making a commit probably by tomorrow).</p>
-
-<p>Amit also suggested on creating a coverage report so as to get an idea about the amount of tests covered by the code. The current coverage report can be found <a href="https://yathartha22.github.io/covhtml/sympy_solvers_solveset_py.html">here</a>. Other than this he also advised on reading <a href="https://www.investigatii.md/uploads/resurse/Clean_Code.pdf">Clean Code</a> by <code class="highlighter-rouge">Robert C. Martin</code> which will help me improve in writing clean and efficient code.</p>
-
-<p>The main target for the coming week will be merging <code class="highlighter-rouge">PR #14736</code>, implementing <code class="highlighter-rouge">log solver</code> (will try to merge this as well), starting with implementing <code class="highlighter-rouge">lambert solver</code> (try to add atleast a WIP PR) and reading the book.</p>
-
-<p>Hope things go as planned!!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2513,164 +2546,164 @@ I will be completing few leftovers of the current PR to make it merge and start 
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.github.io/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://aktech.github.io/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="http://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arif7blog.wordpress.com">Arif's Blog</a></td>
 <td><a class="xmlbutton" href="https://arif7blog.wordpress.com/feed/">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
-</tr>
-<tr class="feedsrow">
-<td>http://sidhantnagpal.com/rss-gsoc.xml</td>
-<td><a class="xmlbutton" href="http://sidhantnagpal.com/rss-gsoc.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="http://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://shikharj.github.io/feed.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
+</tr>
+<tr class="feedsrow">
+<td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
+<td><a class="xmlbutton" href="http://sidhantnagpal.com/rss-gsoc.xml">XML</a></td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>16:00, Sunday, 29 July</td>
-<td>16:15, Sunday, 29 July</td>
+<td>16:20, Sunday, 29 July</td>
+<td>16:35, Sunday, 29 July</td>
 </tr>
 </table>
 
