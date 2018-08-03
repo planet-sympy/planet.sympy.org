@@ -7,6 +7,17 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://nkhlpappu.wordpress.com/?p=15</guid>
+      <author>Nikhil Pappu (NikhilPappu)</author>
+      <title>Nikhil Pappu (NikhilPappu): Autolev Parser: Status Update</title>
+      <pubDate>Fri, 03 Aug 2018 20:36:26 GMT</pubDate>
+      <link>https://nkhlpappu.wordpress.com/2018/08/03/autolev-parser-status-update-4/</link>
+      <description>&lt;p&gt;I have made some changes to the parser code to parse more files since &lt;a href="https://github.com/sympy/sympy/pull/14758"&gt;#14758&lt;/a&gt; has been merged. I have also made the changes suggested in that PR after it had been merged. I have opened a new PR&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/15006/"&gt;#15006&lt;/a&gt;&amp;#160;for the updated parser code. I have also opened &lt;a href="https://github.com/sympy/sympy/pull/15013"&gt;#15013&lt;/a&gt;&amp;#160;to include tests for physics functions which I didn&amp;#8217;t do in the initial PR. The GitLab repo autolev-test-examples is in good shape now and is part of the sympy user.&lt;/p&gt;
+&lt;p&gt;I am currently writing the documentation in which I shall include how to use the parser, gotchas, limitations, issues and future improvements. I shall also include a rewritten version of the PyDy for Autolev Users guide in it.&lt;/p&gt;
+&lt;p&gt;I shall then write the output tests (Tests to compare the outputs of Autolev against those of SymPy) for most of the test examples in the GitLab repo (I shall include these in a directory called output-tests in the GitLab repo). I think its good to put them here as I don&amp;#8217;t see the need to test these on Travis as changing the parser code won&amp;#8217;t affect these. Plus, they will be in a place where the test examples are which are what they will be based on. We could still test these on Travis if required even from here I suppose.&lt;/p&gt;
+&lt;p&gt;Finally, I shall wrap things up with the Final Report and Submission.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">tag:blogger.com,1999:blog-1036447522835236737.post-5320864463564984752</guid>
       <author>Ashish Kumar Gaurav (ashishkg0022)</author>
       <title>Ashish Kumar Gaurav (ashishkg0022): GSoC 2018: Week 11</title>
@@ -725,28 +736,6 @@ x*(8*newton + y, 1)&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Sun, 17 Jun 2018 17:12:20 GMT</pubDate>
       <link>http://ashishkg0022.blogspot.com/2018/06/gsoc-2018-week-5.html</link>
       <description>&lt;div dir="ltr" style="text-align: left;"&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;Hello everyone. Here is the brief summary of my work in the 5th week of GSoC period.&lt;/span&gt;&lt;/div&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;I started this week with testing miscellaneous algebraic test cases. Soon it was found that most test cases depend on rules of `Miscellaneous integration`. So I loaded those rules. There were few new structure in constraints. So parser too was updated for incorporating those.&amp;nbsp;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;While testing, `ExpandIntegrand` did not function well. Matcher used in ExpandIntegrand was of sympy. I changed ExpandIntegrand using replace_all of matchpy. In few more functions I changed the structure using matchpy. In this week, a major part of the time was spent in utility functions. There are many changes. Also some of the test cases of last year was wrong. It gave different result in mathematica. The test cases which I have updated matches with Mathematica's output. I have pushed all changes of utility function in this &lt;a href="https://github.com/sympy/sympy/pull/14756/files"&gt;PR&lt;/a&gt;.&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;Parallely I have also tested around 70 % of miscellaneous algebraic. I will complete the testing within one or two days. After this I will move on to exponential rules and exponential test cases.&lt;/div&gt;&lt;/span&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-5</guid>
-      <author>Yathartha Joshi (Yathartha22)</author>
-      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 5 - Implementing log solver</title>
-      <pubDate>Sun, 17 Jun 2018 00:00:00 GMT</pubDate>
-      <link>https://Yathartha22.github.io//gsoc-week-5</link>
-      <description>&lt;p&gt;So this is the last week of the first evaluation. I started with implementing log solver as part of &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt;. As per the documentation of the &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; we will need two helpers for implementing log solver, &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt; that will check whether the equation is logarithmic or not and &lt;code class="highlighter-rouge"&gt;log_solver&lt;/code&gt; that will solve the equation. Here&amp;#8217;s the &lt;a href="https://github.com/sympy/sympy/pull/14792"&gt;PR&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Idea behind &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Heuristic is implemented to determine whether the equation is logarithmic or not. According to it the logarithmic equations can be reduced to simpler form using log identities. For this purpose we use SymPy&amp;#8217;s function &lt;a href="http://docs.sympy.org/latest/tutorial/simplification.html#logcombine"&gt;logcombine&lt;/a&gt;. If the equation is logarithmic it will be reduced and hence the number of log in the original and modified equation may differ. This will ensure that the equation is logarithmic.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Idea behind the log solver&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;The idea is simple, the reduced form from the &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt; is used as the new target equation and is sent to &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; to handle. Solutions are retuned from &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;, but it may contain values that won&amp;#8217;t satisfy the equation (log does not take negative values in real domain). Therfore to remove unwanted values we use &lt;a href="http://docs.sympy.org/latest/modules/solvers/solvers.html#sympy.solvers.solvers.checksol"&gt;checksol&lt;/a&gt; function of solve module which substitutes each solution in the equation and returns &lt;code class="highlighter-rouge"&gt;True&lt;/code&gt; if it satisfies otherwise &lt;code class="highlighter-rouge"&gt;False&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Apart from implementing helpers, I have added their documentation. Certain things needs to be done before the PR is ready for review: Tests needs to be added for the helpers and &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt; needs to be improved a bit to handle corner cases.&lt;/p&gt;
-
-&lt;p&gt;In parallel I am also working on improving &lt;code class="highlighter-rouge"&gt;transolve's&lt;/code&gt; PR to make it merge as soon as possible. After these two gets completely fixed we will be focusing on implementing &lt;code class="highlighter-rouge"&gt;lambert equation solver&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;In the coming week I will be focussing on finishing off the work of these two PR.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
