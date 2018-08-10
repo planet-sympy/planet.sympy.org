@@ -7,6 +7,63 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-12</guid>
+      <author>Yathartha Joshi (Yathartha22)</author>
+      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 12 - Continuing with logarithmic solver and implementing lambert solver Part-II</title>
+      <pubDate>Thu, 09 Aug 2018 00:00:00 GMT</pubDate>
+      <link>https://Yathartha22.github.io//gsoc-week-12</link>
+      <description>&lt;p&gt;This week I continued the work with log solver and lambert solver. The log solver implementation is almost done with just few check for assumptions. Symbolic logarithmic equations should be dealt with proper assumptions. Such equations would give unsolved instance of &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; otherwise.&lt;/p&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'a, b, x'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;solveset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Reals&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;ConditionSet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Eq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Reals&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c"&gt;# because the bases (here, `a and b`) should have a positive value &amp;gt; 0)&lt;/span&gt;
+
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'a b'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;positive&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;solveset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Reals&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;))}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Discussions with Amit and Chris suggested that there should be some other way to handle vanilla symbols. There should be atleast a &lt;code class="highlighter-rouge"&gt;ValueError&lt;/code&gt; or something else that would tell the user why this cannot be solved. Chris suggested of returning a &lt;code class="highlighter-rouge"&gt;Piecewise&lt;/code&gt; as  object for this scenario. Something like:&lt;/p&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;cond&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;fuzzy_and&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Eq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;im&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;Eq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;im&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;g&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)])&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
+&lt;span class="n"&gt;Piecewise&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;solutions&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cond&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;ConditionSet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;........&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;  &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Using Piecewise was not the greatest of the option as:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Though the assumptions were checked but it didn&amp;#8217;t provided information to the user that why did it not solved.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Also using &lt;code class="highlighter-rouge"&gt;Piecewise&lt;/code&gt; had some problem causing recursion error, though it could be solved but it would make things unncessarily complicated.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Also &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; is not made to return objects other than &lt;code class="highlighter-rouge"&gt;Sets&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So we switched to a completely different approach. We tried using a different type of &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt;: providing the information within it that is necessary for the equation to be solved. The approach was: &lt;em&gt;Force the equation to get solved but return a ConditionSet (a different than ususal) with the required assumptions, like:&lt;/em&gt;
+&lt;code class="highlighter-rouge"&gt;ConditionSet(x, And(a_base&amp;gt;0, b_base&amp;gt;0, Eq(im(a_exp), 0), Eq((im(b_exp), 0))), {solutions})&lt;/code&gt;. So now the above equation would return solutions something like:
+&lt;code class="highlighter-rouge"&gt;ConditionSet(x, (a &amp;gt; 0) &amp;amp; (b &amp;gt; 0), Intersection(Reals, {log(b)/(log(a) - log(b))}))&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;So this approach has been applied in the &lt;a href="https://github.com/sympy/sympy/pull/14792"&gt;PR&lt;/a&gt; as of now, only a few minor changes needs to be done. I will try to finish this by the end of the week.&lt;/p&gt;
+
+&lt;p&gt;Apart from this some work has been done in &lt;code class="highlighter-rouge"&gt;lambert solver&lt;/code&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Used &lt;code class="highlighter-rouge"&gt;_is_lambert&lt;/code&gt; to identify lambert type equations.&lt;/li&gt;
+  &lt;li&gt;Implemented bivariate solver (I will add a commit for this soon).&lt;/li&gt;
+  &lt;li&gt;Ran &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt;&amp;#8217;s tests, to get an idea of the extent to which &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; would handle such equations.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;What&amp;#8217;s next:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;I will try to wrap up the work of both the PR&amp;#8217;s. Lambert solver PR would need a bit more time for reviewing but nevertheless I will be continuing its work post GSoC. Implementing these two solvers will make &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; fully functional to handle transcendental equations which is a major part of my GSoC propsal. There will be a few minor things left that I will try to finish post GSoC. Also since this is the last week for the coding period, I will be needing to submit a final report of my work, I will complete and submit it before the deadline.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://sidhantnagpal.github.io/2018/08/gsoc-week12</guid>
       <author>Sidhant Nagpal (sidhantnagpal)</author>
       <title>Sidhant Nagpal (sidhantnagpal): GSoC: SymPy - Week 12</title>
@@ -712,37 +769,6 @@ x*(8*newton + y, 1)&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Sun, 24 Jun 2018 15:53:19 GMT</pubDate>
       <link>http://ashishkg0022.blogspot.com/2018/06/gsoc-2018-week-6.html</link>
       <description>&lt;div dir="ltr" style="text-align: left;"&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;Here is the brief work done for rubi in the 6th week of GSoC period.&lt;/span&gt;&lt;/div&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;span&gt; &lt;div style="text-align: justify;"&gt;Last week almost 70 % of the miscellaneous algebra was tested. In the start of the week, the miscellaneous algebra testing was completed. The miscellaneous algebra test cases have been pushed in this &lt;a href="https://github.com/sympy/sympy/pull/14756"&gt;PR&lt;/a&gt;.&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;/span&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;After this, I moved on to load exponential rules and test them. While loading the exponential rules, there were some parsing issues. Those were fixed. On start of the testing, it was found that some integrals depend upon the logarithmic and special_function rules. Those too needed to be loaded. There were some undefined or wrongly defined utility_functions like `CancelCommonFactors`, `Gamma (gammainc)`, `PolyGamma`, `ProductLog` and few more small functions. These didn't take much time. I fixed all these.&lt;/span&gt;&lt;/div&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;Soon I realised a major issue of `exp` and `Pow`. Sympy doesn't identify exp as Pow. The rubi rules are defined in such a way that exp needs to be realised as Pow. I tried to process an expression to replace exp with Pow. These are the major methods I tried :&lt;/span&gt;&lt;/div&gt;&lt;ul style="text-align: left;"&gt;&lt;li style="text-align: justify;"&gt;&lt;span&gt;Pow(E, z, evaluate=False) . This does not&amp;nbsp;work well, an expression containing Mul is evaluated to exp. I tried to fix it. I found that `flatten` of Mul causes the evaluation. I found the code messy. These can be solved but requires more time.&lt;/span&gt;&lt;/li&gt;&lt;li style="text-align: justify;"&gt;&lt;span&gt;Pow(Dummy('E', z, evaluate=False) .This was suggested by Aaron. The matching part has no issues in this. But functions which use&amp;nbsp;the property of `E` does not work properly. Like `Log(E)` should evaluate to 1.&lt;/span&gt;&lt;/li&gt;&lt;li style="text-align: justify;"&gt;&lt;span&gt;Pow(UnevaluatedExpr(E), z) . In this the matching was as expected. I modified `Log` as `return log(z).doit()` . But then also there were some issues. I made a new subclass `rubi_unevaluated_expr`. To solve the commutative issue, I defined a property in this new subclass.&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;I think the last one is the best solution for now. Another issue was some rules which caused recursion errors like one in the image&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div class="separator" style="clear: both; text-align: justify;"&gt;&lt;span&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div class="separator" style="clear: both; text-align: justify;"&gt;&lt;a href="https://4.bp.blogspot.com/-umUEO5F9ppw/Wy-7A03ET5I/AAAAAAAAHbM/FQNRIGwO4koCTc_Lb1aoJYCq3ZYYAcOeQCLcBGAs/s1600/blogrubi.png" style="margin-left: 1em; margin-right: 1em;"&gt;&lt;span&gt;&lt;img border="0" height="56" src="https://4.bp.blogspot.com/-umUEO5F9ppw/Wy-7A03ET5I/AAAAAAAAHbM/FQNRIGwO4koCTc_Lb1aoJYCq3ZYYAcOeQCLcBGAs/s640/blogrubi.png" width="640" /&gt;&lt;/span&gt;&lt;/a&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;To solve it I checked that if last 5 rules applied are same then return a Function `Integrate` and replace it at last while returning. This works fine.&lt;/span&gt;&lt;/div&gt;&lt;span&gt;&lt;/span&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;span&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;span&gt; &lt;div style="text-align: justify;"&gt;In this week, I was unable to do much testing. But I am sure the upcoming week will be better in this respect. I have tested a small part of exponential rules. In the upcoming week, I will try to finish exponential rules within 2-3 days and soon move to logarithmic rules.&amp;nbsp;&lt;/div&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://singhjashan.wordpress.com/?p=61</guid>
-      <author>Jashanpreet Singh Sraw (jashan498)</author>
-      <title>Jashanpreet Singh Sraw (jashan498): Week 5: Solving&#xA0;statically indeterminate beams</title>
-      <pubDate>Sat, 23 Jun 2018 11:54:25 GMT</pubDate>
-      <link>https://singhjashan.wordpress.com/2018/06/23/week-5-16-june-22-june/</link>
-      <description>&lt;p&gt;This week I worked on solving&amp;#160;statically indeterminate beam systems and created &lt;a href="https://github.com/sympy/sympy/pull/14826"&gt;#14826&lt;/a&gt;&amp;#160;for that. Some work was already done in&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/14681"&gt;#14681&lt;/a&gt;, which me and Jason reviewed during community bonding period.&lt;/p&gt;
-&lt;p&gt;Now Beam class uses boundary conditions (bc_deflection and bc_slope) to solve for unknown reactions, hence making statically indeterminate systems solvable.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.physics.continuum_mechanics.beam import Beam
-&amp;gt;&amp;gt;&amp;gt; from sympy import symbols
-&amp;gt;&amp;gt;&amp;gt; E, I = symbols('E, I')
-&amp;gt;&amp;gt;&amp;gt; F = Symbol('F')
-&amp;gt;&amp;gt;&amp;gt; l = Symbol('l', positive=True)
-&amp;gt;&amp;gt;&amp;gt; b5 = Beam(l, E, I)
-&amp;gt;&amp;gt;&amp;gt; b5.bc_deflection = [(0, 0),(l, 0)]
-&amp;gt;&amp;gt;&amp;gt; b5.bc_slope = [(0, 0),(l, 0)]
-&amp;gt;&amp;gt;&amp;gt; R1, R2, M1, M2 = symbols('R1, R2, M1, M2')
-&amp;gt;&amp;gt;&amp;gt; b5.apply_load(R1, 0, -1)
-&amp;gt;&amp;gt;&amp;gt; b5.apply_load(M1, 0, -2)
-&amp;gt;&amp;gt;&amp;gt; b5.apply_load(R2, l, -1)
-&amp;gt;&amp;gt;&amp;gt; b5.apply_load(M2, l, -2)
-&amp;gt;&amp;gt;&amp;gt; b5.apply_load(-F, l/2, -1)
-&amp;gt;&amp;gt;&amp;gt; b5.solve_for_reaction_loads(R1, R2, M1, M2)
-&amp;gt;&amp;gt;&amp;gt; b5.reaction_loads
-{R1: F/2, R2: F/2, M1: -F*l/8, M2: F*l/8}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h2&gt;&lt;em&gt;&lt;strong&gt;Next Week&lt;/strong&gt;&lt;/em&gt;&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;Add max_bmoment and mx_shear_force methods to&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/14826"&gt;#14826&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;</description>
     </item>
   </channel>
 </rss>
