@@ -7,818 +7,62 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
-      <guid isPermaLink="false">https://asmeurer.com/blog/posts/whats-new-in-sympy-14/</guid>
-      <author>Aaron Meurer (asmeurer)</author>
-      <title>Aaron Meurer (asmeurer): What's New in SymPy 1.4</title>
-      <pubDate>Thu, 02 May 2019 05:00:00 GMT</pubDate>
-      <link>https://asmeurer.com/blog/posts/whats-new-in-sympy-14/</link>
-      <description>&lt;div&gt;&lt;p&gt;&lt;em&gt;This post has been cross-posted on the &lt;a href="https://labs.quansight.org/blog/2019/04/whats-new-in-sympy-14/"&gt;Quansight Blog&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;As of November, 2018, I have been working at
-&lt;a href="https://www.quansight.com/"&gt;Quansight&lt;/a&gt;. Quansight is a new startup founded by
-the same people who started Anaconda, which aims to connect companies and open
-source communities, and offers consulting, training, support and mentoring
-services. I work under the heading of &lt;a href="https://www.quansight.com/labs"&gt;Quansight
-Labs&lt;/a&gt;. Quansight Labs is a public-benefit
-division of Quansight. It provides a home for a "PyData Core Team" which
-consists of developers, community managers, designers, and documentation
-writers who build open-source technology and grow open-source communities
-around all aspects of the AI and Data Science workflow. As a part of this, I
-am able to spend a fraction of my time working on SymPy.
-&lt;a href="https://www.sympy.org/en/index.html"&gt;SymPy&lt;/a&gt;, for those who do not know, is a
-symbolic mathematics library written in pure Python. I am the lead maintainer
-of SymPy.&lt;/p&gt;
-&lt;p&gt;SymPy 1.4 was released on April 9, 2019. In this post, I'd like to go over
-some of the highlights for this release. The full release notes for the
-release can be found on the &lt;a href="https://github.com/sympy/sympy/wiki/Release-Notes-for-1.4"&gt;SymPy
-wiki&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;To update to SymPy 1.4, use&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-bash"&gt;conda install sympy
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;or if you prefer to use pip&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-bash"&gt;pip install -U sympy
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The SymPy 1.4 release contains over &lt;a href="https://github.com/sympy/sympy/wiki/Release-Notes-for-1.4#authors"&gt;500 changes from 38 different
-submodules&lt;/a&gt;,
-so I will not be going over every change, but only a few of the main
-highlights. A &lt;a href="https://github.com/sympy/sympy/wiki/Release-Notes-for-1.4#authors"&gt;total of 104
-people&lt;/a&gt;
-contributed to this release, of whom 66 contributed for the first time for
-this release.&lt;/p&gt;
-&lt;p&gt;While I did not personally work on any of the changes listed below (my work
-for this release tended to be more invisible, behind the scenes fixes), I did
-do the release itself.&lt;/p&gt;
-&lt;h2&gt;Automatic LaTeX rendering in the Jupyter notebook&lt;/h2&gt;
-&lt;p&gt;Prior to SymPy 1.4, SymPy expressions in the notebook rendered by default with their
-string representation. To get &lt;code&gt;LaTeX&lt;/code&gt; output, you had to call &lt;code&gt;init_printing()&lt;/code&gt;:&lt;/p&gt;
-&lt;img alt="SymPy 1.3 rendering in the Jupyter lab notebook" src="https://asmeurer.com/blog/sympy-1.3-notebook.png" /&gt;
-&lt;p&gt;In SymPy 1.4, SymPy expressions now automatically render as LaTeX in the notebook:&lt;/p&gt;
-&lt;img alt="SymPy 1.4 rendering in the Jupyter lab notebook" src="https://asmeurer.com/blog/sympy-1.4-notebook.png" /&gt;
-&lt;p&gt;However, this only applies automatically if the type of an object is a SymPy
-expression. For built-in types such as lists or ints, &lt;code&gt;init_printing()&lt;/code&gt; is
-still required to get LaTeX printing. For example, &lt;code&gt;solve()&lt;/code&gt; returns a list,
-so does not render as LaTeX unless &lt;code&gt;init_printing()&lt;/code&gt; is called:&lt;/p&gt;
-&lt;img alt="SymPy 1.4 rendering in the Jupyter lab notebook with init_printing()" src="https://asmeurer.com/blog/sympy-1.4-notebook-2.png" /&gt;
-&lt;p&gt;&lt;code&gt;init_printing()&lt;/code&gt; is also still needed if you want to change any of the
-printing settings, for instance, passing flags to the &lt;code&gt;latex()&lt;/code&gt; printer or
-selecting a different printer.&lt;/p&gt;
-&lt;p&gt;If you want the string form of an expression for copy-pasting, you can use
-&lt;code&gt;print&lt;/code&gt;.&lt;/p&gt;
-&lt;h2&gt;Improved simplification of relational expressions&lt;/h2&gt;
-&lt;p&gt;Simplification of relational and piecewise expressions has been improved:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; x, y, z, w = symbols('x y z w')
-&amp;gt;&amp;gt;&amp;gt; init_printing()
-&amp;gt;&amp;gt;&amp;gt; expr = And(Eq(x,y), x &amp;gt;= y, w &amp;lt; y, y &amp;gt;= z, z &amp;lt; y)
-&amp;gt;&amp;gt;&amp;gt; expr
-x = y &amp;#8743; x &amp;#8805; y &amp;#8743; y &amp;#8805; z &amp;#8743; w &amp;lt; y &amp;#8743; z &amp;lt; y
-&amp;gt;&amp;gt;&amp;gt; simplify(expr)
-x = y &amp;#8743; y &amp;gt; Max(w, z)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; expr = Piecewise((x*y, And(x &amp;gt;= y, Eq(y, 0))), (x - 1, Eq(x, 1)), (0, True))
-&amp;gt;&amp;gt;&amp;gt; expr
-&amp;#9127; x&amp;#8901;y   for y = 0 &amp;#8743; x &amp;#8805; y
-&amp;#9130;
-&amp;#9128;x - 1      for x = 1
-&amp;#9130;
-&amp;#9129;  0        otherwise
-&amp;gt;&amp;gt;&amp;gt; simplify(expr)
-0
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h2&gt;Improved MathML printing&lt;/h2&gt;
-&lt;p&gt;The MathML presentation printer has been greatly improved, putting it on par
-with the existing Unicode and LaTeX pretty printers.&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; mathml(Integral(exp(-x**2), (x, -oo, oo)), 'presentation')
-&amp;lt;mrow&amp;gt;&amp;lt;msubsup&amp;gt;&amp;lt;mo&amp;gt;&amp;amp;#x222B;&amp;lt;/mo&amp;gt;&amp;lt;mrow&amp;gt;&amp;lt;mo&amp;gt;-&amp;lt;/mo&amp;gt;&amp;lt;mi&amp;gt;&amp;amp;#x221E;&amp;lt;/mi&amp;gt;&amp;lt;/mrow&amp;gt;&amp;lt;mi&amp;gt;&amp;amp;#x221E;&amp;lt;/mi&amp;gt;&amp;lt;/msubsup&amp;gt;&amp;lt;msup&amp;gt;&amp;lt;mi&amp;gt;&amp;amp;ExponentialE;&amp;lt;/mi&amp;gt;&amp;lt;mrow&amp;gt;&amp;lt;mo&amp;gt;-&amp;lt;/mo&amp;gt;&amp;lt;msup&amp;gt;&amp;lt;mi&amp;gt;x&amp;lt;/mi&amp;gt;&amp;lt;mn&amp;gt;2&amp;lt;/mn&amp;gt;&amp;lt;/msup&amp;gt;&amp;lt;/mrow&amp;gt;&amp;lt;/msup&amp;gt;&amp;lt;mo&amp;gt;&amp;amp;dd;&amp;lt;/mo&amp;gt;&amp;lt;mi&amp;gt;x&amp;lt;/mi&amp;gt;&amp;lt;/mrow&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;If your &lt;a href="https://caniuse.com/#feat=mathml"&gt;browser supports MathML&lt;/a&gt; (at the
-time of writing, only Firefox and Safari), you should see the above
-presentation form for &lt;code&gt;Integral(exp(-x**2), (x, -oo, oo))&lt;/code&gt; below:&lt;/p&gt;
-&lt;p&gt;&lt;math style="display: block;" xmlns="http://www.w3.org/1998/Math/MathML"&gt;&lt;mrow&gt;&lt;msubsup&gt;&lt;mo&gt;&amp;#8747;&lt;/mo&gt;&lt;mrow&gt;&lt;mo&gt;-&lt;/mo&gt;&lt;mi&gt;&amp;#8734;&lt;/mi&gt;&lt;/mrow&gt;&lt;mi&gt;&amp;#8734;&lt;/mi&gt;&lt;/msubsup&gt;&lt;msup&gt;&lt;mi&gt;&amp;#8519;&lt;/mi&gt;&lt;mrow&gt;&lt;mo&gt;-&lt;/mo&gt;&lt;msup&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;/mrow&gt;&lt;/msup&gt;&lt;mo&gt;&amp;#8518;&lt;/mo&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/mrow&gt;&lt;/math&gt;&lt;/p&gt;
-&lt;h2&gt;Improvements to solvers&lt;/h2&gt;
-&lt;p&gt;Several improvements have been made to the solvers.&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; eq = Eq((x**2 - 7*x + 11)**(x**2 - 13*x + 42), 1)
-&amp;gt;&amp;gt;&amp;gt; eq
-                2
-               x  - 13&amp;#8901;x + 42
-&amp;#9115; 2           &amp;#9118;
-&amp;#9117;x  - 7&amp;#8901;x + 11&amp;#9120;               = 1
-&amp;gt;&amp;gt;&amp;gt; solve(eq, x) # In SymPy 1.3, this only gave the partial solution [2, 5, 6, 7]
-[2, 3, 4, 5, 6, 7]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The ODE solver, &lt;code&gt;dsolve&lt;/code&gt;, has also seen some improvements. Two new hints have
-been added.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;'nth_algebraic'&lt;/code&gt; solves ODEs using &lt;code&gt;solve&lt;/code&gt; by inverting the derivatives
-algebraically:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; f = Function('f')
-&amp;gt;&amp;gt;&amp;gt; eq = Eq(f(x) * (f(x).diff(x)**2 - 1), 0)
-&amp;gt;&amp;gt;&amp;gt; eq
-&amp;#9115;          2    &amp;#9118;
-&amp;#9116;&amp;#9115;d       &amp;#9118;     &amp;#9119;
-&amp;#9116;&amp;#9116;&amp;#9472;&amp;#9472;(f(x))&amp;#9119;  - 1&amp;#9119;&amp;#8901;f(x) = 0
-&amp;#9117;&amp;#9117;dx      &amp;#9120;     &amp;#9120;
-&amp;gt;&amp;gt;&amp;gt; dsolve(eq, f(x)) # In SymPy 1.3, this only gave the solution f(x) = C1 - x
-[f(x) = 0, f(x) = C&amp;#8321; - x, f(x) = C&amp;#8321; + x]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;code&gt;'nth_order_reducible'&lt;/code&gt; solves ODEs that only involve derivatives of &lt;code&gt;f(x)&lt;/code&gt;,
-via the substitution $g(x)=f^{(n)}(x)$.&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; eq = Eq(Derivative(f(x), (x, 2)) + x*Derivative(f(x), x), x)
-&amp;gt;&amp;gt;&amp;gt; eq
-               2
-  d           d
-x&amp;#8901;&amp;#9472;&amp;#9472;(f(x)) + &amp;#9472;&amp;#9472;&amp;#9472;(f(x)) = x
-  dx           2
-             dx
-&amp;gt;&amp;gt;&amp;gt; dsolve(eq, f(x))
-                  &amp;#9115;&amp;#8730;2&amp;#8901;x&amp;#9118;
-f(x) = C&amp;#8321; + C&amp;#8322;&amp;#8901;erf&amp;#9116;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9472;&amp;#9119; + x
-                  &amp;#9117; 2  &amp;#9120;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h2&gt;Dropping Python 3.4 support&lt;/h2&gt;
-&lt;p&gt;This is the last release of SymPy to support Python 3.4. SymPy 1.4 supports
-Python 2.7, 3.4, 3.5, 3.6, 3.7, and PyPy. What's perhaps more exciting is that
-the next release of SymPy, 1.5, which will be released later this year, will
-be the last version to support Python 2.7.&lt;/p&gt;
-&lt;p&gt;Our
-&lt;a href="https://github.com/sympy/sympy/wiki/Python-version-support-policy"&gt;policy&lt;/a&gt; is
-to drop support for major Python versions when they reach their &lt;a href="https://devguide.python.org/#status-of-python-branches"&gt;End of
-Life&lt;/a&gt;. In other words,
-they receive no further support from the core Python team. Python 3.4 reached
-its end of life on May 19 of this year, and Python 2.7 will reach its end of
-life on January 1, 2020.&lt;/p&gt;
-&lt;p&gt;I have &lt;a href="https://www.asmeurer.com/blog/posts/moving-away-from-python-2/"&gt;blogged in the
-past&lt;/a&gt; on why I
-believe it is important for library authors to be proactive in dropping Python
-2 support, and since then &lt;a href="https://python3statement.org"&gt;a large number of Python
-libraries&lt;/a&gt; have either dropped support or
-announced their plans to by 2020.&lt;/p&gt;
-&lt;p&gt;Having Python 2 support removed will not only allow us to remove a &lt;a href="https://github.com/sympy/sympy/blob/sympy-1.4/sympy/core/compatibility.py"&gt;large
-amount of compatibility
-cruft&lt;/a&gt;
-from our codebase, it will also allow us to use some Python 3-only features
-that will clean up our API, such as &lt;a href="https://python-3-for-scientists.readthedocs.io/en/latest/python3_advanced.html#keyword-only-arguments"&gt;keyword-only
-arguments&lt;/a&gt;,
-&lt;a href="https://python-3-for-scientists.readthedocs.io/en/latest/python3_features.html#function-annotations"&gt;type
-hints&lt;/a&gt;,
-and &lt;a href="https://python-3-for-scientists.readthedocs.io/en/latest/python3_features.html#unicode-variable-names"&gt;Unicode variable
-names&lt;/a&gt;.
-It will also enable &lt;a href="https://github.com/sympy/sympy/issues?q=is%3Aissue+is%3Aopen+label%3A%22Dropping+Python+2%22"&gt;several internal
-changes&lt;/a&gt;
-that will not be visible to end-users, but which will result in a much cleaner
-and more maintainable codebase.&lt;/p&gt;
-&lt;p&gt;If you are still using Python 2, I strongly recommend switching to Python 3,
-as otherwise the entire ecosystem of Python libraries is soon going to stop
-improving for you. Python 3 is already highly recommended for SymPy usage due
-to several key improvements. In particular, in Python 3, division of two
-Python &lt;code&gt;int&lt;/code&gt;s like &lt;code&gt;1/2&lt;/code&gt; produces the float &lt;code&gt;0.5&lt;/code&gt;. In Python 2, it does
-integer division (producing &lt;code&gt;1/2 == 0&lt;/code&gt;). The Python 2 integer division
-behavior can lead to very surprising results when using SymPy (imagine writing
-&lt;code&gt;x**2 + 1/2*x + 2&lt;/code&gt; and having the &lt;code&gt;x&lt;/code&gt; term "disappear"). When using SymPy, we
-&lt;a href="https://docs.sympy.org/latest/tutorial/gotchas.html#two-final-notes-and"&gt;recommend&lt;/a&gt;
-using rational numbers (like &lt;code&gt;Rational(1, 2)&lt;/code&gt;) and avoiding &lt;code&gt;int/int&lt;/code&gt;, but the
-Python 3 behavior will at least maintain a mathematically correct result if
-you do not do this. SymPy is also &lt;a href="https://speed.python.org/comparison/?exe=12%2BL%2Bmaster%2C12%2BL%2B3.5%2C12%2BL%2B3.6%2C12%2BL%2B2.7&amp;amp;ben=666%2C667%2C669%2C668&amp;amp;env=1%2C2&amp;amp;hor=false&amp;amp;bas=none&amp;amp;chart=normal+bars"&gt;already faster in Python
-3&lt;/a&gt;
-due to things like &lt;code&gt;math.gcd&lt;/code&gt; and &lt;code&gt;functools.lru_cache&lt;/code&gt; being written in C,
-and general performance improvements in the interpreter itself.&lt;/p&gt;
-&lt;h2&gt;And much more&lt;/h2&gt;
-&lt;p&gt;These are only a few of the highlights of the hundreds of changes in this
-release. The full release notes can be found on &lt;a href="https://github.com/sympy/sympy/wiki/Release-Notes-for-1.4"&gt;our
-wiki&lt;/a&gt;. The wiki
-also has the in progress changes for our next release, &lt;a href="https://github.com/sympy/sympy/wiki/Release-Notes-for-1.5"&gt;SymPy
-1.5&lt;/a&gt;, which will be
-released later this year. Our &lt;a href="https://github.com/sympy/sympy-bot"&gt;bot&lt;/a&gt;
-automatically collects release notes from every pull request, meaning SymPy
-releases have very comprehensive and readable release notes pages. If you see
-any mistakes on either page, feel free to edit the wiki and fix them.&lt;/p&gt;&lt;/div&gt;</description>
+      <guid isPermaLink="false">https://ravicharann.github.io/blog//final-report/</guid>
+      <author>Ravicharan (RavicharanN)</author>
+      <title>Ravicharan (RavicharanN): GSoC 2018 Final Report</title>
+      <pubDate>Tue, 14 Aug 2018 00:00:00 GMT</pubDate>
+      <link>https://ravicharann.github.io/blog//final-report/</link>
+      <description>&lt;p&gt;This post summarizes the work done on the Group Theory part of the combinatorics module during 2018 summers as a part of the GSoC programme</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://gxyd.github.io/blogs/DL-for-NLP</guid>
-      <author>Gaurav Dhingra (gxyd)</author>
-      <title>Gaurav Dhingra (gxyd): Deep learning for Natural Language Processing learnings 1</title>
-      <pubDate>Sun, 30 Dec 2018 00:00:00 GMT</pubDate>
-      <link>https://gxyd.github.io/blogs/DL-for-NLP/</link>
-      <description>&lt;p&gt;Conclusion of things done on weekend regarding learning &lt;code class="highlighter-rouge"&gt;word2vec&lt;/code&gt;.&lt;/p&gt;
+      <guid isPermaLink="false">https://sidhantnagpal.github.io/2018/08/gsoc-conclusion</guid>
+      <author>Sidhant Nagpal (sidhantnagpal)</author>
+      <title>Sidhant Nagpal (sidhantnagpal): Concluding GSoC 2018: SymPy</title>
+      <pubDate>Tue, 14 Aug 2018 00:00:00 GMT</pubDate>
+      <link>https://sidhantnagpal.github.io/2018/08/gsoc-conclusion</link>
+      <description>&lt;p&gt;&lt;img src="https://sidhantnagpal.com/files/gsoc-sympy.png" style="width: 75%; height: 75%; float: left; margin-left: 55px;" /&gt;
+&lt;br clear="all" /&gt;&lt;/p&gt;
 
+&lt;p&gt;This post summarises the work that I have done during GSoC for SymPy. The links to the Pull Requests are in chronological order under each header. For following the progress made during GSoC, see my &lt;a href="https://sidhantnagpal.github.io/blog"&gt;weekly posts&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;This summer has been a great learning experience and has helped me get a good exposure of test-driven development. I plan to actively review the work that has went into this project and continue contributing to SymPy. I am grateful to my mentors, &lt;a href="https://github.com/jksuom"&gt;Kalevi&lt;/a&gt; and &lt;a href="https://github.com/asmeurer"&gt;Aaron&lt;/a&gt; for reviewing my work, giving me valuable suggestions, and being readily available for discussions.&lt;/p&gt;
+
+&lt;h2 id="pull-requests"&gt;Pull Requests&lt;/h2&gt;
+
+&lt;p&gt;This is the &lt;a href="https://github.com/sympy/sympy/pulls?q=is%3Apr+author%3Asidhantnagpal+is%3Aclosed"&gt;list&lt;/a&gt; of merged Pull Requests.&lt;/p&gt;
+
+&lt;h4 id="major-additions"&gt;Major Additions&lt;/h4&gt;
 &lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;word2vec&lt;/code&gt; is one of the really good ways to solve the problem of &amp;#8220;word-embedding&amp;#8221;.
-  , developed by researchers at google (Tomas Mikolov and colleagues)&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;GloVe&lt;/code&gt; (Global Vectors for Word Representation) is another really good way to compute
-  word embeddings, developed at Stanford.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;The original research papers (by Tomas Mikolov and colleagues) on word2vec
-  [1]. Efficient Estimation of Word Representation in Vector Spaces
-  [2]. Distributed Representation of words and phrases and their composotionality&lt;/p&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/14725"&gt;sympy/sympy#14725&lt;/a&gt;: Add discrete module, and transforms sub-module including Fast Fourier Transform, Number Theoretic Transform, and include docstring, doctests, unit-tests.&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/14745"&gt;sympy/sympy#14745&lt;/a&gt;: Add convolution sub-module including &lt;code class="highlighter-rouge"&gt;convolution_fft&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;convolution_ntt&lt;/code&gt; and a general method &lt;code class="highlighter-rouge"&gt;convolution&lt;/code&gt; for identifying the type of convolution and handling the cyclic convolution case, and include docstring, doctests, unit-tests.&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/14765"&gt;sympy/sympy#14765&lt;/a&gt;: Implement Walsh Hadamard Transform and include doctests, unit-tests, docstring for the same.&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/14783"&gt;sympy/sympy#14783&lt;/a&gt;: Implement &lt;code class="highlighter-rouge"&gt;convolution_fwht&lt;/code&gt; and add support for keyword &lt;code class="highlighter-rouge"&gt;dyadic&lt;/code&gt; in the general &lt;code class="highlighter-rouge"&gt;convolution&lt;/code&gt; method, and include docstring, doctests, unit-tests.&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/14816"&gt;sympy/sympy#14816&lt;/a&gt;: Add a method &lt;code class="highlighter-rouge"&gt;linrec&lt;/code&gt; which allows evaluation of linear recurrences without obtaining closed form expressions, and include tests for the same.&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/14853"&gt;sympy/sympy#14853&lt;/a&gt;: Implement M&amp;#246;bius Transform using Yate&amp;#8217;s Dynamic Programming method while having &lt;code class="highlighter-rouge"&gt;subset&lt;/code&gt; keyword for flexibility of the implementation, and include docstring, doctests, unit-tests.&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/14878"&gt;sympy/sympy#14878&lt;/a&gt;: Implement subset convolution and include docstring, doctests, unit-tests.&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/14928"&gt;sympy/sympy#14928&lt;/a&gt;: Add covering product in convolutions sub-module and include docstring, doctests, unit-tests.&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/14954"&gt;sympy/sympy#14954&lt;/a&gt;: Add intersecting product in convolutions sub-module and include docstring, doctests, unit-tests.&lt;/li&gt;
+&lt;/ul&gt;
 
-    &lt;p&gt;these two papers on reading sucked the hell out of me (probably because I don&amp;#8217;t
-  have much background in Neural networks).&lt;/p&gt;
+&lt;h4 id="documentation-and-code-refinements"&gt;Documentation and Code Refinements&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/14969"&gt;sympy/sympy#14969&lt;/a&gt;: Improve Sphinx &lt;a href="http://docs.sympy.org/"&gt;docs&lt;/a&gt; for SymPy, use plural module names - &lt;code class="highlighter-rouge"&gt;convolutions&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;recurrences&lt;/code&gt;, refine the documentation for &lt;code class="highlighter-rouge"&gt;discrete&lt;/code&gt; module.&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/14994"&gt;sympy/sympy#14994&lt;/a&gt;: Add reStructuredText file for &lt;code class="highlighter-rouge"&gt;discrete&lt;/code&gt; module for inclusion in Sphinx docs, which can be referred &lt;a href="http://docs.sympy.org/dev/modules/discrete.html"&gt;here&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/15025"&gt;sympy/sympy#15025&lt;/a&gt;: Refine &lt;code class="highlighter-rouge"&gt;discrete&lt;/code&gt; module to fix tests using floats instead of Rationals, adding warning about sequence size for &lt;code class="highlighter-rouge"&gt;fft&lt;/code&gt; and other improvements.&lt;/li&gt;
+&lt;/ul&gt;
 
-    &lt;p&gt;Rather I found myself having to go through the paper
-  [3]. word2vec explained: Deriving Mikolo et al&amp;#8217;s negative sampling word embedding
-      method&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;I&amp;#8217;d a go through the lecture 7 (skipped the lectures 4, 5 and 6), to get an idea
-  of what are deep learning frameworks like Tensorflow (lecuture 7 is an introduction to it).
-  It gives a basic idea of why to use Tensorflow and performing basic operations with
-  it.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;All in all this weekend was all focused on things related to NLP stuff. I am hopeful
-  that in the next year I might be able to take a few more step towards learning
-  the NLP stuff.&lt;/p&gt;
-  &lt;/li&gt;
+&lt;h4 id="additional-improvements"&gt;Additional Improvements&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/14712"&gt;sympy/sympy#14712&lt;/a&gt;: Add &lt;code class="highlighter-rouge"&gt;.rewrite(exp)&lt;/code&gt; capability for instances of &lt;code class="highlighter-rouge"&gt;Pow&lt;/code&gt; and fix bugs in &lt;code class="highlighter-rouge"&gt;solvers&lt;/code&gt; module.&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/14907"&gt;sympy/sympy#14907&lt;/a&gt;: Fix exception handling for factorial modulo and refine the signature for general &lt;code class="highlighter-rouge"&gt;convolution&lt;/code&gt; method.&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy-bot/pull/18"&gt;sympy/sympy-bot#18&lt;/a&gt;: Fix the issue of incorrect links being referred in wiki by explicitly specifying the links instead of using relative paths.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id="future-work"&gt;Future Work&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Adding a user-facing public method that internally calls &lt;code class="highlighter-rouge"&gt;discrete.recurrences.linrec&lt;/code&gt; and possibly extending it for different types of recurrences as well.&lt;/li&gt;
+  &lt;li&gt;Making methods &lt;code class="highlighter-rouge"&gt;fft&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;convolution_fft&lt;/code&gt; efficient for both symbolic and numeric variants, as some discussion and benchmarking has been done for it and there is some work done by &lt;a href="https://github.com/cbm755"&gt;Colin&lt;/a&gt; for implementing a &lt;code class="highlighter-rouge"&gt;ComplexFloat&lt;/code&gt; class in &lt;a href="https://github.com/sympy/sympy/pull/12192"&gt;sympy/sympy#12192&lt;/a&gt; which would be very helpful for the same.&lt;/li&gt;
 &lt;/ul&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://asmeurer.com/blog/posts/github-cuts/</guid>
-      <author>Aaron Meurer (asmeurer)</author>
-      <title>Aaron Meurer (asmeurer): GitHub Cuts</title>
-      <pubDate>Tue, 06 Nov 2018 22:54:21 GMT</pubDate>
-      <link>https://asmeurer.com/blog/posts/github-cuts/</link>
-      <description>&lt;div&gt;&lt;p&gt;GitHub recently announced its &lt;a href="https://blog.github.com/2018-08-28-announcing-paper-cuts/"&gt;paper cuts
-initiative&lt;/a&gt; to fix
-minor issues that make things more difficult for GitHub users. As someone who
-spends most of his day on &lt;a href="https://github.com"&gt;github.com&lt;/a&gt;, this initiative is
-great, as these small cuts can quickly add up to a painful experience.&lt;/p&gt;
-&lt;p&gt;The initiative has already made some great fixes, such as &lt;a href="https://blog.github.com/changelog/2018-07-31-unselectable-diff-markers/"&gt;making the diff
-markers
-unselectable&lt;/a&gt;
-and
-&lt;a href="https://blog.github.com/changelog/2018-10-08-issue-and-pull-request-hovercards/"&gt;hovercards&lt;/a&gt;.
-Small changes like these are usually quite easy for GitHub to do, but they
-make a huge difference to those of use who use GitHub every day.&lt;/p&gt;
-&lt;p&gt;I &lt;a href="https://twitter.com/asmeurer/status/1034528642389266432"&gt;recently asked&lt;/a&gt;
-how these cuts could be reported to GitHub for fixing, but got no response. So
-I am writing this blog post.&lt;/p&gt;
-&lt;p&gt;To be very clear: I think that on the whole GitHub is great and they are doing
-a great job. And it's still better than the alternatives (to put things in
-perspective, I recently spent &lt;a href="https://twitter.com/asmeurer/status/1029158262069899266"&gt;half an
-hour&lt;/a&gt; trying to
-figure out how to change my password in BitBucket, and GitLab can't even keep
-me logged in between sessions). GitHub has and continues to revolutionize the
-open source ecosystem, and is still the best place to host an open source
-project.&lt;/p&gt;
-&lt;p&gt;But since GitHub did
-&lt;a href="https://blog.github.com/2018-08-28-announcing-paper-cuts/"&gt;ask&lt;/a&gt; what sorts of
-changes they want to see, I'm providing a list. In this post I'm trying to
-only ask about things that are small changes (though I realize many won't be
-as easy to fix as they may appear from the outside, and I readily admit that I
-am not a web developer).&lt;/p&gt;
-&lt;p&gt;These are just the things that have bothered me, personally. Other people use
-GitHub differently and no doubt have their own pain points. For instance, I
-have no suggestions about the project boards feature of GitHub because I don't
-use it. If you are also a GitHub user and have your own pain points feel free
-to use the comment box below (though I have no idea if GitHub will actually
-see them).&lt;/p&gt;
-&lt;p&gt;If you work for GitHub and have any questions, feel free to comment below, or
-&lt;a href="mailto:asmeurer@gmail.com"&gt;email me&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;In no particular order:&lt;/p&gt;
-&lt;h3&gt;Issues&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Allow anyone to add labels to issues.&lt;/strong&gt; At the very least, allow the
-person who opened the issue to add labels.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;The new issue transfer ability is great, but please &lt;strong&gt;make it require only
-push access, not admin access.&lt;/strong&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Remove the automatic hiding of comments when there are too many.&lt;/strong&gt; I
-understand this is done for technical reasons, but it breaks
-Cmd-F/scrolling through the page to find comments. Often I go to an issue
-trying to find an old comment and can't because buried in the comments is a
-button I have to press to actually show the comment (it's even worse when
-you have to find and press the button multiple times).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Better indication for cross-referenced pull requests.&lt;/strong&gt; I really don't
-know how to fix this, only that it is a problem. It happens all the time
-that a new contributor comes to a SymPy issue and asks if it has been
-worked on yet. They generally do not seem to notice the cross-referenced
-pull requests in the list.
-&lt;a href="https://github.com/sympy/sympy/issues/14943"&gt;Here&lt;/a&gt; is an example of what
-I'm talking about.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Indicate better if a cross-referenced pull request would close an
-issue.&lt;/strong&gt; Preferably with text, not just an icon.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;HTML pull request/issue templates.&lt;/strong&gt; I don't know if this counts as a
-"cut", as it isn't a simple fix. Right now, many projects use pull
-requests/new issue templates, but it is not very user friendly. The problem
-is that the whole thing is done in plain text, often with the template text
-as an HTML comment to prevent it from appearing in the final issue text.
-Even for me, I often find this quite difficult to read through, but for new
-contributors, we often find that they don't read it at all. Sure there's no
-way to force people to read, but if we could instead create a very simple
-HTML form for people to fill out, it would be much more friendly, even to
-experienced people like myself.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Fix the back button in Chrome.&lt;/strong&gt; I don't know if this is something that
-GitHub can fix, and I also do not know how things work in other browsers. I
-use Chrome on macOS. Often, when I click the "back" button and it takes me
-back to an issue page, the contents of the page are out-of-date (the newest
-comments or commits do not appear). It's often even more out-of-date than
-it was when I left the page. I have to reload the page to get the latest
-content.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Allow Markdown formatting in issue titles.&lt;/strong&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Show people's names next to comments as "Real Name (@username)".&lt;/strong&gt; In
-general, GitHub should be emphasizing people's display names rather than
-their usernames.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Remember my selection for the "sort" setting in the issues list.&lt;/strong&gt; I'd
-love to have issues/pull requests sort by "most recently updated" by
-default, so that I don't miss updates to old issues/pull requests.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Make advanced search filters more accessible.&lt;/strong&gt; They should autofill,
-similar to how Gmail or even GitLab search works (yes, please steal all
-the good ideas from GitLab; they already stole all their good ideas from
-you).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Tone down the reaction emojis.&lt;/strong&gt; Maybe this ship has sailed, but
-reaction emojis are way too unprofessional for some projects.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Copy/paste text as Markdown.&lt;/strong&gt; For example, copying "&lt;strong&gt;bold&lt;/strong&gt;" and
-pasting it into the comment box would paste &lt;code&gt;**bold**&lt;/code&gt;. Another idea that
-you can steal from GitLab.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Strike out #12345 issue links when the issue/PR is closed/merged&lt;/strong&gt;
-(like &lt;strike&gt;#12345&lt;/strike&gt;).&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Pull requests&lt;/h3&gt;
-&lt;ol start="15"&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Add a button that automatically merges a pull request as soon as all the
-CI checks pass.&lt;/strong&gt; Any additional commits pushed to the branch in the
-interim would cancel it, and it should also be cancellable by someone else
-with push access or the PR author.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Add some way to disable the automatic hiding of large diffs.&lt;/strong&gt; This
-breaks Cmd-F on the page, and makes it harder to scroll through the pull
-request to find what you are looking for (typically the most important
-changes are the ones that are hidden!).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Include all issue/PR authors in the authors search on the pull request
-list page.&lt;/strong&gt; Right now it only lists people with push access. But I
-generally can't remember people's GitHub usernames, and autofilling based
-on all authors would be very helpful.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Better contextual guesses for issue autofilling (after typing &lt;code&gt;#&lt;/code&gt;).&lt;/strong&gt;
-For instance, if an issue has already been referenced or cross-referenced,
-it should appear near the top of the list. We have almost &lt;a href="https://github.com/sympy/sympy/issues"&gt;3000 open
-issues&lt;/a&gt; in SymPy, and the current
-issue numbers are 5-digits long, so referencing an issue purely by number
-is very error prone.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Auto-update edited comments.&lt;/strong&gt; Context: SymPy uses a
-&lt;a href="https://github.com/sympy/sympy-bot"&gt;bot&lt;/a&gt; that comments on every pull
-request, requiring a release notes entry to be added to the description.
-This works quite well, but to prevent the bot from spamming, we have it
-comment only once, and edit its comment on any further checks. However,
-these edits do not automatically update, so people have to manually reload
-the page to see them.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Don't hide full commit messages by default in the commits view.&lt;/strong&gt; It
-would be better to encourage people to write good commit messages.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Make issue cross-references in pull request titles work.&lt;/strong&gt; I'd rather
-people didn't put issue numbers in pull request titles but they do it
-anyway, so it would be nice if they actually worked as links.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Allow me to comment on lines that aren't visible by default.&lt;/strong&gt; That is,
-lines that you have to click the "expand" icon above or below the line
-numbers to access. As an example, this can be useful to point out a line
-that should have been changed but wasn't.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Copying code from a diff that includes lines that aren't visible by
-default includes an extra space to the left for those lines.&lt;/strong&gt; This is a
-straight up bug. Probably fixing the previous point would also fix this :)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Make searches include text from the pull request diff.&lt;/strong&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;When a diff indents a line color the whitespace to the left of the
-line.&lt;/strong&gt; (see
-&lt;a href="https://twitter.com/asmeurer/status/740611970714480640"&gt;this&lt;/a&gt;)&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Pull requests can show commits that are already in master.&lt;/strong&gt; For
-example, if someone makes pull request B based off of pull request A and
-then A gets merged, B will still show the commits from A. This has been a
-bug forever.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Make the "jump to file or symbol" popdown collapsible.&lt;/strong&gt; Specifically
-what I mean is I want to be able to show just the files, without any
-symbols. For large pull requests, it is very difficult to use this popdown
-if there are hundreds of symbols. I typically want to just jump to a
-specific file.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;The status check on the favicon goes away when you switch to the diff
-tab.&lt;/strong&gt; Kudos to Marius Gedminas for &lt;a href="https://twitter.com/mgedmin/status/1058381090694553601"&gt;pointing this
-out&lt;/a&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/15280#issuecomment-426795606"&gt;Apparently&lt;/a&gt;
-status checks that use the GitHub Apps API are forced to link into the
-checks tab.&lt;/strong&gt; The checks tab is useless if no information is actually
-published to it. It would be better if it could link straight to the
-external site, like is done with oauth integrations.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Make it easier to copy someone's username from the pull request page.&lt;/strong&gt;
-I generally do this to &lt;code&gt;git remote add&lt;/code&gt; them (using
-&lt;a href="https://github.com/github/hub"&gt;hub&lt;/a&gt;). If I try to select their username
-from a comment, it's a link, which makes it hard to select. I generally
-copy it from the blue text at the top "&lt;em&gt;user&lt;/em&gt; wants to merge &lt;em&gt;n&lt;/em&gt; commits
-from &lt;code&gt;sympy:master&lt;/code&gt; from &lt;code&gt;user:branch&lt;/code&gt;". If it were easier to select
-"user" or "branch" from that box (say, by double clicking), that would be
-helpful.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Change the "resolve conversation" UI.&lt;/strong&gt; I keep pressing it on accident
-because it's where I expect the "new comment" button to be.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Reviews&lt;/h3&gt;
-&lt;p&gt;I wrote a &lt;a href="https://www.asmeurer.com/blog/posts/github-reviews-gripes/"&gt;whole
-post&lt;/a&gt; about the
-reviews feature when it came out. Not much has changed since then (actually,
-it has gotten worse). In short, the feature doesn't work like I would like it
-too, and I find the default behavior of deferred comments to be extremely
-detrimental. If there were a way to completely disable reviews (for myself, I
-don't care about other people using the feature), I would.&lt;/p&gt;
-&lt;p&gt;See my blog post for full details on why I think the reviews feature is broken
-and actually makes things worse, not better than before. I've summarized a few
-things that could change below.&lt;/p&gt;
-&lt;ol start="32"&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Make reviews non-deferred by default.&lt;/strong&gt; This is the biggest thing. If I
-had to pick only a single item on this page to be changed, it would be
-this. The issue is if I start a review and walk away from it, but forget
-to "finalize" it with a review status, the review is never actually seen
-by anyone. The simplest way to fix this would be to simply make partial
-reviews public.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Make Cmd-Enter default to immediate comment.&lt;/strong&gt; Barring the above change,
-Cmd-Enter on a pull request line comment should default to immediate
-comment, not deferred (review) comment. The problem with the
-Cmd-Shift-Enter shortcut is that it is inconsistent: on a normal comment,
-it closes the pull request, and on a reply comment, it does nothing. I
-shouldn't have to check what "comment context" I am in to figure out what
-keyboard shortcut to use. The worst part is if you accidentally start a
-review, it's a pain in the ass to undo that and just post a normal
-comment. The simplest way to fix this would be to swap the current meaning
-of Cmd-Enter and Cmd-Shift-Enter for line comments (and no, this wouldn't
-be a backwards incompatible change, it would be a regression fix;
-Cmd-Enter &lt;em&gt;used&lt;/em&gt; to do the right thing).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Allow reviewing your own pull request.&lt;/strong&gt; There's no reason to disallow
-this, and it would often be quite useful to, for instance, mark a work in
-progress PR as such with a "request changes" review. Obviously
-self-reviews would be excluded from any required reviews.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Unhide the reviews box.&lt;/strong&gt; It should just be the same box as the comment
-box, unstead of buried on the diff tab (see my &lt;a href="https://www.asmeurer.com/blog/posts/github-reviews-gripes/"&gt;blog
-post&lt;/a&gt;).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Show review status in the pull request list as a red X or green check.&lt;/strong&gt;
-This would make it easier to see which pull requests have reviews.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Allow new commits to invalidate reviews.&lt;/strong&gt; That way they work the same
-way as any other status check. (I see that this is now an option for
-required reviews, which is new since my original blog post, but it still
-doesn't affect the status as reported on the pull requests list).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Allow requiring zero negative reviews to merge (but not necessarily any
-positive reviews)&lt;/strong&gt;. Requiring a positive review is pointless. The person
-merging can just add one real quick before they merge, but it is
-unnecessary extra work. On the other hand allowing people with push access
-to block a merge with a negative review would be very useful.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Web editor&lt;/h3&gt;
-&lt;ol start="39"&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;The web editor seems to have a search function, but I can't get it to
-actually work.&lt;/strong&gt; Half the time Cmd-F pops open the browser search, which
-doesn't find text that isn't on screen. And when I press Cmd-G to actually
-do the search, it doesn't work (and there are no buttons to perform the
-search either).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Add basic syntax testing in the web editor for common languages to catch
-basic mistakes.&lt;/strong&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Mobile site&lt;/h3&gt;
-&lt;ol start="41"&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Please make the mobile site work with iOS 10.&lt;/strong&gt; I don't see any reason
-why simple things like buttons (like the merge button or the comment
-button) shouldn't work on a slightly older browser. No, I am not a web
-developer, but I do use my phone a lot and I've noticed that literally
-every other website works just fine on it.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Add a way to disable the mobile site permanently.&lt;/strong&gt; For the most part,
-the mobile site is useless (see below). If you aren't going to put full
-development effort into it, allow me to disable it permanently so that
-every time I visit &lt;a href="https://github.com"&gt;github.com&lt;/a&gt; on my phone it goes to
-the desktop site.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Seeing as how the site (mobile or not) is almost completely unusable on every
-mobile device I own, it's hard to list other things here, but based on back
-when it actually worked, these are some of the things that annoyed me the
-most. Basically, I have found that virtually every time I go to GitHub to do
-anything on mobile, I have to switch to desktop mode to actually do what I
-want.&lt;/p&gt;
-&lt;p&gt;My apologies if any of these actually work now: as I said,
-&lt;a href="https://github.com"&gt;github.com&lt;/a&gt; doesn't actually work at all on my phone.&lt;/p&gt;
-&lt;ol start="43"&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Cannot search issues on mobile.&lt;/strong&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Cannot make a line comment that &lt;em&gt;isn't&lt;/em&gt; a review on mobile.&lt;/strong&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Cannot view lines beyond the default diff in pull requests on mobile.&lt;/strong&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Show more than 2 lines of the README and 0 lines of the code by default
-on project pages.&lt;/strong&gt; Yes mobile screens are small but it's also not hard to
-scroll on them.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Support Jupyter notebook rendering on mobile.&lt;/strong&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Files view&lt;/h3&gt;
-&lt;ol start="48"&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;GitHub needs a better default color theme for syntax highlighting.&lt;/strong&gt;
-Most of the colors are very similar to one another and hard to
-differentiate. Also things like strings are black, even though one of the
-most useful aspects of syntax highlighting generally is to indicate
-whether something is in a string or not.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Add MathJax support to markdown files.&lt;/strong&gt; This would be amazingly useful
-for SymPy, as well as many scientific software projects. Right now if you
-want this you have to use a Jupyter notebook. MathJax support in
-issue/pull request comments would be awesome as well, though I'm not
-holding out for that.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Add "display source" button for markdown, ReST, etc.&lt;/strong&gt; I mean the button
-that is already there for Jupyter notebooks. Right now you have to view
-markdown and ReST files "raw" or edit the file to see their source.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Add a link to the pull request in the blame view.&lt;/strong&gt; Usually I want to
-find the pull request that produced a change, not just the commit.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Wiki&lt;/h3&gt;
-&lt;ol start="52"&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;The wikis used to support LaTeX math with MathJax. It would be great if
-this were re-added.&lt;/strong&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;The ability to set push permissions for the wiki separately from the
-repo it is attached to, or otherwise create an oauth token that can only
-push to the wiki would be useful.&lt;/strong&gt; Context: for SymPy, we use a
-&lt;a href="https://github.com/sympy/sympy-bot"&gt;bot&lt;/a&gt; that automatically updates our
-&lt;a href="https://github.com/sympy/sympy/wiki/Release-Notes"&gt;release notes&lt;/a&gt; on our
-wiki. It works quite well, but the only way it can push to the wiki is if
-we give it push access to the full repo.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Notification emails&lt;/h3&gt;
-&lt;ol start="54"&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Don't clobber special emails/email headers.&lt;/strong&gt; GitHub adds special emails
-like &lt;a href="mailto:author@noreply.github.com"&gt;author@noreply.github.com&lt;/a&gt; and
-&lt;a href="mailto:mention@noreply.github.com"&gt;mention@noreply.github.com&lt;/a&gt; to email
-notifications based on how the notification was triggered. This is useful,
-as I can create an email filter for
-&lt;a href="mailto:author@noreply.github.com"&gt;author@noreply.github.com&lt;/a&gt; for
-notifications on issues and pull requests created by me. The bad news is,
-&lt;a href="mailto:mention@noreply.github.com"&gt;mention@noreply.github.com&lt;/a&gt;, which is
-added when I am @mentioned, clobbers
-&lt;a href="mailto:author@noreply.github.com"&gt;author@noreply.github.com&lt;/a&gt;, so that it
-doesn't appear anymore. In other words, as soon as someone @mentions me in
-one of my issues, I become &lt;em&gt;less&lt;/em&gt; likely to see it, because it no longer
-gets my label (I get @mentioned on &lt;em&gt;a lot&lt;/em&gt; of issues and don't have the
-ability to read all of my notification emails). Ditto for the
-&lt;code&gt;X-GitHub-Reason&lt;/code&gt; email headers.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Readd the "view issue" links in Gmail.&lt;/strong&gt; (I forgot what these are
-called). GitHub notification emails used to have these useful "view issue"
-buttons that showed up on the right in the email list in Gmail, but they
-were removed for some reason.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;API&lt;/h3&gt;
-&lt;ol start="56"&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Make the requests in the API docs actually return what they show in the
-docs.&lt;/strong&gt; This means the &lt;a href="https://github.com/octocat/Hello-World/"&gt;example
-repo&lt;/a&gt; should have actual example
-issues corresponding to what is shown in the docs.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Allow giving deploy key access to just one branch.&lt;/strong&gt; That way I can have
-a deploy key for &lt;code&gt;gh-pages&lt;/code&gt; and minimize the attack surface that the
-existence of that key produces. I think everyone would agree that more
-fine-grained permissions throughout the API would be nice, but this is one
-that would benefit me personally, specifically for my project
-&lt;a href="https://drdoctr.github.io/"&gt;doctr&lt;/a&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;GitHub Pages&lt;/h3&gt;
-&lt;p&gt;GitHub pages is one of the best features of GitHub, and in fact, this very
-blog is hosted on it. Very few complaints here, because for the most part, it
-"just works".&lt;/p&gt;
-&lt;ol start="58"&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href="https://twitter.com/asmeurer/status/831962312122761216"&gt;&lt;strong&gt;Moar themes.&lt;/strong&gt;&lt;/a&gt;
-Also it's awesome that you can use any GitHub repo as a theme now, but it
-turns out most random themes you find around GitHub don't actually work
-very well.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;The steps to add HTTPS to an existing GitHub pages custom domain are a
-bit confusing.&lt;/strong&gt;. This took us a while to figure out for
-&lt;a href="https://sympy.org"&gt;sympy.org&lt;/a&gt;. To get things to work, you have to trigger
-GitHub to issue a cert for the domain. But the UI to issue the cert is to
-paste the domain into the box. So if the domain is already there but it
-doesn't work, you have to re-enter it. Also if you want both www and the
-apex domain to be HTTPS you have to enter them both in the box to trigger
-GitHub to issue a cert. This is primarily a UX issue. See
-&lt;a href="https://github.com/sympy/sympy.github.com/issues/105#issuecomment-415899934"&gt;https://github.com/sympy/sympy.github.com/issues/105#issuecomment-415899934&lt;/a&gt;.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Settings&lt;/h3&gt;
-&lt;ol start="60"&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Automatically protected branches make the branch difficult to delete
-when you are done with it.&lt;/strong&gt; My use-case is to create a branch for a
-release, which I want to protect, but I also want to delete the branch
-once it is merged. I can protect the branch automatically pretty easily,
-but then I have to go and delete the protection rule when it's merged to
-delete it. There are several ways this could be fixed. For instance, you
-could add a rule to allow protected branches to be deleted if they are
-up-to-date with default branch.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Add a way to disable the ability for non-admins to create new branches
-on a repo.&lt;/strong&gt; We want all of our pull requests to come from forks. Branches
-in the repo just create confusion, for instance, they appear whenever
-someone clones the repository.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Related to the previous point, make pull request reverts come from
-forks.&lt;/strong&gt; Right now when someone uses the revert pull request button, it
-creates a new branch in the same repo, but it would be better if the
-branch were made in the person's fork.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Allow me to enable branch protection by default for new repos.&lt;/strong&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Allow me to enable branch protection by default on new branches.&lt;/strong&gt; This
-is more important than the previous one because of the feature that lets
-people push to your branch on a pull request (which is a great feature by
-the way).&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Clicking a team name in the settings should default to the "members"
-tab.&lt;/strong&gt; I don't understand why GitHub has a non-open "discussions" feature,
-but I find it to be completely useless, and generally see such things as
-harmful for open source.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Suggest people to add push access to.&lt;/strong&gt; I don't necessarily mean
-passively (though that could be interesting too), but I mean in the page
-to add someone, it would be nice if the popup suggested or indicated which
-people had contributed the project before, since just searching for a name
-searches all of GitHub, and I don't want to accidentally give access to
-the wrong person.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Profiles&lt;/h3&gt;
-&lt;ol start="67"&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Stop trying to make profile pages look "cute" with randomly highlighted
-pull requests.&lt;/strong&gt; GitHub should have learned by now that profile pages
-matter a lot (whether people want them to or not), and there can be
-unintended consequences to the things that are put on them.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Explain what the axes actually mean in the new "activity overview".&lt;/strong&gt;
-I'm referring to
-&lt;a href="https://twitter.com/asmeurer/status/1033141923630874624"&gt;this&lt;/a&gt; (it's
-still in beta and you have to manually enable it on your profile page).
-Personally I'm leaving the feature off because I don't like being
-metricized/gamified, but if you're going to have it, at least include some
-transparency.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Releases&lt;/h3&gt;
-&lt;ol start="69"&gt;
-&lt;li&gt;&lt;strong&gt;Allow hiding the "source code (zip)" and "source code (tar.gz)" files in
-a release.&lt;/strong&gt; We upload our actual release files (generated by &lt;code&gt;setup.py&lt;/code&gt;)
-to the GitHub release. We want people to download those, not snapshots of
-the repo.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;Miscellaneous&lt;/h3&gt;
-&lt;ol start="70"&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;The repository search function doesn't support partial matches.&lt;/strong&gt; This
-is annoying for &lt;a href="https://github.com/conda-forge/"&gt;conda-forge&lt;/a&gt;. For
-instance, if I &lt;a href="https://github.com/conda-forge/?utf8=%E2%9C%93&amp;amp;q=png&amp;amp;type=&amp;amp;language="&gt;search for
-"png"&lt;/a&gt;
-it doesn't show the
-&lt;a href="https://github.com/conda-forge/libpng-feedstock"&gt;libpng-feedstock&lt;/a&gt; repo.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Show commit history as a graph.&lt;/strong&gt; Like &lt;code&gt;git log --graph&lt;/code&gt;. This would go
-a &lt;em&gt;long&lt;/em&gt; way to helping new users understand git. When I first started
-with git, understanding the history as a graph was a major part of me
-finally grokking how it worked.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Bring back the old "fork" UI.&lt;/strong&gt; The one that just had icons for all the
-repos, and the icons didn't go away or become harder to find if you
-already had a fork. Some of us use the "fork" button to go to our
-pre-existing forks, not just to perform a fork action. This was recently
-changed and now it's better than it was, but I still don't see why
-existing forks need to be harder to find, visually, than nonexisting ones.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Provide a more official way to request fixes to these cuts.&lt;/strong&gt; I often
-ask on Twitter, but get no response. Preferably something public so that
-others could vote on them (but I understand if you don't want too much
-bikeshedding).&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-conclusion</guid>
-      <author>Yathartha Joshi (Yathartha22)</author>
-      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - A Great Summer with SymPy</title>
-      <pubDate>Wed, 22 Aug 2018 00:00:00 GMT</pubDate>
-      <link>https://Yathartha22.github.io//gsoc-conclusion</link>
-      <description>&lt;p&gt;Today&amp;#8217;s day started with receiving an email from Google. Here is a snapshot:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src="https://yathartha22.github.io/public/gsoc4.png" /&gt;&lt;/p&gt;
-
-&lt;p&gt;This left a big smile on my face &amp;#128516;&lt;/p&gt;
-
-&lt;p&gt;The past 3-4 months have been amazing and I have learnt a lot during the course of time. I would like to thank &lt;a href="https://github.com/asmeurer"&gt;Aaron&lt;/a&gt;, &lt;a href="https://github.com/certik"&gt;Ondrej&lt;/a&gt; and the &lt;a href="http://sympy.org"&gt;SymPy&lt;/a&gt; team for providing me with this opportunity, my mentor &lt;a href="https://github.com/aktech"&gt;Amit Kumar&lt;/a&gt; for guiding me all through the phases and a special thanks to &lt;a href="https://github.com/smichr"&gt;Chris&lt;/a&gt; who was not officially my mentor but was present all the time for reviweing my work and helping me complete the project successfully.&lt;/p&gt;
-
-&lt;p&gt;Here is what Amit has to say:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src="https://yathartha22.github.io/public/gsoc5.png" /&gt;&lt;/p&gt;
-
-&lt;p&gt;Though GSoC is completed I will be continuing my contribution in the developement of the software.&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://nkhlpappu.wordpress.com/?p=17</guid>
@@ -856,61 +100,26 @@ bikeshedding).&lt;/p&gt;
 &lt;p&gt;Weekly Blog link: &lt;a href="https://nkhlpappu.wordpress.com/"&gt;https://nkhlpappu.wordpress.com/&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-12</guid>
-      <author>Yathartha Joshi (Yathartha22)</author>
-      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 12 - Continuing with logarithmic solver and implementing lambert solver Part-II</title>
-      <pubDate>Thu, 09 Aug 2018 00:00:00 GMT</pubDate>
-      <link>https://Yathartha22.github.io//gsoc-week-12</link>
-      <description>&lt;p&gt;This week I continued the work with log solver and lambert solver. The log solver implementation is almost done with just few check for assumptions. Symbolic logarithmic equations should be dealt with proper assumptions. Such equations would give unsolved instance of &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt; otherwise.&lt;/p&gt;
+      <guid isPermaLink="false">https://sidhantnagpal.github.io/2018/08/gsoc-week12</guid>
+      <author>Sidhant Nagpal (sidhantnagpal)</author>
+      <title>Sidhant Nagpal (sidhantnagpal): GSoC 2018: SymPy - Week 12</title>
+      <pubDate>Tue, 07 Aug 2018 00:00:00 GMT</pubDate>
+      <link>https://sidhantnagpal.github.io/2018/08/gsoc-week12</link>
+      <description>&lt;p&gt;&lt;img src="https://sidhantnagpal.com/files/gsoc-sympy.png" style="width: 75%; height: 75%; float: left; margin-left: 55px;" /&gt;
+&lt;br clear="all" /&gt;&lt;/p&gt;
 
-&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'a, b, x'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;solveset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Reals&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;ConditionSet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Eq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Reals&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="c"&gt;# because the bases (here, `a and b`) should have a positive value &amp;gt; 0)&lt;/span&gt;
+&lt;p&gt;The final week of Coding Period has completed.&lt;/p&gt;
 
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'a b'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;positive&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;solveset&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Reals&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;))}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;This week, the work was mainly concerned with the documentation and refinements in the &lt;code class="highlighter-rouge"&gt;discrete&lt;/code&gt; module.
+I started by opening PR &lt;a href="https://github.com/sympy/sympy/pull/14994"&gt;#14994&lt;/a&gt; to update Sphinx docs for SymPy.
+&lt;a href="https://github.com/jksuom"&gt;Kalevi&lt;/a&gt; and &lt;a href="https://github.com/asmeurer"&gt;Aaron&lt;/a&gt; were kind enough to review the PR and help refine it for the final merge. The documentation for &lt;code class="highlighter-rouge"&gt;discrete&lt;/code&gt; module is now part of the SymPy docs and can be referred &lt;a href="http://docs.sympy.org/dev/modules/discrete.html"&gt;here&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;Discussions with Amit and Chris suggested that there should be some other way to handle vanilla symbols. There should be atleast a &lt;code class="highlighter-rouge"&gt;ValueError&lt;/code&gt; or something else that would tell the user why this cannot be solved. Chris suggested of returning a &lt;code class="highlighter-rouge"&gt;Piecewise&lt;/code&gt; as  object for this scenario. Something like:&lt;/p&gt;
+&lt;p&gt;Late this week, I opened PR &lt;a href="https://github.com/sympy/sympy/pull/15025"&gt;#15025&lt;/a&gt; for improvements in the &lt;code class="highlighter-rouge"&gt;discrete&lt;/code&gt; module.
+&lt;a href="https://github.com/cbm755"&gt;Colin&lt;/a&gt; helped fix accidental floats in unit tests (which should have been Rationals). After the review, the PR was merged successfully.&lt;/p&gt;
 
-&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;cond&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;True&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;fuzzy_and&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Eq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;im&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;Eq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;im&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;g&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)])&lt;/span&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
-&lt;span class="n"&gt;Piecewise&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;solutions&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cond&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;ConditionSet&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;........&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;  &lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Future work would include - addition of a user-facing public method for &lt;code class="highlighter-rouge"&gt;linrec&lt;/code&gt; and making methods &lt;code class="highlighter-rouge"&gt;fft&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;convolution_fft&lt;/code&gt; efficient for both symbolic and numeric variants, as some discussion and benchmarking has been done for it and there is some work done by &lt;a href="https://github.com/cbm755"&gt;Colin&lt;/a&gt; for &lt;code class="highlighter-rouge"&gt;ComplexFloat&lt;/code&gt; class in PR &lt;a href="https://github.com/sympy/sympy/pull/12192"&gt;#12192&lt;/a&gt; which would be helpful for the same.&lt;/p&gt;
 
-&lt;p&gt;Using Piecewise was not the greatest of the option as:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Though the assumptions were checked but it didn&amp;#8217;t provided information to the user that why did it not solved.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Also using &lt;code class="highlighter-rouge"&gt;Piecewise&lt;/code&gt; had some problem causing recursion error, though it could be solved but it would make things unncessarily complicated.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Also &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; is not made to return objects other than &lt;code class="highlighter-rouge"&gt;Sets&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;So we switched to a completely different approach. We tried using a different type of &lt;code class="highlighter-rouge"&gt;ConditionSet&lt;/code&gt;: providing the information within it that is necessary for the equation to be solved. The approach was: &lt;em&gt;Force the equation to get solved but return a ConditionSet (a different than ususal) with the required assumptions, like:&lt;/em&gt;
-&lt;code class="highlighter-rouge"&gt;ConditionSet(x, And(a_base&amp;gt;0, b_base&amp;gt;0, Eq(im(a_exp), 0), Eq((im(b_exp), 0))), {solutions})&lt;/code&gt;. So now the above equation would return solutions something like:
-&lt;code class="highlighter-rouge"&gt;ConditionSet(x, (a &amp;gt; 0) &amp;amp; (b &amp;gt; 0), Intersection(Reals, {log(b)/(log(a) - log(b))}))&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;So this approach has been applied in the &lt;a href="https://github.com/sympy/sympy/pull/14792"&gt;PR&lt;/a&gt; as of now, only a few minor changes needs to be done. I will try to finish this by the end of the week.&lt;/p&gt;
-
-&lt;p&gt;Apart from this some work has been done in &lt;code class="highlighter-rouge"&gt;lambert solver&lt;/code&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Used &lt;code class="highlighter-rouge"&gt;_is_lambert&lt;/code&gt; to identify lambert type equations.&lt;/li&gt;
-  &lt;li&gt;Implemented bivariate solver (I will add a commit for this soon).&lt;/li&gt;
-  &lt;li&gt;Ran &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt;&amp;#8217;s tests, to get an idea of the extent to which &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; would handle such equations.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;What&amp;#8217;s next:&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;I will try to wrap up the work of both the PR&amp;#8217;s. Lambert solver PR would need a bit more time for reviewing but nevertheless I will be continuing its work post GSoC. Implementing these two solvers will make &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; fully functional to handle transcendental equations which is a major part of my GSoC propsal. There will be a few minor things left that I will try to finish post GSoC. Also since this is the last week for the coding period, I will be needing to submit a final report of my work, I will complete and submit it before the deadline.&lt;/p&gt;</description>
+&lt;p&gt;Looking forward to the concluding phase, where I will be wrapping up GSoC and preparing the report for the final evaluation.&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://nkhlpappu.wordpress.com/?p=15</guid>
@@ -947,32 +156,40 @@ bikeshedding).&lt;/p&gt;
       <description>&lt;div dir="ltr" style="text-align: left;"&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;Hello everyone. Here is the brief progress of Rubi&amp;nbsp;module in the 11th week of GSoC period.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;The main PR, which contains the major changes of this GSoC period was merged this week. I had not run pyflakes on it. I ran pyflakes on the main PR and fixed undefined issues.&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;This week was mainly spent to test code generation. Initially, there was some error in generating the code. An &lt;a href="https://github.com/HPAC/matchpy/issues/33"&gt;issue&lt;/a&gt; was opened in this regard. I tried various other structure of Rubi to get it working.&amp;nbsp; Currently, patterns are not matched correctly. I have opened a &lt;a href="https://github.com/sympy/sympy/pull/14988"&gt;PR&lt;/a&gt; for this. We are still trying to get the code generator working so that we can reduce the loading time of rules. Now, the loading time of all rules is around 10 minutes.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;/div&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-11</guid>
-      <author>Yathartha Joshi (Yathartha22)</author>
-      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 11 - Continuing with logarithmic solver and implementing lambert solver</title>
-      <pubDate>Sun, 29 Jul 2018 00:00:00 GMT</pubDate>
-      <link>https://Yathartha22.github.io//gsoc-week-11</link>
-      <description>&lt;p&gt;So this week I started up with implementing and sending a PR for lambert solver &lt;a href="https://github.com/sympy/sympy/pull/14972"&gt;#14972&lt;/a&gt;. Solving these equations can be achieved by &lt;code class="highlighter-rouge"&gt;_solve_lambert&lt;/code&gt; routine of &lt;a href="https://github.com/sympy/sympy/blob/2b4afb6cd0a7cd5791d512b80fce493cda9b57e0/sympy/solvers/bivariate.py"&gt;bivariate.py&lt;/a&gt;. It is really powerful and can solve a varied type of equations having a general form. Another routine comes into action, the &lt;code class="highlighter-rouge"&gt;bivariate_type&lt;/code&gt; to solve majorly lambert type of equations when the former is unable to solve. These two routines can be handy for implementing such equations. As of now I have added &lt;code class="highlighter-rouge"&gt;_solve_lambert()&lt;/code&gt; in the PR. I will add &lt;code class="highlighter-rouge"&gt;bivariate_type&lt;/code&gt; once the log solver PR gets finalised. There are few equations that can be solved by posifying the variable that needs to be solved. A bit discussion is needed on this part.&lt;/p&gt;
+      <guid isPermaLink="false">https://sidhantnagpal.github.io/2018/07/gsoc-week11</guid>
+      <author>Sidhant Nagpal (sidhantnagpal)</author>
+      <title>Sidhant Nagpal (sidhantnagpal): GSoC 2018: SymPy - Week 11</title>
+      <pubDate>Sat, 28 Jul 2018 00:00:00 GMT</pubDate>
+      <link>https://sidhantnagpal.github.io/2018/07/gsoc-week11</link>
+      <description>&lt;p&gt;&lt;img src="https://sidhantnagpal.com/files/gsoc-sympy.png" style="width: 75%; height: 75%; float: left; margin-left: 55px;" /&gt;
+&lt;br clear="all" /&gt;&lt;/p&gt;
 
-&lt;p&gt;Apart from this, a lot of work was done in the &lt;code class="highlighter-rouge"&gt;log solver&lt;/code&gt; PR&lt;/p&gt;
+&lt;p&gt;This week, I started working on adding the final method to convolution module for Intersecting Product. PR &lt;a href="https://github.com/sympy/sympy/pull/14954"&gt;#14954&lt;/a&gt; dealt with the addition of &lt;code class="highlighter-rouge"&gt;intersection_product&lt;/code&gt; method. Intersecting Product was implemented using M&amp;#246;bius Transform with superset enumeration (&lt;code class="highlighter-rouge"&gt;mobius_transform(..., subset=False)&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;inverse_mobius_transform(..., subset=False)&lt;/code&gt;). After minor documentation improvements, the PR was merged successfully. The proposed transforms and convolutions are now part of &lt;code class="highlighter-rouge"&gt;sympy.discrete&lt;/code&gt;. The basic usage for the method is:&lt;/p&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;S&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;I&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;intersecting_product&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'u v x y z'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;intersecting_product&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;intersecting_product&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Late this week, I started working on improving the documentation for SymPy&amp;#8217;s Sphinx docs (&lt;a href="http://docs.sympy.org/dev/index.html"&gt;http://docs.sympy.org/dev/index.html&lt;/a&gt;) and other minor changes in the PR &lt;a href="https://github.com/sympy/sympy/pull/14969"&gt;#14969&lt;/a&gt;. Also, issue &lt;a href="https://github.com/sympy/sympy/issues/14964"&gt;#14964&lt;/a&gt; was opened to discuss the possibility of using LaTeX in docstrings for SymPy documentation. The following changes were part of the PR:&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;_term_factors()&lt;/code&gt; is used again.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Logic for exponential identifying is modified to not identify lambert type equations&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Few mores tests were added.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/smichr"&gt;Chris&lt;/a&gt; advised to make identification helpers such that they identify their class even if they won&amp;#8217;t get solved by their respective solvers, the equation should not be passed to any of the other helpers for further solving. This wasn&amp;#8217;t the case before, the identifying helpers were implemented only for equations that their helpers could solve. So now this idea is implemented for both the exponential and logarithmic solver.
-Equations that these identifiers can&amp;#8217;t identify will be further solved as lambert type.&lt;/p&gt;
-  &lt;/li&gt;
+  &lt;li&gt;Use LaTeX for docstrings in functions.combinatorial (reference to &lt;a href="https://github.com/sympy/sympy/issues/14964"&gt;#14964&lt;/a&gt;)&lt;/li&gt;
+  &lt;li&gt;Include genocchi and partition numbers in sphinx docs&lt;/li&gt;
+  &lt;li&gt;Improve docstrings with single and double backticks for sphinx docs&lt;/li&gt;
+  &lt;li&gt;Use plural module names under discrete (discrete.convolutions and discrete.recurrences)&lt;/li&gt;
+  &lt;li&gt;Add graphviz as a prerequisite in sympy/doc/README.rst for Debian/Ubuntu&lt;/li&gt;
+  &lt;li&gt;Fix links in references containing rounded braces and unicode chars for sphinx docs&lt;/li&gt;
+  &lt;li&gt;Miscellaneous improvements to documentation&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;Almost all the work of the log solver PR is done. I will be finishing the work on lambert solver PR and complete in coming week. I hope both the PR&amp;#8217;s gets merged before the GSoC period ends.&lt;/p&gt;</description>
+&lt;p&gt;Successive reviews and discussions were helpful in finalizing the Pull Requests.&lt;/p&gt;
+
+&lt;p&gt;Looking forward to the final week of Coding Period.&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://nkhlpappu.wordpress.com/?p=13</guid>
@@ -1022,6 +239,14 @@ Equations that these identifiers can&amp;#8217;t identify will be further solved
 &lt;/ul&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://ravicharann.github.io/blog//misc/</guid>
+      <author>Ravicharan (RavicharanN)</author>
+      <title>Ravicharan (RavicharanN): Subgroup quotients, Polycyclic groups and misc</title>
+      <pubDate>Tue, 24 Jul 2018 00:00:00 GMT</pubDate>
+      <link>https://ravicharann.github.io/blog//misc/</link>
+      <description>&lt;p&gt;GSoC'18 Week 9 &amp; 10</description>
+    </item>
+    <item>
       <guid isPermaLink="false">tag:blogger.com,1999:blog-1036447522835236737.post-4503634706614858581</guid>
       <author>Ashish Kumar Gaurav (ashishkg0022)</author>
       <title>Ashish Kumar Gaurav (ashishkg0022): GSoC 2018: Week 10</title>
@@ -1030,43 +255,33 @@ Equations that these identifiers can&amp;#8217;t identify will be further solved
       <description>&lt;div dir="ltr" style="text-align: left;"&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;Hello everyone. Here is the brief progress of Rubi&amp;nbsp;module in the 10th week of GSoC period.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;Last week, we were able to load all rules. Rubi has now come in a very stable and working condition. One Missing thing in the main &lt;a href="https://github.com/sympy/sympy/pull/14756"&gt;PR&lt;/a&gt; was missing instructions and documentation. This week I tried my best to write instructions, so that a new user can easily get familiar with it. I have kept it really simple.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;Initially, I wrote a script in Mathematica to generate downvalues&amp;nbsp;in separate files. This was done till now manually, but now it's automated. Then I wrote a sympy&amp;nbsp;script to generate all rules and constraints in proper files directly just by running a function.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;For a more easier understanding of steps, I created&amp;nbsp;`rubi_parsing_guide.md` explaining all steps.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;Next thing I realised that it would be good if we create a parsing script for the tests too. Till now I used maple format. But a lot of manual things were required. So I wrote a script which directly parses tests into sympy&amp;nbsp;format. All this are added properly in `rubi_parsing_guide.md`.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;`init` in Rubi&amp;nbsp;too was updated with proper explanation of basic structure of rules and constraints. I also updated docs of few important utility_functions.&lt;/span&gt;&lt;/div&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;Now a new user can easily get familiar with Rubi and working with it will be simple.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;I have also opened a new &lt;a href="https://github.com/sympy/sympy/pull/14956"&gt;PR&lt;/a&gt; for new utility_functions. Once the old &lt;a href="https://github.com/sympy/sympy/pull/14756"&gt;PR&lt;/a&gt; gets merged, we can merge this.&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-10</guid>
-      <author>Yathartha Joshi (Yathartha22)</author>
-      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 10 - Continuing with logarithmic solver</title>
-      <pubDate>Sun, 22 Jul 2018 00:00:00 GMT</pubDate>
-      <link>https://Yathartha22.github.io//gsoc-week-10</link>
-      <description>&lt;p&gt;This week started with the merge of the PR &lt;a href="https://github.com/sympy/sympy/pull/14736"&gt;#14736&lt;/a&gt;. Yehhhh!!!!!. So now &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; will be able to solve a varied type of exponential equations.  Next work is going on to build the logarithmic and lambert solver.&lt;/p&gt;
+      <guid isPermaLink="false">https://sidhantnagpal.github.io/2018/07/gsoc-week10</guid>
+      <author>Sidhant Nagpal (sidhantnagpal)</author>
+      <title>Sidhant Nagpal (sidhantnagpal): GSoC 2018: SymPy - Week 10</title>
+      <pubDate>Sat, 21 Jul 2018 00:00:00 GMT</pubDate>
+      <link>https://sidhantnagpal.github.io/2018/07/gsoc-week10</link>
+      <description>&lt;p&gt;&lt;img src="https://sidhantnagpal.com/files/gsoc-sympy.png" style="width: 75%; height: 75%; float: left; margin-left: 55px;" /&gt;
+&lt;br clear="all" /&gt;&lt;/p&gt;
 
-&lt;p&gt;A lot of discussion has been taken place over the implementation of the logarithmic solver, there were mainly two points to consider:&lt;/p&gt;
+&lt;p&gt;This week SymPy 1.2 was released, which included the &lt;code class="highlighter-rouge"&gt;discrete&lt;/code&gt; module. The complete changelog for the SymPy 1.2 is &lt;a href="https://github.com/sympy/sympy/wiki/Release-Notes-for-1.2"&gt;here&lt;/a&gt;. I started the week by cleaning up &lt;code class="highlighter-rouge"&gt;discrete&lt;/code&gt; module, improving the API of public &lt;code class="highlighter-rouge"&gt;convolution&lt;/code&gt; method by attending to reviews by &lt;a href="https://github.com/asmeurer"&gt;Aaron&lt;/a&gt; and &lt;a href="https://github.com/jksuom"&gt;Kalevi&lt;/a&gt; and fixing issue &lt;a href="https://github.com/sympy/sympy/issues/14901"&gt;#14901&lt;/a&gt; reported by &lt;a href="https://github.com/asmeurer"&gt;Aaron&lt;/a&gt; in &lt;a href="https://github.com/sympy/sympy/pull/14907"&gt;PR #14907&lt;/a&gt;.&lt;/p&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;How the logarithmic equation gets evaluated, i.e., should we consider solutions that would make the log term negative.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;The &lt;a href="https://github.com/sympy/sympy/pull/14907"&gt;PR #14907&lt;/a&gt; has been merged successfully and will be part of SymPy 1.2.1.&lt;/p&gt;
 
-&lt;p&gt;Take for instance a logarithmic equation &lt;code class="highlighter-rouge"&gt;log(x - 3) + log(x + 3) = 0&lt;/code&gt;, when solved the solutions would be &lt;code class="highlighter-rouge"&gt;-sqrt(10) and sqrt(10)&lt;/code&gt;, but &lt;code class="highlighter-rouge"&gt;-sqrt(10)&lt;/code&gt; make the log term negative. So the question was what should we do for such a scenario? Should we add a check to remove these solution or just accept. it.&lt;/p&gt;
+&lt;p&gt;Late this week, I started working on the convolution module for inclusion of &lt;code class="highlighter-rouge"&gt;covering_product&lt;/code&gt;.
+The &lt;a href="https://github.com/sympy/sympy/pull/14928"&gt;PR #14298&lt;/a&gt; included the same with documentation, doctests and unit tests.
+The implementation of &lt;code class="highlighter-rouge"&gt;covering_product&lt;/code&gt; uses M&amp;#246;bius Transform with subset enumeration (&lt;code class="highlighter-rouge"&gt;mobius_transform(..., subset=True)&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;inverse_mobius_transform(..., subset=True)&lt;/code&gt;). As included in the PR, the usage for the same is:&lt;/p&gt;
 
-&lt;p&gt;As of now as suggested by &lt;a href="https://github.com/jksuom"&gt;Kalevi&lt;/a&gt; and &lt;a href="https://github.com/asmeurer"&gt;Aaron&lt;/a&gt; we should focus on the liberal interpratation for evaluating equations: if an expression can be written in its equivalent form and makes sense then we can consider solutions of this equivalent form. Therefore both the above solutions are acceptable.&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;covering_product&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'u v x y z'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;How the identification of the logarithmic equations would take place.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;covering_product&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
 
-&lt;p&gt;The identification of logarithmic type is another question and is still yet to be agreed upon. At first the implementation was done by extracting each term of the expression and see if it has &lt;code class="highlighter-rouge"&gt;log&lt;/code&gt; terms in it, this wasn&amp;#8217;t the best of the method as we are trying to identify a large class of logarithmic equation while solving is done only for a subset of those equations (only those that can be reduced by &lt;code class="highlighter-rouge"&gt;logcombine&lt;/code&gt;). So Amit and Chris stressed upon making the logarithmic identification for equations that its solver would solve. So as of now I have made changes accordingly.&lt;/p&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;covering_product&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Another problem that this PR is facing is of the infinite recursion. The equations that both exponential and logarithmic can&amp;#8217;t solve but still their respective solver try to handle gets into infinite recursion. One way (though not appropriate) is to use &lt;code class="highlighter-rouge"&gt;flags&lt;/code&gt; like in &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt;, using this would remove the infinite recursion but is not the best way to  handle, therefore I am looking into ways on how to get this fixed.&lt;/p&gt;
-
-&lt;p&gt;Apart from the work on log solver, I did some work on lambert solver- how the implementation would go, ran all the tests of &lt;code class="highlighter-rouge"&gt;solve&lt;/code&gt;, differentiated the tests that &lt;code class="highlighter-rouge"&gt;_solve_lambert&lt;/code&gt; could solve and that &lt;code class="highlighter-rouge"&gt;bivariate_type&lt;/code&gt; would. I will be adding a PR for this in a day or so.&lt;/p&gt;
-
-&lt;p&gt;Next week goals:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Finish things with logarithmic solver&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Sending a PR for lambert solver and try to finish its work as quickly as possible.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;</description>
+&lt;p&gt;Looking forward to the next week, where I will be implementing &lt;code class="highlighter-rouge"&gt;intersecting_product&lt;/code&gt; as the final method for the convolution module.&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://nkhlpappu.wordpress.com/?p=9</guid>
@@ -1163,48 +378,45 @@ applied throughout the span of a beam.&lt;/li&gt;
       <description>&lt;div dir="ltr" style="text-align: left;"&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;Hello everyone. Here is the progress of &lt;/span&gt;rubi&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt; module in the 9th week of GSoC period.&lt;/span&gt;&lt;/div&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;In the very beginning of the week, the PR for appelf1 was merged. My aim for this week was to load all rules and test at least&amp;nbsp;a small part for each type of rule. Due to the time factor, its not possible to test all. Moreover, rubi needs to be updated to the latest version, so the test suite too will be updated.&amp;nbsp;&amp;nbsp;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;I started with trigo rules. They are huge in number. They were never tested before, so some utility_functions like `&lt;i&gt;TrigReduce&lt;/i&gt;`, `&lt;i&gt;KnownTrigIntegrandQ&lt;/i&gt;`, `&lt;i&gt;FunctionOfTrig&lt;/i&gt;` etc were wrong. They were corrected. Soon I realised a difference between sympy and Mathematica. In mathematica, `&lt;i&gt;1/Cot[x]`&lt;/i&gt; is automatically transformed to `&lt;i&gt;Tan[x]&lt;/i&gt;` and `&lt;i&gt;1/Tan[x]&lt;/i&gt;` too was transformed to `&lt;i&gt;Cot[x]`&lt;/i&gt;. But in sympy, these are different. So, `&lt;i&gt;tan(x)&lt;/i&gt;` didn't match to `&lt;i&gt;cot(x)&lt;/i&gt;` . Francesco suggested to replace all `&lt;i&gt;cot&lt;/i&gt;` with `&lt;i&gt;1/tan&lt;/i&gt;`&amp;nbsp; and similarly for `&lt;i&gt;sec&lt;/i&gt;` and `&lt;i&gt;csc`&lt;/i&gt; (in the code generator too).&amp;nbsp;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;Next, I moved to `&lt;i&gt;inverse_trigo&lt;/i&gt;`, `&lt;i&gt;hyperbolic&lt;/i&gt;` and `&lt;i&gt;inverse_hyperbolic&lt;/i&gt;`. I tested some test cases for all these rules. I also tested `&lt;i&gt;error_functions&lt;/i&gt;` completely to make sure `&lt;i&gt;special_functions&lt;/i&gt;` are working properly.&amp;nbsp;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;After all this, I feel rubi is in a stable and working condition. The loading time is around `&lt;i&gt;10 minutes`&lt;/i&gt;. Except for the loading time, the performance of rubi is good.&amp;nbsp;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;I have left `&lt;i&gt;DerivativeIntegration&lt;/i&gt;` and `&lt;i&gt;Piecewise&lt;/i&gt;` rules. We will be discussing it.&amp;nbsp;&lt;/div&gt;&lt;/span&gt;&lt;/div&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-9</guid>
-      <author>Yathartha Joshi (Yathartha22)</author>
-      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 9 - Starting up with Lambert equations</title>
-      <pubDate>Fri, 13 Jul 2018 00:00:00 GMT</pubDate>
-      <link>https://Yathartha22.github.io//gsoc-week-9</link>
-      <description>&lt;p&gt;At the start of the week I worked on the leftovers of week 8:&lt;/p&gt;
+      <guid isPermaLink="false">https://sidhantnagpal.github.io/2018/07/gsoc-week9</guid>
+      <author>Sidhant Nagpal (sidhantnagpal)</author>
+      <title>Sidhant Nagpal (sidhantnagpal): GSoC 2018: SymPy - Week 9</title>
+      <pubDate>Sat, 14 Jul 2018 00:00:00 GMT</pubDate>
+      <link>https://sidhantnagpal.github.io/2018/07/gsoc-week9</link>
+      <description>&lt;p&gt;&lt;img src="https://sidhantnagpal.com/files/gsoc-sympy.png" style="width: 75%; height: 75%; float: left; margin-left: 55px;" /&gt;
+&lt;br clear="all" /&gt;&lt;/p&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;added &lt;code class="highlighter-rouge"&gt;log_singularities()&lt;/code&gt; that will help in determining logarithmic singularities,&lt;/li&gt;
-  &lt;li&gt;improved documentation of all helpers as suggested by Amit to maintain consistency&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;The second phase of Coding Period has concluded.&lt;/p&gt;
 
-&lt;p&gt;Status of the PR&amp;#8217;s:&lt;/p&gt;
+&lt;p&gt;This week I worked on implementing Subset Convolution for &lt;code class="highlighter-rouge"&gt;discrete&lt;/code&gt; module.
+PR &lt;a href="https://github.com/sympy/sympy/pull/14878"&gt;#14878&lt;/a&gt; was opened for the same. The PR included unit tests, documentation, and correspondingly &lt;code class="highlighter-rouge"&gt;subset&lt;/code&gt; keyword was added for public &lt;code class="highlighter-rouge"&gt;convolution&lt;/code&gt; method.&lt;/p&gt;
 
-&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/14736"&gt;#14736&lt;/a&gt; is ready to be merged.&lt;/p&gt;
+&lt;p&gt;After discussing the implementation details and references with &lt;a href="https://github.com/jksuom"&gt;Kalevi&lt;/a&gt;, the approach was finalized. The PR has been merged successfully. The usage for the same is:&lt;/p&gt;
 
-&lt;p&gt;PR &lt;a href="https://github.com/sympy/sympy/pull/14792"&gt;#14792&lt;/a&gt; is being worked on. Major tasks has been completed, just review and refining has to be done.&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy.discrete.convolutions&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;convolution&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;convolution_subset&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'u v x y z'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 
-&lt;p&gt;Apart from this I started working on the way Lambert type equations can be solved through &lt;code class="highlighter-rouge"&gt;_transolve()&lt;/code&gt;. I looked into &lt;code class="highlighter-rouge"&gt;_tsolve's&lt;/code&gt; way of handling such equations.
-For solving Lambert type equations &lt;code class="highlighter-rouge"&gt;_tsolve()&lt;/code&gt; largely depends on &lt;code class="highlighter-rouge"&gt;bivariate.py&lt;/code&gt;. It takes help of the different utility functions implemented there.
-Of them two important are &lt;code class="highlighter-rouge"&gt;_solve_lambert()&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;bivariate_type()&lt;/code&gt;. These two helpers help in getting the equations evaluated.&lt;/p&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;convolution_subset&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
 
-&lt;p&gt;Equations that can be written in the standard form as: &lt;code class="highlighter-rouge"&gt;A + B*x + C*log(D + E*x) = 0&lt;/code&gt; has the solutions in terms of &lt;code class="highlighter-rouge"&gt;Lambert&lt;/code&gt; function as:&lt;/p&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;convolution&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;subset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
 
-&lt;p&gt;&lt;code class="highlighter-rouge"&gt;D/E + C*B*W(t) with (B/C*E)*exp((BD - AE)/CE)&lt;/code&gt;&lt;/p&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;convolution&lt;/span&gt;&lt;span class="p"&gt;([&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;subset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;True&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cycle&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;u&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;This is what &lt;code class="highlighter-rouge"&gt;_solve_lambert()&lt;/code&gt; determines and accordingly returns the solutions, otherwise returns a &lt;code class="highlighter-rouge"&gt;NotImplementedError&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Plan for this phase has executed well, and the second evaluation has been successful.&lt;/p&gt;
 
-&lt;p&gt;If &lt;code class="highlighter-rouge"&gt;_solve_lambert()&lt;/code&gt; is unable to handle &lt;code class="highlighter-rouge"&gt;bivariate_type()&lt;/code&gt; is tried. This function first tries to identify the type of composite bivariate and then substitutes &lt;code class="highlighter-rouge"&gt;Dummy&lt;/code&gt; in place of them. For eq: &lt;code class="highlighter-rouge"&gt;(x + y)**2 - 3&lt;/code&gt; would become &lt;code class="highlighter-rouge"&gt;_u**2 - 3&lt;/code&gt; where &lt;code class="highlighter-rouge"&gt;_u&lt;/code&gt; is the dummy variable. The idea is that solving the latter equation for &lt;code class="highlighter-rouge"&gt;u&lt;/code&gt; and then equating the solutions to the former equation is equivalent for solving the original one.&lt;/p&gt;
-
-&lt;p&gt;While implementing in &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; this philosophy needs to be applied. As of now I have looked into different tests on how they behave. I will start implementing it next.&lt;/p&gt;
-
-&lt;p&gt;Next week&amp;#8217;s plan:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Finishing with the logsolver&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Implementing lambert solver.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;</description>
+&lt;p&gt;Looking forward to the final phase of Coding Period.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://ravicharann.github.io/blog//polycylic-groups-part1/</guid>
+      <author>Ravicharan (RavicharanN)</author>
+      <title>Ravicharan (RavicharanN): Polycyclic groups - Part1</title>
+      <pubDate>Wed, 11 Jul 2018 00:00:00 GMT</pubDate>
+      <link>https://ravicharann.github.io/blog//polycylic-groups-part1/</link>
+      <description>&lt;p&gt;GSoC'18 Week 7 &amp; 8</description>
     </item>
     <item>
       <guid isPermaLink="false">tag:blogger.com,1999:blog-1036447522835236737.post-7572262454034848939</guid>
@@ -1213,78 +425,6 @@ Of them two important are &lt;code class="highlighter-rouge"&gt;_solve_lambert()
       <pubDate>Sun, 08 Jul 2018 15:20:15 GMT</pubDate>
       <link>http://ashishkg0022.blogspot.com/2018/07/gsoc-2018-week-8.html</link>
       <description>&lt;div dir="ltr" style="text-align: left;"&gt;Hello everyone. Here is the brief summary of the progress of rubi integration module in the 8th week of GSoC period.&lt;br /&gt;&lt;br /&gt;We completed the testing of logarithmic test cases. Some of the tests are failing as they depend on trigonometric rules. The rules and tests have been updated in this &lt;a href="https://github.com/sympy/sympy/pull/14756/"&gt;PR.&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;Next, I loaded all trigonometric rules. They are huge in number. So the loading time increased from &lt;i&gt;1 min 30 sec&lt;/i&gt; to around&amp;nbsp;&lt;i&gt;6 min&lt;/i&gt;. For now, I have not loaded them. I also updated the test cases for &lt;i&gt;parsetools&lt;/i&gt; and fixed code quality issues. Currently, the travis is failing due to a bug, which has been fixed in branch &lt;i&gt;1.2.&lt;/i&gt; In the upcoming week, &lt;i&gt;1.2&lt;/i&gt;&amp;nbsp;probably will get merged in master.&lt;br /&gt;&lt;br /&gt;Then I moved on to implementing &lt;i&gt;appellf1&lt;/i&gt; in sympy. Progress can be seen in this &lt;a href="https://github.com/sympy/sympy/pull/14882"&gt;PR.&lt;/a&gt;&lt;br /&gt;&lt;br /&gt;We will be updating our &lt;i&gt;utility_functions&lt;/i&gt; to the latest version of RUBI.&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-8</guid>
-      <author>Yathartha Joshi (Yathartha22)</author>
-      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 8 - Improving solving of logarithmic equations</title>
-      <pubDate>Sun, 08 Jul 2018 00:00:00 GMT</pubDate>
-      <link>https://Yathartha22.github.io//gsoc-week-8</link>
-      <description>&lt;p&gt;Before the start of the week Amit and I discussed on a few points on:&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: &lt;code class="highlighter-rouge"&gt;is_logarithmic()&lt;/code&gt; is an identifier helper for &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; to determine whether the expression is logarithmic or not.
-      and &lt;code class="highlighter-rouge"&gt;_solve_log()&lt;/code&gt; is a solving helper that returns the equation in a tractable form for &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; to better handle.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;What should &lt;code class="highlighter-rouge"&gt;is_logarithmic()&lt;/code&gt; return?&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;While designing the method at first it returned a &lt;code class="highlighter-rouge"&gt;logcombined&lt;/code&gt; equation if found to be logarithmic, but we agreed upon having consistency among all the identifying helpers to return either &lt;code class="highlighter-rouge"&gt;True&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;False&lt;/code&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;How &lt;code class="highlighter-rouge"&gt;_is_logarithmic()&lt;/code&gt; should work?&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Next question was how it should work. We can implement it in two ways either to make the &lt;code class="highlighter-rouge"&gt;logcombined&lt;/code&gt; equation, if the expression reduces, it is obviously a logarithmic equation otherwise not. We also need to check whether the equation reduced has the variable to be solved in its &lt;code class="highlighter-rouge"&gt;free_symbols&lt;/code&gt;
-But &lt;code class="highlighter-rouge"&gt;logcombine&lt;/code&gt; possessed a problem that it unknowingly manipulates the equation, like &lt;code class="highlighter-rouge"&gt;log(x) - log(2*x)&lt;/code&gt; would reduce to &lt;code class="highlighter-rouge"&gt;log(1/2)&lt;/code&gt; for which the routine would return &lt;code class="highlighter-rouge"&gt;False&lt;/code&gt; as there are no symbol involved. So a more better way needs to be implemented.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;How &lt;code class="highlighter-rouge"&gt;_solve_log()&lt;/code&gt; will handle removing unwanted solutions?&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Simply reducing the logarithmic equation to a tractable form for &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; to handle would cause spurious solutions in the result. Therefore it becomes necessary to remove them. Take for example: &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; gives the result of &lt;code class="highlighter-rouge"&gt;log(x - 3) + log(x + 3)&lt;/code&gt; as &lt;code class="highlighter-rouge"&gt;{-sqrt(10), sqrt(10)}&lt;/code&gt;, but &lt;code class="highlighter-rouge"&gt;-sqrt(10)&lt;/code&gt; is not the solution in &lt;code class="highlighter-rouge"&gt;Real&lt;/code&gt; domain. Therefore one way to remove it was using &lt;code class="highlighter-rouge"&gt;checksol&lt;/code&gt;. Amit suggested on to have a look over the singularities and try incorporating the check in &lt;code class="highlighter-rouge"&gt;_solveset&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Things that I did during the week:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;improved &lt;code class="highlighter-rouge"&gt;is_logarithmic()&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Removed the &lt;code class="highlighter-rouge"&gt;logcombine&lt;/code&gt; way of checking the equation. As of now the &lt;code class="highlighter-rouge"&gt;_is_logarithm&lt;/code&gt; checks for every term to be logarithmic in terms of the variable to be solved, if so it returns &lt;code class="highlighter-rouge"&gt;True&lt;/code&gt; otherwise &lt;code class="highlighter-rouge"&gt;False&lt;/code&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;improved the &lt;code class="highlighter-rouge"&gt;_solve_log()&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;As per the current documentation of &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; this routine is improved to return a modified form of the equation that &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; could better handle. Checking of the spurious solutions will take place in &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; itself.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Way to remove spurious solutions&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;To handle this scenario I have added a &lt;a href="https://github.com/sympy/sympy/pull/14792/files#diff-eec0422923e8f100745c015cd8fdd6cfR985"&gt;check&lt;/a&gt; in &lt;code class="highlighter-rouge"&gt;_solveset&lt;/code&gt; specifically for logarithmic equations to remove spurious solutions.
-The idea is based on the fact that natural log in undefined for negative and zero value, therefore this method gets each term of the expression, substitutes each solution to every term one by one and if for any term the value isn&amp;#8217;t real that solution will not be included.&lt;/p&gt;
-
-&lt;p&gt;Why &lt;code class="highlighter-rouge"&gt;checksol()&lt;/code&gt; is not the appropriate way?&lt;/p&gt;
-
-&lt;p&gt;At first I thought of using the &lt;code class="highlighter-rouge"&gt;checksol()&lt;/code&gt;, but it possessed a problem. &lt;code class="highlighter-rouge"&gt;checksol&lt;/code&gt; unintensionally allows wrong solution to creep in. Take for example &lt;code class="highlighter-rouge"&gt;log(3*x) - log(-x + 1) - log(4*x + 1)&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; would give &lt;code class="highlighter-rouge"&gt;-1/2 and 1/2&lt;/code&gt; as the solutions but the former isn&amp;#8217;t a solution in real domain. Using &lt;code class="highlighter-rouge"&gt;checksol&lt;/code&gt; would not remove this as &lt;code class="highlighter-rouge"&gt;I*pi&lt;/code&gt; gets cancelled out during evaluating the expression therefore it returns &lt;code class="highlighter-rouge"&gt;True&lt;/code&gt;, which is not correct.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Addressing comments&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Apart from this few changes have been done in the &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; &lt;a href="https://github.com/sympy/sympy/pull/14736"&gt;PR&lt;/a&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;I have added a method that would return all the terms present in the expression: &lt;a href="https://github.com/sympy/sympy/pull/14736/files#diff-eec0422923e8f100745c015cd8fdd6cfR988"&gt;make_expr_args()&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Made the expresssion remain unevaluated when doing &lt;a href="https://github.com/sympy/sympy/pull/14736/files#diff-eec0422923e8f100745c015cd8fdd6cfR1299"&gt;lhs - rhs&lt;/a&gt; within &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Read this &lt;a href="http://localhost:4000/gsoc-week-5"&gt;blog&lt;/a&gt; for better understanding of logarithmic solving.&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://singhjashan.wordpress.com/?p=65</guid>
@@ -1304,6 +444,34 @@ x*(8*newton + y, 1)&lt;/code&gt;&lt;/pre&gt;
 &lt;li&gt;Make sure&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/14865"&gt;#14865&lt;/a&gt;&amp;#160;gets merged.&lt;/li&gt;
 &lt;li&gt;Open a Pull Request and start working on 3dbeam class.&lt;/li&gt;
 &lt;/ul&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://sidhantnagpal.github.io/2018/07/gsoc-week8</guid>
+      <author>Sidhant Nagpal (sidhantnagpal)</author>
+      <title>Sidhant Nagpal (sidhantnagpal): GSoC 2018: SymPy - Week 8</title>
+      <pubDate>Fri, 06 Jul 2018 00:00:00 GMT</pubDate>
+      <link>https://sidhantnagpal.github.io/2018/07/gsoc-week8</link>
+      <description>&lt;p&gt;&lt;img src="https://sidhantnagpal.com/files/gsoc-sympy.png" style="width: 75%; height: 75%; float: left; margin-left: 55px;" /&gt;
+&lt;br clear="all" /&gt;&lt;/p&gt;
+
+&lt;p&gt;This week I started working on adding M&amp;#246;bius Transform to the &lt;code class="highlighter-rouge"&gt;discrete&lt;/code&gt; module using Yate&amp;#8217;s DP (Dynamic Programming) method for implementation as part of PR &lt;a href="https://github.com/sympy/sympy/pull/14853"&gt;#14853&lt;/a&gt;. The proposed transforms are part of &lt;code class="highlighter-rouge"&gt;sympy.discrete.transforms&lt;/code&gt; module.&lt;/p&gt;
+
+&lt;p&gt;After discussing with &lt;a href="https://github.com/jksuom"&gt;Kalevi&lt;/a&gt;, the methods implementing this transform were added with appropriate names. The keyword &lt;code class="highlighter-rouge"&gt;subset&lt;/code&gt; is used as a boolean to choose whether enumeration is done over subsets or supersets. The usage for the transform is:&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;mobius_transform&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;inverse_mobius_transform&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;seq&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;symbols&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'w x y z'&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;mobius_transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;seq&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;inverse_mobius_transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;inverse_mobius_transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;seq&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;subset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;mobius_transform&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;subset&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;False&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;w&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The PR was merged successfully, after inclusion of docstring and unit tests for the transform.&lt;/p&gt;
+
+&lt;p&gt;Looking forward to another exciting week.&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://nkhlpappu.wordpress.com/?p=7</guid>
@@ -1327,37 +495,6 @@ x*(8*newton + y, 1)&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Sun, 01 Jul 2018 15:19:06 GMT</pubDate>
       <link>http://ashishkg0022.blogspot.com/2018/07/gsoc-2018-week-7.html</link>
       <description>&lt;div dir="ltr" style="text-align: left;"&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;Hello everyone. Here is the brief summary of my work in the seventh week of GSoC period.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;Last week, we found a solution for matching `exp` as `Pow`. This week major part was spent in testing exponential rules. Here are some problem faced.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;1. UnevaluatedExpr is quite untested and results in recursion errors in many places.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;like `u = UnevaluatedExpr(E)` now when we want to find imaginary and real part of `u`, using `im(u)`. It causes recursion error. There were other instances too. So in those functions, I replaced them back to `exp`.&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;2. There was a lot of index error because length of args of a `Pow` object is 2. Whereas for `exp` it's 1. Utility functions used in lot of places `.args[1]`. I found all possible places where arguments of a `Pow` object was accessed using `.args[0] and .args[1]` . I replaced them with `.base` and `.exp`.&amp;nbsp;This solved the problem&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;There were more minor changes in many utility functions. Currently, I have finished the exponential testing and almost all are passing. I have pushed all changes in this &lt;/span&gt;&lt;a href="https://github.com/sympy/sympy/pull/14756" style="font-family: Arial, Helvetica, sans-serif;"&gt;PR&lt;/a&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;.&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;I have tested a small part of logarithmic tests. I will try to finish them in 2 days and next move on to either special functions on trigonometric rules.&lt;/div&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;br /&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-7</guid>
-      <author>Yathartha Joshi (Yathartha22)</author>
-      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 7 - Continuing with transolve Part-IV</title>
-      <pubDate>Sun, 01 Jul 2018 00:00:00 GMT</pubDate>
-      <link>https://Yathartha22.github.io//gsoc-week-7</link>
-      <description>&lt;p&gt;This week I continued to work on finalising the design of the &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt;. Following were the things discussed and implemented:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;The loop over the &lt;code class="highlighter-rouge"&gt;rhs_s&lt;/code&gt; was removed because &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; already has a loop and since &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; is called within the loop therefore there won&amp;#8217;t be a case where there would be more than one argument in &lt;code class="highlighter-rouge"&gt;rhs_s&lt;/code&gt; inside &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;code class="highlighter-rouge"&gt;pow_type()&lt;/code&gt; was created to handle power type equations in &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; but it turns out that power type equations will be handled in the &lt;code class="highlighter-rouge"&gt;_invert()&lt;/code&gt; itself, so it was repetitive to add again.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;The names of the solving helpers were improved to &lt;code class="highlighter-rouge"&gt;_solve_class&lt;/code&gt; from the previous &lt;code class="highlighter-rouge"&gt;_class_solver&lt;/code&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Discussions with Amit and Chris led to the conclusion that &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; should be completely made an internal function of &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;, i.e. it should not be used as an independent function. At first the thought was that it can be used as an independent function, but this created a problem of the code being repeated as that of &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;, so Chris suggested that &lt;code class="highlighter-rouge"&gt;_transolve&lt;/code&gt; should raise an error for equations that &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; can handle, but again this created problem, it would make unnnecessary complications in the code as we need to be very specific as to when and where raise an error.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;We decided to have same arguments for all the helpers. Be it identification or solving helper, both will take the equation and the variable as their arguments, with the choice that the helper can ignore to use any of the argument if not needed.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;There were a lot of improvement in the documentation as the design changed.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Apart from these changes work in implementing &lt;code class="highlighter-rouge"&gt;log solver&lt;/code&gt; is going on in parallel.&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">http://singhjashan.wordpress.com/?p=63</guid>
@@ -1400,6 +537,42 @@ x*(8*newton + y, 1)&lt;/code&gt;&lt;/pre&gt;
 &lt;/ul&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://sidhantnagpal.github.io/2018/06/gsoc-week6and7</guid>
+      <author>Sidhant Nagpal (sidhantnagpal)</author>
+      <title>Sidhant Nagpal (sidhantnagpal): GSoC 2018: SymPy - Week 6 &amp; 7</title>
+      <pubDate>Thu, 28 Jun 2018 00:00:00 GMT</pubDate>
+      <link>https://sidhantnagpal.github.io/2018/06/gsoc-week6and7</link>
+      <description>&lt;p&gt;&lt;img src="https://sidhantnagpal.com/files/gsoc-sympy.png" style="width: 75%; height: 75%; float: left; margin-left: 55px;" /&gt;
+&lt;br clear="all" /&gt;&lt;/p&gt;
+
+&lt;p&gt;The second phase of Coding Period has started.&lt;/p&gt;
+
+&lt;p&gt;I started this phase working on recurrence submodule under &lt;code class="highlighter-rouge"&gt;discrete&lt;/code&gt;. After having an initial discussion with &lt;a href="https://github.com/jksuom"&gt;Kalevi&lt;/a&gt; regarding the functionality to be implemented, I did the proof-of-concept for the same on a remote branch.&lt;/p&gt;
+
+&lt;p&gt;After the approach was finalized, the implementation was polished before opening the PR. The PR &lt;a href="https://github.com/sympy/sympy/pull/14816"&gt;#14816&lt;/a&gt; also included documentation, doctests, and unit tests for the module.&lt;/p&gt;
+
+&lt;p&gt;The method &lt;code class="highlighter-rouge"&gt;linrec(coeffs, init, n)&lt;/code&gt; takes coefficients, initial values and point of evaluation for the linear recurrence. Usage for a recurrence like &lt;code class="highlighter-rouge"&gt;f(n) = f(n - 7) + f(n - 13) + f(n - 17)&lt;/code&gt; (having order &lt;code class="highlighter-rouge"&gt;17&lt;/code&gt;) would be:&lt;/p&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;coeffs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;init&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;17&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;17&lt;/span&gt;
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="n"&gt;coeffs&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;coeffs&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;13&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;coeffs&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;17&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;linrec&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;coeffs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;init&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;40&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;50&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;17&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;21&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;21&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;23&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;29&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;31&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;31&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;35&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;41&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;41&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+  &lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;     &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;17&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+  &lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;         &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;
+  &lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;13&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;17&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;n&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;n&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;40&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;50&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
+&lt;span class="n"&gt;Out&lt;/span&gt;&lt;span class="p"&gt;[]:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;17&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;21&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;21&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;23&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;29&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;31&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;31&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;35&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;41&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;41&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;As suggested by &lt;a href="https://github.com/asmeurer"&gt;Aaron&lt;/a&gt;, it will be good to have a user-facing method that calls &lt;code class="highlighter-rouge"&gt;linrec&lt;/code&gt; internally for performing the computation.&lt;/p&gt;
+
+&lt;p&gt;Looking forward to another exciting week.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">tag:blogger.com,1999:blog-1036447522835236737.post-6731843843505254405</guid>
       <author>Ashish Kumar Gaurav (ashishkg0022)</author>
       <title>Ashish Kumar Gaurav (ashishkg0022): GSoC 2018: Week 6</title>
@@ -1439,40 +612,12 @@ x*(8*newton + y, 1)&lt;/code&gt;&lt;/pre&gt;
 &lt;/ul&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-6</guid>
-      <author>Yathartha Joshi (Yathartha22)</author>
-      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 6 - Continuing with transolve Part-III</title>
-      <pubDate>Sat, 23 Jun 2018 00:00:00 GMT</pubDate>
-      <link>https://Yathartha22.github.io//gsoc-week-6</link>
-      <description>&lt;p&gt;For the sixth week, I started working on a few things as per the discussions with Amit:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Improving the API of &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;As &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; grew over the past few weeks the API became a bit messy, which was against the plan. So Amit suggested on to work on it to make it look clean. For this I added two internal functions &lt;code class="highlighter-rouge"&gt;add_type()&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;pow_type()&lt;/code&gt;, to handle expressions having &lt;code class="highlighter-rouge"&gt;add&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;power&lt;/code&gt; terms respectively. This could help us in achieving what we planned of: making the API extensible without it getting affected from the changes done in the function itself. If new solvers are to be added the modifcation has to be done in either of the internal functions.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Improved the working of &lt;code class="highlighter-rouge"&gt;_check_expo&lt;/code&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The implementation of the &lt;code class="highlighter-rouge"&gt;check_expo&lt;/code&gt; had a probelm, of not being generalised, only equations having two terms were checked. So the task was to make it generalised, so I implemented it using &lt;a href="http://docs.sympy.org/latest/modules/core.html#atom"&gt;atoms&lt;/a&gt;, filtered the equations having &lt;code class="highlighter-rouge"&gt;Pow&lt;/code&gt; or &lt;code class="highlighter-rouge"&gt;exp&lt;/code&gt; with the help of &lt;code class="highlighter-rouge"&gt;.atoms()&lt;/code&gt; and then checked whether the variable that needs to be solved is present in the exponent or not but this too possesed a problem: asking for atoms was not a great choice as they can come from anywhere like &lt;code class="highlighter-rouge"&gt;cos(2**x).atoms(Pow, exp)&lt;/code&gt; would give &lt;code class="highlighter-rouge"&gt;2**x&lt;/code&gt; and consequently the helper would return &lt;code class="highlighter-rouge"&gt;True&lt;/code&gt;, which is wrong. For this &lt;a href="https://github.com/smichr"&gt;smichr&lt;/a&gt; suggested even better method of using &lt;a href="https://github.com/sympy/sympy/blob/master/sympy/core/operations.py#L344"&gt;.make_args()&lt;/a&gt;. We will seperate out all the &lt;code class="highlighter-rouge"&gt;Add&lt;/code&gt; arguments and then in each of them we will look for &lt;code class="highlighter-rouge"&gt;Mul&lt;/code&gt; arguments which will give us the atomic argument of the expression, now this term can be tested to have variable in the exponent.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Changes in the documentation&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Also there were a few things that needed to fixed in the documentation. The docstring of &lt;code class="highlighter-rouge"&gt;expo_solver&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;check_expo&lt;/code&gt; were improved. Few changes were also done in &lt;code class="highlighter-rouge"&gt;transolve's&lt;/code&gt; documentation.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Worked on improvement of &lt;code class="highlighter-rouge"&gt;log solver&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Apart from this I did some improvement in &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt; to handle corner cases. As per the current logic &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt; would return a &amp;#8220;&lt;em&gt;logcombined&lt;/em&gt;&amp;#8221; equation to be further solved by &lt;code class="highlighter-rouge"&gt;log_solver&lt;/code&gt;, but this lead to a problem that the some equation (&lt;code class="highlighter-rouge"&gt;log(x**y) - y*log(x)&lt;/code&gt;) might get reduced to &lt;code class="highlighter-rouge"&gt;0&lt;/code&gt; and the check would fail, therefore this was handled by improving the condition as &lt;code class="highlighter-rouge"&gt;if condition not False&lt;/code&gt;. Apart from this single term expression needs to be properly handled.&lt;/p&gt;
-
-&lt;p&gt;Also I started getting familiar with &lt;code class="highlighter-rouge"&gt;lambert&lt;/code&gt; equations.&lt;/p&gt;
-
-&lt;p&gt;So these were the things that I worked on this week. The PR needs a bit more improvement to get merged, I will try to get it finished by mid of the coming week and start working on implementation of other solvers.&lt;/p&gt;</description>
+      <guid isPermaLink="false">https://ravicharann.github.io/blog//modif-todd-coxeter/</guid>
+      <author>Ravicharan (RavicharanN)</author>
+      <title>Ravicharan (RavicharanN): Modifeid todd Coxeter methods</title>
+      <pubDate>Thu, 21 Jun 2018 00:00:00 GMT</pubDate>
+      <link>https://ravicharann.github.io/blog//modif-todd-coxeter/</link>
+      <description>&lt;p&gt;GSoC'18 Week 5</description>
     </item>
     <item>
       <guid isPermaLink="false">tag:blogger.com,1999:blog-1036447522835236737.post-5483137592484274057</guid>
@@ -1483,26 +628,42 @@ x*(8*newton + y, 1)&lt;/code&gt;&lt;/pre&gt;
       <description>&lt;div dir="ltr" style="text-align: left;"&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;Hello everyone. Here is the brief summary of my work in the 5th week of GSoC period.&lt;/span&gt;&lt;/div&gt;&lt;span style="font-family: Arial, Helvetica, sans-serif;"&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;I started this week with testing miscellaneous algebraic test cases. Soon it was found that most test cases depend on rules of `Miscellaneous integration`. So I loaded those rules. There were few new structure in constraints. So parser too was updated for incorporating those.&amp;nbsp;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;While testing, `ExpandIntegrand` did not function well. Matcher used in ExpandIntegrand was of sympy. I changed ExpandIntegrand using replace_all of matchpy. In few more functions I changed the structure using matchpy. In this week, a major part of the time was spent in utility functions. There are many changes. Also some of the test cases of last year was wrong. It gave different result in mathematica. The test cases which I have updated matches with Mathematica's output. I have pushed all changes of utility function in this &lt;a href="https://github.com/sympy/sympy/pull/14756/files"&gt;PR&lt;/a&gt;.&lt;/div&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;div style="text-align: justify;"&gt;Parallely I have also tested around 70 % of miscellaneous algebraic. I will complete the testing within one or two days. After this I will move on to exponential rules and exponential test cases.&lt;/div&gt;&lt;/span&gt;&lt;br /&gt;&lt;div style="text-align: justify;"&gt;&lt;br /&gt;&lt;/div&gt;&lt;/div&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://Yathartha22.github.io//gsoc-week-5</guid>
-      <author>Yathartha Joshi (Yathartha22)</author>
-      <title>Yathartha Joshi (Yathartha22): GSoC 2018 - Week 5 - Implementing log solver</title>
-      <pubDate>Sun, 17 Jun 2018 00:00:00 GMT</pubDate>
-      <link>https://Yathartha22.github.io//gsoc-week-5</link>
-      <description>&lt;p&gt;So this is the last week of the first evaluation. I started with implementing log solver as part of &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt;. As per the documentation of the &lt;code class="highlighter-rouge"&gt;transolve&lt;/code&gt; we will need two helpers for implementing log solver, &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt; that will check whether the equation is logarithmic or not and &lt;code class="highlighter-rouge"&gt;log_solver&lt;/code&gt; that will solve the equation. Here&amp;#8217;s the &lt;a href="https://github.com/sympy/sympy/pull/14792"&gt;PR&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Idea behind &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Heuristic is implemented to determine whether the equation is logarithmic or not. According to it the logarithmic equations can be reduced to simpler form using log identities. For this purpose we use SymPy&amp;#8217;s function &lt;a href="http://docs.sympy.org/latest/tutorial/simplification.html#logcombine"&gt;logcombine&lt;/a&gt;. If the equation is logarithmic it will be reduced and hence the number of log in the original and modified equation may differ. This will ensure that the equation is logarithmic.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Idea behind the log solver&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;The idea is simple, the reduced form from the &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt; is used as the new target equation and is sent to &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; to handle. Solutions are retuned from &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt;, but it may contain values that won&amp;#8217;t satisfy the equation (log does not take negative values in real domain). Therfore to remove unwanted values we use &lt;a href="http://docs.sympy.org/latest/modules/solvers/solvers.html#sympy.solvers.solvers.checksol"&gt;checksol&lt;/a&gt; function of solve module which substitutes each solution in the equation and returns &lt;code class="highlighter-rouge"&gt;True&lt;/code&gt; if it satisfies otherwise &lt;code class="highlighter-rouge"&gt;False&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Apart from implementing helpers, I have added their documentation. Certain things needs to be done before the PR is ready for review: Tests needs to be added for the helpers and &lt;code class="highlighter-rouge"&gt;check_log&lt;/code&gt; needs to be improved a bit to handle corner cases.&lt;/p&gt;
-
-&lt;p&gt;In parallel I am also working on improving &lt;code class="highlighter-rouge"&gt;transolve's&lt;/code&gt; PR to make it merge as soon as possible. After these two gets completely fixed we will be focusing on implementing &lt;code class="highlighter-rouge"&gt;lambert equation solver&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;In the coming week I will be focussing on finishing off the work of these two PR.&lt;/p&gt;</description>
+      <guid isPermaLink="false">http://singhjashan.wordpress.com/?p=56</guid>
+      <author>Jashanpreet Singh Sraw (jashan498)</author>
+      <title>Jashanpreet Singh Sraw (jashan498): Week 4: Solving hinged beams</title>
+      <pubDate>Fri, 15 Jun 2018 11:00:25 GMT</pubDate>
+      <link>https://singhjashan.wordpress.com/2018/06/15/week-4-9-june-15-june/</link>
+      <description>&lt;p&gt;This week I worked on adding support for beams connected via hinge in &lt;a href="https://github.com/sympy/sympy/pull/14773"&gt;#14773&lt;/a&gt;. Support for axially fixed beams and its API was implemented last week.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;_solve_hinge_beams&lt;/code&gt;&amp;#160;was added as a helper function to solve such Beams.&amp;#160;&lt;span class="pl-s"&gt;This method resolves the composite Beam into its sub-beams and then&amp;#160;equations of shear force, bending moment, slope and deflection are&amp;#160;evaluated for both of them separately. These equations are then solved&amp;#160;for unknown reactions and integration constants using the boundary&amp;#160;conditions applied on the Beam. Equal deflection of both sub-beams&amp;#160;at the hinge joint gives us another equation to solve the system.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;So the final API looks like:&lt;/p&gt;
+&lt;p&gt;&lt;img alt="hinge_hinge_blog" class=" size-full wp-image-57 aligncenter" src="https://singhjashan.files.wordpress.com/2018/06/hinge_hinge_blog.png?w=730" /&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.physics.continuum_mechanics.beam import Beam
+&amp;gt;&amp;gt;&amp;gt; from sympy import symbols
+&amp;gt;&amp;gt;&amp;gt; l = symbols('l', positive=True)
+&amp;gt;&amp;gt;&amp;gt; R1, M1, R2, R3, P = symbols('R1 M1 R2 R3 P')
+&amp;gt;&amp;gt;&amp;gt; b1 = Beam(2*l, E, I)
+&amp;gt;&amp;gt;&amp;gt; b2 = Beam(2*l, E, I)
+&amp;gt;&amp;gt;&amp;gt; b = b1.join(b2,"hinge")
+&amp;gt;&amp;gt;&amp;gt; b.apply_load(M1, 0, -2)
+&amp;gt;&amp;gt;&amp;gt; b.apply_load(R1, 0, -1)
+&amp;gt;&amp;gt;&amp;gt; b.apply_load(R2, l, -1)
+&amp;gt;&amp;gt;&amp;gt; b.apply_load(R3, 4*l, -1
+&amp;gt;&amp;gt;&amp;gt; b.apply_load(P, 3*l, -1)
+&amp;gt;&amp;gt;&amp;gt; b.bc_slope = [(0, 0)]
+&amp;gt;&amp;gt;&amp;gt; b.bc_deflection = [(0, 0), (l, 0), (4*l, 0)]
+&amp;gt;&amp;gt;&amp;gt; b.solve_for_reaction_loads(M1, R1, R2, R3)
+&amp;gt;&amp;gt;&amp;gt; b.reaction_loads
+{R3: -P/2, R2: -5*P/4, M1: -P*l/4, R1: 3*P/4}
+&amp;gt;&amp;gt;&amp;gt; b.slope().subs(x, 3*l)
+-7*P*l**2/(48*E*I)
+&amp;gt;&amp;gt;&amp;gt; b.deflection().subs(x, 2*l)
+7*P*l**3/(24*E*I)&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;&lt;em&gt;&lt;strong&gt;Next Week&lt;/strong&gt;&lt;/em&gt;&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;See for changes in&amp;#160;&lt;a href="https://github.com/sympy/sympy/pull/14786"&gt;#14786&lt;/a&gt;&amp;#160;to get it merged.&lt;/li&gt;
+&lt;li&gt;Add support for non-horizontal beams.&lt;/li&gt;
+&lt;li&gt;See for any remaining implementation from first two stages of my proposal.&lt;/li&gt;
+&lt;/ul&gt;</description>
     </item>
   </channel>
 </rss>
