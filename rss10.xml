@@ -146,10 +146,10 @@
     &lt;/section&gt;
     &lt;section&gt;
         &lt;p&gt;For the past week, I&amp;#8217;ve been working on adding support for &lt;a href="https://lfortran.org/"&gt;LFortran&lt;/a&gt; to SymPy&amp;#8217;s code generation capabilities. My current goal is to emulate SymPy&amp;#8217;s &lt;code&gt;fcode&lt;/code&gt;, which converts a SymPy expression to an equivalent expression in Fortran, utilizing only LFortran as a backend. This post is an outline of what I&amp;#8217;ve done (and learned) over last week.&lt;/p&gt;
-&lt;h1 id="lfortran"&gt;LFortran&lt;/h1&gt;
+&lt;h2 id="lfortran"&gt;LFortran&lt;/h2&gt;
 &lt;p&gt;LFortran is a Fortran (with some extensions) to LLVM compiler. One advantage that this design provides is that it enables interactive execution of Fortran code. LFortran can also be used as a Jupyter kernel, which means it can be used in a Jupyter notebook environment (you can even find an online interactive demo &lt;a href="https://mybinder.org/v2/gl/lfortran%2Fweb%2Flfortran-binder/master?filepath=Demo.ipynb"&gt;here&lt;/a&gt;).&lt;/p&gt;
 &lt;p&gt;In addition to being able to parse code, LFortran also provides the functionality of traversing a parse tree and generating the equivalent Fortran code. This means that if we want to generate Fortran code from a SymPy expression, the only work that we have to do is convert the SymPy expression tree to its LFortran equivalent.&lt;/p&gt;
-&lt;h2 id="lfortran-builder"&gt;LFortran Builder&lt;/h2&gt;
+&lt;h3 id="lfortran-builder"&gt;LFortran Builder&lt;/h3&gt;
 &lt;p&gt;LFortran provides a number of convenience functions for building a Fortran AST. Since LFortran is still in early alpha, there are currently only about a dozen builder functions. However, these few basic functions are enough for constructing simple expressions in the Fortran AST. As an example, if we wanted to construct the expression represented by &lt;code&gt;c = a + b&lt;/code&gt;, where each variable involved is an integer, we could do something like:&lt;/p&gt;
 &lt;div class="sourceCode"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;import&lt;/span&gt; lfortran.asr.builder &lt;span class="im"&gt;as&lt;/span&gt; builder
 &lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;import&lt;/span&gt; lfortran.asr.asr &lt;span class="im"&gt;as&lt;/span&gt; asr
@@ -174,7 +174,7 @@
     &amp;#9500;&amp;#9472;kind&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="dv"&gt;4&lt;/span&gt;
     &amp;#9584;&amp;#9472;dims&lt;span class="op"&gt;=&lt;/span&gt;[]&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h1 id="sympy-to-lfortran-converter"&gt;Sympy to LFortran Converter&lt;/h1&gt;
+&lt;h2 id="sympy-to-lfortran-converter"&gt;Sympy to LFortran Converter&lt;/h2&gt;
 &lt;p&gt;I&amp;#8217;ve started with the implementation of a basic SymPy to LFortran converter utilizing the AST builder described above, with the current &lt;a href="https://github.com/sympy/sympy/pull/16931"&gt;pull request&lt;/a&gt; available on the SymPy GitHub. The converter follows the same node visitor class structure as all of the other code printers (it even inherits the &lt;code&gt;CodePrinter&lt;/code&gt; class, despite the methods not producing strings but rather AST nodes). Here&amp;#8217;s a simple example that demonstrates the conversion of a simple expression to an equivalent in LFortran:&lt;/p&gt;
 &lt;div class="sourceCode"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.abc &lt;span class="im"&gt;import&lt;/span&gt; x
 &lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.codegen.lfort &lt;span class="im"&gt;import&lt;/span&gt; sympy_to_lfortran
@@ -195,7 +195,7 @@ ret = 1 + x
 end function&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;p&gt;Since LFortran can directly compile the AST to an LLVM intermediate representation, a future implementation of &lt;code&gt;autowrap&lt;/code&gt; might be implemented by compiling the output of this function (instead of first completely generating the code and then feeding it to &lt;code&gt;gfortran&lt;/code&gt; as it&amp;#8217;s done right now).&lt;/p&gt;
-&lt;h1 id="next-steps"&gt;Next Steps&lt;/h1&gt;
+&lt;h2 id="next-steps"&gt;Next Steps&lt;/h2&gt;
 &lt;p&gt;For the next couple of days, I will try to extend the types of SymPy expressions that may be converted. One thing to note is that there isn&amp;#8217;t a perfect correspondence between SymPy and LFortran AST nodes. LFortran supports nodes for operations like unary subtraction and division, which SymPy converts into multiplication and division respectively. On top of this, I&amp;#8217;ll also add some tests for the functionality that I have implemented so far. After that, I&amp;#8217;ll start with work on SymPy&amp;#8217;s matrix expression code generation (the second part of my GSoC project) and pick LFortran up again close to the end of the summer.&lt;/p&gt;
     &lt;/section&gt;
 &lt;/article&gt;</description>
