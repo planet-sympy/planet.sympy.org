@@ -572,6 +572,228 @@
 			</div>
 		</div>
 	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-b30d7457 feed-" id="item-5a829fbd">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/jmig5776.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Jogi Miglani (jmig5776) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://jmig5776.github.io//gsoc-week-1">00:00, Sunday, 02 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-week-1">Jogi Miglani (jmig5776): GSoC 2019 - Week 1</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/jmig5776.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Jogi Miglani (jmig5776) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://jmig5776.github.io//gsoc-week-1">00:00, Sunday, 02 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-week-1">GSoC 2019 - Week 1</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>This was the first week meeting with the GSoC mentors which was scheduled on
+Sunday 2nd June, 2019 between 11:30 AM - 12:30 PM (IST). Me, Amit and Yathartha
+were the attendees of the meeting. In this meeting we mainly discussed about the
+problems and implementation for my pull request <a href="https://github.com/sympy/sympy/pull/16890">#16890</a>
+to complete the lambert solver.<br />
+As Amit requested changes at the pull request to describe the problem in detail,
+to give proof of correctness and describe the plan more briefly. So here below
+are the all details for what I am trying to achieve and how I am trying to
+achieve this:-</p>
+
+<h3 id="current-implementation">Current Implementation</h3>
+
+<p>Let me show here code from <code class="highlighter-rouge">_lambert</code> function to show the current
+implementation so that I could describe the problem in detail:-</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">u</span> <span class="o">=</span> <span class="n">Dummy</span><span class="p">(</span><span class="s">'rhs'</span><span class="p">)</span>
+<span class="n">sol</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c"># check only real solutions:</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">LambertW</span><span class="p">(</span><span class="n">d</span><span class="o">/</span><span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">b</span><span class="p">)</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">d</span><span class="o">/</span><span class="n">a</span><span class="o">/</span><span class="n">b</span><span class="p">)</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">f</span><span class="o">/</span><span class="n">a</span><span class="p">),</span> <span class="n">k</span><span class="p">)</span>
+    <span class="c"># if W's arg is between -1/e and 0 there is</span>
+    <span class="c"># a -1 branch real solution, too.</span>
+    <span class="k">if</span> <span class="n">k</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">l</span><span class="o">.</span><span class="n">is_real</span><span class="p">:</span>
+        <span class="k">continue</span>
+    <span class="n">rhs</span> <span class="o">=</span> <span class="o">-</span><span class="n">c</span><span class="o">/</span><span class="n">b</span> <span class="o">+</span> <span class="p">(</span><span class="n">a</span><span class="o">/</span><span class="n">d</span><span class="p">)</span><span class="o">*</span><span class="n">l</span>
+
+    <span class="n">solns</span> <span class="o">=</span> <span class="n">solve</span><span class="p">(</span><span class="n">X1</span> <span class="o">-</span> <span class="n">u</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tmp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">solns</span><span class="p">):</span>
+        <span class="n">solns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">subs</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span>
+        <span class="n">sol</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">solns</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="k">return</span> <span class="n">sol</span>
+</code></pre></div></div>
+
+<p>Explanation of for loop:</p>
+
+<ol>
+  <li><code class="highlighter-rouge">k == -1</code> :- In this case all the real solutions are considered due to <code class="highlighter-rouge">not l.is_real</code>.</li>
+  <li><code class="highlighter-rouge">k == 0</code> :- In this case all the solutions come out to be real as always.</li>
+</ol>
+
+<h3 id="what-solutions-are-missed">What solutions are missed?</h3>
+<p>The solutions are missed due to the argument inside the <code class="highlighter-rouge">LambertW</code> function of value</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>l = LambertW(d/(a*b)*exp(c*d/a/b)*exp(-f/a), k)
+</code></pre></div></div>
+<p>While converting all lambert solvable equations to this form
+<code class="highlighter-rouge">F(X, a..f) = a*log(b*X + c) + d*X + f = 0</code> some solutions get missed.</p>
+
+<p>For eg:
+Consider the equation <code class="highlighter-rouge">(a/x + exp(x/2)).diff(x) = 0</code> which is
+<code class="highlighter-rouge">-a/x**2 + exp(x/2)/2 = 0</code>(Please take note of the <code class="highlighter-rouge">x**2</code> in denominator of a).
+And we can also write this equation as <code class="highlighter-rouge">-a/(-x)**2 + exp(x/2)/2 = 0</code>.
+What sympy do is to convert this equation to this form:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>F(X, a..f) = a*log(b*X + c) + d*X + f = 0
+</code></pre></div></div>
+<p>which will be <code class="highlighter-rouge">2*log(x) + x/2 - log(a) = 0</code> and <code class="highlighter-rouge">2*log(-x) + x/2 - log(a) = 0</code> respectively:
+So solutions corresponding to both equations are:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2*log(x) + x/2 - log(a) = 0 --&gt; [4*LambertW(sqrt(2)*sqrt(a)/4)] --&gt; this is currently included
+2*log(-x) + x/2 - log(a) = 0 --&gt; [4*LambertW(-sqrt(2)*sqrt(a)/4)] --&gt; this is missed
+</code></pre></div></div>
+
+<h3 id="what-type-of-lambert-type-equation-it-is-for">What type of lambert type equation it is for?</h3>
+<p>This is for the equations where the changing of cofficients of the target equation doesn&#8217;t
+change the original equation just like the above case.</p>
+
+<h3 id="whats-the-current-algorithm-to-solve-such-type-of-equation-and-whats-wrong-with-current-logic">What&#8217;s the current algorithm to solve such type of equation and what&#8217;s wrong with current logic?</h3>
+
+<p>Current implementation is shown above and what is wrong is that it is not considering
+the other logarithm equations which are originated from the original equation.
+<code class="highlighter-rouge">2*log(-x) + x/2 - log(a) = 0</code> in case of <code class="highlighter-rouge">(a/x + exp(x/2)).diff(x) = 0</code>.</p>
+
+<h3 id="whats-the-proposed-solution">What&#8217;s the proposed solution?</h3>
+
+<p>This problem can be solved by two methods as follows:</p>
+
+<ul>
+  <li>Combining all the logarithm forms generated by the original equation(by taking abs)
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2*log(x) + x/2 - log(a) = 0 + 2*log(-x) + x/2 - log(a) = 0
+                      \      /
+                       \    /
+                        \  /
+          2*log(abs(x)) + x/2 - log(a) = 0                     
+</code></pre></div>    </div>
+    <p>I think this method is not viable at this time as it will be very complex to solve
+the equation invloving abs with log.</p>
+  </li>
+  <li>This method I propose to solve this problem i.e considering all solutions and
+eliminating by substitution.
+For example for this equation <code class="highlighter-rouge">(1/x + exp(x/2)).diff(x) = 0</code>
+Possible solutions considered <code class="highlighter-rouge">[4*LambertW(-sqrt(2)*sqrt(a)/4), 4*LambertW(sqrt(2)*sqrt(a)/4), \
+4*LambertW(-sqrt(2)*sqrt(a)/4, -1), 4*LambertW(sqrt(2)*sqrt(a)/4, -1)]</code>
+Solutions after filtering from checksol <code class="highlighter-rouge">[4*LambertW(-sqrt(2)*sqrt(a)/4), 4*LambertW(sqrt(2)*sqrt(a)/4)]</code>.</li>
+</ul>
+
+<h3 id="why-is-the-proposed-solution-better-and-how-it-wont-effect-the-other-equations-no-side-effects">Why is the proposed solution better and how it won&#8217;t effect the other equations (no side effects)?</h3>
+
+<p>This method involves less computation to solve this problem i.e considering all solutions and
+eliminating by substitution rather than first converting the given equation to target equation
+in which we doesn&#8217;t know about coffecient of logarithmic equation and solving it again by
+making different equations from it in case of abs taken.</p>
+
+<p>This doesn&#8217;t effect other equation because the only thing we are doing is considering all solutions
+and not changing code for other type of equations. And we are using checksol to check the correct solutions.</p>
+
+<h3 id="what-is-the-testing-strategy-to-verify-that-the-proposed-solution-works">What is the testing strategy to verify that the proposed solution works?</h3>
+<p>Testing strategy should be to involve the cases where current implementation is
+missing other logarithmic equations.</p>
+
+<h3 id="which-examplesequations-are-we-going-to-use-to-make-sure-that-those-are-necessary-and-sufficient-for-testing-purposes">Which examples/equations are we going to use to make sure that those are necessary and sufficient for testing purposes?</h3>
+<p>According to me these tests are sufficient test this strategy:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>assert solve((a/x + exp(x/2)).diff(x), x) == \
+        [4*LambertW(-sqrt(2)*sqrt(a)/4), 4*LambertW(sqrt(2)*sqrt(a)/4)]
+assert solve(x*log(x) + 3*x + 1, x) == \
+        [exp(-3 + LambertW(-exp(3))), exp(-3 + LambertW(-exp(3), -1))]
+assert solve((1/x + exp(x/2)).diff(x, 2), x) == \
+            [6*LambertW((-1)**(S(1)/3)/3), 6*LambertW((-1)**(S(1)/3)/3, -1)]
+assert solve(-x**2 + 2**x, x) == [2, 4, -2*LambertW(log(2)/2)/log(2)]
+# issue 4271
+assert solve((a/x + exp(x/2)).diff(x, 2), x) == \
+            [6*LambertW(-(-1)**(S(1)/3)*a**(S(1)/3)/3),
+            6*LambertW((-1)**(S(1)/3)*a**(S(1)/3)/3),
+            6*LambertW(-(-1)**(S(1)/3)*a**(S(1)/3)/3, -1),
+            6*LambertW((-1)**(S(1)/3)*a**(S(1)/3)/3, -1)]
+assert solve(x**2 - y**2/exp(x), x, y, dict=True) == \
+                [{x: 2*LambertW(-y/2)}, {x: 2*LambertW(y/2)}]
+</code></pre></div></div>
+
+<h3 id="some-test-cases-that-fail-due-to-some-other-reasons">Some test cases that fail due to some other reasons</h3>
+
+<ul>
+  <li>
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>assert solve((1/x + exp(x/2)).diff(x), x) == \
+[4*LambertW(-sqrt(2)/4), 4*LambertW(sqrt(2)/4), 4*LambertW(-sqrt(2)/4, -1)]
+assert solve(x**2 - 2**x, x) == [2, 4]
+</code></pre></div>    </div>
+    <p>These tests are failing because checksol returns false but expected to return true
+Although <code class="highlighter-rouge">_lambert</code> is returning correct solutions of equation.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">assert solve(a/x + exp(x/2), x) == [2*LambertW(-a/2), 2*LambertW(a/2)]</code>
+In this case <code class="highlighter-rouge">2*LambertW(a/2)</code> which is not a solution is included because checksol returns none.</p>
+  </li>
+  <li>
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt;solve((1/x + exp(x/2)).diff(x, 2), x)
+[6*LambertW((-1)**(1/3)/3), 6*LambertW((-1)**(1/3)/3, -1)]
+</code></pre></div>    </div>
+    <p>here <code class="highlighter-rouge">(-1)**1/3</code> can have these values <code class="highlighter-rouge">-1, 1/6(1 - I*3**1/3), 1/6(1 + I*3**1/3)</code>
+but sympy only take <code class="highlighter-rouge">(-1)**1/3</code> to be <code class="highlighter-rouge">1/6(1 - I*3**1/3)</code> whereas
+real solutions are <code class="highlighter-rouge">[6*LambertW(-1/3), 6*LambertW(-1/3, -1)]</code></p>
+  </li>
+</ul>
+
+<h3 id="why-including-checksol-in-_solve_lambert-">Why including checksol in <code class="highlighter-rouge">_solve_lambert</code> ?</h3>
+
+<p>Due to this test case:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>p = symbols('p', positive=True)
+eq = 4*2**(2*p + 3) - 2*p - 3
+assert _solve_lambert(eq, p, _filtered_gens(Poly(eq), p)) == [
+    -S(3)/2 - LambertW(-4*log(2))/(2*log(2))]
+</code></pre></div></div>
+<p>To remove the solutions which were supposed to be checked by checksol later in solve.</p>
+
+<p>Pardon me if I missed a thing!!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div></div>
 <div class="day">
 <h2 class="dayform">May 31, 2019</h2>
@@ -1272,6 +1494,110 @@ Today is May 31, it&rsquo;s been 5 days of work and I&rsquo;ve had some progress
 </ul>
 
 <p>Looking forward for a really productive and wonderful summer ahead.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">May 23, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-b30d7457 feed-" id="item-7cceb040">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/jmig5776.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Jogi Miglani (jmig5776) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://jmig5776.github.io//gsoc-cbp">00:00, Thursday, 23 May UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-cbp">Jogi Miglani (jmig5776): GSoC 2019 - Community bonding period</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/jmig5776.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Jogi Miglani (jmig5776) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://jmig5776.github.io//gsoc-cbp">00:00, Thursday, 23 May UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-cbp">GSoC 2019 - Community bonding period</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>My first meeting with the GSoC mentors was on Saturday 18th May, 2019 scheduled
+between 11:30 AM - 12:30 PM (IST). Me, Amit and Yathartha were the attendees of
+the meeting. As per the community bonding period the first meeting was meant to
+increase the familiarity between me and my mentors and we also discussed about
+completing lambert solver. Major points discussed in the meeting are:-</p>
+
+<ul>
+  <li>
+    <p>Schedule and frequency of meetings.</p>
+  </li>
+  <li>
+    <p>How to proceed with completing lambert, understanding existing code and
+ writing tests for it.</p>
+  </li>
+</ul>
+
+<p>As of now I have looked few things:</p>
+
+<ul>
+  <li>
+    <p>How <code class="highlighter-rouge">lambert</code> works in <code class="highlighter-rouge">bivariate</code>.</p>
+  </li>
+  <li>
+    <p>How equations are converted to target equation.</p>
+  </li>
+  <li>
+    <p>Filtering out the tests to include all solutions.</p>
+  </li>
+  <li>
+    <p>What will be the flow to fix this problem.</p>
+  </li>
+</ul>
+
+<p>In the previous days I have been understanding the flow of <code class="highlighter-rouge">bivariate</code> along with
+<code class="highlighter-rouge">solve</code> and <code class="highlighter-rouge">solveset</code>. It might take time for me to go through it and arrive
+at a good plan but I am trying to learn the art of general aspects of a open
+source software. I believe in understanding rather than rushing. The mentors were
+very kind and helpfull.</p>
+
+<p>Hope things go as planned!!</p>
 					</div>
 				</div>
 			</div>
@@ -3118,143 +3444,6 @@ I started by opening PR <a href="https://github.com/sympy/sympy/pull/14994">#149
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">July 30, 2018</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-cd0b75e7 feed-" id="item-3652581b">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/jashan498.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Jashanpreet Singh Sraw (jashan498) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://singhjashan.wordpress.com/2018/07/30/week-11-unset_show-bug-and-documentation/">17:45, Monday, 30 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://singhjashan.wordpress.com/2018/07/30/week-11-unset_show-bug-and-documentation/">Jashanpreet Singh Sraw (jashan498): Week 11: unset_show bug and documentation</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/jashan498.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Jashanpreet Singh Sraw (jashan498) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://singhjashan.wordpress.com/2018/07/30/week-11-unset_show-bug-and-documentation/">17:45, Monday, 30 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://singhjashan.wordpress.com/2018/07/30/week-11-unset_show-bug-and-documentation/">Week 11: unset_show bug and documentation</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Last week, I created&#160;<a href="https://github.com/sympy/sympy/pull/14967">#14967</a>&#160;for implementation of plotting methods.&#160;Soon after pushing my commits, many of the jobs failed on Travis. It was strange as I was not able to reciprocate the errors locally.</p>
-<p>After discussing it on Gitter, I got to know that it was due to the printing of plots using TextBackend in the doctest in absence of matplotlib. As matplotlib was present in my system,&#160; doctest used matplotlib backend instead of TextBackend locally, hence passing all tests.&#160;<a href="https://github.com/jksuom">Kalevi</a>&#160;suggested using&#160;<em>unset_show </em>to stop the printing of plots during doctest but apparently,&#160;<em>unset_show&#160;</em>didn&#8217;t work for TextBackend. This was fixed by&#160;<a href="https://github.com/sympy/sympy/pull/14984">#14984</a>&#160;later that day and&#160;<a href="https://github.com/sympy/sympy/pull/14967">#14967</a>&#160;passed all the tests after former one was merged.</p>
-<p>This week, I also started editing&#160;<a href="https://github.com/sympy/sympy/pull/14453">#14453</a>&#160;for documentation. It included a few beam problems along with their ascii diagrams.</p>
-<h2><em><strong>Next Week</strong></em></h2>
-<ul>
-<li>Make sure&#160;<a href="https://github.com/sympy/sympy/pull/14967">#14967</a>&#160;and<a href="https://github.com/sympy/sympy/pull/14453">#14453</a>&#160;gets merged.</li>
-<li>&#160;Add more beam problems for documentation.</li>
-</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">July 29, 2018</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-3fff17e0 feed-" id="item-129f4957">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/ashishkg0022.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Ashish Kumar Gaurav (ashishkg0022) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://ashishkg0022.blogspot.com/2018/07/gsoc-2018-week-11.html">14:47, Sunday, 29 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://ashishkg0022.blogspot.com/2018/07/gsoc-2018-week-11.html">Ashish Kumar Gaurav (ashishkg0022): GSoC 2018: Week 11</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/ashishkg0022.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Ashish Kumar Gaurav (ashishkg0022) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://ashishkg0022.blogspot.com/2018/07/gsoc-2018-week-11.html">14:47, Sunday, 29 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://ashishkg0022.blogspot.com/2018/07/gsoc-2018-week-11.html">GSoC 2018: Week 11</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<div dir="ltr" style="text-align: left;"><br /><div style="text-align: justify;"><span style="font-family: Arial, Helvetica, sans-serif;">Hello everyone. Here is the brief progress of Rubi&nbsp;module in the 11th week of GSoC period.</span></div><div style="text-align: justify;"><span style="font-family: Arial, Helvetica, sans-serif;"><br /></span></div><div style="text-align: justify;"><span style="font-family: Arial, Helvetica, sans-serif;">The main PR, which contains the major changes of this GSoC period was merged this week. I had not run pyflakes on it. I ran pyflakes on the main PR and fixed undefined issues.&nbsp;</span></div><div style="text-align: justify;"><span style="font-family: Arial, Helvetica, sans-serif;"><br /></span></div><div style="text-align: justify;"><span style="font-family: Arial, Helvetica, sans-serif;">This week was mainly spent to test code generation. Initially, there was some error in generating the code. An <a href="https://github.com/HPAC/matchpy/issues/33">issue</a> was opened in this regard. I tried various other structure of Rubi to get it working.&nbsp; Currently, patterns are not matched correctly. I have opened a <a href="https://github.com/sympy/sympy/pull/14988">PR</a> for this. We are still trying to get the code generator working so that we can reduce the loading time of rules. Now, the loading time of all rules is around 10 minutes.</span></div><div style="text-align: justify;"><br /></div></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3282,218 +3471,218 @@ I started by opening PR <a href="https://github.com/sympy/sympy/pull/14994">#149
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.com/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
 <td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://divyanshu132.github.io//">Divyanshu Thakur</a></td>
 <td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
-</tr>
-<tr class="feedsrow">
-<td>https://jmig5776.github.io/feed.sympy.xml</td>
-<td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
+</tr>
+<tr class="feedsrow">
+<td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
+<td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://username.github.io">My website</a></td>
 <td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://czgdp1807.github.io/">OpenBlog</a></td>
 <td><a class="xmlbutton" href="https://czgdp1807.github.io/feed.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sc0rpi0n101.github.io/">Sc0rpi0n's Journey</a></td>
 <td><a class="xmlbutton" href="https://sc0rpi0n101.github.io/index.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://shikharj.github.io/feed.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamkjha.github.io/">Shubham&#8217;s Blog</a></td>
 <td><a class="xmlbutton" href="https://shubhamkjha.github.io/sympy_feed.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
 <td><a class="xmlbutton" href="https://sidhantnagpal.com/rss-gsoc.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://www.kangzhiq.com">sympy &#8211; Kangzhiq's blog</a></td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ritesh99rakesh.github.io/">Thoughts that Matter</a></td>
 <td><a class="xmlbutton" href="https://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>19:40, Tuesday, 04 June</td>
-<td>19:55, Tuesday, 04 June</td>
+<td>20:01, Tuesday, 04 June</td>
+<td>20:16, Tuesday, 04 June</td>
 </tr>
 </table>
 
