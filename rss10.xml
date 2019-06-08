@@ -7,6 +7,64 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-06-07-week-2.html</guid>
+      <author>Ankit Pandey (anpandey)</author>
+      <title>Ankit Pandey (anpandey): Google Summer of Code: Week 2</title>
+      <pubDate>Fri, 07 Jun 2019 00:00:00 GMT</pubDate>
+      <link>https://anpandey.github.io/posts/sympy/2019-06-07-week-2.html</link>
+      <description>&lt;p&gt;&lt;article&gt;
+    &lt;section class="header"&gt;
+        Posted on June  7, 2019
+        
+            by Ankit Pandey
+        
+    &lt;/section&gt;
+    &lt;section&gt;
+        &lt;p&gt;&lt;em&gt;See the &lt;a href="https://anpandey.github.io/2019-05-31-week-1.html"&gt;previous post&lt;/a&gt; for Week 1&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;For this week, I&amp;#8217;ve continued working on adding support for LFortran to SymPy&amp;#8217;s code generation capabilities. This week mostly involved getting the infrastructure for testing the functionality of the new code generator working. I also extended the number of expressions the generator can handle, in addition to adding to LFortran&amp;#8217;s ability to parse numbers upstream.&lt;/p&gt;
+&lt;h2 id="more-expressions"&gt;More Expressions&lt;/h2&gt;
+&lt;p&gt;I&amp;#8217;ve added support for four more expression types that the generator can handle: &lt;code&gt;Float&lt;/code&gt;, &lt;code&gt;Rational&lt;/code&gt;, &lt;code&gt;Pow&lt;/code&gt; and &lt;code&gt;Function&lt;/code&gt;. Since our base translation class was already in place from last week, implementing these was relatively straightforward and involved just defining the node visitors for each expression type (The commit that implements this can be found &lt;a href="https://github.com/sympy/sympy/pull/16931/commits/67a06a83d4aa239e8d319837d9ed7d11b67f7846"&gt;here&lt;/a&gt;). Here&amp;#8217;s a demonstration showing the abstract syntax tree generated from translating the expression &lt;math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"&gt;&lt;semantics&gt;&lt;msup&gt;&lt;mrow&gt;&lt;mo form="prefix" stretchy="true"&gt;(&lt;/mo&gt;&lt;mfrac&gt;&lt;mn&gt;4&lt;/mn&gt;&lt;mn&gt;3&lt;/mn&gt;&lt;/mfrac&gt;&lt;mo form="postfix" stretchy="true"&gt;)&lt;/mo&gt;&lt;/mrow&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/msup&gt;&lt;annotation encoding="application/x-tex"&gt;\left(\frac{4}{3}\right)^{x}&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;:&lt;/p&gt;
+&lt;div class="sourceCode" id="cb1"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb1-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.abc &lt;span class="im"&gt;import&lt;/span&gt; x&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.codegen.lfort &lt;span class="im"&gt;import&lt;/span&gt; sympy_to_lfortran&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; lfortran.asr.pprint &lt;span class="im"&gt;import&lt;/span&gt; pprint_asr&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-4" title="4"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; pprint_asr(sympy_to_lfortran(Rational(&lt;span class="dv"&gt;4&lt;/span&gt;, &lt;span class="dv"&gt;3&lt;/span&gt;) &lt;span class="op"&gt;**&lt;/span&gt; x))&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-5" title="5"&gt;expr.BinOp&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-6" title="6"&gt;&amp;#9500;&amp;#9472;left&lt;span class="op"&gt;=&lt;/span&gt;expr.BinOp&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-7" title="7"&gt;&amp;#9474; &amp;#9500;&amp;#9472;left&lt;span class="op"&gt;=&lt;/span&gt;expr.Num&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-8" title="8"&gt;&amp;#9474; &amp;#9474; &amp;#9500;&amp;#9472;n&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="st"&gt;'4_dp'&lt;/span&gt;&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-9" title="9"&gt;&amp;#9474; &amp;#9474; &amp;#9584;&amp;#9472;type&lt;span class="op"&gt;=&lt;/span&gt;ttype.Real&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-10" title="10"&gt;&amp;#9474; &amp;#9474;   &amp;#9500;&amp;#9472;kind&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="dv"&gt;4&lt;/span&gt;&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-11" title="11"&gt;&amp;#9474; &amp;#9474;   &amp;#9584;&amp;#9472;dims&lt;span class="op"&gt;=&lt;/span&gt;[]&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-12" title="12"&gt;&amp;#9474; &amp;#9500;&amp;#9472;op&lt;span class="op"&gt;=&lt;/span&gt;operator.Div&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-13" title="13"&gt;&amp;#9474; &amp;#9500;&amp;#9472;right&lt;span class="op"&gt;=&lt;/span&gt;expr.Num&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-14" title="14"&gt;&amp;#9474; &amp;#9474; &amp;#9500;&amp;#9472;n&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="st"&gt;'3_dp'&lt;/span&gt;&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-15" title="15"&gt;&amp;#9474; &amp;#9474; &amp;#9584;&amp;#9472;type&lt;span class="op"&gt;=&lt;/span&gt;ttype.Real&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-16" title="16"&gt;&amp;#9474; &amp;#9474;   &amp;#9500;&amp;#9472;kind&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="dv"&gt;4&lt;/span&gt;&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-17" title="17"&gt;&amp;#9474; &amp;#9474;   &amp;#9584;&amp;#9472;dims&lt;span class="op"&gt;=&lt;/span&gt;[]&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-18" title="18"&gt;&amp;#9474; &amp;#9584;&amp;#9472;type&lt;span class="op"&gt;=&lt;/span&gt;ttype.Real&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-19" title="19"&gt;&amp;#9474;   &amp;#9500;&amp;#9472;kind&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="dv"&gt;4&lt;/span&gt;&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-20" title="20"&gt;&amp;#9474;   &amp;#9584;&amp;#9472;dims&lt;span class="op"&gt;=&lt;/span&gt;[]&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-21" title="21"&gt;&amp;#9500;&amp;#9472;op&lt;span class="op"&gt;=&lt;/span&gt;operator.Pow&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-22" title="22"&gt;&amp;#9500;&amp;#9472;right&lt;span class="op"&gt;=&lt;/span&gt;x&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-23" title="23"&gt;&amp;#9584;&amp;#9472;type&lt;span class="op"&gt;=&lt;/span&gt;ttype.Real&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-24" title="24"&gt;  &amp;#9500;&amp;#9472;kind&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="dv"&gt;4&lt;/span&gt;&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-25" title="25"&gt;  &amp;#9584;&amp;#9472;dims&lt;span class="op"&gt;=&lt;/span&gt;[]&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;However, the translator fails for expressions that should in theory work. Right now, we can&amp;#8217;t add an integer to a symbol because symbols default to real numbers, resulting in a type mismatch:&lt;/p&gt;
+&lt;div class="sourceCode" id="cb2"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb2-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; pprint_asr(sympy_to_lfortran(&lt;span class="dv"&gt;3&lt;/span&gt; &lt;span class="op"&gt;+&lt;/span&gt; x))&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-2" title="2"&gt;lfortran.asr.asr_check.TypeMismatch: Type mismatch&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Fortran allows the implicit conversion of a float to a real, and the expression shouldn&amp;#8217;t generate an error. This is functionality that will hopefully be implemented by the time I come back to this project close to the end of the summer.&lt;/p&gt;
+&lt;h2 id="testing-the-lfortran-converter"&gt;Testing the LFortran Converter&lt;/h2&gt;
+&lt;p&gt;I also added the initial infrastructure for testing the new code generation functions, with the starting commit available &lt;a href="https://github.com/sympy/sympy/pull/16931/commits/918c12de43e319f8d3f16d48c19f25d1db248909"&gt;here&lt;/a&gt;. As Aaron mentioned in one of our meetings, the plan right now is for code generated by the LFortran backend to be equivalent to the output generated by the existing &lt;code&gt;fcode&lt;/code&gt; at the AST level. Each test should be in the form of an assertion that tests the (parsed) output of &lt;code&gt;fcode&lt;/code&gt; applied to a SymPy expression against the same AST generated by our newly implemented &lt;code&gt;sympy_to_lfortran&lt;/code&gt;. The LFortran project already has code to check generated ASTs against expected values, so I adapted this to the testing library of our code generator (I&amp;#8217;m also not sure how this works in terms of licensing, since both SymPy and LFortran use the BSD-3 license).&lt;/p&gt;
+&lt;p&gt;One problem that immediately became apparent was the way that LFortran represents numbers. Looking at the expression tree above, the real numbers are actually stored as strings. On the parser side, LFortran stores a real number as the string used to represent that number. This means that the ASTs of two expressions that represent the same number in different ways are not identical (for example, &lt;code&gt;1.0_dp&lt;/code&gt; and &lt;code&gt;1.d0&lt;/code&gt; both represent the same double precision floating point number, but the strings stored by LFortran will be different). It&amp;#8217;s only at the &amp;#8220;annotation&amp;#8221; stage of evaluation that LFortran canonicalizes floating point representations. For now, the tests use the annotation function of this stage, and I filed a &lt;a href="https://gitlab.com/lfortran/lfortran/merge_requests/225"&gt;merge request&lt;/a&gt; on the LFortran project to add support for parsing numbers in the way that &lt;code&gt;fcode&lt;/code&gt; generates them.&lt;/p&gt;
+&lt;p&gt;While the initial infrastructure is in place, I haven&amp;#8217;t added any tests yet. Since the LFortran project is still in early alpha, the functionality needed to compare the syntax tree made by the builder API against the syntax tree parsed from the output of &lt;code&gt;fcode&lt;/code&gt; hasn&amp;#8217;t been implemented yet. Again, this is something that will hopefully be implemented in LFortran near the end of the summer when I start on this portion of the project again.&lt;/p&gt;
+&lt;h3 id="contributing-upstream"&gt;Contributing Upstream&lt;/h3&gt;
+&lt;p&gt;After I filed the merge request to add the functionality I needed to LFortran, Ondr&amp;#780;ej (the creator of LFortran and one of my mentors) mentioned that he was planning on eventually removing the module I contributed to. The merge request I filed actually wasn&amp;#8217;t the one I had in mind at first. I thought about adding support for canonicalizing number nodes right after they&amp;#8217;re created in the builder API, but I decided against this because I felt that any changes I made would have to be minimally invasive. In retrospect, this was probably a misplaced concern, since it&amp;#8217;s important to consider the development stage of a project when deciding how much of it should be changed. Because of this, LFortran will probably end up with something I opted at the moment to not implement.&lt;/p&gt;
+&lt;h2 id="next-steps"&gt;Next Steps&lt;/h2&gt;
+&lt;p&gt;There&amp;#8217;s still some work left to be done with LFortran, such as filing issues I encountered and preparing the pull request for a merge (though it&amp;#8217;ll probably remain a work in progress for some time). After that, I&amp;#8217;ll be finished with LFortran for the time being and move on to extending support for matrix expressions in the Python code generator. The Python code generator can already convert (most) matrix expressions through NumPy, though there are still some bugs owing to an incomplete implementation. For next week, I&amp;#8217;ll have to figure out what this missing functionality is how it can be implemented.&lt;/p&gt;
+    &lt;/section&gt;
+&lt;/article&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/06/week-0-communtiy-bonding-period-a-new-beginning/</guid>
       <author>Nikhil Maan (Sc0rpi0n101)</author>
       <title>Nikhil Maan (Sc0rpi0n101): Week 0: Communtiy Bonding Period - A new Beginning</title>
@@ -358,14 +416,14 @@ assert _solve_lambert(eq, p, _filtered_gens(Poly(eq), p)) == [
 &lt;p&gt;In addition to being able to parse code, LFortran also provides the functionality of traversing a parse tree and generating the equivalent Fortran code. This means that if we want to generate Fortran code from a SymPy expression, the only work that we have to do is convert the SymPy expression tree to its LFortran equivalent.&lt;/p&gt;
 &lt;h3 id="lfortran-builder"&gt;LFortran Builder&lt;/h3&gt;
 &lt;p&gt;LFortran provides a number of convenience functions for building a Fortran AST. Since LFortran is still in early alpha, there are currently only about a dozen builder functions. However, these few basic functions are enough for constructing simple expressions in the Fortran AST. As an example, if we wanted to construct the expression represented by &lt;code&gt;c = a + b&lt;/code&gt;, where each variable involved is an integer, we could do something like:&lt;/p&gt;
-&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;import&lt;/span&gt; lfortran.asr.builder &lt;span class="im"&gt;as&lt;/span&gt; builder
-&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;import&lt;/span&gt; lfortran.asr.asr &lt;span class="im"&gt;as&lt;/span&gt; asr
-&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; integer &lt;span class="op"&gt;=&lt;/span&gt; builder.make_type_integer()
-&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; a &lt;span class="op"&gt;=&lt;/span&gt; asr.Variable(name&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;a&amp;quot;&lt;/span&gt;, &lt;span class="bu"&gt;type&lt;/span&gt;&lt;span class="op"&gt;=&lt;/span&gt;integer)
-&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; b &lt;span class="op"&gt;=&lt;/span&gt; asr.Variable(name&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;b&amp;quot;&lt;/span&gt;, &lt;span class="bu"&gt;type&lt;/span&gt;&lt;span class="op"&gt;=&lt;/span&gt;integer)
-&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; c &lt;span class="op"&gt;=&lt;/span&gt; asr.Variable(name&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;c&amp;quot;&lt;/span&gt;, &lt;span class="bu"&gt;type&lt;/span&gt;&lt;span class="op"&gt;=&lt;/span&gt;integer)
-&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="bu"&gt;sum&lt;/span&gt; &lt;span class="op"&gt;=&lt;/span&gt; builder.make_binop(a, asr.Add(), b)
-&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; expr &lt;span class="op"&gt;=&lt;/span&gt; asr.Assignment(c, &lt;span class="bu"&gt;sum&lt;/span&gt;)&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="sourceCode" id="cb1"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb1-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;import&lt;/span&gt; lfortran.asr.builder &lt;span class="im"&gt;as&lt;/span&gt; builder&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;import&lt;/span&gt; lfortran.asr.asr &lt;span class="im"&gt;as&lt;/span&gt; asr&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; integer &lt;span class="op"&gt;=&lt;/span&gt; builder.make_type_integer()&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-4" title="4"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; a &lt;span class="op"&gt;=&lt;/span&gt; asr.Variable(name&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;a&amp;quot;&lt;/span&gt;, &lt;span class="bu"&gt;type&lt;/span&gt;&lt;span class="op"&gt;=&lt;/span&gt;integer)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-5" title="5"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; b &lt;span class="op"&gt;=&lt;/span&gt; asr.Variable(name&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;b&amp;quot;&lt;/span&gt;, &lt;span class="bu"&gt;type&lt;/span&gt;&lt;span class="op"&gt;=&lt;/span&gt;integer)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-6" title="6"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; c &lt;span class="op"&gt;=&lt;/span&gt; asr.Variable(name&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="st"&gt;&amp;quot;c&amp;quot;&lt;/span&gt;, &lt;span class="bu"&gt;type&lt;/span&gt;&lt;span class="op"&gt;=&lt;/span&gt;integer)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-7" title="7"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="bu"&gt;sum&lt;/span&gt; &lt;span class="op"&gt;=&lt;/span&gt; builder.make_binop(a, asr.Add(), b)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-8" title="8"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; expr &lt;span class="op"&gt;=&lt;/span&gt; asr.Assignment(c, &lt;span class="bu"&gt;sum&lt;/span&gt;)&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;LFortran also provides functionality to visualize what the expression tree looks like:&lt;/p&gt;
 
 &lt;div class="sourceCode"&gt;
@@ -383,13 +441,13 @@ assert _solve_lambert(eq, p, _filtered_gens(Poly(eq), p)) == [
 &lt;/div&gt;
 &lt;h2 id="sympy-to-lfortran-converter"&gt;Sympy to LFortran Converter&lt;/h2&gt;
 &lt;p&gt;I&amp;#8217;ve started with the implementation of a basic SymPy to LFortran converter utilizing the AST builder described above, with the current &lt;a href="https://github.com/sympy/sympy/pull/16931"&gt;pull request&lt;/a&gt; available on the SymPy GitHub. The converter follows the same node visitor class structure as all of the other code printers (it even inherits the &lt;code&gt;CodePrinter&lt;/code&gt; class, despite the methods not producing strings but rather AST nodes). Here&amp;#8217;s a simple example that demonstrates the conversion of a simple expression to an equivalent in LFortran:&lt;/p&gt;
-&lt;div class="sourceCode"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.abc &lt;span class="im"&gt;import&lt;/span&gt; x
-&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.codegen.lfort &lt;span class="im"&gt;import&lt;/span&gt; sympy_to_lfortran
-&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;import&lt;/span&gt; lfortran
-&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; e &lt;span class="op"&gt;=&lt;/span&gt; x &lt;span class="op"&gt;+&lt;/span&gt; &lt;span class="dv"&gt;1&lt;/span&gt;
-&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; e_converted &lt;span class="op"&gt;=&lt;/span&gt; sympy_to_lfortran(e)
-&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; lfortran.ast_to_src(lfortran.asr_to_ast(e_converted)).replace(&lt;span class="st"&gt;'&lt;/span&gt;&lt;span class="ch"&gt;\n&lt;/span&gt;&lt;span class="st"&gt;'&lt;/span&gt;, &lt;span class="st"&gt;''&lt;/span&gt;)
-&lt;span class="co"&gt;'(x) + (1)'&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="sourceCode" id="cb2"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb2-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.abc &lt;span class="im"&gt;import&lt;/span&gt; x&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.codegen.lfort &lt;span class="im"&gt;import&lt;/span&gt; sympy_to_lfortran&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;import&lt;/span&gt; lfortran&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-4" title="4"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; e &lt;span class="op"&gt;=&lt;/span&gt; x &lt;span class="op"&gt;+&lt;/span&gt; &lt;span class="dv"&gt;1&lt;/span&gt;&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-5" title="5"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; e_converted &lt;span class="op"&gt;=&lt;/span&gt; sympy_to_lfortran(e)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-6" title="6"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; lfortran.ast_to_src(lfortran.asr_to_ast(e_converted)).replace(&lt;span class="st"&gt;'&lt;/span&gt;&lt;span class="ch"&gt;\n&lt;/span&gt;&lt;span class="st"&gt;'&lt;/span&gt;, &lt;span class="st"&gt;''&lt;/span&gt;)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-7" title="7"&gt;&lt;span class="co"&gt;'(x) + (1)'&lt;/span&gt;&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;There are two things to notice here. The first is that I had to replace all the newlines in the generated expression, since a &lt;a href="https://gitlab.com/lfortran/lfortran/issues/110"&gt;bug in LFortran&lt;/a&gt; causes too many newlines to be printed. The second is that there are a number of redundant parentheses in the printed expression. While this isn&amp;#8217;t an outright bug, it&amp;#8217;s another aspect of LFortran that is currently being improved upon.&lt;/p&gt;
 &lt;p&gt;I&amp;#8217;ve also add another function, &lt;code&gt;sympy_to_lfortran_wrapped&lt;/code&gt;, which wraps an expression in a function definition, (poorly) emulating the wrapping part of &lt;a href="https://docs.sympy.org/latest/modules/utilities/autowrap.html"&gt;&lt;code&gt;autowrap&lt;/code&gt;&lt;/a&gt;:&lt;/p&gt;
 &lt;div class="sourceCode"&gt;
@@ -1654,28 +1712,6 @@ bikeshedding).&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;What&amp;#8217;s next:&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;I will try to wrap up the work of both the PR&amp;#8217;s. Lambert solver PR would need a bit more time for reviewing but nevertheless I will be continuing its work post GSoC. Implementing these two solvers will make &lt;code class="highlighter-rouge"&gt;solveset&lt;/code&gt; fully functional to handle transcendental equations which is a major part of my GSoC propsal. There will be a few minor things left that I will try to finish post GSoC. Also since this is the last week for the coding period, I will be needing to submit a final report of my work, I will complete and submit it before the deadline.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sidhantnagpal.github.io/2018/08/gsoc-week12</guid>
-      <author>Sidhant Nagpal (sidhantnagpal)</author>
-      <title>Sidhant Nagpal (sidhantnagpal): GSoC 2018: SymPy - Week 12</title>
-      <pubDate>Tue, 07 Aug 2018 00:00:00 GMT</pubDate>
-      <link>https://sidhantnagpal.github.io/2018/08/gsoc-week12</link>
-      <description>&lt;p&gt;&lt;img src="https://sidhantnagpal.com/files/gsoc-sympy.png" style="width: 75%; height: 75%; float: left; margin-left: 55px;" /&gt;
-&lt;br clear="all" /&gt;&lt;/p&gt;
-
-&lt;p&gt;The final week of Coding Period has completed.&lt;/p&gt;
-
-&lt;p&gt;This week, the work was mainly concerned with the documentation and refinements in the &lt;code class="highlighter-rouge"&gt;discrete&lt;/code&gt; module.
-I started by opening PR &lt;a href="https://github.com/sympy/sympy/pull/14994"&gt;#14994&lt;/a&gt; to update Sphinx docs for SymPy.
-&lt;a href="https://github.com/jksuom"&gt;Kalevi&lt;/a&gt; and &lt;a href="https://github.com/asmeurer"&gt;Aaron&lt;/a&gt; were kind enough to review the PR and help refine it for the final merge. The documentation for &lt;code class="highlighter-rouge"&gt;discrete&lt;/code&gt; module is now part of the SymPy docs and can be referred &lt;a href="http://docs.sympy.org/dev/modules/discrete.html"&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Late this week, I opened PR &lt;a href="https://github.com/sympy/sympy/pull/15025"&gt;#15025&lt;/a&gt; for improvements in the &lt;code class="highlighter-rouge"&gt;discrete&lt;/code&gt; module.
-&lt;a href="https://github.com/cbm755"&gt;Colin&lt;/a&gt; helped fix accidental floats in unit tests (which should have been Rationals). After the review, the PR was merged successfully.&lt;/p&gt;
-
-&lt;p&gt;Future work would include - addition of a user-facing public method for &lt;code class="highlighter-rouge"&gt;linrec&lt;/code&gt; and making methods &lt;code class="highlighter-rouge"&gt;fft&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;convolution_fft&lt;/code&gt; efficient for both symbolic and numeric variants, as some discussion and benchmarking has been done for it and there is some work done by &lt;a href="https://github.com/cbm755"&gt;Colin&lt;/a&gt; for &lt;code class="highlighter-rouge"&gt;ComplexFloat&lt;/code&gt; class in PR &lt;a href="https://github.com/sympy/sympy/pull/12192"&gt;#12192&lt;/a&gt; which would be helpful for the same.&lt;/p&gt;
-
-&lt;p&gt;Looking forward to the concluding phase, where I will be wrapping up GSoC and preparing the report for the final evaluation.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

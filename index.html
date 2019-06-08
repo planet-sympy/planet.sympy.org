@@ -89,6 +89,121 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">June 07, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-2b8e50f7 feed-" id="item-ae1ee85e">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/anpandey.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Ankit Pandey (anpandey) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://anpandey.github.io/posts/sympy/2019-06-07-week-2.html">00:00, Friday, 07 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://anpandey.github.io/posts/sympy/2019-06-07-week-2.html">Ankit Pandey (anpandey): Google Summer of Code: Week 2</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/anpandey.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Ankit Pandey (anpandey) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://anpandey.github.io/posts/sympy/2019-06-07-week-2.html">00:00, Friday, 07 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://anpandey.github.io/posts/sympy/2019-06-07-week-2.html">Google Summer of Code: Week 2</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p><article>
+    <section class="header">
+        Posted on June  7, 2019
+        
+            by Ankit Pandey
+        
+    </section>
+    <section>
+        <p><em>See the <a href="https://anpandey.github.io/2019-05-31-week-1.html">previous post</a> for Week 1</em>.</p>
+<p>For this week, I&#8217;ve continued working on adding support for LFortran to SymPy&#8217;s code generation capabilities. This week mostly involved getting the infrastructure for testing the functionality of the new code generator working. I also extended the number of expressions the generator can handle, in addition to adding to LFortran&#8217;s ability to parse numbers upstream.</p>
+<h2 id="more-expressions">More Expressions</h2>
+<p>I&#8217;ve added support for four more expression types that the generator can handle: <code>Float</code>, <code>Rational</code>, <code>Pow</code> and <code>Function</code>. Since our base translation class was already in place from last week, implementing these was relatively straightforward and involved just defining the node visitors for each expression type (The commit that implements this can be found <a href="https://github.com/sympy/sympy/pull/16931/commits/67a06a83d4aa239e8d319837d9ed7d11b67f7846">here</a>). Here&#8217;s a demonstration showing the abstract syntax tree generated from translating the expression <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo form="prefix" stretchy="true">(</mo><mfrac><mn>4</mn><mn>3</mn></mfrac><mo form="postfix" stretchy="true">)</mo></mrow><mi>x</mi></msup><annotation encoding="application/x-tex">\left(\frac{4}{3}\right)^{x}</annotation></semantics></math>:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" title="1"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sympy.abc <span class="im">import</span> x</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sympy.codegen.lfort <span class="im">import</span> sympy_to_lfortran</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> lfortran.asr.pprint <span class="im">import</span> pprint_asr</a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="op">&gt;&gt;&gt;</span> pprint_asr(sympy_to_lfortran(Rational(<span class="dv">4</span>, <span class="dv">3</span>) <span class="op">**</span> x))</a>
+<a class="sourceLine" id="cb1-5" title="5">expr.BinOp</a>
+<a class="sourceLine" id="cb1-6" title="6">&#9500;&#9472;left<span class="op">=</span>expr.BinOp</a>
+<a class="sourceLine" id="cb1-7" title="7">&#9474; &#9500;&#9472;left<span class="op">=</span>expr.Num</a>
+<a class="sourceLine" id="cb1-8" title="8">&#9474; &#9474; &#9500;&#9472;n<span class="op">=</span><span class="st">'4_dp'</span></a>
+<a class="sourceLine" id="cb1-9" title="9">&#9474; &#9474; &#9584;&#9472;type<span class="op">=</span>ttype.Real</a>
+<a class="sourceLine" id="cb1-10" title="10">&#9474; &#9474;   &#9500;&#9472;kind<span class="op">=</span><span class="dv">4</span></a>
+<a class="sourceLine" id="cb1-11" title="11">&#9474; &#9474;   &#9584;&#9472;dims<span class="op">=</span>[]</a>
+<a class="sourceLine" id="cb1-12" title="12">&#9474; &#9500;&#9472;op<span class="op">=</span>operator.Div</a>
+<a class="sourceLine" id="cb1-13" title="13">&#9474; &#9500;&#9472;right<span class="op">=</span>expr.Num</a>
+<a class="sourceLine" id="cb1-14" title="14">&#9474; &#9474; &#9500;&#9472;n<span class="op">=</span><span class="st">'3_dp'</span></a>
+<a class="sourceLine" id="cb1-15" title="15">&#9474; &#9474; &#9584;&#9472;type<span class="op">=</span>ttype.Real</a>
+<a class="sourceLine" id="cb1-16" title="16">&#9474; &#9474;   &#9500;&#9472;kind<span class="op">=</span><span class="dv">4</span></a>
+<a class="sourceLine" id="cb1-17" title="17">&#9474; &#9474;   &#9584;&#9472;dims<span class="op">=</span>[]</a>
+<a class="sourceLine" id="cb1-18" title="18">&#9474; &#9584;&#9472;type<span class="op">=</span>ttype.Real</a>
+<a class="sourceLine" id="cb1-19" title="19">&#9474;   &#9500;&#9472;kind<span class="op">=</span><span class="dv">4</span></a>
+<a class="sourceLine" id="cb1-20" title="20">&#9474;   &#9584;&#9472;dims<span class="op">=</span>[]</a>
+<a class="sourceLine" id="cb1-21" title="21">&#9500;&#9472;op<span class="op">=</span>operator.Pow</a>
+<a class="sourceLine" id="cb1-22" title="22">&#9500;&#9472;right<span class="op">=</span>x</a>
+<a class="sourceLine" id="cb1-23" title="23">&#9584;&#9472;type<span class="op">=</span>ttype.Real</a>
+<a class="sourceLine" id="cb1-24" title="24">  &#9500;&#9472;kind<span class="op">=</span><span class="dv">4</span></a>
+<a class="sourceLine" id="cb1-25" title="25">  &#9584;&#9472;dims<span class="op">=</span>[]</a></code></pre></div>
+<p>However, the translator fails for expressions that should in theory work. Right now, we can&#8217;t add an integer to a symbol because symbols default to real numbers, resulting in a type mismatch:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" title="1"><span class="op">&gt;&gt;&gt;</span> pprint_asr(sympy_to_lfortran(<span class="dv">3</span> <span class="op">+</span> x))</a>
+<a class="sourceLine" id="cb2-2" title="2">lfortran.asr.asr_check.TypeMismatch: Type mismatch</a></code></pre></div>
+<p>Fortran allows the implicit conversion of a float to a real, and the expression shouldn&#8217;t generate an error. This is functionality that will hopefully be implemented by the time I come back to this project close to the end of the summer.</p>
+<h2 id="testing-the-lfortran-converter">Testing the LFortran Converter</h2>
+<p>I also added the initial infrastructure for testing the new code generation functions, with the starting commit available <a href="https://github.com/sympy/sympy/pull/16931/commits/918c12de43e319f8d3f16d48c19f25d1db248909">here</a>. As Aaron mentioned in one of our meetings, the plan right now is for code generated by the LFortran backend to be equivalent to the output generated by the existing <code>fcode</code> at the AST level. Each test should be in the form of an assertion that tests the (parsed) output of <code>fcode</code> applied to a SymPy expression against the same AST generated by our newly implemented <code>sympy_to_lfortran</code>. The LFortran project already has code to check generated ASTs against expected values, so I adapted this to the testing library of our code generator (I&#8217;m also not sure how this works in terms of licensing, since both SymPy and LFortran use the BSD-3 license).</p>
+<p>One problem that immediately became apparent was the way that LFortran represents numbers. Looking at the expression tree above, the real numbers are actually stored as strings. On the parser side, LFortran stores a real number as the string used to represent that number. This means that the ASTs of two expressions that represent the same number in different ways are not identical (for example, <code>1.0_dp</code> and <code>1.d0</code> both represent the same double precision floating point number, but the strings stored by LFortran will be different). It&#8217;s only at the &#8220;annotation&#8221; stage of evaluation that LFortran canonicalizes floating point representations. For now, the tests use the annotation function of this stage, and I filed a <a href="https://gitlab.com/lfortran/lfortran/merge_requests/225">merge request</a> on the LFortran project to add support for parsing numbers in the way that <code>fcode</code> generates them.</p>
+<p>While the initial infrastructure is in place, I haven&#8217;t added any tests yet. Since the LFortran project is still in early alpha, the functionality needed to compare the syntax tree made by the builder API against the syntax tree parsed from the output of <code>fcode</code> hasn&#8217;t been implemented yet. Again, this is something that will hopefully be implemented in LFortran near the end of the summer when I start on this portion of the project again.</p>
+<h3 id="contributing-upstream">Contributing Upstream</h3>
+<p>After I filed the merge request to add the functionality I needed to LFortran, Ondr&#780;ej (the creator of LFortran and one of my mentors) mentioned that he was planning on eventually removing the module I contributed to. The merge request I filed actually wasn&#8217;t the one I had in mind at first. I thought about adding support for canonicalizing number nodes right after they&#8217;re created in the builder API, but I decided against this because I felt that any changes I made would have to be minimally invasive. In retrospect, this was probably a misplaced concern, since it&#8217;s important to consider the development stage of a project when deciding how much of it should be changed. Because of this, LFortran will probably end up with something I opted at the moment to not implement.</p>
+<h2 id="next-steps">Next Steps</h2>
+<p>There&#8217;s still some work left to be done with LFortran, such as filing issues I encountered and preparing the pull request for a merge (though it&#8217;ll probably remain a work in progress for some time). After that, I&#8217;ll be finished with LFortran for the time being and move on to extending support for matrix expressions in the Python code generator. The Python code generator can already convert (most) matrix expressions through NumPy, though there are still some bugs owing to an incomplete implementation. For next week, I&#8217;ll have to figure out what this missing functionality is how it can be implemented.</p>
+    </section>
+</article>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">June 05, 2019</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -866,7 +981,7 @@ assert _solve_lambert(eq, p, _filtered_gens(Poly(eq), p)) == [
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-2b8e50f7 feed-" id="item-921bf48f">
+		    <div class="box" class="item feed-2b8e50f7 feed-" id="item-b23755aa">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -933,14 +1048,14 @@ assert _solve_lambert(eq, p, _filtered_gens(Poly(eq), p)) == [
 <p>In addition to being able to parse code, LFortran also provides the functionality of traversing a parse tree and generating the equivalent Fortran code. This means that if we want to generate Fortran code from a SymPy expression, the only work that we have to do is convert the SymPy expression tree to its LFortran equivalent.</p>
 <h3 id="lfortran-builder">LFortran Builder</h3>
 <p>LFortran provides a number of convenience functions for building a Fortran AST. Since LFortran is still in early alpha, there are currently only about a dozen builder functions. However, these few basic functions are enough for constructing simple expressions in the Fortran AST. As an example, if we wanted to construct the expression represented by <code>c = a + b</code>, where each variable involved is an integer, we could do something like:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> lfortran.asr.builder <span class="im">as</span> builder
-<span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> lfortran.asr.asr <span class="im">as</span> asr
-<span class="op">&gt;&gt;&gt;</span> integer <span class="op">=</span> builder.make_type_integer()
-<span class="op">&gt;&gt;&gt;</span> a <span class="op">=</span> asr.Variable(name<span class="op">=</span><span class="st">&quot;a&quot;</span>, <span class="bu">type</span><span class="op">=</span>integer)
-<span class="op">&gt;&gt;&gt;</span> b <span class="op">=</span> asr.Variable(name<span class="op">=</span><span class="st">&quot;b&quot;</span>, <span class="bu">type</span><span class="op">=</span>integer)
-<span class="op">&gt;&gt;&gt;</span> c <span class="op">=</span> asr.Variable(name<span class="op">=</span><span class="st">&quot;c&quot;</span>, <span class="bu">type</span><span class="op">=</span>integer)
-<span class="op">&gt;&gt;&gt;</span> <span class="bu">sum</span> <span class="op">=</span> builder.make_binop(a, asr.Add(), b)
-<span class="op">&gt;&gt;&gt;</span> expr <span class="op">=</span> asr.Assignment(c, <span class="bu">sum</span>)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" title="1"><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> lfortran.asr.builder <span class="im">as</span> builder</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> lfortran.asr.asr <span class="im">as</span> asr</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="op">&gt;&gt;&gt;</span> integer <span class="op">=</span> builder.make_type_integer()</a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="op">&gt;&gt;&gt;</span> a <span class="op">=</span> asr.Variable(name<span class="op">=</span><span class="st">&quot;a&quot;</span>, <span class="bu">type</span><span class="op">=</span>integer)</a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="op">&gt;&gt;&gt;</span> b <span class="op">=</span> asr.Variable(name<span class="op">=</span><span class="st">&quot;b&quot;</span>, <span class="bu">type</span><span class="op">=</span>integer)</a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="op">&gt;&gt;&gt;</span> c <span class="op">=</span> asr.Variable(name<span class="op">=</span><span class="st">&quot;c&quot;</span>, <span class="bu">type</span><span class="op">=</span>integer)</a>
+<a class="sourceLine" id="cb1-7" title="7"><span class="op">&gt;&gt;&gt;</span> <span class="bu">sum</span> <span class="op">=</span> builder.make_binop(a, asr.Add(), b)</a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="op">&gt;&gt;&gt;</span> expr <span class="op">=</span> asr.Assignment(c, <span class="bu">sum</span>)</a></code></pre></div>
 <p>LFortran also provides functionality to visualize what the expression tree looks like:</p>
 
 <div class="sourceCode">
@@ -958,13 +1073,13 @@ assert _solve_lambert(eq, p, _filtered_gens(Poly(eq), p)) == [
 </div>
 <h2 id="sympy-to-lfortran-converter">Sympy to LFortran Converter</h2>
 <p>I&#8217;ve started with the implementation of a basic SymPy to LFortran converter utilizing the AST builder described above, with the current <a href="https://github.com/sympy/sympy/pull/16931">pull request</a> available on the SymPy GitHub. The converter follows the same node visitor class structure as all of the other code printers (it even inherits the <code>CodePrinter</code> class, despite the methods not producing strings but rather AST nodes). Here&#8217;s a simple example that demonstrates the conversion of a simple expression to an equivalent in LFortran:</p>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sympy.abc <span class="im">import</span> x
-<span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sympy.codegen.lfort <span class="im">import</span> sympy_to_lfortran
-<span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> lfortran
-<span class="op">&gt;&gt;&gt;</span> e <span class="op">=</span> x <span class="op">+</span> <span class="dv">1</span>
-<span class="op">&gt;&gt;&gt;</span> e_converted <span class="op">=</span> sympy_to_lfortran(e)
-<span class="op">&gt;&gt;&gt;</span> lfortran.ast_to_src(lfortran.asr_to_ast(e_converted)).replace(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>, <span class="st">''</span>)
-<span class="co">'(x) + (1)'</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" title="1"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sympy.abc <span class="im">import</span> x</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sympy.codegen.lfort <span class="im">import</span> sympy_to_lfortran</a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="op">&gt;&gt;&gt;</span> <span class="im">import</span> lfortran</a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="op">&gt;&gt;&gt;</span> e <span class="op">=</span> x <span class="op">+</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="op">&gt;&gt;&gt;</span> e_converted <span class="op">=</span> sympy_to_lfortran(e)</a>
+<a class="sourceLine" id="cb2-6" title="6"><span class="op">&gt;&gt;&gt;</span> lfortran.ast_to_src(lfortran.asr_to_ast(e_converted)).replace(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>, <span class="st">''</span>)</a>
+<a class="sourceLine" id="cb2-7" title="7"><span class="co">'(x) + (1)'</span></a></code></pre></div>
 <p>There are two things to notice here. The first is that I had to replace all the newlines in the generated expression, since a <a href="https://gitlab.com/lfortran/lfortran/issues/110">bug in LFortran</a> causes too many newlines to be printed. The second is that there are a number of redundant parentheses in the printed expression. While this isn&#8217;t an outright bug, it&#8217;s another aspect of LFortran that is currently being improved upon.</p>
 <p>I&#8217;ve also add another function, <code>sympy_to_lfortran_wrapped</code>, which wraps an expression in a function definition, (poorly) emulating the wrapping part of <a href="https://docs.sympy.org/latest/modules/utilities/autowrap.html"><code>autowrap</code></a>:</p>
 <div class="sourceCode">
@@ -3363,85 +3478,6 @@ bikeshedding).</p>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">August 07, 2018</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-f687280e feed-" id="item-ed59e9e1">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/sidhantnagpal.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Sidhant Nagpal (sidhantnagpal) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://sidhantnagpal.github.io/2018/08/gsoc-week12">00:00, Tuesday, 07 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://sidhantnagpal.github.io/2018/08/gsoc-week12">Sidhant Nagpal (sidhantnagpal): GSoC 2018: SymPy - Week 12</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/sidhantnagpal.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Sidhant Nagpal (sidhantnagpal) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://sidhantnagpal.github.io/2018/08/gsoc-week12">00:00, Tuesday, 07 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://sidhantnagpal.github.io/2018/08/gsoc-week12">GSoC 2018: SymPy - Week 12</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p><img src="https://sidhantnagpal.com/files/gsoc-sympy.png" style="width: 75%; height: 75%; float: left; margin-left: 55px;" />
-<br clear="all" /></p>
-
-<p>The final week of Coding Period has completed.</p>
-
-<p>This week, the work was mainly concerned with the documentation and refinements in the <code class="highlighter-rouge">discrete</code> module.
-I started by opening PR <a href="https://github.com/sympy/sympy/pull/14994">#14994</a> to update Sphinx docs for SymPy.
-<a href="https://github.com/jksuom">Kalevi</a> and <a href="https://github.com/asmeurer">Aaron</a> were kind enough to review the PR and help refine it for the final merge. The documentation for <code class="highlighter-rouge">discrete</code> module is now part of the SymPy docs and can be referred <a href="http://docs.sympy.org/dev/modules/discrete.html">here</a>.</p>
-
-<p>Late this week, I opened PR <a href="https://github.com/sympy/sympy/pull/15025">#15025</a> for improvements in the <code class="highlighter-rouge">discrete</code> module.
-<a href="https://github.com/cbm755">Colin</a> helped fix accidental floats in unit tests (which should have been Rationals). After the review, the PR was merged successfully.</p>
-
-<p>Future work would include - addition of a user-facing public method for <code class="highlighter-rouge">linrec</code> and making methods <code class="highlighter-rouge">fft</code> and <code class="highlighter-rouge">convolution_fft</code> efficient for both symbolic and numeric variants, as some discussion and benchmarking has been done for it and there is some work done by <a href="https://github.com/cbm755">Colin</a> for <code class="highlighter-rouge">ComplexFloat</code> class in PR <a href="https://github.com/sympy/sympy/pull/12192">#12192</a> which would be helpful for the same.</p>
-
-<p>Looking forward to the concluding phase, where I will be wrapping up GSoC and preparing the report for the final evaluation.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3469,218 +3505,218 @@ I started by opening PR <a href="https://github.com/sympy/sympy/pull/14994">#149
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.com/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
 <td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://divyanshu132.github.io//">Divyanshu Thakur</a></td>
 <td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
 <td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://username.github.io">My website</a></td>
 <td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://czgdp1807.github.io/">OpenBlog</a></td>
 <td><a class="xmlbutton" href="https://czgdp1807.github.io/feed.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sc0rpi0n101.github.io/">Sc0rpi0n's Journey</a></td>
 <td><a class="xmlbutton" href="https://sc0rpi0n101.github.io/index.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://shikharj.github.io/feed.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamkjha.github.io/">Shubham&#8217;s Blog</a></td>
 <td><a class="xmlbutton" href="https://shubhamkjha.github.io/sympy_feed.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
 <td><a class="xmlbutton" href="https://sidhantnagpal.com/rss-gsoc.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://www.kangzhiq.com">sympy &#8211; Kangzhiq's blog</a></td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ritesh99rakesh.github.io/">Thoughts that Matter</a></td>
 <td><a class="xmlbutton" href="https://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>01:00, Saturday, 08 June</td>
-<td>01:15, Saturday, 08 June</td>
+<td>01:21, Saturday, 08 June</td>
+<td>01:36, Saturday, 08 June</td>
 </tr>
 </table>
 
