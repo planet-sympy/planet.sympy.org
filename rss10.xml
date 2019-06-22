@@ -7,6 +7,62 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/06/week-4-the-fortran-parser-is-finally-here/</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 4: The Fortran Parser is finally here</title>
+      <pubDate>Sat, 22 Jun 2019 00:00:00 GMT</pubDate>
+      <link>https://sc0rpi0n101.github.io/2019/06/week-4-the-fortran-parser-is-finally-here/</link>
+      <description>&lt;p&gt;&amp;ldquo;When someone says: &amp;lsquo;I want a programming language in which I need only say what I wish done&amp;rsquo;, give him a lollipop.&amp;rdquo; &amp;#8212; Alan J. Perlis in Software Metrics
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week has been relatively a little odd. The week started a little slow but slowly it turned out to be a good and productive week.
+ A Slow Start LFortran Testing Finally, The Missing Pull Request The Long Awaited Meeting What now?</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-06-21-weeks-3-and-4.html</guid>
+      <author>Ankit Pandey (anpandey)</author>
+      <title>Ankit Pandey (anpandey): Google Summer of Code Weeks 3 and 4: Matrix Optimizations</title>
+      <pubDate>Fri, 21 Jun 2019 00:00:00 GMT</pubDate>
+      <link>https://anpandey.github.io/posts/sympy/2019-06-21-weeks-3-and-4.html</link>
+      <description>&lt;p&gt;&lt;article&gt;
+    &lt;section class="header"&gt;
+        Posted on June 21, 2019
+        
+            by Ankit Pandey
+        
+    &lt;/section&gt;
+    &lt;section&gt;
+        &lt;p&gt;&lt;em&gt;See the &lt;a href="https://anpandey.github.io/2019-06-07-week-2.html"&gt;previous post&lt;/a&gt; for Week 2&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;I spent a large part of last week travelling, so I&amp;#8217;m combining the blog posts for the last two weeks.&lt;/p&gt;
+&lt;h2 id="finishing-up-with-lfortran"&gt;Finishing up with LFortran&lt;/h2&gt;
+&lt;p&gt;I&amp;#8217;m finished with the &lt;a href="https://github.com/sympy/sympy/pull/16931"&gt;pull request&lt;/a&gt; for the LFortran code printer for now, though it&amp;#8217;s definitely way too incomplete to be merged. The code passes &lt;em&gt;most&lt;/em&gt; of the rudimentary tests I&amp;#8217;ve added.&lt;/p&gt;
+&lt;p&gt;Here&amp;#8217;s a simple example of one of the failing LFortran tests: Suppose we want to generate Fortran (using LFortran) code from the mathematical expression &lt;math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mo&gt;&amp;#8722;&lt;/mo&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/mrow&gt;&lt;annotation encoding="application/x-tex"&gt;-x&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;. SymPy sees this expression as multiplication with -1, as it implements only addition and multiplication in its arithmetic operations:&lt;/p&gt;
+&lt;div class="sourceCode" id="cb1"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb1-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy &lt;span class="im"&gt;import&lt;/span&gt; &lt;span class="op"&gt;*&lt;/span&gt;&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; x &lt;span class="op"&gt;=&lt;/span&gt; Symbol(&lt;span class="st"&gt;'x'&lt;/span&gt;)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; srepr(&lt;span class="op"&gt;-&lt;/span&gt;x)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-4" title="4"&gt;&lt;span class="co"&gt;&amp;quot;Mul(Integer(-1), Symbol('x'))&amp;quot;&lt;/span&gt;&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Directly converting same mathematical expression in Fortran as &lt;code&gt;-x&lt;/code&gt; we can see that LFortran instead sees it as unary subtraction:&lt;/p&gt;
+&lt;div class="sourceCode" id="cb2"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb2-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; lfortran &lt;span class="im"&gt;import&lt;/span&gt; &lt;span class="op"&gt;*&lt;/span&gt;&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; src_to_ast(&lt;span class="st"&gt;&amp;quot;-x&amp;quot;&lt;/span&gt;, &lt;span class="va"&gt;False&lt;/span&gt;)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-3" title="3"&gt;&lt;span class="op"&gt;&amp;lt;&lt;/span&gt;lfortran.ast.ast.UnaryOp &lt;span class="bu"&gt;object&lt;/span&gt; at &lt;span class="bn"&gt;0x7f9027f1aba8&lt;/span&gt;&lt;span class="op"&gt;&amp;gt;&lt;/span&gt;&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This is a major problem for the tests, which right now look to see if the Lfortran-parsed output of &lt;code&gt;fcode&lt;/code&gt; (SymPy&amp;#8217;s current Fortran code generator) on an expression matches the same directly translated AST. This won&amp;#8217;t be true for &lt;math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;mo&gt;&amp;#8722;&lt;/mo&gt;&lt;mi&gt;x&lt;/mi&gt;&lt;/mrow&gt;&lt;annotation encoding="application/x-tex"&gt;-x&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt;, since the translated expression is a multiplication &lt;code&gt;BinOp&lt;/code&gt; while the parsed expression in an &lt;code&gt;UnaryOp&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;One solution might be to not parse &lt;code&gt;fcode&lt;/code&gt;&amp;#8217;s output and instead just check for equivalence between strings. This would mean dealing with the quirks of the code printers (such as their tendency to produce excessive parenthesis), and take away some of the advantages of direct translation. The more probable solution would be to introduce substitution rules within the LFortran AST.&lt;/p&gt;
+&lt;h2 id="missing-matrix-nodes"&gt;Missing matrix nodes&lt;/h2&gt;
+&lt;p&gt;I filed issue &lt;a href="https://github.com/sympy/sympy/issues/17006"&gt;#17006&lt;/a&gt;, in which &lt;code&gt;lambdify&lt;/code&gt; misinterpreted identity matrices as the imaginary unit. The fix in &lt;a href="https://github.com/sympy/sympy/pull/17022"&gt;#17022&lt;/a&gt; is pretty simple: just generate identity matrices with &lt;code&gt;np.eye&lt;/code&gt; when we can.&lt;/p&gt;
+&lt;p&gt;I also went through the matrix expression classes to see which ones weren&amp;#8217;t supported by the NumPy code printer and filed issue &lt;a href="https://github.com/sympy/sympy/issues/17013"&gt;#1703&lt;/a&gt;. These are addressed by another contributor in &lt;a href="https://github.com/sympy/sympy/pull/17029%5D"&gt;#17029&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id="rewriting-matrix-inversion"&gt;Rewriting matrix inversion&lt;/h2&gt;
+&lt;p&gt;Most of this week was spent on implementing an optimization for the NumPy generator suggested by Aaron: given the expression &lt;math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"&gt;&lt;semantics&gt;&lt;mrow&gt;&lt;msup&gt;&lt;mi&gt;A&lt;/mi&gt;&lt;mrow&gt;&lt;mo&gt;&amp;#8722;&lt;/mo&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/mrow&gt;&lt;/msup&gt;&lt;mi&gt;b&lt;/mi&gt;&lt;/mrow&gt;&lt;annotation encoding="application/x-tex"&gt;A^{-1}b&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt; where &lt;math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"&gt;&lt;semantics&gt;&lt;mi&gt;A&lt;/mi&gt;&lt;annotation encoding="application/x-tex"&gt;A&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt; is a square matrix and &lt;math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"&gt;&lt;semantics&gt;&lt;mi&gt;b&lt;/mi&gt;&lt;annotation encoding="application/x-tex"&gt;b&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt; a vector, generate the expression &lt;code&gt;np.linalg.solve(A, b)&lt;/code&gt; instead of &lt;code&gt;np.linalg.inv(A) * b&lt;/code&gt;. While both &lt;code&gt;solve&lt;/code&gt; and &lt;code&gt;inv&lt;/code&gt; use the same LU-decomposition based LAPACK &lt;a href="http://www.netlib.org/lapack95/DOC/la_gesv.txt"&gt;&lt;code&gt;?gesv&lt;/code&gt;&lt;/a&gt; functions &lt;a class="footnote-ref" href="https://anpandey.github.io/atom-sympy.xml#fn1" id="fnref1"&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;, &lt;code&gt;solve&lt;/code&gt; is called on a vector while the &lt;code&gt;inv&lt;/code&gt; on a (much larger) matrix. In addition to cutting down on the number of operations, this optimization might also remove any errors introduced in calculating the inverse.&lt;/p&gt;
+&lt;p&gt;My pull request for this optimization is available at &lt;a href="https://github.com/sympy/sympy/pull/17041"&gt;#17041&lt;/a&gt;, which uses SymPy&amp;#8217;s assumption system to make sure that &lt;math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"&gt;&lt;semantics&gt;&lt;mi&gt;A&lt;/mi&gt;&lt;annotation encoding="application/x-tex"&gt;A&lt;/annotation&gt;&lt;/semantics&gt;&lt;/math&gt; is full-rank (a constraint imposed by &lt;code&gt;solve&lt;/code&gt;). My initial approach was to embed these optimizations directly in the code printing base classes. After some discussion with Bj&amp;#246;rn, we decided it would be better to separate optimization from printing as much as possible, leading to the representation of the solving operation as its own distinct AST node. This approach is much better than the original, since it was fairly easy to the optimization to the Octave/Matlab code printer.&lt;/p&gt;
+&lt;h2 id="next-steps"&gt;Next Steps&lt;/h2&gt;
+&lt;p&gt;For this week, I&amp;#8217;ll be continuing with the matrix optimization PR. I&amp;#8217;ll try to find other optimizations that can be applied (such as the evaluation order of complicated matrix expressions) and look into using Sympy&amp;#8217;s unification capabilities in simplifying the expression of optimization rules.&lt;/p&gt;
+&lt;section class="footnotes"&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id="fn1"&gt;&lt;p&gt;You can find the C definitions for the functions eventually called by &lt;a href="https://github.com/numpy/numpy/blob/b80d360e/numpy/linalg/umath_linalg.c.src#L1694"&gt;&lt;code&gt;inv&lt;/code&gt;&lt;/a&gt; and &lt;a href="https://github.com/numpy/numpy/blob/b80d360e/numpy/linalg/umath_linalg.c.src#L1622"&gt;&lt;code&gt;solve&lt;/code&gt;&lt;/a&gt;. These are written in a special templated version of C, but you can find the &lt;a href="https://github.com/numpy/numpy/blob/b80d360e/numpy/linalg/umath_linalg.c.src#L1560"&gt;template variable definitions&lt;/a&gt; a bit higher up in the source.&lt;a class="footnote-back" href="https://anpandey.github.io/atom-sympy.xml#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/section&gt;
+    &lt;/section&gt;
+&lt;/article&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://arighnaiitg.github.io/2019-06-19-gsoc-week3/</guid>
       <author>Arighna Chakrabarty (arighnaiitg)</author>
       <title>Arighna Chakrabarty (arighnaiitg): GSoC Week 3 !!</title>
@@ -175,7 +231,7 @@ powers of symbols present in an expression.&lt;/p&gt;
       <title>Nikhil Maan (Sc0rpi0n101): Week 3: What's Happening? Where have I been?</title>
       <pubDate>Sun, 16 Jun 2019 00:00:00 GMT</pubDate>
       <link>https://sc0rpi0n101.github.io/2019/06/week-3-whats-happening-where-have-i-been/</link>
-      <description>&lt;p&gt;&amp;#8220;How did it get so late so soon?&amp;#8221;  &amp;#8213; Dr. Seuss
+      <description>&lt;p&gt;&amp;#8220;How did it get so late so soon?&amp;#8221; &amp;#8213; Dr. Seuss
  Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and we&amp;rsquo;re running late on everything this week. This time we will talk about some operating system stuff along with the week&amp;rsquo;s work. I will have more blogs on operating systems and that type of stuff soon. For now, let&amp;rsquo;s talk about what&amp;rsquo;s happening.
 Why so Late?</description>
     </item>
@@ -899,8 +955,9 @@ end function&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
       <title>Nikhil Maan (Sc0rpi0n101): Week 1: Let the Grind Begin</title>
       <pubDate>Fri, 31 May 2019 00:00:00 GMT</pubDate>
       <link>https://sc0rpi0n101.github.io/2019/05/week-1-let-the-grind-begin/</link>
-      <description>&lt;p&gt;Welcome everyone, I am your host Nikhil Maan aka Sc0rpi0n101 and I will be barraging you with blogs of my progress with my GSoC project. This is the blog for the first week of work. The official coding started May 27.
-Today is May 31, it&amp;rsquo;s been 5 days of work and I&amp;rsquo;ve had some progress since Monday and had the meeting for the first week yesterday. The week has not been as productive as I would&amp;rsquo;ve liked to be but I managed to get in some work.</description>
+      <description>&lt;p&gt;The joy of coding Python should be in seeing short, concise, readable classes that express a lot of action in a small amount of clear code, not in reams of trivial code that bores the reader to death
+- Guido van Rossum
+ Welcome everyone, I am your host Nikhil Maan aka Sc0rpi0n101 and I will be barraging you with blogs of my progress with my GSoC project. This is the blog for the first week of work.</description>
     </item>
     <item>
       <guid isPermaLink="false">https://shubhamkjha.github.io/2019/05/29/Community-bonding-period</guid>
@@ -921,23 +978,6 @@ Today is May 31, it&amp;rsquo;s been 5 days of work and I&amp;rsquo;ve had some 
 &lt;p&gt;Along with this, I will also be looking for inconsistencies between the two Assumptions systems.&lt;/p&gt;
 
 &lt;p&gt;Sign out for the next week &amp;#128516;&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://czgdp1807.github.io/bonding-period</guid>
-      <author>Gagandeep Singh (czgdp1807)</author>
-      <title>Gagandeep Singh (czgdp1807): Community Bonding - A head start</title>
-      <pubDate>Mon, 27 May 2019 00:00:00 GMT</pubDate>
-      <link>https://czgdp1807.github.io/bonding-period/</link>
-      <description>&lt;p&gt;So, here I am with another set of experiences to share with you, i.e., the Community Bonding of GSoC. After discussing with my fellow developers, and my mentors, we reframed our timeline. I will be working on very interesting topics in statistics, including, joint distributions, Markov chains, random matrices, assumptions of dependence and simplifying the results of the stats module. For a head start, I started working on adding multivariate distributions and the good news is that I have completed majority of the work, apart from some technical constraints which will be solved by another project very soon. If you are interested in seeing the code, take a look at the PRs #16576, #16808, #16825. Infact, apart from the stats module, I also had an opportunity to work on other modules of SymPy, like, I improved the API of Sum in sympy.concrete, allowing Range to be passed as limits and that too while working on discrete joint distributions. You can check the PR #16810 for the details. Thanks to Christopher Smith for helping me with this. Still there are issues like, #16833 which require a lot of discussion before concrete implementation, will update you on this if some progress takes place. Apart from coding, we had discussions on design of Markov chain and random matrices. I also made two prototypes at PR #16852, and #16866 . We are currently having more to think on this part, like API, class structure, etc. Overall, the bonding period was very a great learning experience about how various modules affect each other and bring the best out of SymPy. See you soon in the next blog. :)</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://arighnaiitg.github.io/2019-05-26-gsoc-end-of-community-bonding-period/</guid>
-      <author>Arighna Chakrabarty (arighnaiitg)</author>
-      <title>Arighna Chakrabarty (arighnaiitg): GSoC - Community Bonding Period Ends !!</title>
-      <pubDate>Sun, 26 May 2019 07:00:00 GMT</pubDate>
-      <link>https://arighnaiitg.github.io/2019-05-26-gsoc-end-of-community-bonding-period/</link>
-      <description>&lt;p&gt;The Journey will begin now !! - 
-          The all-important Community Bonding Period ends!! During these three weeks, I have come to learn a lot more things about SymPy, and especially its Series module, the module I would be improving this summer. The first week of the CBP was wasted since I had college exams going on, and...</description>
     </item>
   </channel>
 </rss>
