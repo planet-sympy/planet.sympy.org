@@ -160,7 +160,7 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-2b8e50f7 feed-" id="item-cd05953d">
+		    <div class="box" class="item feed-2b8e50f7 feed-" id="item-103e5903">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -213,19 +213,11 @@
 				</div>
 				<div class="row">
 					<div class="col-md-12 col-xs-12 descript">
-						<p><article>
-    <section class="header">
-        Posted on June 21, 2019
-        
-            by Ankit Pandey
-        
-    </section>
-    <section>
-        <p><em>See the <a href="https://anpandey.github.io/2019-06-07-week-2.html">previous post</a> for Week 2</em>.</p>
+						<p><em>See the <a href="https://anpandey.github.io/2019-06-07-week-2.html">previous post</a> for Week 2</em>.</p>
 <p>I spent a large part of last week travelling, so I&#8217;m combining the blog posts for the last two weeks.</p>
 <h2 id="finishing-up-with-lfortran">Finishing up with LFortran</h2>
 <p>I&#8217;m finished with the <a href="https://github.com/sympy/sympy/pull/16931">pull request</a> for the LFortran code printer for now, though it&#8217;s definitely way too incomplete to be merged. The code passes <em>most</em> of the rudimentary tests I&#8217;ve added.</p>
-<p>Here&#8217;s a simple example of one of the failing LFortran tests: Suppose we want to generate Fortran (using LFortran) code from the mathematical expression <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>&#8722;</mo><mi>x</mi></mrow><annotation encoding="application/x-tex">-x</annotation></semantics></math>. SymPy sees this expression as multiplication with -1, as it implements only addition and multiplication in its arithmetic operations:</p>
+<p>Here&#8217;s a simple example of one of the failing LFortran tests: Suppose we want to generate Fortran (using LFortran) code from the mathematical expression <span class="math inline">&#8197;&#8722;&#8197;<em>x</em></span>. SymPy sees this expression as multiplication with -1, as it implements only addition and multiplication in its arithmetic operations:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" title="1"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sympy <span class="im">import</span> <span class="op">*</span></a>
 <a class="sourceLine" id="cb1-2" title="2"><span class="op">&gt;&gt;&gt;</span> x <span class="op">=</span> Symbol(<span class="st">'x'</span>)</a>
 <a class="sourceLine" id="cb1-3" title="3"><span class="op">&gt;&gt;&gt;</span> srepr(<span class="op">-</span>x)</a>
@@ -234,14 +226,14 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" title="1"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> lfortran <span class="im">import</span> <span class="op">*</span></a>
 <a class="sourceLine" id="cb2-2" title="2"><span class="op">&gt;&gt;&gt;</span> src_to_ast(<span class="st">&quot;-x&quot;</span>, <span class="va">False</span>)</a>
 <a class="sourceLine" id="cb2-3" title="3"><span class="op">&lt;</span>lfortran.ast.ast.UnaryOp <span class="bu">object</span> at <span class="bn">0x7f9027f1aba8</span><span class="op">&gt;</span></a></code></pre></div>
-<p>This is a major problem for the tests, which right now look to see if the Lfortran-parsed output of <code>fcode</code> (SymPy&#8217;s current Fortran code generator) on an expression matches the same directly translated AST. This won&#8217;t be true for <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>&#8722;</mo><mi>x</mi></mrow><annotation encoding="application/x-tex">-x</annotation></semantics></math>, since the translated expression is a multiplication <code>BinOp</code> while the parsed expression in an <code>UnaryOp</code>.</p>
+<p>This is a major problem for the tests, which right now look to see if the Lfortran-parsed output of <code>fcode</code> (SymPy&#8217;s current Fortran code generator) on an expression matches the same directly translated AST. This won&#8217;t be true for <span class="math inline">&#8197;&#8722;&#8197;<em>x</em></span>, since the translated expression is a multiplication <code>BinOp</code> while the parsed expression in an <code>UnaryOp</code>.</p>
 <p>One solution might be to not parse <code>fcode</code>&#8217;s output and instead just check for equivalence between strings. This would mean dealing with the quirks of the code printers (such as their tendency to produce excessive parenthesis), and take away some of the advantages of direct translation. The more probable solution would be to introduce substitution rules within the LFortran AST.</p>
 <h2 id="missing-matrix-nodes">Missing matrix nodes</h2>
 <p>I filed issue <a href="https://github.com/sympy/sympy/issues/17006">#17006</a>, in which <code>lambdify</code> misinterpreted identity matrices as the imaginary unit. The fix in <a href="https://github.com/sympy/sympy/pull/17022">#17022</a> is pretty simple: just generate identity matrices with <code>np.eye</code> when we can.</p>
 <p>I also went through the matrix expression classes to see which ones weren&#8217;t supported by the NumPy code printer and filed issue <a href="https://github.com/sympy/sympy/issues/17013">#1703</a>. These are addressed by another contributor in <a href="https://github.com/sympy/sympy/pull/17029%5D">#17029</a>.</p>
 <h2 id="rewriting-matrix-inversion">Rewriting matrix inversion</h2>
-<p>Most of this week was spent on implementing an optimization for the NumPy generator suggested by Aaron: given the expression <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>A</mi><mrow><mo>&#8722;</mo><mn>1</mn></mrow></msup><mi>b</mi></mrow><annotation encoding="application/x-tex">A^{-1}b</annotation></semantics></math> where <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math> is a square matrix and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math> a vector, generate the expression <code>np.linalg.solve(A, b)</code> instead of <code>np.linalg.inv(A) * b</code>. While both <code>solve</code> and <code>inv</code> use the same LU-decomposition based LAPACK <a href="http://www.netlib.org/lapack95/DOC/la_gesv.txt"><code>?gesv</code></a> functions <a class="footnote-ref" href="https://anpandey.github.io/atom-sympy.xml#fn1" id="fnref1"><sup>1</sup></a>, <code>solve</code> is called on a vector while the <code>inv</code> on a (much larger) matrix. In addition to cutting down on the number of operations, this optimization might also remove any errors introduced in calculating the inverse.</p>
-<p>My pull request for this optimization is available at <a href="https://github.com/sympy/sympy/pull/17041">#17041</a>, which uses SymPy&#8217;s assumption system to make sure that <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math> is full-rank (a constraint imposed by <code>solve</code>). My initial approach was to embed these optimizations directly in the code printing base classes. After some discussion with Bj&#246;rn, we decided it would be better to separate optimization from printing as much as possible, leading to the representation of the solving operation as its own distinct AST node. This approach is much better than the original, since it was fairly easy to the optimization to the Octave/Matlab code printer.</p>
+<p>Most of this week was spent on implementing an optimization for the NumPy generator suggested by Aaron: given the expression <span class="math inline"><em>A</em><sup>&#8197;&#8722;&#8197;1</sup><em>b</em></span> where <span class="math inline"><em>A</em></span> is a square matrix and <span class="math inline"><em>b</em></span> a vector, generate the expression <code>np.linalg.solve(A, b)</code> instead of <code>np.linalg.inv(A) * b</code>. While both <code>solve</code> and <code>inv</code> use the same LU-decomposition based LAPACK <a href="http://www.netlib.org/lapack95/DOC/la_gesv.txt"><code>?gesv</code></a> functions <a class="footnote-ref" href="https://anpandey.github.io/atom-sympy.xml#fn1" id="fnref1"><sup>1</sup></a>, <code>solve</code> is called on a vector while the <code>inv</code> on a (much larger) matrix. In addition to cutting down on the number of operations, this optimization might also remove any errors introduced in calculating the inverse.</p>
+<p>My pull request for this optimization is available at <a href="https://github.com/sympy/sympy/pull/17041">#17041</a>, which uses SymPy&#8217;s assumption system to make sure that <span class="math inline"><em>A</em></span> is full-rank (a constraint imposed by <code>solve</code>). My initial approach was to embed these optimizations directly in the code printing base classes. After some discussion with Bj&#246;rn, we decided it would be better to separate optimization from printing as much as possible, leading to the representation of the solving operation as its own distinct AST node. This approach is much better than the original, since it was fairly easy to the optimization to the Octave/Matlab code printer.</p>
 <h2 id="next-steps">Next Steps</h2>
 <p>For this week, I&#8217;ll be continuing with the matrix optimization PR. I&#8217;ll try to find other optimizations that can be applied (such as the evaluation order of complicated matrix expressions) and look into using Sympy&#8217;s unification capabilities in simplifying the expression of optimization rules.</p>
 <section class="footnotes">
@@ -250,8 +242,6 @@
 <li id="fn1"><p>You can find the C definitions for the functions eventually called by <a href="https://github.com/numpy/numpy/blob/b80d360e/numpy/linalg/umath_linalg.c.src#L1694"><code>inv</code></a> and <a href="https://github.com/numpy/numpy/blob/b80d360e/numpy/linalg/umath_linalg.c.src#L1622"><code>solve</code></a>. These are written in a special templated version of C, but you can find the <a href="https://github.com/numpy/numpy/blob/b80d360e/numpy/linalg/umath_linalg.c.src#L1560">template variable definitions</a> a bit higher up in the source.<a class="footnote-back" href="https://anpandey.github.io/atom-sympy.xml#fnref1">&#8617;</a></p></li>
 </ol>
 </section>
-    </section>
-</article>
 					</div>
 				</div>
 			</div>
@@ -1561,7 +1551,7 @@ The Weekend after the Meeting The plan for the week was discussed in the meeting
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-2b8e50f7 feed-" id="item-ae1ee85e">
+		    <div class="box" class="item feed-2b8e50f7 feed-" id="item-315fd0ac">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -1614,18 +1604,10 @@ The Weekend after the Meeting The plan for the week was discussed in the meeting
 				</div>
 				<div class="row">
 					<div class="col-md-12 col-xs-12 descript">
-						<p><article>
-    <section class="header">
-        Posted on June  7, 2019
-        
-            by Ankit Pandey
-        
-    </section>
-    <section>
-        <p><em>See the <a href="https://anpandey.github.io/2019-05-31-week-1.html">previous post</a> for Week 1</em>.</p>
+						<p><em>See the <a href="https://anpandey.github.io/2019-05-31-week-1.html">previous post</a> for Week 1</em>.</p>
 <p>For this week, I&#8217;ve continued working on adding support for LFortran to SymPy&#8217;s code generation capabilities. This week mostly involved getting the infrastructure for testing the functionality of the new code generator working. I also extended the number of expressions the generator can handle, in addition to adding to LFortran&#8217;s ability to parse numbers upstream.</p>
 <h2 id="more-expressions">More Expressions</h2>
-<p>I&#8217;ve added support for four more expression types that the generator can handle: <code>Float</code>, <code>Rational</code>, <code>Pow</code> and <code>Function</code>. Since our base translation class was already in place from last week, implementing these was relatively straightforward and involved just defining the node visitors for each expression type (The commit that implements this can be found <a href="https://github.com/sympy/sympy/pull/16931/commits/67a06a83d4aa239e8d319837d9ed7d11b67f7846">here</a>). Here&#8217;s a demonstration showing the abstract syntax tree generated from translating the expression <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo form="prefix" stretchy="true">(</mo><mfrac><mn>4</mn><mn>3</mn></mfrac><mo form="postfix" stretchy="true">)</mo></mrow><mi>x</mi></msup><annotation encoding="application/x-tex">\left(\frac{4}{3}\right)^{x}</annotation></semantics></math>:</p>
+<p>I&#8217;ve added support for four more expression types that the generator can handle: <code>Float</code>, <code>Rational</code>, <code>Pow</code> and <code>Function</code>. Since our base translation class was already in place from last week, implementing these was relatively straightforward and involved just defining the node visitors for each expression type (The commit that implements this can be found <a href="https://github.com/sympy/sympy/pull/16931/commits/67a06a83d4aa239e8d319837d9ed7d11b67f7846">here</a>). Here&#8217;s a demonstration showing the abstract syntax tree generated from translating the expression <span class="math inline">$\left(\frac{4}{3}\right)^{x}$</span>:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" title="1"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sympy.abc <span class="im">import</span> x</a>
 <a class="sourceLine" id="cb1-2" title="2"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sympy.codegen.lfort <span class="im">import</span> sympy_to_lfortran</a>
 <a class="sourceLine" id="cb1-3" title="3"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> lfortran.asr.pprint <span class="im">import</span> pprint_asr</a>
@@ -1663,8 +1645,6 @@ The Weekend after the Meeting The plan for the week was discussed in the meeting
 <p>After I filed the merge request to add the functionality I needed to LFortran, Ondr&#780;ej (the creator of LFortran and one of my mentors) mentioned that he was planning on eventually removing the module I contributed to. The merge request I filed actually wasn&#8217;t the one I had in mind at first. I thought about adding support for canonicalizing number nodes right after they&#8217;re created in the builder API, but I decided against this because I felt that any changes I made would have to be minimally invasive. In retrospect, this was probably a misplaced concern, since it&#8217;s important to consider the development stage of a project when deciding how much of it should be changed. Because of this, LFortran will probably end up with something I opted at the moment to not implement.</p>
 <h2 id="next-steps">Next Steps</h2>
 <p>There&#8217;s still some work left to be done with LFortran, such as filing issues I encountered and preparing the pull request for a merge (though it&#8217;ll probably remain a work in progress for some time). After that, I&#8217;ll be finished with LFortran for the time being and move on to extending support for matrix expressions in the Python code generator. The Python code generator can already convert (most) matrix expressions through NumPy, though there are still some bugs owing to an incomplete implementation. For next week, I&#8217;ll have to figure out what this missing functionality is how it can be implemented.</p>
-    </section>
-</article>
 					</div>
 				</div>
 			</div>
@@ -2464,7 +2444,7 @@ assert _solve_lambert(eq, p, _filtered_gens(Poly(eq), p)) == [
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-2b8e50f7 feed-" id="item-b23755aa">
+		    <div class="box" class="item feed-2b8e50f7 feed-" id="item-e6dd0e5a">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -2517,15 +2497,7 @@ assert _solve_lambert(eq, p, _filtered_gens(Poly(eq), p)) == [
 				</div>
 				<div class="row">
 					<div class="col-md-12 col-xs-12 descript">
-						<p><article>
-    <section class="header">
-        Posted on May 31, 2019
-        
-            by Ankit Pandey
-        
-    </section>
-    <section>
-        <p>For the past week, I&#8217;ve been working on adding support for <a href="https://lfortran.org/">LFortran</a> to SymPy&#8217;s code generation capabilities. My current goal is to emulate SymPy&#8217;s <code>fcode</code>, which converts a SymPy expression to an equivalent expression in Fortran, utilizing only LFortran as a backend. This post is an outline of what I&#8217;ve done (and learned) over last week.</p>
+						<p>For the past week, I&#8217;ve been working on adding support for <a href="https://lfortran.org/">LFortran</a> to SymPy&#8217;s code generation capabilities. My current goal is to emulate SymPy&#8217;s <code>fcode</code>, which converts a SymPy expression to an equivalent expression in Fortran, utilizing only LFortran as a backend. This post is an outline of what I&#8217;ve done (and learned) over last week.</p>
 <h2 id="lfortran">LFortran</h2>
 <p>LFortran is a Fortran (with some extensions) to LLVM compiler. One advantage that this design provides is that it enables interactive execution of Fortran code. LFortran can also be used as a Jupyter kernel, which means it can be used in a Jupyter notebook environment (you can even find an online interactive demo <a href="https://mybinder.org/v2/gl/lfortran%2Fweb%2Flfortran-binder/master?filepath=Demo.ipynb">here</a>).</p>
 <p>In addition to being able to parse code, LFortran also provides the functionality of traversing a parse tree and generating the equivalent Fortran code. This means that if we want to generate Fortran code from a SymPy expression, the only work that we have to do is convert the SymPy expression tree to its LFortran equivalent.</p>
@@ -2577,8 +2549,6 @@ end function</span></code></pre>
 <p>Since LFortran can directly compile the AST to an LLVM intermediate representation, a future implementation of <code>autowrap</code> might be implemented by compiling the output of this function (instead of first completely generating the code and then feeding it to <code>gfortran</code> as it&#8217;s done right now).</p>
 <h2 id="next-steps">Next Steps</h2>
 <p>For the next couple of days, I will try to extend the types of SymPy expressions that may be converted. One thing to note is that there isn&#8217;t a perfect correspondence between SymPy and LFortran AST nodes. LFortran supports nodes for operations like unary subtraction and division, which SymPy converts into multiplication and division respectively. On top of this, I&#8217;ll also add some tests for the functionality that I have implemented so far. After that, I&#8217;ll start with work on SymPy&#8217;s matrix expression code generation (the second part of my GSoC project) and pick LFortran up again close to the end of the summer.</p>
-    </section>
-</article>
 					</div>
 				</div>
 			</div>
@@ -2753,218 +2723,218 @@ end function</span></code></pre>
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.com/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
 <td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://divyanshu132.github.io//">Divyanshu Thakur</a></td>
 <td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arighnaiitg.github.io">GSoC Days</a></td>
 <td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
 <td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://czgdp1807.github.io/">OpenBlog</a></td>
 <td><a class="xmlbutton" href="https://czgdp1807.github.io/feed.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sc0rpi0n101.github.io/">Sc0rpi0n's Journey</a></td>
 <td><a class="xmlbutton" href="https://sc0rpi0n101.github.io/index.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://shikharj.github.io/feed.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamkjha.github.io/">Shubham&#8217;s Blog</a></td>
 <td><a class="xmlbutton" href="https://shubhamkjha.github.io/sympy_feed.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
 <td><a class="xmlbutton" href="https://sidhantnagpal.com/rss-gsoc.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://www.kangzhiq.com">sympy &#8211; Kangzhiq's blog</a></td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ritesh99rakesh.github.io/">Thoughts that Matter</a></td>
 <td><a class="xmlbutton" href="https://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>03:36, Sunday, 23 June</td>
-<td>03:51, Sunday, 23 June</td>
+<td>07:35, Sunday, 23 June</td>
+<td>07:50, Sunday, 23 June</td>
 </tr>
 </table>
 
