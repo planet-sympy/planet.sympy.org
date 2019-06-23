@@ -7,6 +7,60 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=52</guid>
+      <author>Ishan Joshi (ishanaj)</author>
+      <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-4-Starting with Column Buckling implementation</title>
+      <pubDate>Sun, 23 Jun 2019 18:41:36 GMT</pubDate>
+      <link>https://ishanaj.wordpress.com/2019/06/24/gsoc19-week-4-starting-with-column-buckling-implementation/</link>
+      <description>&lt;p&gt;Finalizing what had been discussed in &lt;a href="https://github.com/sympy/sympy/pull/16964"&gt;PR #16964&lt;/a&gt; for integrating geometry module with the beam module,&lt;a href="https://github.com/sympy/sympy/pull/17055"&gt; PR #17055&lt;/a&gt; was opened which is now ready to go!&lt;/p&gt;
+&lt;p&gt;There is no special function for defining the cross-section of a Beam object. A user can simply pass the geometry object as a parameter instead of the &lt;strong&gt;second_moment, &lt;/strong&gt;and the corresponding second moment would be calculated internally. The example below might explain this better:&lt;/p&gt;
+&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
+
+&amp;gt;&amp;gt;&amp;gt; b = Beam(l, E, Circle((0, 0), r))
+
+&amp;gt;&amp;gt;&amp;gt; b.second_moment
+
+pi*r*Abs(r)**3/4
+
+&amp;gt;&amp;gt;&amp;gt; b.cross_section
+
+Circle(Point2D(0, 0), r)
+
+&lt;/pre&gt;
+&lt;p&gt;Further, the &lt;strong&gt;cross_section&lt;/strong&gt; attribute can be changed even after the beam is created. Every time the &lt;strong&gt;cross_section&lt;/strong&gt; is assigned a new value, the &lt;strong&gt;second_moment&lt;/strong&gt; gets automatically updated.&lt;/p&gt;
+&lt;p&gt;Similarly, every time the user changes the &lt;strong&gt;second_moment&lt;/strong&gt; explicitly after the creation of the beam, the previous &lt;strong&gt;cross_section&lt;/strong&gt; gets destroyed, or in other words, the &lt;strong&gt;cross_section&lt;/strong&gt; is set to None.&lt;/p&gt;
+&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
+
+&amp;gt;&amp;gt;&amp;gt; b = Beam(l, E, Circle((0, 0), r))
+
+&amp;gt;&amp;gt;&amp;gt; I&amp;#160; = Symbol(&amp;#8216;I&amp;#8217;)
+
+&amp;gt;&amp;gt;&amp;gt; b.second_moment = I
+
+&amp;gt;&amp;gt;&amp;gt; b.cross_section
+
+None
+
+&amp;gt;&amp;gt;&amp;gt; b.second_moment = Polygon((0, 0), (a, 0), (a, b), (0, b))
+
+ValueError: To update cross-section geometry use `cross_section` attribute
+
+&lt;/pre&gt;
+&lt;p&gt;The PR is complete and just needs the final approval from the mentors.&lt;/p&gt;
+&lt;p&gt;Simultaneously, I had worked on the column buckling calculations which is a part of the stage &amp;#8211;II.&lt;/p&gt;
+&lt;p&gt;I have opened an &lt;a href="https://github.com/sympy/sympy/issues/17072"&gt;issue-cum-discussion&lt;/a&gt; for discussing its API and further implementations.&lt;/p&gt;
+&lt;p&gt;Since the calculations of the Column Buckling are very much different from those of beam bending, we will have to make a separate class Column. The basic API and the way the calculations are supposed to go can be seen from the stage &amp;#8211;II in the &lt;a href="https://docs.google.com/document/d/1LOtMTr9cCrzQ8_OnKrgkZs8wFS9N9PxlR10h3aKG0jg/edit?usp=sharing"&gt;proposal&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I would be making a PR for column buckling calculations within a day or two, once some initial questions (as mentioned in the issue-cum-discussion) gets clarified.&lt;/p&gt;
+&lt;h2&gt;Next Week:&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Finalizing the basic API and implementations of Column class&lt;/li&gt;
+&lt;li&gt;Making a PR for the above implementations&lt;/li&gt;
+&lt;li&gt;Documentation and testing&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Will keep you updated!&lt;/p&gt;
+&lt;p&gt;Thanks!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://czgdp1807.github.io/week_4</guid>
       <author>Gagandeep Singh (czgdp1807)</author>
       <title>Gagandeep Singh (czgdp1807): Week 4 - Phase 1 Ends</title>
@@ -1016,16 +1070,6 @@ end function&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Since LFortran can directly compile the AST to an LLVM intermediate representation, a future implementation of &lt;code&gt;autowrap&lt;/code&gt; might be implemented by compiling the output of this function (instead of first completely generating the code and then feeding it to &lt;code&gt;gfortran&lt;/code&gt; as it&amp;#8217;s done right now).&lt;/p&gt;
 &lt;h2 id="next-steps"&gt;Next Steps&lt;/h2&gt;
 &lt;p&gt;For the next couple of days, I will try to extend the types of SymPy expressions that may be converted. One thing to note is that there isn&amp;#8217;t a perfect correspondence between SymPy and LFortran AST nodes. LFortran supports nodes for operations like unary subtraction and division, which SymPy converts into multiplication and division respectively. On top of this, I&amp;#8217;ll also add some tests for the functionality that I have implemented so far. After that, I&amp;#8217;ll start with work on SymPy&amp;#8217;s matrix expression code generation (the second part of my GSoC project) and pick LFortran up again close to the end of the summer.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/05/week-1-let-the-grind-begin/</guid>
-      <author>Nikhil Maan (Sc0rpi0n101)</author>
-      <title>Nikhil Maan (Sc0rpi0n101): Week 1: Let the Grind Begin</title>
-      <pubDate>Fri, 31 May 2019 00:00:00 GMT</pubDate>
-      <link>https://sc0rpi0n101.github.io/2019/05/week-1-let-the-grind-begin/</link>
-      <description>&lt;p&gt;The joy of coding Python should be in seeing short, concise, readable classes that express a lot of action in a small amount of clear code, not in reams of trivial code that bores the reader to death
-- Guido van Rossum
- Welcome everyone, I am your host Nikhil Maan aka Sc0rpi0n101 and I will be barraging you with blogs of my progress with my GSoC project. This is the blog for the first week of work.</description>
     </item>
   </channel>
 </rss>
