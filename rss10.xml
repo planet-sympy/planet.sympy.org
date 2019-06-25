@@ -56,6 +56,22 @@
 &lt;p&gt;To follow the discussion on above topics and the further progress of the project one can check Gitter room &lt;a href="https://gitter.im/sympy/GroupTheory"&gt;sympy/GroupTheory&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://shubhamkjha.github.io/2019/06/24/GSoC-2019-Week-4</guid>
+      <author>Shubham Kumar Jha (ShubhamKJha)</author>
+      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 4</title>
+      <pubDate>Mon, 24 Jun 2019 00:00:00 GMT</pubDate>
+      <link>https://shubhamkjha.github.io/2019/06/24/GSoC-2019-Week-4.html</link>
+      <description>&lt;p&gt;With this the fourth week and the first phase of GSoC 2019 is over. Here I will give you a brief summary of my progress this week.&lt;/p&gt;
+
+&lt;p&gt;I started this week by setting up my workspace for profiling the code related to new assumptions. I am using &lt;code class="highlighter-rouge"&gt;pyinstrument&lt;/code&gt; for that. The results of profiler suggests that a significant amount of time is spent in the &lt;code class="highlighter-rouge"&gt;to_cnf()&lt;/code&gt; function which converts the logical expression into their CNF counterparts, to be used by the SAT solver. Also, since this system is built over the SymPy core, a large amount of this time is spent in the core itself (See the graph &lt;a href="https://github.com/sympy/sympy/issues/17066#issuecomment-504774120"&gt;here&lt;/a&gt;). A possible solution to this is to use constructs at a level lower than the SymPy objects, hence removing the overheads.&lt;/p&gt;
+
+&lt;p&gt;Also, as suggested in the last blog, there are various ideas proposed for improving the new assumptions mechanism. Some of them have been implemented to some extent in some PRs. Before proceeding for any new strategies, I need to look into these ideas first. I have started an &lt;a href="https://github.com/sympy/sympy/issues/17066"&gt;issue-tree&lt;/a&gt; to gather them.&lt;/p&gt;
+
+&lt;p&gt;Over the end of the week, I also pushed my work on &lt;code class="highlighter-rouge"&gt;First Order Logic&lt;/code&gt; module at &lt;a href="https://github.com/sympy/sympy/pull/17069"&gt;#17069&lt;/a&gt;. This work is based on &lt;a href="https://github.com/sympy/sympy/pull/7608"&gt;#7608&lt;/a&gt; and extends it by adding &lt;code class="highlighter-rouge"&gt;Equality&lt;/code&gt; to it. Currently, there are test failures and some points to decide. I will try to get it done within this week.&lt;/p&gt;
+
+&lt;p&gt;I spent most of this week exploring the profiling and benchmarking of code, and I learnt a lot during this. For the coming week, I will focus on speeding up the code in &lt;code class="highlighter-rouge"&gt;to_cnf&lt;/code&gt;. As suggested by Aaron, &lt;a href="https://github.com/sympy/sympy/pull/11789"&gt;this&lt;/a&gt; seems a good point to start with. Also, I will be working on the &lt;code class="highlighter-rouge"&gt;FOL&lt;/code&gt; module.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=52</guid>
       <author>Ishan Joshi (ishanaj)</author>
       <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-4-Starting with Column Buckling implementation</title>
@@ -108,6 +124,15 @@ ValueError: To update cross-section geometry use `cross_section` attribute
 &lt;/ul&gt;
 &lt;p&gt;Will keep you updated!&lt;/p&gt;
 &lt;p&gt;Thanks!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://arighnaiitg.github.io/2019-06-23-gsoc-week4/</guid>
+      <author>Arighna Chakrabarty (arighnaiitg)</author>
+      <title>Arighna Chakrabarty (arighnaiitg): GSoC Week 4 !!</title>
+      <pubDate>Sun, 23 Jun 2019 07:00:00 GMT</pubDate>
+      <link>https://arighnaiitg.github.io/2019-06-23-gsoc-week4/</link>
+      <description>&lt;p&gt;Week 4 ends.. - 
+          Week 4 and the final week of the first phase of the Coding Period is coming to an end. The work, which was initially proposed to be done in FormalPowerSeries</description>
     </item>
     <item>
       <guid isPermaLink="false">https://czgdp1807.github.io/week_4</guid>
@@ -814,81 +839,6 @@ The Weekend after the Meeting The plan for the week was discussed in the meeting
 &lt;/ul&gt;
 
 &lt;p&gt;Hopping I&amp;#8217;ll be able to execute things as planned! Till then good bye, keep learning.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://shubhamkjha.github.io/2019/06/04/GSoC-2019-Week-1</guid>
-      <author>Shubham Kumar Jha (ShubhamKJha)</author>
-      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 1</title>
-      <pubDate>Tue, 04 Jun 2019 00:00:00 GMT</pubDate>
-      <link>https://shubhamkjha.github.io/2019/06/04/GSoC-2019-Week-1.html</link>
-      <description>&lt;p&gt;The first week of official Coding Period is over and it went well &amp;#128516;.&lt;/p&gt;
-
-&lt;p&gt;As proposed, I created a branch over &lt;a href="https://github.com/sympy/sympy/pull/7608"&gt;#7608&lt;/a&gt; and went through it locally. I have made certain improvements and I will create appropriate PR for them this week. I intend to get that merged in this week only, if everything goes well. Also, as suggested by Aaron, I looked for profiling tools for optimizing slow parts in the codebase. I will be using &lt;a href="https://pypi.org/project/pyinstrument/"&gt;&lt;strong&gt;pyinstrument&lt;/strong&gt;&lt;/a&gt; and the profiler of PyCharm for this purpose.&lt;/p&gt;
-
-&lt;p&gt;Later in this week, I started the PR &lt;a href="https://github.com/sympy/sympy/pull/16956"&gt;#16956&lt;/a&gt; which fixes issues &lt;a href="https://github.com/sympy/sympy/issues/16915"&gt;#16915&lt;/a&gt; and &lt;a href="https://github.com/sympy/sympy/issues/16582"&gt;#16582&lt;/a&gt;. Both these issues are related to assumptions handling in Relationals. It broke more code than expected &amp;#128517;. This shows how embedded the old assumptions are in the codebase. I will try to fix them ASAP.&lt;/p&gt;
-
-&lt;p&gt;With the first week wrapped up, in the next week :&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;I will create an experimental PR to include &lt;code class="highlighter-rouge"&gt;complex -&amp;gt; finite&lt;/code&gt; in the old assumptions. This is going to break &lt;code class="highlighter-rouge"&gt;zoo.is_complex&lt;/code&gt; overall. I will try to do it without including new facts. &lt;a href="https://github.com/sympy/sympy/pull/16666"&gt;#16666&lt;/a&gt; shows how difficult such proceedings can be.&lt;/li&gt;
-  &lt;li&gt;I will also create a PR to include &lt;code class="highlighter-rouge"&gt;complex -&amp;gt; finite&lt;/code&gt; in the new assumptions. This should be easier than the former. The new assumptions is still not used much in the codebase &amp;#128524;.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;I will try to shift my focus more towards the new assumptions. But I will also look for any major inconsistency between the assumptions systems.&lt;/p&gt;
-
-&lt;p&gt;With this, sign out for the next week.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://www.kangzhiq.com/?p=11</guid>
-      <author>Zhiqi KANG (kangzhiq)</author>
-      <title>Zhiqi KANG (kangzhiq): [GSoC 2019] WEEK 1!</title>
-      <pubDate>Sun, 02 Jun 2019 22:38:28 GMT</pubDate>
-      <link>https://www.kangzhiq.com/2019/06/03/gsoc-week-1/</link>
-      <description>&lt;p&gt;Hello everyone! Here comes the end of the first coding week. This blog is dedicated to present the progress that I have had during the past week. &lt;/p&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;PRs&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;p&gt;This week the PR about  ArrayComprehension   is merged. &lt;a href="https://github.com/sympy/sympy/pull/16845"&gt;#16845&lt;/a&gt;. This class is designed as an extension of list comprehension in Python, which enables the list comprehension with symbolic dimensions. &lt;/p&gt;
-
-
-
-&lt;p&gt;A new PR &lt;a href="https://github.com/sympy/sympy/pull/16937"&gt;#16937&lt;/a&gt; about the sparse array being cast to dense array in the case of derive_by_array is opened. But somes improvements are still needed. The challenge is to find an approriate method to override and perform a derivative correctly. &lt;/p&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;Issues&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;p&gt;An issue &lt;a href="https://github.com/sympy/sympy/issues/16911"&gt;#16911&lt;/a&gt; is opened. It is in fact a discussion about implementing a NumPy-Like behavior in Array module. It is interesting because my mentor was, at first, not in favor of this implementation. But some differences of behavior between the Array module in SymPy and the one in NumPy did change his mind. So this implementation can be kept in my proposal and will be my tasks for the next phase.&lt;/p&gt;
-
-
-
-&lt;p&gt;Another issue &lt;a href="https://github.com/sympy/sympy/issues/16941"&gt;#16941&lt;/a&gt; whose aim is to list out all cases where a sparse array is cast to dense arrays is opened this week. Not only as a discussion, this issue would also be a overview of the problems so that the PRs like &lt;a href="https://github.com/sympy/sympy/pull/16937"&gt;#16937&lt;/a&gt; can refer to it. A checklist is being updated to show the avancement. &lt;/p&gt;
-
-
-
-&lt;p&gt;Please feel free to comment on the issues or the PRs that I opened. I would love to listen to your opinions.&lt;/p&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;Reviews&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;p&gt;After the merge of ArrayComprehension, another student  &lt;a href="https://github.com/czgdp1807"&gt;Gagandeep Singh&lt;/a&gt;  opened a new PR to ameliorate the code quality of this class. I have also participated as a reviewer to offer some help. I have also leant a lot from the discussion.&lt;/p&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;Related works&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;p&gt;Not much, due to the burden of projects in college. &lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
