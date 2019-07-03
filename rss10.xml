@@ -7,6 +7,47 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://shubhamkjha.github.io/2019/07/03/GSoC-2019-Week-5</guid>
+      <author>Shubham Kumar Jha (ShubhamKJha)</author>
+      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 5</title>
+      <pubDate>Wed, 03 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://shubhamkjha.github.io/2019/07/03/GSoC-2019-Week-5.html</link>
+      <description>&lt;p&gt;With this the fifth week and the first phase of the official coding period has ended. I will try to give a brief summary of my work during this week.&lt;/p&gt;
+
+&lt;p&gt;I spent most of this week learning the inner working of &lt;strong&gt;satask&lt;/strong&gt; module. It took a lot of debugging to understand the on-going processes efficiently &amp;#128517; . My major job was to reduce the unwanted slowing portions in the code. I had  &lt;a href="https://github.com/sympy/sympy/pull/11789"&gt;#11789&lt;/a&gt; for reference. Some of such performance reducing portions of code were:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;A major segment of code was creating &lt;strong&gt;And&lt;/strong&gt; objects unnecessarily. As suggested in &lt;a href="https://github.com/sympy/sympy/issues/17087"&gt;#17087&lt;/a&gt; the sorting in the &lt;strong&gt;And&lt;/strong&gt; constructor takes up a significant amount of time. These have to be reduced.&lt;/li&gt;
+  &lt;li&gt;Using SymPy objects is itself a bottleneck for performance. Having a system built over SymPy objects slows things down. Python&amp;#8217;s built-in types should be used as much as possible.&lt;/li&gt;
+  &lt;li&gt;A specific segment (used many times in the code) calls &lt;code class="highlighter-rouge"&gt;rcall&lt;/code&gt; over propositions. The &lt;code class="highlighter-rouge"&gt;rcall&lt;/code&gt; which is a recursive process also takes a significant of time.&lt;/li&gt;
+  &lt;li&gt;Also, I have tried to pre-compile results as much as possible.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;With the above and some other changes, the overall performance of &lt;code class="highlighter-rouge"&gt;satask&lt;/code&gt; has improved much. I have made a PR over this &lt;a href="https://github.com/sympy/sympy/pull/17144"&gt;#17144&lt;/a&gt;. For an instance,&lt;/p&gt;
+&lt;table&gt;
+    &lt;thead&gt;
+        &lt;th&gt;Tests&lt;/th&gt;
+        &lt;th&gt;After this PR&lt;/th&gt;
+        &lt;th&gt;In master&lt;/th&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;test_satask&lt;/td&gt;
+            &lt;td&gt;2.39 s&lt;/td&gt;
+            &lt;td&gt;36.26 s&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;assumptions/tests&lt;/td&gt;
+            &lt;td&gt;16.74 s&lt;/td&gt;
+            &lt;td&gt;127.21 s&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;There is still scope for improvement in performance. In the coming week, I will try to work these out. I will also try to improve the performance of &lt;strong&gt;ask&lt;/strong&gt; module.&lt;/p&gt;
+
+&lt;p&gt;Also, the first evaluations are over now and I feel happy to announce that I passed it. During the first phase I learnt a lot. In last few weeks I got to explore profiling and got to understand how small segments can influence performance. Before this I felt that I already know the codebase, but in reality I had much to explore. My mentors always gave me a good starting point and a direction over the course of this phase. With the hope to work much better in the coming phases, I take your leave now &amp;#128516; .&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://czgdp1807.github.io/week_5</guid>
       <author>Gagandeep Singh (czgdp1807)</author>
       <title>Gagandeep Singh (czgdp1807): Week 5 - Transition towards Phase 2</title>
@@ -819,27 +860,6 @@ True&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;I have participated in the discussion about the nature of ArrayComprehension in the community this week. Comprehension is a new class that I implemented last week(See &lt;a href="https://www.kangzhiq.com/2019/06/03/gsoc-week-1/"&gt;last post&lt;/a&gt; for more details) This discussion helped me better understand the difference between a multipledimensional list and an array: an array is suppposed to perform vectorized operations while list is mosyly element-wise.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=46</guid>
-      <author>Ishan Joshi (ishanaj)</author>
-      <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week 2 &#x2013; Working on CrossSection class</title>
-      <pubDate>Sun, 09 Jun 2019 18:20:25 GMT</pubDate>
-      <link>https://ishanaj.wordpress.com/2019/06/09/gsoc19-week-2-working-on-crosssection-class/</link>
-      <description>&lt;p&gt;The second week has ended and here I am to give you a brief about the week&amp;#8217;s work!&lt;/p&gt;
-&lt;p&gt;The week started with the opening of a &lt;a href="https://github.com/sympy/sympy/pull/16964"&gt;PR #16964&lt;/a&gt; which intended to define a class &lt;strong&gt;CrossSection &lt;/strong&gt;as planned. Discussions have been done in this PR regarding its API and its need. All these discussions lead to a conclusion of making a slight change in the API to make it accept any arbitrary cross-section which the user can define using the geometry module. So now the &lt;strong&gt;CrossSection&lt;/strong&gt; class will take the input of a pre-defined object of the geometry module and calculate its corresponding properties. This will make the &lt;strong&gt;CrossSection&lt;/strong&gt; class much simpler and generalized. I will be updating the same in the &lt;strong&gt;PR&lt;/strong&gt; soon.&lt;/p&gt;
-&lt;p&gt;I had also researched some of the previous works done in this area. &lt;a href="https://github.com/sympy/sympy/pull/14434"&gt;PR #14434&lt;/a&gt;, which intends to implement a shape class, giving functionality to cut an ellipse or a parabola via a line and determine the properties of the newly formed segment. I have tried to implement a similar concept to the Polygon class via a method &lt;strong&gt;cut_section() &lt;/strong&gt;in &lt;a href="https://github.com/sympy/sympy/pull/17001"&gt;PR #17001&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Also since one of the major issues also was to determine the first moment of area, this PR would further help in the calculation of the first moment of area. It intends to give the Polygon class functionality to return a new Polygon segment formed when a given line intersects the Polygon. Although, an alternative method of &lt;strong&gt;Polygon triangulation&lt;/strong&gt; also has been discussed in this PR, to determine the first moment. I will have to do a bit of research for this to get this implemented&lt;strong&gt;.&lt;/strong&gt;&lt;/p&gt;
-&lt;h2&gt;&lt;strong&gt;Next Week:&lt;/strong&gt;&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;Implementing a method to determine the first moment of area&lt;/li&gt;
-&lt;li&gt;Completing the CrossSection class along with its documentation and testing&lt;/li&gt;
-&lt;li&gt;Linking it with the beam module&lt;/li&gt;
-&lt;li&gt;Working over the implementation of &lt;strong&gt;Stage-II&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;I will try to make the CrossSection class fully functional, by the end of the coming week.&lt;/p&gt;
-&lt;p&gt;Will keep you updated!&lt;/p&gt;
-&lt;p&gt;Thanks!&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
