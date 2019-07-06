@@ -7,6 +7,15 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/07/week-6-the-most-chaotic-week-ever/</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 6: The Most Chaotic Week Ever!!</title>
+      <pubDate>Sat, 06 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://sc0rpi0n101.github.io/2019/07/week-6-the-most-chaotic-week-ever/</link>
+      <description>&lt;p&gt;&amp;#8220;A language that doesn&amp;rsquo;t affect the way you think about programming is not worth knowing.&amp;#8221;  &amp;#8213; Alan J. Perlis
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week was one of the most chaotic weeks till now if not the most chaotic. I had to move places as the Uni opens next week, had the summer classes exams and had to convert the C parser to use SymPy&amp;rsquo;s Codegen AST from Python AST all in one week.</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://shubhamkjha.github.io/2019/07/03/GSoC-2019-Week-5</guid>
       <author>Shubham Kumar Jha (ShubhamKJha)</author>
       <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 5</title>
@@ -768,98 +777,6 @@ The second week of coding period has been ended and for the complete week we wor
 &lt;/ul&gt;
 
 &lt;p&gt;Will try my best to execute things in order mentioned above. With this, sign out for the next week.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://www.kangzhiq.com/?p=15</guid>
-      <author>Zhiqi KANG (kangzhiq)</author>
-      <title>Zhiqi KANG (kangzhiq): [GSoC 2019] WEEK 2!</title>
-      <pubDate>Sun, 09 Jun 2019 22:53:12 GMT</pubDate>
-      <link>https://www.kangzhiq.com/2019/06/10/gsoc-2019week-2/</link>
-      <description>&lt;p&gt;Hello everyone! I am glad to present some of my progress during this past week.&lt;/p&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;Overview&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;p&gt;I was mainly working on the sparse aray issue over this week. A sparse array is, by a brief definition, an array in which most of the elements are zero.  In order to save the memory cost, sparse array is distinguished from the dense array(which means most of elements are non-zero) and then is stored and manipulated in a different way. The default data format in SymPy for sparse array is called Dictionary of keys (DOK), where the non-zero value is stored in a dictionary.&lt;/p&gt;
-
-
-
-&lt;p&gt;However, the sparse array is cast to dense array in various ways. So what I am trying to do is to free these sparse arrays and nake good use of them for cases like large scale sparse array operations. &lt;/p&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;PRs&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;p&gt;The PR about derive_by_array &lt;a href="https://github.com/sympy/sympy/pull/16937"&gt;#16937&lt;/a&gt; is not yet merged. Thank to the guidance of my mentor Francesco, the PR is being ameliorated and now has satisfactory result. Besides the operation of derive_by_array, I have updated as well the way Array module perform a equality test and apply function. To show the result of these changes, let&amp;#8217;s see what the behavior of derive_by_array was:&lt;/p&gt;
-
-
-
-&lt;pre class="wp-block-code"&gt;&lt;code&gt;&gt;&gt;&gt; a = MutableSparseNDimArray.zeros(10000, 20000)
-&gt;&gt;&gt; a[1, 1] = i
-&gt;&gt;&gt; a[1, 2] = j
-&gt;&gt;&gt; d = derive_by_array(a, i)
-MemoryError
-&gt;&gt;&gt; d = derive_by_array(a, (i, j))
-MemoryError&lt;/code&gt;&lt;/pre&gt;
-
-
-
-&lt;p&gt;The sparse array is cast to a list which leads to the MemoryError. Now, we can have:&lt;/p&gt;
-
-
-
-&lt;pre class="wp-block-code"&gt;&lt;code&gt;&gt;&gt;&gt; a = MutableSparseNDimArray.zeros(10000, 20000)
-&gt;&gt;&gt; a[1, 1] = i
-&gt;&gt;&gt; derive_by_array(a, i) = ImmutableSparseNDimArray({20001:1},(10000, 20000))
-True
-&gt;&gt;&gt; a[1, 2] = j
-&gt;&gt;&gt; derive_by_array(a, (i, j)) == ImmutableSparseNDimArray({20001: 1, 200020002: 1},(2, 10000, 20000))
-True&lt;/code&gt;&lt;/pre&gt;
-
-
-
-&lt;p&gt;The operation is much more rapid and can save a lot of spaces of memory. &lt;/p&gt;
-
-
-
-&lt;p&gt;Francesco also helped to improve the quality of codes. For example, to perform the deriative of a sparse array, he suggested me to use a dictionary comprehension instead of a for loop, so an extra function is replaced by one single line of code.&lt;/p&gt;
-
-
-
-&lt;p&gt;A new PR &lt;a href="https://github.com/sympy/sympy/pull/16994"&gt;#16994&lt;/a&gt; about __mul__ and__rmul__ is opened, which solves the problem of casting in these operators. Same as another new PR &lt;a href="https://github.com/sympy/sympy/pull/17000"&gt;#17000&lt;/a&gt; for tensorproduct. However, these PRs cannot pass the test for now because the issue about equality test is not yet fixed and merged into master of SymPy.&lt;/p&gt;
-
-
-
-&lt;p&gt;A new PR &lt;a href="https://github.com/sympy/sympy/pull/16969"&gt;#16969&lt;/a&gt; about adding functions and tests for ArrayComprehension is merged, which added functions like .tomatrix(), .tolist() for this class.&lt;/p&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;Issues&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;p&gt;I have opened a issue &lt;a href="https://github.com/sympy/sympy/issues/16984"&gt;#16984&lt;/a&gt; about equality test of Dict and dict objects. I ran into this case while comparing the dictionaries of sparse array. Fortunately, this issue is recently fixed. &lt;/p&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;Reviews&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;p&gt;No reviews for other contributors&amp;#8217; PR. I have participated in the review of my own PRs since there are some errors have been found after the creation of PR.&lt;/p&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;Related works&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;p&gt;I have participated in the discussion about the nature of ArrayComprehension in the community this week. Comprehension is a new class that I implemented last week(See &lt;a href="https://www.kangzhiq.com/2019/06/03/gsoc-week-1/"&gt;last post&lt;/a&gt; for more details) This discussion helped me better understand the difference between a multipledimensional list and an array: an array is suppposed to perform vectorized operations while list is mosyly element-wise.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
