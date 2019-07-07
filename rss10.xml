@@ -7,6 +7,44 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-07-07-week-6.html</guid>
+      <author>Ankit Pandey (anpandey)</author>
+      <title>Ankit Pandey (anpandey): Google Summer of Code Week 6: Unification and Tensors Continued</title>
+      <pubDate>Sun, 07 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://anpandey.github.io/posts/sympy/2019-07-07-week-6.html</link>
+      <description>&lt;p&gt;&lt;em&gt;See the &lt;a href="https://anpandey.github.io/2019-06-28-week-5.html"&gt;previous post&lt;/a&gt; for Week 5&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;This week I&amp;#8217;ve made some progress on matching and tensors, though I haven&amp;#8217;t filed any pull requests.&lt;/p&gt;
+&lt;h2 id="unification"&gt;Unification&lt;/h2&gt;
+&lt;p&gt;I have a working implementation of rewriting non-commutative expressions using SymPy&amp;#8217;s unify. It works by generating a &lt;code&gt;ReplaceOptim&lt;/code&gt; object that applies the rewriting rules to any term it&amp;#8217;s called with. Here&amp;#8217;s how we specify the rewriting rules:&lt;/p&gt;
+&lt;div class="sourceCode" id="cb1"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb1-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy &lt;span class="im"&gt;import&lt;/span&gt; Symbol, MatrixSymbol&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; n &lt;span class="op"&gt;=&lt;/span&gt; Symbol(&lt;span class="st"&gt;'N_matcher'&lt;/span&gt;, integer&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="va"&gt;True&lt;/span&gt;)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; X &lt;span class="op"&gt;=&lt;/span&gt; MatrixSymbol(&lt;span class="st"&gt;'X_matcher'&lt;/span&gt;, n, n)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-4" title="4"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; Y &lt;span class="op"&gt;=&lt;/span&gt; MatrixSymbol(&lt;span class="st"&gt;'Y_matcher'&lt;/span&gt;, n, &lt;span class="dv"&gt;1&lt;/span&gt;)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-5" title="5"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; variables &lt;span class="op"&gt;=&lt;/span&gt; [n, X, Y]&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-6" title="6"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; matcher &lt;span class="op"&gt;=&lt;/span&gt; X&lt;span class="op"&gt;**&lt;/span&gt;(&lt;span class="op"&gt;-&lt;/span&gt;&lt;span class="dv"&gt;1&lt;/span&gt;) &lt;span class="op"&gt;*&lt;/span&gt; Y&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-7" title="7"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; goal &lt;span class="op"&gt;=&lt;/span&gt; MatrixSolve(X, Y)&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Here, the combination of &lt;code&gt;matcher&lt;/code&gt; and &lt;code&gt;variables&lt;/code&gt; specifies that we&amp;#8217;re looking for any expression of the form &lt;span class="math inline"&gt;&lt;em&gt;X&lt;/em&gt;&lt;sup&gt;&amp;#8197;&amp;#8722;&amp;#8197;1&lt;/sup&gt;&lt;em&gt;Y&lt;/em&gt;&lt;/span&gt;, where both &lt;span class="math inline"&gt;&lt;em&gt;X&lt;/em&gt;&lt;/span&gt; and &lt;span class="math inline"&gt;&lt;em&gt;Y&lt;/em&gt;&lt;/span&gt; can be any compound matrix expression. The inclusion of &lt;code&gt;n&lt;/code&gt; in &lt;code&gt;variables&lt;/code&gt; imposes the additional restriction that the matrix expression matched by &lt;span class="math inline"&gt;&lt;em&gt;X&lt;/em&gt;&lt;/span&gt; must be square (i.e. &lt;span class="math inline"&gt;&lt;em&gt;n&lt;/em&gt;&amp;#8197;&amp;#215;&amp;#8197;&lt;em&gt;n&lt;/em&gt;&lt;/span&gt;) while the expression matched by &lt;span class="math inline"&gt;&lt;em&gt;Y&lt;/em&gt;&lt;/span&gt; must be a vector (i.e. &lt;span class="math inline"&gt;&lt;em&gt;n&lt;/em&gt;&amp;#8197;&amp;#215;&amp;#8197;1&lt;/span&gt;). &lt;code&gt;goal&lt;/code&gt; specifies what the matched expression should be replaced with, where &lt;code&gt;X&lt;/code&gt; and &lt;code&gt;Y&lt;/code&gt; serve as stand-ins for the matched terms.&lt;/p&gt;
+&lt;p&gt;After specifying our goals, we can construct the object and apply the replacement to some expressions:&lt;/p&gt;
+&lt;div class="sourceCode" id="cb2"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb2-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; replacer &lt;span class="op"&gt;=&lt;/span&gt; gen_replacement_operator(matcher, goal, variables)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; A, B, x &lt;span class="op"&gt;=&lt;/span&gt; MatrixSymbol(&lt;span class="st"&gt;'A'&lt;/span&gt;, &lt;span class="dv"&gt;3&lt;/span&gt;, &lt;span class="dv"&gt;3&lt;/span&gt;), MatrixSymbol(&lt;span class="st"&gt;'B'&lt;/span&gt;, &lt;span class="dv"&gt;3&lt;/span&gt;, &lt;span class="dv"&gt;3&lt;/span&gt;), MatrixSymbol(&lt;span class="st"&gt;'x'&lt;/span&gt;, &lt;span class="dv"&gt;3&lt;/span&gt;, &lt;span class="dv"&gt;1&lt;/span&gt;)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; replacer(A &lt;span class="op"&gt;**&lt;/span&gt; (&lt;span class="op"&gt;-&lt;/span&gt;&lt;span class="dv"&gt;1&lt;/span&gt;) &lt;span class="op"&gt;*&lt;/span&gt; x)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-4" title="4"&gt;(MatrixSolve(A, vector&lt;span class="op"&gt;=&lt;/span&gt;x))&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-5" title="5"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; replacer(A &lt;span class="op"&gt;**&lt;/span&gt; (&lt;span class="op"&gt;-&lt;/span&gt;&lt;span class="dv"&gt;1&lt;/span&gt;) &lt;span class="op"&gt;*&lt;/span&gt; B)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-6" title="6"&gt;A &lt;span class="op"&gt;**&lt;/span&gt; (&lt;span class="op"&gt;-&lt;/span&gt;&lt;span class="dv"&gt;1&lt;/span&gt;) &lt;span class="op"&gt;*&lt;/span&gt; B&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The first term was replaced since the dimensions of &lt;code&gt;A&lt;/code&gt; and &lt;code&gt;x&lt;/code&gt; agreed with what was specified in matcher, while the second expression was left untouched since &lt;code&gt;B&lt;/code&gt; is not a vector.&lt;/p&gt;
+&lt;p&gt;While the matcher does work, I haven&amp;#8217;t filed a pull request because of some problems which don&amp;#8217;t seem like they could be easily addressed:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;I had to give add the suffix &lt;code&gt;_matcher&lt;/code&gt; to the variable names to avoid variable capture, since SymPy symbols are considered equal if they have the same name. &lt;code&gt;unify&lt;/code&gt; does not support &lt;code&gt;Dummy&lt;/code&gt; symbols as variables.&lt;/li&gt;
+&lt;li&gt;Some compound expressions are not matched. I&amp;#8217;ve narrowed this down to the way the variables are being passed to &lt;code&gt;unify&lt;/code&gt;, since they need to be converted to symbols. It seems like this conversion sometimes causes expressions to no longer be unifiable.&lt;/li&gt;
+&lt;li&gt;Unification doesn&amp;#8217;t seem to work for a mixture of commutative and non-commutative expressions. I&amp;#8217;m not sure if this is a problem with &lt;code&gt;unify&lt;/code&gt; itself or the way that I&amp;#8217;m using it, since the only test of &lt;code&gt;unify&lt;/code&gt; in the SymPy codebase involving matrix expressions is on matrix multiplication.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;As I mentioned in my last blog post, SymPy already supports this sort of pattern matching through &lt;code&gt;Wild&lt;/code&gt;, though it currently does not support expressions involving matrices. Before trying to address these issues, I think it would be worthwhile to look into extending the functionality of &lt;code&gt;Wild&lt;/code&gt; as an alternative.&lt;/p&gt;
+&lt;h2 id="tensors"&gt;Tensors&lt;/h2&gt;
+&lt;p&gt;I&amp;#8217;ve made some progress in low-level code generation of matrix expressions. I tried seeing if instances of classes in the &lt;code&gt;array_utils&lt;/code&gt; module could be converted to SymPy&amp;#8217;s AST representation before being passed off to the code generators. This doesn&amp;#8217;t seem possible at the moment, since the AST has a number of limitations (such as not supporting variables in &lt;code&gt;for&lt;/code&gt; loop ranges). The &lt;code&gt;IndexedBase&lt;/code&gt; printer already has some of the functionality that I&amp;#8217;m trying to implement, so I&amp;#8217;ve settled on extending the printer to support arbitrary contractions. This same functionality can probably be reused for the &lt;code&gt;array_utils&lt;/code&gt; printers. The implementation will hopefully be straightforward.&lt;/p&gt;
+&lt;h2 id="next-steps"&gt;Next steps&lt;/h2&gt;
+&lt;p&gt;My goal for this week is to have a pull request for the tensor code generation ready, along with a plan for what to do with matching.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/07/week-6-the-most-chaotic-week-ever/</guid>
       <author>Nikhil Maan (Sc0rpi0n101)</author>
       <title>Nikhil Maan (Sc0rpi0n101): Week 6: The Most Chaotic Week Ever!!</title>
@@ -754,29 +792,6 @@ Why so Late?</description>
 &lt;/ul&gt;
 
 &lt;p&gt;With enough said, these PRs made me realize how much the codebase can break with small changes in the assumptions. Also, I know this post is a little bit late(because of bad health). I have some pending work over from the last week and I will try to catch speed as soon as possible.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://divyanshu132.github.io//gsoc-week-2</guid>
-      <author>Divyanshu Thakur (divyanshu132)</author>
-      <title>Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 2 - Polycyclic Group Presentation in SymPy</title>
-      <pubDate>Tue, 11 Jun 2019 00:00:00 GMT</pubDate>
-      <link>https://divyanshu132.github.io//gsoc-week-2</link>
-      <description>&lt;p&gt;Hello world,
-The second week of coding period has been ended and for the complete week we worked on the presentation of polycyclic groups. I&amp;#8217;ve created a WIP PR for the basic structure of PcGroups &lt;a href="https://github.com/sympy/sympy/pull/16991"&gt;here&lt;/a&gt; but it seems like there are a lot of things that needs to be changed or enhanced in this presentation.&lt;/p&gt;
-
-&lt;p&gt;Initially I thought of representing PcGroups with just the generators of the given permutation group and then from the last week we already have composition-series(&lt;a href="https://divyanshu132.github.io//gsoc-week-1"&gt;here&lt;/a&gt;) so we can easily compute the generating sequence(pcgs) for the polycyclic group. But, finally we realised that the composition-series will be too big to do all the computations for the PcGroup. Also, in the presentation we can&amp;#8217;t ignore the relators.&lt;/p&gt;
-
-&lt;p&gt;So, after all this we thought of computing the smaller version of subnormal series with cyclic factors and finally we realised that &lt;strong&gt;collection algorithm&lt;/strong&gt; is something that we need. Can&amp;#8217;t say more about this because I have to look into the &lt;code class="highlighter-rouge"&gt;rewriting&lt;/code&gt; code which looks like a tough task for me but let&amp;#8217;s hope for the best.&lt;/p&gt;
-
-&lt;p&gt;For the next week I&amp;#8217;m setting these milestones for me:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Get ready with the presentation of PcGroups(still I&amp;#8217;m not sure if collection algorithm is what we need!).&lt;/li&gt;
-  &lt;li&gt;Implement &lt;code class="highlighter-rouge"&gt;exponent-vector&lt;/code&gt; which may further help in HallSubgroup computation.&lt;/li&gt;
-  &lt;li&gt;Include more methods in the PcGroup class.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Will try my best to execute things in order mentioned above. With this, sign out for the next week.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
