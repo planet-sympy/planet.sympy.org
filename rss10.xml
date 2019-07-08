@@ -31,6 +31,43 @@
 &lt;p&gt;Thanks!&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://divyanshu132.github.io//gsoc-week-6</guid>
+      <author>Divyanshu Thakur (divyanshu132)</author>
+      <title>Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 6 - Computation of Polycyclic presentation</title>
+      <pubDate>Mon, 08 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://divyanshu132.github.io//gsoc-week-6</link>
+      <description>&lt;p&gt;The sixth week of coding period has ended and a good amount of work has been done on polycyclic groups. Polycyclic presentation, Polycyclic generating sequence(pcgs) and it&amp;#8217;s series is implemented which for sure need some improvement &lt;a href="https://github.com/sympy/sympy/pull/16991"&gt;sympy/sympy#16991&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The polycyclic series is computed starting from the bottom of the derived series of a group by adding the missing generators in the subgroups, and collecting these missing generators provide us the polycyclic generating sequence.&lt;/p&gt;
+
+&lt;p&gt;As we discussed last week &lt;a href="https://divyanshu132.github.io/gsoc-week-5"&gt;here&lt;/a&gt; that to compute conjugate relators of a polycyclic group we were missing the &lt;code class="highlighter-rouge"&gt;RHS&lt;/code&gt; term, which was of the form &lt;code class="highlighter-rouge"&gt;x[i]**-1*x[i+1]*x[i] == RHS&lt;/code&gt;. So, starting from the bottom of the polycyclic generating sequence forming the subgroup and finding all the generators of the RHS using &lt;code class="highlighter-rouge"&gt;generator_product&lt;/code&gt;, mapping these generators with the free group elements and forming a word, finally collect the above formed word which will give us the collected RHS.&lt;/p&gt;
+
+&lt;p&gt;Below is an example to compute polycyclic presentation for S(9).sylow_subgroup(3)&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
+&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics.free_groups import free_group
+&amp;gt;&amp;gt;&amp;gt; F, x0, x1, x2, x3 = free_group("x0, x1, x2, x3")
+&amp;gt;&amp;gt;&amp;gt; S = SymmetricGroup(9)
+&amp;gt;&amp;gt;&amp;gt; G = S.sylow_subgroup(3)
+&amp;gt;&amp;gt;&amp;gt; pc_group = G.polycyclic_group()
+&amp;gt;&amp;gt;&amp;gt; group = F
+&amp;gt;&amp;gt;&amp;gt; pc_group.pc_presentation(group)
+{x3**3: (), x2**3: (), x1**3: (), x0**3: (), x2**-1*x3*x2: x3, x1**-1*x3*x1: x3, x1**-1*x2*x1: x2, x0**-1*x3*x0: x2**2*x3**2, x0**-1*x2*x0: x3, x0**-1*x1*x0: x1*x3}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;One problem that we&amp;#8217;ve encountered is that the generators in pcgs may change for the same group on executing it several times which makes it difficult to test pc_presentation but, Kalevi advised me to initalize &lt;code class="highlighter-rouge"&gt;random.seed&lt;/code&gt; with some chosen value and then it will result in the same repeatable result, will try it by today!&lt;/p&gt;
+
+&lt;p&gt;The tasks that I&amp;#8217;m hopping to accomplish next week are&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Add tests for plycyclic presentation and be sure that it works properly.&lt;/li&gt;
+  &lt;li&gt;Include more functionalities to pc groups like &lt;code class="highlighter-rouge"&gt;exponent_vector&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;element_depth&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;leading_coefficient&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;Add documentation for all the functions.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Till then, good byee..&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-07-07-week-6.html</guid>
       <author>Ankit Pandey (anpandey)</author>
       <title>Ankit Pandey (anpandey): Google Summer of Code Week 6: Unification and Tensors Continued</title>
@@ -786,16 +823,6 @@ powers of symbols present in an expression.&lt;/p&gt;
       <pubDate>Sun, 16 Jun 2019 00:00:00 GMT</pubDate>
       <link>https://ritesh99rakesh.github.io/Sympy_post5/</link>
       <description>&lt;p&gt;Week 3 has ended and o boy, what a week it has been. I was able to achieve quite a bit this week. Opened a PR for sampling methods, along the lines of Francesco Bonazzi&amp;#8217;s suggestion, and it has well receieved. I will continue my work to more it more robust and avoid code repetition as much as possible. I have started the discussion on Compound distributions and have started an issue regarding the same. I also went through the implementation of Joint distribution to see how it was structured and will take inspiration from it for implementation of Compound distribution. I also raised a PR for Compound distribution and will continue to work on it. In addition I also implemented some more distributions and factorial moment function for statistics module. I will try to get them merged before evaluation begin.</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/06/week-3-whats-happening-where-have-i-been/</guid>
-      <author>Nikhil Maan (Sc0rpi0n101)</author>
-      <title>Nikhil Maan (Sc0rpi0n101): Week 3: What's Happening? Where have I been?</title>
-      <pubDate>Sun, 16 Jun 2019 00:00:00 GMT</pubDate>
-      <link>https://sc0rpi0n101.github.io/2019/06/week-3-whats-happening-where-have-i-been/</link>
-      <description>&lt;p&gt;&amp;#8220;How did it get so late so soon?&amp;#8221;  &amp;#8213; Dr. Seuss
- Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and we&amp;rsquo;re running late on everything this week. This time we will talk about some operating system stuff along with the week&amp;rsquo;s work. I will have more blogs on operating systems and that type of stuff soon. For now, let&amp;rsquo;s talk about what&amp;rsquo;s happening.
-Why so Late?</description>
     </item>
   </channel>
 </rss>
