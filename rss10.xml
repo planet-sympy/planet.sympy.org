@@ -28,6 +28,80 @@
 &lt;p&gt;Thanks!&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://czgdp1807.github.io/week_7</guid>
+      <author>Gagandeep Singh (czgdp1807)</author>
+      <title>Gagandeep Singh (czgdp1807): Week 7 - All about logics and algorithms</title>
+      <pubDate>Mon, 15 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://czgdp1807.github.io/week_7/</link>
+      <description>&lt;p&gt;This week required a lot of thinking before jumping to code the stuff. Interested? Okay move on to next paragraph.&lt;/p&gt;
+
+&lt;p&gt;Basically, I worked on three PRs, &lt;a href="https://github.com/sympy/sympy/pull/17163"&gt;#17163&lt;/a&gt; for continuous time Markov chains, &lt;a href="https://github.com/sympy/sympy/pull/17174"&gt;#17174&lt;/a&gt; for random matrices and &lt;a href="https://github.com/sympy/sympy/pull/17146"&gt;#17146&lt;/a&gt; for symbolic Ranges. The first and the last PRs are very much intensive. I developed a new algorithm for the query handler of &lt;code class="highlighter-rouge"&gt;ContinuousMarkovChain.probability&lt;/code&gt; method, because the previous one which I implemented in &lt;code class="highlighter-rouge"&gt;DiscreteMarkovChain.probability&lt;/code&gt;, was not easy to maintain, quite ad-hoc, rigid and difficult to extend. The philosophy behind the algorithm is recursion i.e., boil everything down to &lt;code class="highlighter-rouge"&gt;Relational&lt;/code&gt; query, convert them to sets and then calculate the probability. You can find the complete description &lt;a href="https://github.com/sympy/sympy/pull/17163#issuecomment-510939984"&gt;here&lt;/a&gt;. I am waiting for any critical objections from my mentors and after that I will refactor the code as suggested by &lt;a href="https://github.com/oscarbenjamin"&gt;oscarbenjamin&lt;/a&gt; and &lt;a href="https://github.com/jksuom"&gt;jksuom&lt;/a&gt;. So, now let&amp;#8217;s move on to random matrices. As it was to be implemented from scratch, it required a bit of thinking to reach a decent architecture. Currently, the PR is at a basic level, and some more testing is to be done. Now, coming on to symbolic &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt;. Let me tell you, it requires a lot of logical thinking to make &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; accept symbolic parameters. A lot of tests fail, and a lot of debugging has to be done to make a method work. In fact, we might deprecate &lt;code class="highlighter-rouge"&gt;xrange&lt;/code&gt; support from &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; because we are going to drop &lt;code class="highlighter-rouge"&gt;Python 2&lt;/code&gt; support from &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;This week I learnt to combine the concepts from algorithms and software engineering to develop the stuff I mentioned above. This was the best week of my overall GSoC experience till now.&lt;/p&gt;
+
+&lt;p&gt;A lot more lies ahead. Bye!!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://shubhamkjha.github.io/2019/07/15/GSoC-2019-Week-6-and-7</guid>
+      <author>Shubham Kumar Jha (ShubhamKJha)</author>
+      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 6 and 7</title>
+      <pubDate>Mon, 15 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://shubhamkjha.github.io/2019/07/15/GSoC-2019-Week-6-and-7.html</link>
+      <description>&lt;p&gt;With this ends the seventh week of the official coding period. During the end of 6th week and the beginning of 7th week, I was mostly travelling, so I was not able to write a blog for the sixth week. Instead, I will try to summarize my work during the last two weeks here.&lt;/p&gt;
+
+&lt;p&gt;For the last few weeks, I have been focused on optimizing the code of new assumptions to enhance its performance. Most of my work has been exploratory, as Aaron says &amp;#128517;. Indeed I have dry-run, backtracked, profiled, and ran the same code with a debugger too many times to understand the slow parts and the improvements I can make here and there. Mostly the code is optimized given the class structure of SymPy. But it is also the class structure that is adding up to the performance issues. Already noted in my last blog, classes like &lt;code class="highlighter-rouge"&gt;And&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Or&lt;/code&gt; sorts their &lt;em&gt;args&lt;/em&gt;, hence take a great amount of time. But other SymPy class constructors also take significant time.&lt;/p&gt;
+
+&lt;p&gt;With the success of fifth week&amp;#8217;s attempt, I have been desperate to bring down the execution time &amp;#128517;. Some of the attempts I have made, which are included in &lt;a href="https://github.com/sympy/sympy/pull/17144"&gt;#17144&lt;/a&gt;, are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;I have modified &lt;strong&gt;CNF&lt;/strong&gt; class, which essentially is a low-level implementation for the &lt;a href="https://en.wikipedia.org/wiki/Conjunctive_normal_form"&gt;cnf&lt;/a&gt; of any boolean expression. &lt;strong&gt;CNF&lt;/strong&gt; object holds a set of clauses. These clauses are themselves &lt;code class="highlighter-rouge"&gt;frozenset&lt;/code&gt; of &lt;strong&gt;Literal&lt;/strong&gt; objects. &lt;strong&gt;Literal&lt;/strong&gt; class is being implemented just to reduce the unnecessary creation of &lt;code class="highlighter-rouge"&gt;Not&lt;/code&gt; objects (It takes significant execution time and is called many times).&lt;/li&gt;
+  &lt;li&gt;I have also modified the code of &lt;em&gt;sympify()&lt;/em&gt;, it appeared to take more time than expected when the argument is a SymPy object already. Consider this, almost one-third execution time.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Symbol&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'x'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;timeit&lt;/span&gt; &lt;span class="n"&gt;sympify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c"&gt;# before change&lt;/span&gt;
+&lt;span class="mi"&gt;601&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="mf"&gt;14.6&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="n"&gt;per&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1000000&lt;/span&gt; &lt;span class="n"&gt;loops&lt;/span&gt; &lt;span class="n"&gt;each&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;timeit&lt;/span&gt; &lt;span class="n"&gt;sympify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c"&gt;# after change&lt;/span&gt;
+&lt;span class="mi"&gt;239&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="mf"&gt;11.8&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="n"&gt;per&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1000000&lt;/span&gt; &lt;span class="n"&gt;loops&lt;/span&gt; &lt;span class="n"&gt;each&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Finally, I rewrote &lt;code class="highlighter-rouge"&gt;to_cnf()&lt;/code&gt; for &lt;strong&gt;CNF&lt;/strong&gt; objects. By using mostly Python&amp;#8217;s built-ins and removing any SymPy object construction during its execution. The performance gain is quite subtle &amp;#128526;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy.abc&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy.logic.boolalg&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;CNF&lt;/span&gt;
+
+&lt;span class="c"&gt;# Before&lt;/span&gt;
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;timeit&lt;/span&gt; &lt;span class="n"&gt;CNF&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;from_prop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c"&gt;# It is using to_cnf()&lt;/span&gt;
+&lt;span class="mf"&gt;1.41&lt;/span&gt; &lt;span class="n"&gt;ms&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="mi"&gt;18&lt;/span&gt; &lt;span class="err"&gt;&amp;#181;&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="n"&gt;per&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1000&lt;/span&gt; &lt;span class="n"&gt;loops&lt;/span&gt; &lt;span class="n"&gt;each&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c"&gt;# after&lt;/span&gt;
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;timeit&lt;/span&gt; &lt;span class="n"&gt;CNF&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;from_prop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c"&gt;# It is using the new to_CNF()&lt;/span&gt;
+&lt;span class="mf"&gt;31.5&lt;/span&gt; &lt;span class="err"&gt;&amp;#181;&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="mf"&gt;1.48&lt;/span&gt; &lt;span class="err"&gt;&amp;#181;&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="n"&gt;per&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10000&lt;/span&gt; &lt;span class="n"&gt;loops&lt;/span&gt; &lt;span class="n"&gt;each&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;There is definitely a limit to performance we can get with Python. But implementing most of the things in Python built-ins we can definitely make things much faster.&lt;/p&gt;
+
+&lt;p&gt;For the upcoming week, I will try to complete the following:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;The CNF objects are still not simplified. I have to implement simplification to reduce the number of clauses. These have to be fed into &lt;code class="highlighter-rouge"&gt;satisfiable&lt;/code&gt; at the end, which can benefit from lesser number of clauses.&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;rcall&lt;/code&gt; used with &lt;strong&gt;sathandlers&lt;/strong&gt; is another major portion having high execution time. I will try to work it out.&lt;/li&gt;
+  &lt;li&gt;Clean up the code and make it ready for reviewing.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Apart from that, I will also try to shift my focus towards the other part of my project and write some theory solvers. After all, I need to enhance the assumptions not just make it faster &amp;#128526;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Peace&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/07/week-7a-little-step-towards-consistency/</guid>
       <author>Nikhil Maan (Sc0rpi0n101)</author>
       <title>Nikhil Maan (Sc0rpi0n101): Week 7:A Little Step Towards Consistency</title>
@@ -753,44 +827,6 @@ function. Hope it gets merged by this week.&lt;/p&gt;
       <link>https://arighnaiitg.github.io/2019-06-19-gsoc-week3/</link>
       <description>&lt;p&gt;Week 3 ends.. - 
           Week 3 of the first phase of this coding period is coming to an end. The week started with a bad note, given that I had fallen sick due to travelling. But the work in Week 2, and the meeting with Sartaj on 11th of June helped me to progress...</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://divyanshu132.github.io//gsoc-week-3</guid>
-      <author>Divyanshu Thakur (divyanshu132)</author>
-      <title>Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 3 - Polycyclic Groups</title>
-      <pubDate>Mon, 17 Jun 2019 00:00:00 GMT</pubDate>
-      <link>https://divyanshu132.github.io//gsoc-week-3</link>
-      <description>&lt;p&gt;The third week has ended and a good amount of work has been done on polycyclic groups PR &lt;a href="https://github.com/sympy/sympy/pull/16991"&gt;here&lt;/a&gt;. The collection algorithm has been implemented, from the beginning of the week, I started with understanding the algorithm which took some time and then finally it was implemented, still we are facing a problem in type conversion(&lt;a href="https://github.com/sympy/sympy/pull/16991#discussion_r294054681"&gt;here&lt;/a&gt;) but that will be sorted out soon!&lt;/p&gt;
-
-&lt;p&gt;Even though only two weeks were alloted for polycyclic group implementation but it seems we need one more week or maybe more than a week to implement more functionalities for pc groups. But it&amp;#8217;s completely fine because we started work early and according to the proposed timeline we still have one week.&lt;/p&gt;
-
-&lt;p&gt;Few of the issues with the current implementation which needs to be sorted out are:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;firstly to &lt;code class="highlighter-rouge"&gt;compute uncollected subwords&lt;/code&gt; the word is manipulated using its &lt;code class="highlighter-rouge"&gt;array_form&lt;/code&gt; which eventually leads to change in the type of the subwords computed and it creates a problem in processing these subwords further.&lt;/li&gt;
-  &lt;li&gt;Some more issues were pointed out by Kalevi and can be seen in the comments of the PR.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The complete week was spent implementing collection of words so a lot of tasks targeted last week were not completed, I&amp;#8217;ll try to cover those tasks in the upcomming week.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Solve the issues with collection of words.&lt;/li&gt;
-  &lt;li&gt;Get ready with the pc presentation.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Till then, Good byee..!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://shubhamkjha.github.io/2019/06/17/GSoC-2019-Week-3</guid>
-      <author>Shubham Kumar Jha (ShubhamKJha)</author>
-      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 3</title>
-      <pubDate>Mon, 17 Jun 2019 00:00:00 GMT</pubDate>
-      <link>https://shubhamkjha.github.io/2019/06/17/GSoC-2019-Week-3.html</link>
-      <description>&lt;p&gt;The third week of coding period has ended and as I already stated in the last blog, I couldn&amp;#8217;t be much productive this week. Nevertheless, I tried to wrap-up some unfinished works. PR &lt;a href="https://github.com/sympy/sympy/pull/16956"&gt;#16956&lt;/a&gt; is ready to merge, just waiting for some last reviews. This PR needs to be supplemented with some fixes in the code of &lt;code class="highlighter-rouge"&gt;Add&lt;/code&gt; class to handle all the issues over &lt;code class="highlighter-rouge"&gt;Relationals&lt;/code&gt;. PR &lt;a href="https://github.com/sympy/sympy/pull/16978"&gt;#16978&lt;/a&gt; had one major failing test from the &lt;code class="highlighter-rouge"&gt;stats&lt;/code&gt; module. I tried to debug it ,but due to my unfamiliarity with that part of code I took help from &lt;a href="https://github.com/czgdp1807"&gt;Gagandeep&lt;/a&gt; and as his &lt;a href="https://github.com/sympy/sympy/pull/16978#discussion_r294039337"&gt;comment&lt;/a&gt; suggests, the result this PR is giving is correct and more intuitive. At least, one less issue to handle &amp;#128524;.&lt;/p&gt;
-
-&lt;p&gt;Over the end of the week, I shifted my focus towards &lt;em&gt;New Assumptions&lt;/em&gt;. One of my major tasks for this summer is to speed up the &lt;em&gt;satask&lt;/em&gt; module. As suggested by Aaron, I searched the repository for issues and PRs over this, and I found a number of such unfinished work. I would need to study these ideas and profile the results before working ahead. I would create a issue-tree over it connecting all such PRs and there respective benchmarks.&lt;/p&gt;
-
-&lt;p&gt;For this week, I would focus on the above mentioned task only. Since the first phase is about to end, I would have to speed things up.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
