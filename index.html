@@ -236,6 +236,125 @@
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-a7ab14f6 feed-" id="item-15a55d25">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/divyanshu132.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Divyanshu Thakur (divyanshu132) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://divyanshu132.github.io//gsoc-week-7">00:00, Monday, 15 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://divyanshu132.github.io//gsoc-week-7">Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 7 - Modify Presentation and Addition of Methods</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/divyanshu132.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Divyanshu Thakur (divyanshu132) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://divyanshu132.github.io//gsoc-week-7">00:00, Monday, 15 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://divyanshu132.github.io//gsoc-week-7">GSoC 2019 - Week 7 - Modify Presentation and Addition of Methods</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>The seventh week of coding period has ended and a few methods has been introduced to polycyclic groups, also pc presentation has been modified. Previously for pc presentation we were computing the LHS for both power and conjugate relators via separate methods and then finally their RHS was computed.</p>
+
+<p>Now, the computation of presentation starts from the bottom of the polycyclic generating sequence(pcgs) and polycyclic series. Storing all the previous generators from pcgs and then taking the last generator as the generator which acts as a conjugator and conjugates all the previous generators in the list.</p>
+
+<p>To get a clear picture let&#8217;s take an example of <code class="highlighter-rouge">S(4)</code>
+For S(4) we&#8217;ll have 4 generators in pcgs say <code class="highlighter-rouge">[x0, x1, x2, x3]</code> and the <code class="highlighter-rouge">relative_order vector as [2, 3, 2, 2]</code>. Starting from bottom of this sequence the presentation is computed in order as below.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x3**2	       	---|
+x2**2		   | ---&gt; using only [x3] from pcgs and pc_series[1]
+x2**-1*x3*x2	---| from bottom up because pc_series[0] is an identity.
+
+x1**3		---|	
+x1**-1*x3*x1	   | ---&gt; using [x3, x2] from pcgs and pc_series[2]
+x1**-1*x2*x1	---|      from bottom up(which have both the gens).
+
+x0**2		---|
+x0**-1*x3*x0	   |---&gt; using [x3, x2, x1] from pcgs and pc_series[3]
+x0**-1*x2*x0	   |     from bottom up(which have all three gens).
+x0**-1*x1*x0	---|
+
+</code></pre></div></div>
+
+<p>There were 3-methods which were added namely:</p>
+
+<ul>
+  <li>Exponent vector</li>
+  <li>Depth</li>
+  <li>Leading Exponent</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; from sympy.combinatorics import *
+&gt;&gt;&gt; from sympy.combinatorics.free_groups import free_group
+&gt;&gt;&gt; G = SymmetricGroup(4)
+&gt;&gt;&gt; PcGroup = G.polycyclic_group()
+&gt;&gt;&gt; pcgs = PcGroup.pcgs
+&gt;&gt;&gt; group, x0, x1, x2, x3 = free_group("x0, x1, x2, x3")
+&gt;&gt;&gt; PcGroup.exponent_vector(G[0], group)
+[1, 0, 0, 0]
+&gt;&gt;&gt; exp = PcGroup.exponent_vector(G[1], group)
+&gt;&gt;&gt; g = Permutation()
+&gt;&gt;&gt; for i in range(len(exp)):
+...     g = g*pcgs[i] if exp[i] else g
+... 
+&gt;&gt;&gt; g == G[1]
+True
+&gt;&gt;&gt; 
+
+</code></pre></div></div>
+<p>For the details of these methods one can look into the docstrings and doctests of these methods in the PR <a href="https://github.com/sympy/sympy/pull/16991">sympy/sympy#16991</a>.</p>
+
+<p>Tasks I hope to complete next week:</p>
+
+<ul>
+  <li>Get the polycyclic group pr ready to be merged.</li>
+  <li>Get started with quotient groups.</li>
+</ul>
+
+<p>Till then good byee..</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-403273e0 feed-" id="item-525c2b0f">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -342,6 +461,110 @@
 <p>Apart from that, I will also try to shift my focus towards the other part of my project and write some theory solvers. After all, I need to enhance the assumptions not just make it faster &#128526;.</p>
 
 <p><em>Peace</em></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">July 14, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-2b8e50f7 feed-" id="item-aa656391">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/anpandey.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Ankit Pandey (anpandey) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://anpandey.github.io/posts/sympy/2019-07-14-week-7.html">00:00, Sunday, 14 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://anpandey.github.io/posts/sympy/2019-07-14-week-7.html">Ankit Pandey (anpandey): Google Summer of Code Week 7: Matrix Wildcards</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/anpandey.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Ankit Pandey (anpandey) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://anpandey.github.io/posts/sympy/2019-07-14-week-7.html">00:00, Sunday, 14 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://anpandey.github.io/posts/sympy/2019-07-14-week-7.html">Google Summer of Code Week 7: Matrix Wildcards</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>I spent most of this week on extending wildcard support for matrix expressions, along with some more explorations in printing array contractions.</p>
+<h3 id="matrices-and-wildcards">Matrices and Wildcards</h3>
+<p>As I&#8217;ve probably mentioned in the last two blog posts, SymPy&#8217;s support for matching matrix expressions through the <code>Wild</code> class is currently severely limited (<a href="https://github.com/sympy/sympy/issues/17172">when it works</a>). While it is possible to construct a non-commutative <code>Wild</code>, it isn&#8217;t able to match expressions in a matrix multiplication:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" title="1"><span class="op">&gt;&gt;&gt;</span> W, X <span class="op">=</span> symbols(<span class="st">'W, X'</span>, cls<span class="op">=</span>Wild, commutative<span class="op">=</span><span class="va">False</span>)</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sympy.abc <span class="im">import</span>  N</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="op">&gt;&gt;&gt;</span> A, B <span class="op">=</span> MatrixSymbol(<span class="st">'A'</span>, N, N), MatrixSymbol(<span class="st">'B'</span>, N, N)</a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="op">&gt;&gt;&gt;</span> <span class="bu">type</span>((A <span class="op">*</span> B).match(W <span class="op">*</span> X))</a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="op">&lt;</span><span class="kw">class</span> <span class="st">'NoneType'</span><span class="op">&gt;</span></a></code></pre></div>
+<p>It&#8217;s also currently not possible to combine matrices and wildcards in expressions, since wildcards don&#8217;t have a defined shape and so may only function as scalars:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" title="1"><span class="op">&gt;&gt;&gt;</span> W <span class="op">+</span> A</a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="pp">TypeError</span>: Mix of Matrix <span class="kw">and</span> Scalar symbols</a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="op">&gt;&gt;&gt;</span> W <span class="op">*</span> A</a>
+<a class="sourceLine" id="cb2-4" title="4"><span class="pp">NotImplementedError</span>: noncommutative scalars <span class="kw">in</span> MatMul are <span class="kw">not</span> supported.</a></code></pre></div>
+<h3 id="matrixwild"><code>MatrixWild</code></h3>
+<p>I spent most of this week working on <a href="https://github.com/sympy/sympy/pull/17177">#17177</a>, which implements a <code>MatrixWild</code> class that functions as both a wildcard and a matrix expression. In order to construct the wildcard, we need to give it a shape:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb3-1" title="1"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sympy.abc <span class="im">import</span> N</a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sympy.matrices.expressions.matexpr <span class="im">import</span> MatrixWild</a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="op">&gt;&gt;&gt;</span> W, X <span class="op">=</span> MatrixWild(<span class="st">'W'</span>, N, N), MatrixWild(<span class="st">'X'</span>, N, N)</a></code></pre></div>
+<p>Unlike in the example above using <code>Wild</code>, compound expressions are able to match against a matrix multiplication:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb4-1" title="1"><span class="op">&gt;&gt;&gt;</span> A, B <span class="op">=</span> MatrixSymbol(<span class="st">'A'</span>, N, N), MatrixSymbol(<span class="st">'B'</span>, N, N)</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="op">&gt;&gt;&gt;</span> (A <span class="op">*</span> B).match(W <span class="op">*</span> X)</a>
+<a class="sourceLine" id="cb4-3" title="3">{W_: A, X_: B}</a></code></pre></div>
+<p>Note that in order for matrix wildcards to match, their shape must match with the target expression:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb5-1" title="1"><span class="op">&gt;&gt;&gt;</span> x <span class="op">=</span> MatrixSymbol(<span class="st">'x'</span>, N, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="op">&gt;&gt;&gt;</span> e <span class="op">=</span> A <span class="op">*</span> x</a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="op">&gt;&gt;&gt;</span> e.shape</a>
+<a class="sourceLine" id="cb5-4" title="4">(N, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="op">&gt;&gt;&gt;</span> <span class="bu">type</span>(e.match(W))</a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="op">&lt;</span><span class="kw">class</span> <span class="st">'NoneType'</span><span class="op">&gt;</span></a></code></pre></div>
+<p>However, if we don&#8217;t care about dimension, we can include another wildcard in the matrix wildcard&#8217;s shape:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb6-1" title="1"><span class="op">&gt;&gt;&gt;</span> M <span class="op">=</span> MatrixSymbol(<span class="st">'M'</span>, <span class="dv">3</span>, <span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb6-2" title="2"><span class="op">&gt;&gt;&gt;</span> w <span class="op">=</span> Wild(<span class="st">'w'</span>)</a>
+<a class="sourceLine" id="cb6-3" title="3"><span class="op">&gt;&gt;&gt;</span> Y <span class="op">=</span> MatrixWild(<span class="st">'Y'</span>, w, w)</a>
+<a class="sourceLine" id="cb6-4" title="4"><span class="op">&gt;&gt;&gt;</span> M.match(Y)</a>
+<a class="sourceLine" id="cb6-5" title="5">{w_: <span class="dv">3</span>, Y_: M}</a></code></pre></div>
+<p>While this is a good first step to the matching functionality I was looking for with <code>unify</code> for rewriting matrix expressions, there is still quite a bit of functionality (and tests) to be implemented, along with an unknown number of bugs to fix.</p>
+<h2 id="printing-indexed-bases">Printing Indexed Bases</h2>
+<p>I&#8217;ve also been working on a small pull request to improve the functionality the printing <code>IndexedBases</code> so that it instead uses intermediate values (represented through the new code generation classes) to accumulate the values of contractions. Currently, this does nothing but break existing compatibility (Fortran versions older than Fortran 95 don&#8217;t support variable declarations in arbitrary locations, and the variable currently defaults to a 32-bit floating point number), though I think this is a good first step for supporting the printing of more complex contractions.</p>
+<h2 id="next-steps">Next Steps</h2>
+<p>For this week, I plan to finish with the implementation of<code>MatrixWild</code> (and hopefully get started with using it for rewriting matrix expressions), along with making some more progress on the indexed bases pull request.</p>
 					</div>
 				</div>
 			</div>
@@ -2419,165 +2642,6 @@ function. Hope it gets merged by this week.</p>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">June 21, 2019</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-2b8e50f7 feed-" id="item-5885249a">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/anpandey.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Ankit Pandey (anpandey) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://anpandey.github.io/posts/sympy/2019-06-21-weeks-3-and-4.html">00:00, Friday, 21 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://anpandey.github.io/posts/sympy/2019-06-21-weeks-3-and-4.html">Ankit Pandey (anpandey): Google Summer of Code Weeks 3 and 4: Matrix Optimizations</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/anpandey.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Ankit Pandey (anpandey) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://anpandey.github.io/posts/sympy/2019-06-21-weeks-3-and-4.html">00:00, Friday, 21 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://anpandey.github.io/posts/sympy/2019-06-21-weeks-3-and-4.html">Google Summer of Code Weeks 3 and 4: Matrix Optimizations</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p><em>See the <a href="https://anpandey.github.io/2019-06-07-week-2.html">previous post</a> for Week 2</em>.</p>
-<p>I spent a large part of last week travelling, so I&#8217;m combining the blog posts for the last two weeks.</p>
-<h2 id="finishing-up-with-lfortran">Finishing up with LFortran</h2>
-<p>I&#8217;m finished with the <a href="https://github.com/sympy/sympy/pull/16931">pull request</a> for the LFortran code printer for now, though it&#8217;s definitely way too incomplete to be merged. The code passes <em>most</em> of the rudimentary tests I&#8217;ve added.</p>
-<p>Here&#8217;s a simple example of one of the failing LFortran tests: Suppose we want to generate Fortran (using LFortran) code from the mathematical expression <span class="math inline">&#8197;&#8722;&#8197;<em>x</em></span>. SymPy sees this expression as multiplication with -1, as it implements only addition and multiplication in its arithmetic operations:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" title="1"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sympy <span class="im">import</span> <span class="op">*</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="op">&gt;&gt;&gt;</span> x <span class="op">=</span> Symbol(<span class="st">'x'</span>)</a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="op">&gt;&gt;&gt;</span> srepr(<span class="op">-</span>x)</a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="co">&quot;Mul(Integer(-1), Symbol('x'))&quot;</span></a></code></pre></div>
-<p>Directly converting same mathematical expression in Fortran as <code>-x</code> we can see that LFortran instead sees it as unary subtraction:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" title="1"><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> lfortran <span class="im">import</span> <span class="op">*</span></a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="op">&gt;&gt;&gt;</span> src_to_ast(<span class="st">&quot;-x&quot;</span>, <span class="va">False</span>)</a>
-<a class="sourceLine" id="cb2-3" title="3"><span class="op">&lt;</span>lfortran.ast.ast.UnaryOp <span class="bu">object</span> at <span class="bn">0x7f9027f1aba8</span><span class="op">&gt;</span></a></code></pre></div>
-<p>This is a major problem for the tests, which right now look to see if the Lfortran-parsed output of <code>fcode</code> (SymPy&#8217;s current Fortran code generator) on an expression matches the same directly translated AST. This won&#8217;t be true for <span class="math inline">&#8197;&#8722;&#8197;<em>x</em></span>, since the translated expression is a multiplication <code>BinOp</code> while the parsed expression in an <code>UnaryOp</code>.</p>
-<p>One solution might be to not parse <code>fcode</code>&#8217;s output and instead just check for equivalence between strings. This would mean dealing with the quirks of the code printers (such as their tendency to produce excessive parenthesis), and take away some of the advantages of direct translation. The more probable solution would be to introduce substitution rules within the LFortran AST.</p>
-<h2 id="missing-matrix-nodes">Missing matrix nodes</h2>
-<p>I filed issue <a href="https://github.com/sympy/sympy/issues/17006">#17006</a>, in which <code>lambdify</code> misinterpreted identity matrices as the imaginary unit. The fix in <a href="https://github.com/sympy/sympy/pull/17022">#17022</a> is pretty simple: just generate identity matrices with <code>np.eye</code> when we can.</p>
-<p>I also went through the matrix expression classes to see which ones weren&#8217;t supported by the NumPy code printer and filed issue <a href="https://github.com/sympy/sympy/issues/17013">#17013</a>. These are addressed by another contributor in <a href="https://github.com/sympy/sympy/pull/17029%5D">#17029</a>.</p>
-<h2 id="rewriting-matrix-inversion">Rewriting matrix inversion</h2>
-<p>Most of this week was spent on implementing an optimization for the NumPy generator suggested by Aaron: given the expression <span class="math inline"><em>A</em><sup>&#8197;&#8722;&#8197;1</sup><em>b</em></span> where <span class="math inline"><em>A</em></span> is a square matrix and <span class="math inline"><em>b</em></span> a vector, generate the expression <code>np.linalg.solve(A, b)</code> instead of <code>np.linalg.inv(A) * b</code>. While both <code>solve</code> and <code>inv</code> use the same LU-decomposition based LAPACK <a href="http://www.netlib.org/lapack95/DOC/la_gesv.txt"><code>?gesv</code></a> functions <a class="footnote-ref" href="https://anpandey.github.io/atom-sympy.xml#fn1" id="fnref1"><sup>1</sup></a>, <code>solve</code> is called on a vector while the <code>inv</code> on a (much larger) matrix. In addition to cutting down on the number of operations, this optimization might also remove any errors introduced in calculating the inverse.</p>
-<p>My pull request for this optimization is available at <a href="https://github.com/sympy/sympy/pull/17041">#17041</a>, which uses SymPy&#8217;s assumption system to make sure that <span class="math inline"><em>A</em></span> is full-rank (a constraint imposed by <code>solve</code>). My initial approach was to embed these optimizations directly in the code printing base classes. After some discussion with Bj&#246;rn, we decided it would be better to separate optimization from printing as much as possible, leading to the representation of the solving operation as its own distinct AST node. This approach is much better than the original, since it was fairly easy to the optimization to the Octave/Matlab code printer.</p>
-<h2 id="next-steps">Next Steps</h2>
-<p>For this week, I&#8217;ll be continuing with the matrix optimization PR. I&#8217;ll try to find other optimizations that can be applied (such as the evaluation order of complicated matrix expressions) and look into using Sympy&#8217;s unification capabilities in simplifying the expression of optimization rules.</p>
-<section class="footnotes">
-<hr />
-<ol>
-<li id="fn1"><p>You can find the C definitions for the functions eventually called by <a href="https://github.com/numpy/numpy/blob/b80d360e/numpy/linalg/umath_linalg.c.src#L1694"><code>inv</code></a> and <a href="https://github.com/numpy/numpy/blob/b80d360e/numpy/linalg/umath_linalg.c.src#L1622"><code>solve</code></a>. These are written in a special templated version of C, but you can find the <a href="https://github.com/numpy/numpy/blob/b80d360e/numpy/linalg/umath_linalg.c.src#L1560">template variable definitions</a> a bit higher up in the source.<a class="footnote-back" href="https://anpandey.github.io/atom-sympy.xml#fnref1">&#8617;</a></p></li>
-</ol>
-</section>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">June 19, 2019</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-d75afba2 feed-" id="item-e41bbfd7">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Arighna.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Arighna Chakrabarty (arighnaiitg) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://arighnaiitg.github.io/2019-06-19-gsoc-week3/">07:00, Wednesday, 19 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://arighnaiitg.github.io/2019-06-19-gsoc-week3/">Arighna Chakrabarty (arighnaiitg): GSoC Week 3 !!</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Arighna.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Arighna Chakrabarty (arighnaiitg) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://arighnaiitg.github.io/2019-06-19-gsoc-week3/">07:00, Wednesday, 19 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://arighnaiitg.github.io/2019-06-19-gsoc-week3/">GSoC Week 3 !!</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Week 3 ends.. - 
-          Week 3 of the first phase of this coding period is coming to an end. The week started with a bad note, given that I had fallen sick due to travelling. But the work in Week 2, and the meeting with Sartaj on 11th of June helped me to progress...
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2605,218 +2669,218 @@ function. Hope it gets merged by this week.</p>
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.com/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
 <td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://divyanshu132.github.io//">Divyanshu Thakur</a></td>
 <td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arighnaiitg.github.io">GSoC Days</a></td>
 <td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sc0rpi0n101.github.io/categories/gsoc/">Gsoc on Sc0rpi0n's Journey</a></td>
 <td><a class="xmlbutton" href="https://sc0rpi0n101.github.io/categories/gsoc/index.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
 <td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://czgdp1807.github.io/">OpenBlog</a></td>
 <td><a class="xmlbutton" href="https://czgdp1807.github.io/feed.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://shikharj.github.io/feed.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamkjha.github.io/">Shubham&#8217;s Blog</a></td>
 <td><a class="xmlbutton" href="https://shubhamkjha.github.io/sympy_feed.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
 <td><a class="xmlbutton" href="https://sidhantnagpal.com/rss-gsoc.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://www.kangzhiq.com">sympy &#8211; Kangzhiq's blog</a></td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ritesh99rakesh.github.io/">Thoughts that Matter</a></td>
 <td><a class="xmlbutton" href="https://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>15:25, Tuesday, 16 July</td>
-<td>15:40, Tuesday, 16 July</td>
+<td>16:28, Tuesday, 16 July</td>
+<td>16:43, Tuesday, 16 July</td>
 </tr>
 </table>
 

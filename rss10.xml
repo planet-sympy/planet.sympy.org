@@ -42,6 +42,71 @@
 &lt;p&gt;A lot more lies ahead. Bye!!&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://divyanshu132.github.io//gsoc-week-7</guid>
+      <author>Divyanshu Thakur (divyanshu132)</author>
+      <title>Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 7 - Modify Presentation and Addition of Methods</title>
+      <pubDate>Mon, 15 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://divyanshu132.github.io//gsoc-week-7</link>
+      <description>&lt;p&gt;The seventh week of coding period has ended and a few methods has been introduced to polycyclic groups, also pc presentation has been modified. Previously for pc presentation we were computing the LHS for both power and conjugate relators via separate methods and then finally their RHS was computed.&lt;/p&gt;
+
+&lt;p&gt;Now, the computation of presentation starts from the bottom of the polycyclic generating sequence(pcgs) and polycyclic series. Storing all the previous generators from pcgs and then taking the last generator as the generator which acts as a conjugator and conjugates all the previous generators in the list.&lt;/p&gt;
+
+&lt;p&gt;To get a clear picture let&amp;#8217;s take an example of &lt;code class="highlighter-rouge"&gt;S(4)&lt;/code&gt;
+For S(4) we&amp;#8217;ll have 4 generators in pcgs say &lt;code class="highlighter-rouge"&gt;[x0, x1, x2, x3]&lt;/code&gt; and the &lt;code class="highlighter-rouge"&gt;relative_order vector as [2, 3, 2, 2]&lt;/code&gt;. Starting from bottom of this sequence the presentation is computed in order as below.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x3**2	       	---|
+x2**2		   | ---&amp;gt; using only [x3] from pcgs and pc_series[1]
+x2**-1*x3*x2	---| from bottom up because pc_series[0] is an identity.
+
+x1**3		---|	
+x1**-1*x3*x1	   | ---&amp;gt; using [x3, x2] from pcgs and pc_series[2]
+x1**-1*x2*x1	---|      from bottom up(which have both the gens).
+
+x0**2		---|
+x0**-1*x3*x0	   |---&amp;gt; using [x3, x2, x1] from pcgs and pc_series[3]
+x0**-1*x2*x0	   |     from bottom up(which have all three gens).
+x0**-1*x1*x0	---|
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;There were 3-methods which were added namely:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Exponent vector&lt;/li&gt;
+  &lt;li&gt;Depth&lt;/li&gt;
+  &lt;li&gt;Leading Exponent&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
+&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics.free_groups import free_group
+&amp;gt;&amp;gt;&amp;gt; G = SymmetricGroup(4)
+&amp;gt;&amp;gt;&amp;gt; PcGroup = G.polycyclic_group()
+&amp;gt;&amp;gt;&amp;gt; pcgs = PcGroup.pcgs
+&amp;gt;&amp;gt;&amp;gt; group, x0, x1, x2, x3 = free_group("x0, x1, x2, x3")
+&amp;gt;&amp;gt;&amp;gt; PcGroup.exponent_vector(G[0], group)
+[1, 0, 0, 0]
+&amp;gt;&amp;gt;&amp;gt; exp = PcGroup.exponent_vector(G[1], group)
+&amp;gt;&amp;gt;&amp;gt; g = Permutation()
+&amp;gt;&amp;gt;&amp;gt; for i in range(len(exp)):
+...     g = g*pcgs[i] if exp[i] else g
+... 
+&amp;gt;&amp;gt;&amp;gt; g == G[1]
+True
+&amp;gt;&amp;gt;&amp;gt; 
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;For the details of these methods one can look into the docstrings and doctests of these methods in the PR &lt;a href="https://github.com/sympy/sympy/pull/16991"&gt;sympy/sympy#16991&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Tasks I hope to complete next week:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Get the polycyclic group pr ready to be merged.&lt;/li&gt;
+  &lt;li&gt;Get started with quotient groups.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Till then good byee..&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://shubhamkjha.github.io/2019/07/15/GSoC-2019-Week-6-and-7</guid>
       <author>Shubham Kumar Jha (ShubhamKJha)</author>
       <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 6 and 7</title>
@@ -100,6 +165,53 @@
 &lt;p&gt;Apart from that, I will also try to shift my focus towards the other part of my project and write some theory solvers. After all, I need to enhance the assumptions not just make it faster &amp;#128526;.&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;Peace&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-07-14-week-7.html</guid>
+      <author>Ankit Pandey (anpandey)</author>
+      <title>Ankit Pandey (anpandey): Google Summer of Code Week 7: Matrix Wildcards</title>
+      <pubDate>Sun, 14 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://anpandey.github.io/posts/sympy/2019-07-14-week-7.html</link>
+      <description>&lt;p&gt;I spent most of this week on extending wildcard support for matrix expressions, along with some more explorations in printing array contractions.&lt;/p&gt;
+&lt;h3 id="matrices-and-wildcards"&gt;Matrices and Wildcards&lt;/h3&gt;
+&lt;p&gt;As I&amp;#8217;ve probably mentioned in the last two blog posts, SymPy&amp;#8217;s support for matching matrix expressions through the &lt;code&gt;Wild&lt;/code&gt; class is currently severely limited (&lt;a href="https://github.com/sympy/sympy/issues/17172"&gt;when it works&lt;/a&gt;). While it is possible to construct a non-commutative &lt;code&gt;Wild&lt;/code&gt;, it isn&amp;#8217;t able to match expressions in a matrix multiplication:&lt;/p&gt;
+&lt;div class="sourceCode" id="cb1"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb1-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; W, X &lt;span class="op"&gt;=&lt;/span&gt; symbols(&lt;span class="st"&gt;'W, X'&lt;/span&gt;, cls&lt;span class="op"&gt;=&lt;/span&gt;Wild, commutative&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="va"&gt;False&lt;/span&gt;)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.abc &lt;span class="im"&gt;import&lt;/span&gt;  N&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; A, B &lt;span class="op"&gt;=&lt;/span&gt; MatrixSymbol(&lt;span class="st"&gt;'A'&lt;/span&gt;, N, N), MatrixSymbol(&lt;span class="st"&gt;'B'&lt;/span&gt;, N, N)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-4" title="4"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="bu"&gt;type&lt;/span&gt;((A &lt;span class="op"&gt;*&lt;/span&gt; B).match(W &lt;span class="op"&gt;*&lt;/span&gt; X))&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-5" title="5"&gt;&lt;span class="op"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kw"&gt;class&lt;/span&gt; &lt;span class="st"&gt;'NoneType'&lt;/span&gt;&lt;span class="op"&gt;&amp;gt;&lt;/span&gt;&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;It&amp;#8217;s also currently not possible to combine matrices and wildcards in expressions, since wildcards don&amp;#8217;t have a defined shape and so may only function as scalars:&lt;/p&gt;
+&lt;div class="sourceCode" id="cb2"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb2-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; W &lt;span class="op"&gt;+&lt;/span&gt; A&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-2" title="2"&gt;&lt;span class="pp"&gt;TypeError&lt;/span&gt;: Mix of Matrix &lt;span class="kw"&gt;and&lt;/span&gt; Scalar symbols&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; W &lt;span class="op"&gt;*&lt;/span&gt; A&lt;/a&gt;
+&lt;a class="sourceLine" id="cb2-4" title="4"&gt;&lt;span class="pp"&gt;NotImplementedError&lt;/span&gt;: noncommutative scalars &lt;span class="kw"&gt;in&lt;/span&gt; MatMul are &lt;span class="kw"&gt;not&lt;/span&gt; supported.&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id="matrixwild"&gt;&lt;code&gt;MatrixWild&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;I spent most of this week working on &lt;a href="https://github.com/sympy/sympy/pull/17177"&gt;#17177&lt;/a&gt;, which implements a &lt;code&gt;MatrixWild&lt;/code&gt; class that functions as both a wildcard and a matrix expression. In order to construct the wildcard, we need to give it a shape:&lt;/p&gt;
+&lt;div class="sourceCode" id="cb3"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb3-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.abc &lt;span class="im"&gt;import&lt;/span&gt; N&lt;/a&gt;
+&lt;a class="sourceLine" id="cb3-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.matrices.expressions.matexpr &lt;span class="im"&gt;import&lt;/span&gt; MatrixWild&lt;/a&gt;
+&lt;a class="sourceLine" id="cb3-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; W, X &lt;span class="op"&gt;=&lt;/span&gt; MatrixWild(&lt;span class="st"&gt;'W'&lt;/span&gt;, N, N), MatrixWild(&lt;span class="st"&gt;'X'&lt;/span&gt;, N, N)&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Unlike in the example above using &lt;code&gt;Wild&lt;/code&gt;, compound expressions are able to match against a matrix multiplication:&lt;/p&gt;
+&lt;div class="sourceCode" id="cb4"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb4-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; A, B &lt;span class="op"&gt;=&lt;/span&gt; MatrixSymbol(&lt;span class="st"&gt;'A'&lt;/span&gt;, N, N), MatrixSymbol(&lt;span class="st"&gt;'B'&lt;/span&gt;, N, N)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb4-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; (A &lt;span class="op"&gt;*&lt;/span&gt; B).match(W &lt;span class="op"&gt;*&lt;/span&gt; X)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb4-3" title="3"&gt;{W_: A, X_: B}&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Note that in order for matrix wildcards to match, their shape must match with the target expression:&lt;/p&gt;
+&lt;div class="sourceCode" id="cb5"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb5-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; x &lt;span class="op"&gt;=&lt;/span&gt; MatrixSymbol(&lt;span class="st"&gt;'x'&lt;/span&gt;, N, &lt;span class="dv"&gt;1&lt;/span&gt;)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb5-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; e &lt;span class="op"&gt;=&lt;/span&gt; A &lt;span class="op"&gt;*&lt;/span&gt; x&lt;/a&gt;
+&lt;a class="sourceLine" id="cb5-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; e.shape&lt;/a&gt;
+&lt;a class="sourceLine" id="cb5-4" title="4"&gt;(N, &lt;span class="dv"&gt;1&lt;/span&gt;)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb5-5" title="5"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="bu"&gt;type&lt;/span&gt;(e.match(W))&lt;/a&gt;
+&lt;a class="sourceLine" id="cb5-6" title="6"&gt;&lt;span class="op"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kw"&gt;class&lt;/span&gt; &lt;span class="st"&gt;'NoneType'&lt;/span&gt;&lt;span class="op"&gt;&amp;gt;&lt;/span&gt;&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;However, if we don&amp;#8217;t care about dimension, we can include another wildcard in the matrix wildcard&amp;#8217;s shape:&lt;/p&gt;
+&lt;div class="sourceCode" id="cb6"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb6-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; M &lt;span class="op"&gt;=&lt;/span&gt; MatrixSymbol(&lt;span class="st"&gt;'M'&lt;/span&gt;, &lt;span class="dv"&gt;3&lt;/span&gt;, &lt;span class="dv"&gt;3&lt;/span&gt;)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb6-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; w &lt;span class="op"&gt;=&lt;/span&gt; Wild(&lt;span class="st"&gt;'w'&lt;/span&gt;)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb6-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; Y &lt;span class="op"&gt;=&lt;/span&gt; MatrixWild(&lt;span class="st"&gt;'Y'&lt;/span&gt;, w, w)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb6-4" title="4"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; M.match(Y)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb6-5" title="5"&gt;{w_: &lt;span class="dv"&gt;3&lt;/span&gt;, Y_: M}&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;While this is a good first step to the matching functionality I was looking for with &lt;code&gt;unify&lt;/code&gt; for rewriting matrix expressions, there is still quite a bit of functionality (and tests) to be implemented, along with an unknown number of bugs to fix.&lt;/p&gt;
+&lt;h2 id="printing-indexed-bases"&gt;Printing Indexed Bases&lt;/h2&gt;
+&lt;p&gt;I&amp;#8217;ve also been working on a small pull request to improve the functionality the printing &lt;code&gt;IndexedBases&lt;/code&gt; so that it instead uses intermediate values (represented through the new code generation classes) to accumulate the values of contractions. Currently, this does nothing but break existing compatibility (Fortran versions older than Fortran 95 don&amp;#8217;t support variable declarations in arbitrary locations, and the variable currently defaults to a 32-bit floating point number), though I think this is a good first step for supporting the printing of more complex contractions.&lt;/p&gt;
+&lt;h2 id="next-steps"&gt;Next Steps&lt;/h2&gt;
+&lt;p&gt;For this week, I plan to finish with the implementation of&lt;code&gt;MatrixWild&lt;/code&gt; (and hopefully get started with using it for rewriting matrix expressions), along with making some more progress on the indexed bases pull request.&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/07/week-7a-little-step-towards-consistency/</guid>
@@ -782,51 +894,6 @@ function. Hope it gets merged by this week.&lt;/p&gt;
       <link>https://sc0rpi0n101.github.io/2019/06/week-4-the-fortran-parser-is-finally-here/</link>
       <description>&lt;p&gt;&amp;ldquo;When someone says: &amp;lsquo;I want a programming language in which I need only say what I wish done&amp;rsquo;, give him a lollipop.&amp;rdquo;  &amp;#8212; Alan J. Perlis in Software Metrics
  Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week has been relatively a little odd. The week started a little slow but slowly it turned out to be a good and productive week.</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-06-21-weeks-3-and-4.html</guid>
-      <author>Ankit Pandey (anpandey)</author>
-      <title>Ankit Pandey (anpandey): Google Summer of Code Weeks 3 and 4: Matrix Optimizations</title>
-      <pubDate>Fri, 21 Jun 2019 00:00:00 GMT</pubDate>
-      <link>https://anpandey.github.io/posts/sympy/2019-06-21-weeks-3-and-4.html</link>
-      <description>&lt;p&gt;&lt;em&gt;See the &lt;a href="https://anpandey.github.io/2019-06-07-week-2.html"&gt;previous post&lt;/a&gt; for Week 2&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;I spent a large part of last week travelling, so I&amp;#8217;m combining the blog posts for the last two weeks.&lt;/p&gt;
-&lt;h2 id="finishing-up-with-lfortran"&gt;Finishing up with LFortran&lt;/h2&gt;
-&lt;p&gt;I&amp;#8217;m finished with the &lt;a href="https://github.com/sympy/sympy/pull/16931"&gt;pull request&lt;/a&gt; for the LFortran code printer for now, though it&amp;#8217;s definitely way too incomplete to be merged. The code passes &lt;em&gt;most&lt;/em&gt; of the rudimentary tests I&amp;#8217;ve added.&lt;/p&gt;
-&lt;p&gt;Here&amp;#8217;s a simple example of one of the failing LFortran tests: Suppose we want to generate Fortran (using LFortran) code from the mathematical expression &lt;span class="math inline"&gt;&amp;#8197;&amp;#8722;&amp;#8197;&lt;em&gt;x&lt;/em&gt;&lt;/span&gt;. SymPy sees this expression as multiplication with -1, as it implements only addition and multiplication in its arithmetic operations:&lt;/p&gt;
-&lt;div class="sourceCode" id="cb1"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb1-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy &lt;span class="im"&gt;import&lt;/span&gt; &lt;span class="op"&gt;*&lt;/span&gt;&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; x &lt;span class="op"&gt;=&lt;/span&gt; Symbol(&lt;span class="st"&gt;'x'&lt;/span&gt;)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; srepr(&lt;span class="op"&gt;-&lt;/span&gt;x)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-4" title="4"&gt;&lt;span class="co"&gt;&amp;quot;Mul(Integer(-1), Symbol('x'))&amp;quot;&lt;/span&gt;&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Directly converting same mathematical expression in Fortran as &lt;code&gt;-x&lt;/code&gt; we can see that LFortran instead sees it as unary subtraction:&lt;/p&gt;
-&lt;div class="sourceCode" id="cb2"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb2-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; lfortran &lt;span class="im"&gt;import&lt;/span&gt; &lt;span class="op"&gt;*&lt;/span&gt;&lt;/a&gt;
-&lt;a class="sourceLine" id="cb2-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; src_to_ast(&lt;span class="st"&gt;&amp;quot;-x&amp;quot;&lt;/span&gt;, &lt;span class="va"&gt;False&lt;/span&gt;)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb2-3" title="3"&gt;&lt;span class="op"&gt;&amp;lt;&lt;/span&gt;lfortran.ast.ast.UnaryOp &lt;span class="bu"&gt;object&lt;/span&gt; at &lt;span class="bn"&gt;0x7f9027f1aba8&lt;/span&gt;&lt;span class="op"&gt;&amp;gt;&lt;/span&gt;&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;This is a major problem for the tests, which right now look to see if the Lfortran-parsed output of &lt;code&gt;fcode&lt;/code&gt; (SymPy&amp;#8217;s current Fortran code generator) on an expression matches the same directly translated AST. This won&amp;#8217;t be true for &lt;span class="math inline"&gt;&amp;#8197;&amp;#8722;&amp;#8197;&lt;em&gt;x&lt;/em&gt;&lt;/span&gt;, since the translated expression is a multiplication &lt;code&gt;BinOp&lt;/code&gt; while the parsed expression in an &lt;code&gt;UnaryOp&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;One solution might be to not parse &lt;code&gt;fcode&lt;/code&gt;&amp;#8217;s output and instead just check for equivalence between strings. This would mean dealing with the quirks of the code printers (such as their tendency to produce excessive parenthesis), and take away some of the advantages of direct translation. The more probable solution would be to introduce substitution rules within the LFortran AST.&lt;/p&gt;
-&lt;h2 id="missing-matrix-nodes"&gt;Missing matrix nodes&lt;/h2&gt;
-&lt;p&gt;I filed issue &lt;a href="https://github.com/sympy/sympy/issues/17006"&gt;#17006&lt;/a&gt;, in which &lt;code&gt;lambdify&lt;/code&gt; misinterpreted identity matrices as the imaginary unit. The fix in &lt;a href="https://github.com/sympy/sympy/pull/17022"&gt;#17022&lt;/a&gt; is pretty simple: just generate identity matrices with &lt;code&gt;np.eye&lt;/code&gt; when we can.&lt;/p&gt;
-&lt;p&gt;I also went through the matrix expression classes to see which ones weren&amp;#8217;t supported by the NumPy code printer and filed issue &lt;a href="https://github.com/sympy/sympy/issues/17013"&gt;#17013&lt;/a&gt;. These are addressed by another contributor in &lt;a href="https://github.com/sympy/sympy/pull/17029%5D"&gt;#17029&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id="rewriting-matrix-inversion"&gt;Rewriting matrix inversion&lt;/h2&gt;
-&lt;p&gt;Most of this week was spent on implementing an optimization for the NumPy generator suggested by Aaron: given the expression &lt;span class="math inline"&gt;&lt;em&gt;A&lt;/em&gt;&lt;sup&gt;&amp;#8197;&amp;#8722;&amp;#8197;1&lt;/sup&gt;&lt;em&gt;b&lt;/em&gt;&lt;/span&gt; where &lt;span class="math inline"&gt;&lt;em&gt;A&lt;/em&gt;&lt;/span&gt; is a square matrix and &lt;span class="math inline"&gt;&lt;em&gt;b&lt;/em&gt;&lt;/span&gt; a vector, generate the expression &lt;code&gt;np.linalg.solve(A, b)&lt;/code&gt; instead of &lt;code&gt;np.linalg.inv(A) * b&lt;/code&gt;. While both &lt;code&gt;solve&lt;/code&gt; and &lt;code&gt;inv&lt;/code&gt; use the same LU-decomposition based LAPACK &lt;a href="http://www.netlib.org/lapack95/DOC/la_gesv.txt"&gt;&lt;code&gt;?gesv&lt;/code&gt;&lt;/a&gt; functions &lt;a class="footnote-ref" href="https://anpandey.github.io/atom-sympy.xml#fn1" id="fnref1"&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;, &lt;code&gt;solve&lt;/code&gt; is called on a vector while the &lt;code&gt;inv&lt;/code&gt; on a (much larger) matrix. In addition to cutting down on the number of operations, this optimization might also remove any errors introduced in calculating the inverse.&lt;/p&gt;
-&lt;p&gt;My pull request for this optimization is available at &lt;a href="https://github.com/sympy/sympy/pull/17041"&gt;#17041&lt;/a&gt;, which uses SymPy&amp;#8217;s assumption system to make sure that &lt;span class="math inline"&gt;&lt;em&gt;A&lt;/em&gt;&lt;/span&gt; is full-rank (a constraint imposed by &lt;code&gt;solve&lt;/code&gt;). My initial approach was to embed these optimizations directly in the code printing base classes. After some discussion with Bj&amp;#246;rn, we decided it would be better to separate optimization from printing as much as possible, leading to the representation of the solving operation as its own distinct AST node. This approach is much better than the original, since it was fairly easy to the optimization to the Octave/Matlab code printer.&lt;/p&gt;
-&lt;h2 id="next-steps"&gt;Next Steps&lt;/h2&gt;
-&lt;p&gt;For this week, I&amp;#8217;ll be continuing with the matrix optimization PR. I&amp;#8217;ll try to find other optimizations that can be applied (such as the evaluation order of complicated matrix expressions) and look into using Sympy&amp;#8217;s unification capabilities in simplifying the expression of optimization rules.&lt;/p&gt;
-&lt;section class="footnotes"&gt;
-&lt;hr /&gt;
-&lt;ol&gt;
-&lt;li id="fn1"&gt;&lt;p&gt;You can find the C definitions for the functions eventually called by &lt;a href="https://github.com/numpy/numpy/blob/b80d360e/numpy/linalg/umath_linalg.c.src#L1694"&gt;&lt;code&gt;inv&lt;/code&gt;&lt;/a&gt; and &lt;a href="https://github.com/numpy/numpy/blob/b80d360e/numpy/linalg/umath_linalg.c.src#L1622"&gt;&lt;code&gt;solve&lt;/code&gt;&lt;/a&gt;. These are written in a special templated version of C, but you can find the &lt;a href="https://github.com/numpy/numpy/blob/b80d360e/numpy/linalg/umath_linalg.c.src#L1560"&gt;template variable definitions&lt;/a&gt; a bit higher up in the source.&lt;a class="footnote-back" href="https://anpandey.github.io/atom-sympy.xml#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/section&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://arighnaiitg.github.io/2019-06-19-gsoc-week3/</guid>
-      <author>Arighna Chakrabarty (arighnaiitg)</author>
-      <title>Arighna Chakrabarty (arighnaiitg): GSoC Week 3 !!</title>
-      <pubDate>Wed, 19 Jun 2019 07:00:00 GMT</pubDate>
-      <link>https://arighnaiitg.github.io/2019-06-19-gsoc-week3/</link>
-      <description>&lt;p&gt;Week 3 ends.. - 
-          Week 3 of the first phase of this coding period is coming to an end. The week started with a bad note, given that I had fallen sick due to travelling. But the work in Week 2, and the meeting with Sartaj on 11th of June helped me to progress...</description>
     </item>
   </channel>
 </rss>
