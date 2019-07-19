@@ -116,6 +116,175 @@ True
 &lt;p&gt;Till then good byee..&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://jmig5776.github.io//gsoc-weel-7</guid>
+      <author>Jogi Miglani (jmig5776)</author>
+      <title>Jogi Miglani (jmig5776): Lambert Solver Of Sympy (GSoC 2019 - Week 7)</title>
+      <pubDate>Mon, 15 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://jmig5776.github.io//gsoc-weel-7</link>
+      <description>&lt;p&gt;This was the seventh week meeting with the GSoC mentors which was scheduled on
+Monday 15th July, 2019 between 6:00 - 7:00 PM (IST). Me and  Yathartha
+were the attendees of the meeting. In this blog I will be describing the lambert
+equation solver for Sympy and what problems it faced before and how PR
+&lt;a href="https://github.com/sympy/sympy/pull/16890"&gt;#16890&lt;/a&gt; will solve the problems.
+It is preassumed that you know what lambert type equations are, so I will not be
+explaining that.&lt;/p&gt;
+
+&lt;h2 id="explaining-the-function-_solve_lambert-main-function-to-solve-lambert-equations"&gt;Explaining the function &lt;code class="highlighter-rouge"&gt;_solve_lambert&lt;/code&gt; (main function to solve lambert equations)&lt;/h2&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;Input - f, symbol, gens
+OutPut - Solution of f = 0 if its lambert type expression else NotImplementedError
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;This function separates out cases as below based on the main function present in
+the main equation.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;For the first ones:
+1a1) B**B = R != 0 (when 0, there is only a solution if the base is 0,
+                   but if it is, the exp is 0 and 0**0=1
+                   comes back as B*log(B) = log(R)
+1a2) B*(a + b*log(B))**p = R or with monomial expanded or with whole
+                            thing expanded comes back unchanged
+   log(B) + p*log(a + b*log(B)) = log(R)
+   lhs is Mul:
+       expand log of both sides to give:
+       log(B) + log(log(B)) = log(log(R))
+1b) d*log(a*B + b) + c*B = R
+   lhs is Add:
+       isolate c*B and expand log of both sides:
+       log(c) + log(B) = log(R - d*log(a*B + b))
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;If the equation are of type 1a1, 1a2 and 1b then the mainlog of the equation is
+taken into concern as the deciding factor lies in the main logarithmic term of equation.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;For the next two,
+   collect on main exp
+   2a) (b*B + c)*exp(d*B + g) = R
+       lhs is mul:
+           log to give
+           log(b*B + c) + d*B = log(R) - g
+   2b) -b*B + g*exp(d*B + h) = R
+       lhs is add:
+           add b*B
+           log and rearrange
+           log(R + b*B) - d*B = log(g) + h
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;If the equation are of type 2a and 2b then the mainexp of the equation is
+taken into concern as the deciding factor lies in the main exponential term of equation.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;3) d*p**(a*B + b) + c*B = R
+   collect on main pow
+   log(R - c*B) - a*B*log(p) = log(d) + b*log(p)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;If the equation are of type 3 then the mainpow of the equation is
+taken into concern as the deciding factor lies in the main power term of equation.&lt;/p&gt;
+
+&lt;p&gt;Eventually from all of the three cases the equation is meant to be converted to this form:-&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;f(x, a..f) = a*log(b*X + c) + d*X - f = 0 which has the
+solution,  X = -c/b + (a/d)*W(d/(a*b)*exp(c*d/a/b)*exp(f/a)).
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;And the solution calculation process is done by &lt;code class="highlighter-rouge"&gt;_lambert&lt;/code&gt; function.&lt;/p&gt;
+
+&lt;p&gt;Everything seems flawless?? You might be thinking no modification is required. Lets
+see what loopholes are there in it.&lt;/p&gt;
+
+&lt;h2 id="what-does-pr-16890-do"&gt;What does PR &lt;a href="https://github.com/sympy/sympy/pull/16890"&gt;#16890&lt;/a&gt; do?&lt;/h2&gt;
+
+&lt;p&gt;There are basically two flaws present with the this approach.&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Not considering all branches of equation while taking log both sides.&lt;/li&gt;
+  &lt;li&gt;Calculation of roots should consider all roots in case having rational power.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id="1-not-considering-all-branches-of-equation-while-taking-log-both-sides"&gt;1. Not considering all branches of equation while taking log both sides.&lt;/h3&gt;
+
+&lt;p&gt;Let us consider this equation to be solved by &lt;code class="highlighter-rouge"&gt;_solve_lambert&lt;/code&gt; function.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;-1/x**2 + exp(x/2)/2 = 0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;So what the old &lt;code class="highlighter-rouge"&gt;_solve_lambert&lt;/code&gt; do is to convert this equation to following.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;2*log(x) + x/2 = 0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;and calculates its roots from &lt;code class="highlighter-rouge"&gt;_lambert&lt;/code&gt;.
+But it missed this branch of equation while taking log on main equation.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;2*log(-x) + x/2 = 0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Yeah you can reproduce the original equation from this equation.So basically the problem
+was that it missed the branches of equation while taking log. And when does the
+main equation have more than one branch?? The terms having even powers of variable x
+leads to two different branches of equation.&lt;/p&gt;
+
+&lt;p&gt;So how it is solved?
+What I has done is that before actually gets into solving I preprocess the main equation
+and if it has more than one branches of equation while converting taking log then I consider
+all the equations generated from them.(with the help of &lt;code class="highlighter-rouge"&gt;_solve_even_degree_expr&lt;/code&gt;)&lt;/p&gt;
+
+&lt;p&gt;How I preprocess the equation?
+So what I do is I replace all the even powers of x present with even powers of t(dummy variable).&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;Code for targeted replacement
+lhs = lhs.replace(
+            lambda i:  # find symbol**even
+                i.is_Pow and i.base == symbol and i.exp.is_even,
+            lambda i:  # replace t**even
+                t**i.exp)
+Example:-
+Main equation -&amp;gt; -1/x**2 + exp(x/2)/2 = 0
+After replacement -&amp;gt; -1/t**2 + exp(x/2)/2 = 0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Now I take logarithms on both sides and simplify it.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;After simplifying -&amp;gt; 2*log(t) + x/2 = 0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Now I call function &lt;code class="highlighter-rouge"&gt;_solve_even_degree_expr&lt;/code&gt; to replace the t with +/-x to generate two equations.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;Replacing t with +/-x
+1. 2*log(x) + x/2 = 0
+2. 2*log(-x) + x/2 = 0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;And consider the solutions of both of the equations to return all lambert real solutions
+of &lt;code class="highlighter-rouge"&gt;-1/x**2 + exp(x/2)/2 = 0&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Hope you could understand the logic behind this work.&lt;/p&gt;
+
+&lt;h3 id="2-calculation-of-roots-should-consider-all-roots-in-case-having-rational-power"&gt;2. Calculation of roots should consider all roots in case having rational power.&lt;/h3&gt;
+
+&lt;p&gt;This flaw is in the calculation of roots in function &lt;code class="highlighter-rouge"&gt;_lambert&lt;/code&gt;.
+Earlier the function_lambert has the working like :-&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Find all the values of a, b, c, d, e in the required loagrithmic equation&lt;/li&gt;
+  &lt;li&gt;Then it defines a solution of the form
+    &lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;-c/b + (a/d)*l where l = LambertW(d/(a*b)*exp(c*d/a/b)*exp(-f/a), k)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+    &lt;p&gt;and then it included that solution.
+I agree everything seems flawless here. but try to see the step where we are defining l.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Let us suppose a hypothetical algorithm just like algorithm used in &lt;code class="highlighter-rouge"&gt;_lambert&lt;/code&gt;
+in which equation to be solved is&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x**3 - 1 = 0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;and in which we define solution of the form&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x = exp(I*2*pi/n) where n is the power of x in equation
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;so the algorithm will give solution&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x = exp(I*2*pi/3) # but expected was [1, exp(I*2*pi/3), exp(-I*2*pi/3)]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;which can be found by finding all solutions of&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x**n - exp(2*I*pi) = 0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;by a different correct algorithm. Thats y it was wrong.
+The above algorithm would have given correct values for &lt;code class="highlighter-rouge"&gt;x - 1 = 0&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;And the question in your mind may arise that why only exp() because the
+possiblity of having more than one roots is in exp(), because if the algorithm
+would have been like &lt;code class="highlighter-rouge"&gt;x = a&lt;/code&gt;, where a is some real constant then there is not
+any possiblity of further roots rather than solution like &lt;code class="highlighter-rouge"&gt;x = a**(1/n)&lt;/code&gt;.
+And its been done in code like this:&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;code
+num, den = ((c*d-b*f)/a/b).as_numer_denom()
+p, den = den.as_coeff_Mul()
+e = exp(num/den)
+t = Dummy('t')
+args = [d/(a*b)*t for t in roots(t**p - e, t).keys()]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Thank you! Thats all it was!!.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://shubhamkjha.github.io/2019/07/15/GSoC-2019-Week-6-and-7</guid>
       <author>Shubham Kumar Jha (ShubhamKJha)</author>
       <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 6 and 7</title>
@@ -848,52 +1017,6 @@ Overall, according to me phase 1 was a great learning and working experience.&lt
       <pubDate>Sun, 23 Jun 2019 00:00:00 GMT</pubDate>
       <link>https://ritesh99rakesh.github.io/Sympy_post6/</link>
       <description>&lt;p&gt;Phase I has ended and here are the details of the PRs I have raised: #16935 #16843 #16848 #16858 #16886 #16888 #16970 #17004 #17033 #17036 #17068 #17070 #17076 #17077 Many of the above PRs are merged and some are open. I will work to get other merged. My plan for second phase: Complete the sampling method and finish the exporting of random variables to external libraries. I will work on Compound distributions and will finish it in the phase 2. I will add Wishart and Inverse Wishart distributions after multigamma function is merged. I will also discuss the implementation of Random Walks and will start working on the PR. This phase was a great learning experience. That&amp;#8217;s all from my side. Namaste!</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://jmig5776.github.io//gsoc-week-4</guid>
-      <author>Jogi Miglani (jmig5776)</author>
-      <title>Jogi Miglani (jmig5776): GSoC 2019 - Week 4</title>
-      <pubDate>Sat, 22 Jun 2019 00:00:00 GMT</pubDate>
-      <link>https://jmig5776.github.io//gsoc-week-4</link>
-      <description>&lt;p&gt;This was the fourth week meeting with the GSoC mentors which was scheduled on
-Sunday 22th June, 2019 between 12:30 - 01:30 PM (IST). Me and Yathartha
-were the attendees of the meeting.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Discussing previous week&amp;#8217;s progress&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;In the previous week many things happened very suddenly. In the starting of the
-week it was decided that we had to create a function &lt;code class="highlighter-rouge"&gt;power_list&lt;/code&gt; which could
-return powers. So I thought to create this type of function as a new feature in
-this PR &lt;a href="https://github.com/sympy/sympy/pull/17043"&gt;#17043&lt;/a&gt;.
-But as @jksoum and @smichr advised that this function can act as
-helper function in &lt;code class="highlighter-rouge"&gt;bivariate&lt;/code&gt; itself so it was decided to make it as helper
-function there. And we discussed the code for handling modular equations also.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Next week goals&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Implementing and get plan for defining imageset union&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;As per the timeline we decided that Imageset Union should be defined first rather
-than code for handling nested trigonometric equation solver. So according to
-timeline this week goes for discussion and getting plan for implementing imageset
-union. A PR &lt;a href="https://github.com/sympy/sympy/pull/17079"&gt;#17079&lt;/a&gt; is also started
-based on fundamental approach to solve the problem.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Getting merge Lambert Solver&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Most of the work had been done only a little improvement is to be done in &lt;code class="highlighter-rouge"&gt;power_list&lt;/code&gt;
-function. Hope it gets merged by this week.&lt;/p&gt;
-
-&lt;p&gt;Code improvement takes time!!&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
