@@ -7,6 +7,33 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://shubhamkjha.github.io/2019/07/23/GSoC-Week-8</guid>
+      <author>Shubham Kumar Jha (ShubhamKJha)</author>
+      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 8</title>
+      <pubDate>Tue, 23 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://shubhamkjha.github.io/2019/07/23/GSoC-Week-8.html</link>
+      <description>&lt;p&gt;Now, the eighth week of official coding period has ended. I would give you a summary of my work during this week.&lt;/p&gt;
+
+&lt;p&gt;I spent most of this week polishing and finishing my work on &lt;a href="https://github.com/sympy/sympy/pull/17144"&gt;#17144&lt;/a&gt;. The performance gain from this PR was very subtle but I had tested this only on the &lt;code class="highlighter-rouge"&gt;\assumptions\tests&lt;/code&gt; of SymPy. During this week&amp;#8217;s meeting, Aaron suggested an example that had become slower than before:&lt;/p&gt;
+&lt;div class="language-py highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;random_poly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;ask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Q&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;positive&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;Q&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;positive&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This made me realize that my strategy had a flaw. I had converted the smallest expressions into &lt;strong&gt;CNF&lt;/strong&gt; objects and applied Boolean functions (&lt;code class="highlighter-rouge"&gt;or&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;and&lt;/code&gt;, and &lt;code class="highlighter-rouge"&gt;not&lt;/code&gt;) on them keeping the CNF structure intact. The performance regression was coming from operations &lt;code class="highlighter-rouge"&gt;or&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;not&lt;/code&gt;. In case of CNF structures, the number of expressions increased exponentially for these operations. Since the test suite didn&amp;#8217;t have such examples, all the tests passed without any visible performance issue.&lt;/p&gt;
+
+&lt;p&gt;With some research, I found that the best approach to handle this (without any kind of pruning) was to convert these expression into &lt;a href="https://en.wikipedia.org/wiki/Negation_normal_form"&gt;&lt;strong&gt;NNF&lt;/strong&gt;&lt;/a&gt; form first. So, I implemented a function &lt;code class="highlighter-rouge"&gt;to_NNF&lt;/code&gt; which works with low-level constructs (SymPy&amp;#8217;s &lt;code class="highlighter-rouge"&gt;to_nnf&lt;/code&gt; would have been too costly) and converts an expression into NNF. This is then converted into &lt;strong&gt;CNF&lt;/strong&gt; with ease. It keeps the number of clauses in check and hence also increases the performance outcome. The results are such: the above example now takes about &lt;code class="highlighter-rouge"&gt;0.4 s&lt;/code&gt; on this PR while it takes about &lt;code class="highlighter-rouge"&gt;6 s&lt;/code&gt; in master.&lt;/p&gt;
+
+&lt;p&gt;Currently, the work on this PR is almost complete and it is under review.&lt;/p&gt;
+
+&lt;p&gt;For the next week,&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;My first priority is to get &lt;a href="https://github.com/sympy/sympy/pull/17144"&gt;#17144&lt;/a&gt; merged.&lt;/li&gt;
+  &lt;li&gt;Then, work on optimizing &lt;code class="highlighter-rouge"&gt;rcall&lt;/code&gt;. This is an extension for the above work.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Will keep you updated. Thank you !&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=60</guid>
       <author>Ishan Joshi (ishanaj)</author>
       <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-8- The draw() function in action</title>
@@ -1098,55 +1125,6 @@ goes on.&lt;/p&gt;
 &lt;li id="fn1"&gt;&lt;p&gt;For our purposes, we can think of tensors as just &lt;span class="math inline"&gt;&lt;em&gt;n&lt;/em&gt;&lt;/span&gt;-dimensional arrays. Most of my reading on tensors was Justin C. Feng&amp;#8217;s &lt;a href="https://justincfeng.github.io/Tensors_Poor_Man.pdf"&gt;The Poor Man&amp;#8217;s Introduction to Tensors&lt;/a&gt;.&lt;a class="footnote-back" href="https://anpandey.github.io/atom-sympy.xml#fnref1"&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/section&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://divyanshu132.github.io//gsoc-week-4</guid>
-      <author>Divyanshu Thakur (divyanshu132)</author>
-      <title>Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 4 - Phase-I Completion</title>
-      <pubDate>Mon, 24 Jun 2019 00:00:00 GMT</pubDate>
-      <link>https://divyanshu132.github.io//gsoc-week-4</link>
-      <description>&lt;p&gt;The fourth week of coding period has ended and now it&amp;#8217;s time for phase-I evaluations. Below, is a brief progress report of the project.&lt;/p&gt;
-
-&lt;p&gt;The tasks that were proposed in the proposal for phase-I consists of:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Implementation of Abelian Invariants&lt;/li&gt;
-  &lt;li&gt;Implementation of Composition Series&lt;/li&gt;
-  &lt;li&gt;Computation with Polycyclic groups&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Abelian Invariants&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Implemented a function to compute the abelian invariants for a given permutation or free group. These are given as a list of prime-powers and describe the stucture of &lt;code class="highlighter-rouge"&gt;G/G'&lt;/code&gt; as a direct product of cyclic groups of prime power order.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;PR link &lt;a href="https://github.com/sympy/sympy/pull/16670"&gt;Added method to calculate Abelian Invariants&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Composition Series&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Implemented a function to compute the composition series. It provides a way to break up a group into simple pieces. Composition series of a group &lt;code class="highlighter-rouge"&gt;G&lt;/code&gt; is defined as the maximal subnormal series &lt;code class="highlighter-rouge"&gt;G = H_0 &amp;gt; H_1 &amp;gt; H_2 ... &amp;gt; H_k = 1&lt;/code&gt; where every factor group &lt;code class="highlighter-rouge"&gt;H(i+1)/H(i)&lt;/code&gt; is simple.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;PR link &lt;a href="https://github.com/sympy/sympy/pull/16881"&gt;Added method for Composition Series computation&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Polycyclic Groups&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;The work on polycyclic group is in progress. For now, collection algorithm has been implemented which needs to be tested and a lot of discussions were made on the polycyclic generating sequence and its presentation and may be in a week we&amp;#8217;ll be ready with the stucture of polycyclic groups and collection of words.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;PR link &lt;a href="https://github.com/sympy/sympy/pull/16991"&gt;Added Polycyclic Group Class&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Documentation&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Some documentation is done to increase the sphinx coverage of SymPy.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;PR link &lt;a href="https://github.com/sympy/sympy/pull/16809"&gt;Increase Accessibility of docstrings from Sphinx&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;To follow the discussion on above topics and the further progress of the project one can check Gitter room &lt;a href="https://gitter.im/sympy/GroupTheory"&gt;sympy/GroupTheory&lt;/a&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

@@ -89,6 +89,90 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">July 23, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-403273e0 feed-" id="item-2635b048">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shubhamkjha.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://shubhamkjha.github.io/2019/07/23/GSoC-Week-8.html">00:00, Tuesday, 23 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://shubhamkjha.github.io/2019/07/23/GSoC-Week-8.html">Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 8</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shubhamkjha.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://shubhamkjha.github.io/2019/07/23/GSoC-Week-8.html">00:00, Tuesday, 23 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://shubhamkjha.github.io/2019/07/23/GSoC-Week-8.html">GSoC 2019: Week 8</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Now, the eighth week of official coding period has ended. I would give you a summary of my work during this week.</p>
+
+<p>I spent most of this week polishing and finishing my work on <a href="https://github.com/sympy/sympy/pull/17144">#17144</a>. The performance gain from this PR was very subtle but I had tested this only on the <code class="highlighter-rouge">\assumptions\tests</code> of SymPy. During this week&#8217;s meeting, Aaron suggested an example that had become slower than before:</p>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">p</span> <span class="o">=</span> <span class="n">random_poly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">ask</span><span class="p">(</span><span class="n">Q</span><span class="o">.</span><span class="n">positive</span><span class="p">(</span><span class="n">p</span><span class="p">),</span> <span class="n">Q</span><span class="o">.</span><span class="n">positive</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>This made me realize that my strategy had a flaw. I had converted the smallest expressions into <strong>CNF</strong> objects and applied Boolean functions (<code class="highlighter-rouge">or</code>, <code class="highlighter-rouge">and</code>, and <code class="highlighter-rouge">not</code>) on them keeping the CNF structure intact. The performance regression was coming from operations <code class="highlighter-rouge">or</code> and <code class="highlighter-rouge">not</code>. In case of CNF structures, the number of expressions increased exponentially for these operations. Since the test suite didn&#8217;t have such examples, all the tests passed without any visible performance issue.</p>
+
+<p>With some research, I found that the best approach to handle this (without any kind of pruning) was to convert these expression into <a href="https://en.wikipedia.org/wiki/Negation_normal_form"><strong>NNF</strong></a> form first. So, I implemented a function <code class="highlighter-rouge">to_NNF</code> which works with low-level constructs (SymPy&#8217;s <code class="highlighter-rouge">to_nnf</code> would have been too costly) and converts an expression into NNF. This is then converted into <strong>CNF</strong> with ease. It keeps the number of clauses in check and hence also increases the performance outcome. The results are such: the above example now takes about <code class="highlighter-rouge">0.4 s</code> on this PR while it takes about <code class="highlighter-rouge">6 s</code> in master.</p>
+
+<p>Currently, the work on this PR is almost complete and it is under review.</p>
+
+<p>For the next week,</p>
+<ul>
+  <li>My first priority is to get <a href="https://github.com/sympy/sympy/pull/17144">#17144</a> merged.</li>
+  <li>Then, work on optimizing <code class="highlighter-rouge">rcall</code>. This is an extension for the above work.</li>
+</ul>
+
+<p>Will keep you updated. Thank you !</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 22, 2019</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -2789,112 +2873,6 @@ goes on.</p>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">June 24, 2019</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-a7ab14f6 feed-" id="item-6de01b6d">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/divyanshu132.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Divyanshu Thakur (divyanshu132) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://divyanshu132.github.io//gsoc-week-4">00:00, Monday, 24 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://divyanshu132.github.io//gsoc-week-4">Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 4 - Phase-I Completion</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/divyanshu132.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Divyanshu Thakur (divyanshu132) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://divyanshu132.github.io//gsoc-week-4">00:00, Monday, 24 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://divyanshu132.github.io//gsoc-week-4">GSoC 2019 - Week 4 - Phase-I Completion</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>The fourth week of coding period has ended and now it&#8217;s time for phase-I evaluations. Below, is a brief progress report of the project.</p>
-
-<p>The tasks that were proposed in the proposal for phase-I consists of:</p>
-<ul>
-  <li>Implementation of Abelian Invariants</li>
-  <li>Implementation of Composition Series</li>
-  <li>Computation with Polycyclic groups</li>
-</ul>
-
-<p><strong>Abelian Invariants</strong></p>
-
-<p>Implemented a function to compute the abelian invariants for a given permutation or free group. These are given as a list of prime-powers and describe the stucture of <code class="highlighter-rouge">G/G'</code> as a direct product of cyclic groups of prime power order.</p>
-
-<ul>
-  <li>PR link <a href="https://github.com/sympy/sympy/pull/16670">Added method to calculate Abelian Invariants</a></li>
-</ul>
-
-<p><strong>Composition Series</strong></p>
-
-<p>Implemented a function to compute the composition series. It provides a way to break up a group into simple pieces. Composition series of a group <code class="highlighter-rouge">G</code> is defined as the maximal subnormal series <code class="highlighter-rouge">G = H_0 &gt; H_1 &gt; H_2 ... &gt; H_k = 1</code> where every factor group <code class="highlighter-rouge">H(i+1)/H(i)</code> is simple.</p>
-
-<ul>
-  <li>PR link <a href="https://github.com/sympy/sympy/pull/16881">Added method for Composition Series computation</a></li>
-</ul>
-
-<p><strong>Polycyclic Groups</strong></p>
-
-<p>The work on polycyclic group is in progress. For now, collection algorithm has been implemented which needs to be tested and a lot of discussions were made on the polycyclic generating sequence and its presentation and may be in a week we&#8217;ll be ready with the stucture of polycyclic groups and collection of words.</p>
-
-<ul>
-  <li>PR link <a href="https://github.com/sympy/sympy/pull/16991">Added Polycyclic Group Class</a></li>
-</ul>
-
-<p><strong>Documentation</strong></p>
-
-<p>Some documentation is done to increase the sphinx coverage of SymPy.</p>
-
-<ul>
-  <li>PR link <a href="https://github.com/sympy/sympy/pull/16809">Increase Accessibility of docstrings from Sphinx</a></li>
-</ul>
-
-<p>To follow the discussion on above topics and the further progress of the project one can check Gitter room <a href="https://gitter.im/sympy/GroupTheory">sympy/GroupTheory</a></p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2922,218 +2900,218 @@ goes on.</p>
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.com/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
 <td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://divyanshu132.github.io//">Divyanshu Thakur</a></td>
 <td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arighnaiitg.github.io">GSoC Days</a></td>
 <td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sc0rpi0n101.github.io/categories/gsoc/">Gsoc on Sc0rpi0n's Journey</a></td>
 <td><a class="xmlbutton" href="https://sc0rpi0n101.github.io/categories/gsoc/index.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
 <td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://czgdp1807.github.io/">OpenBlog</a></td>
 <td><a class="xmlbutton" href="https://czgdp1807.github.io/feed.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://shikharj.github.io/feed.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamkjha.github.io/">Shubham&#8217;s Blog</a></td>
 <td><a class="xmlbutton" href="https://shubhamkjha.github.io/sympy_feed.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
 <td><a class="xmlbutton" href="https://sidhantnagpal.com/rss-gsoc.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://www.kangzhiq.com">sympy &#8211; Kangzhiq's blog</a></td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ritesh99rakesh.github.io/">Thoughts that Matter</a></td>
 <td><a class="xmlbutton" href="https://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>09:27, Wednesday, 24 July</td>
-<td>09:42, Wednesday, 24 July</td>
+<td>10:23, Wednesday, 24 July</td>
+<td>10:38, Wednesday, 24 July</td>
 </tr>
 </table>
 
