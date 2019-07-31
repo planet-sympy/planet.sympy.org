@@ -815,6 +815,82 @@ only algorithm part is left which will be performed in this week.</p>
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-2b8e50f7 feed-" id="item-0f3e6291">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/anpandey.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Ankit Pandey (anpandey) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://anpandey.github.io/posts/sympy/2019-07-30-week-9.html">00:00, Monday, 22 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://anpandey.github.io/posts/sympy/2019-07-30-week-9.html">Ankit Pandey (anpandey): Google Summer of Code Week 9: Matrices to Indexed</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/anpandey.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Ankit Pandey (anpandey) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://anpandey.github.io/posts/sympy/2019-07-30-week-9.html">00:00, Monday, 22 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://anpandey.github.io/posts/sympy/2019-07-30-week-9.html">Google Summer of Code Week 9: Matrices to Indexed</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p><em>See the <a href="https://anpandey.github.io/2019-07-22-week-8.html">previous post</a> for Week 8</em>.</p>
+<p>For this week, I&#8217;ve started with <a href="https://github.com/sympy/sympy/pull/17299">#17299</a>. This pull request is meant to extend support for the <code>MatrixExpr</code> class by allowing for conversion into an <code>Indexed</code> class in which contractions equivalent to the matrix expression are represented.</p>
+<h2 id="conversion-to-indexed">Conversion to <code>Indexed</code></h2>
+<p>The <code>as_indexed</code> method that the pull request introduces is pretty self-explanatory:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" title="1"><span class="op">&gt;&gt;&gt;</span> n, m <span class="op">=</span> symbols(<span class="st">'n m'</span>, integer<span class="op">=</span><span class="va">True</span>)</a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="op">&gt;&gt;&gt;</span> A <span class="op">=</span> MatrixSymbol(<span class="st">'A'</span>, n, m)</a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="op">&gt;&gt;&gt;</span> B <span class="op">=</span> MatrixSymbol(<span class="st">'B'</span>, m, n)</a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="op">&gt;&gt;&gt;</span> e <span class="op">=</span> A<span class="op">*</span>B</a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="op">&gt;&gt;&gt;</span> e.as_indexed()</a>
+<a class="sourceLine" id="cb1-6" title="6">A[i, j]<span class="op">*</span>B[j, k]</a></code></pre></div>
+<p>A matrix multiplication between two matrix symbols is equivalent to a contraction along the index <span class="math inline"><em>j</em></span> (Since matrix multiplication is equivalent to a contraction along a single index).</p>
+<h3 id="relationship-to-codegen">Relationship to Codegen</h3>
+<p>The purpose of the pull request is to allow conversion to help in the generation of code related to some matrix expressions. This is because there&#8217;s already an existing infrastructure for code generation through contractions (something that the still-WIP <a href="https://github.com/sympy/sympy/pull/17170">#17170</a> addresses). The currently work in progress PR is meant to aid in extending code generation to matrix expressions instead of just <code>Indexed</code> objects. This same conversion might also be possible using the <code>Codegen*</code> classes in <code>array_utils</code>, though this way seems to make more sense since it&#8217;s entirely possible to use the function for non-codegen related purposes.</p>
+<h2 id="next-steps">Next steps</h2>
+<p>My plans for this week are to continue working on the pull request and start with the new Matrix Wildcard pull request.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-2b8e50f7 feed-" id="item-2e6fd046">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -2902,77 +2978,6 @@ There is still scope for improvement in performance. In the coming week, I will 
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">July 02, 2019</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-93d9ff54 feed-" id="item-a27d5f42">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/GagandeepSingh.jpeg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Gagandeep Singh (czgdp1807) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://czgdp1807.github.io/week_5/">00:00, Tuesday, 02 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://czgdp1807.github.io/week_5/">Gagandeep Singh (czgdp1807): Week 5 - Transition towards Phase 2</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/GagandeepSingh.jpeg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Gagandeep Singh (czgdp1807) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://czgdp1807.github.io/week_5/">00:00, Tuesday, 02 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://czgdp1807.github.io/week_5/">Week 5 - Transition towards Phase 2</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>The evaluation results for phase 1 are out, and I am very glad to share with you that I have passed with flying colors. I received, &#8220;Well done so far.&#8221; as the feedback for my work till now.</p>
-
-<p>So now let us move to the work done in the gap between phase 1 and phase 2. Firstly, both of my open PRs of the previous phase, i.e., <a href="https://github.com/sympy/sympy/pull/16962">#16962</a> and <a href="https://github.com/sympy/sympy/pull/16934">#16934</a> have been merged. Though for symbolic dimensions some more work has to be done to make <code class="highlighter-rouge">sympy.stats.frv</code> more efficient and maintainable. I have also started my work, PR <a href="https://github.com/sympy/sympy/pull/17083">#17083</a>, to extend the scope of queries for <code class="highlighter-rouge">DiscreteMarkovChain</code> and the system has become a bit smarter. In fact, during this week, while working on the PR, <a href="https://github.com/sympy/sympy/pull/17103">#17103</a>, I came across the news that Tensorflow has changed a lot of APIs  while migrating from 1.x to 2.x. AFAIK, they are moving towards <code class="highlighter-rouge">Function</code> approach from the previous <code class="highlighter-rouge">Session</code> approach, and due to that, SymPy&#8217;s <code class="highlighter-rouge">lambdify</code> faced some issues which I will be fixing soon with the help of other members. The Tensorflow details can be seen <a href="https://github.com/tensorflow/community/blob/b1d83bf2ee3fc72650140b89656e29932db36226/rfcs/20180918-functions-not-sessions-20.md">here</a>.</p>
-
-<p>Now, let&#8217;s move to the learning part. During the transition period I learnt about the dependencies of <code class="highlighter-rouge">SymPy</code>. Moreover, I came across, how, some bugs can be unnoticed when left untested. Thanks again to <a href="https://github.com/oscarbenjamin">oscarbenjamin</a> for letting me know about the bugs related to variance of finite random variables. I also got to know that, how bare <code class="highlighter-rouge">except</code> can even catch keyboard interrupt and that&#8217;s what makes it quite vulnerable. Thanks to <a href="https://github.com/sidhantnagpal">sidhantnagpal</a> for helping me with this.</p>
-
-<p>So, that&#8217;s all for this, see you next week. Bye!!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3000,218 +3005,218 @@ There is still scope for improvement in performance. In the coming week, I will 
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.com/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
 <td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://divyanshu132.github.io//">Divyanshu Thakur</a></td>
 <td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arighnaiitg.github.io">GSoC Days</a></td>
 <td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sc0rpi0n101.github.io/categories/gsoc/">Gsoc on Sc0rpi0n's Journey</a></td>
 <td><a class="xmlbutton" href="https://sc0rpi0n101.github.io/categories/gsoc/index.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
 <td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://czgdp1807.github.io/">OpenBlog</a></td>
 <td><a class="xmlbutton" href="https://czgdp1807.github.io/feed.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://shikharj.github.io/feed.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamkjha.github.io/">Shubham&#8217;s Blog</a></td>
 <td><a class="xmlbutton" href="https://shubhamkjha.github.io/sympy_feed.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
 <td><a class="xmlbutton" href="https://sidhantnagpal.com/rss-gsoc.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://www.kangzhiq.com">sympy &#8211; Kangzhiq's blog</a></td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ritesh99rakesh.github.io/">Thoughts that Matter</a></td>
 <td><a class="xmlbutton" href="https://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>16:11, Wednesday, 31 July</td>
-<td>16:26, Wednesday, 31 July</td>
+<td>17:27, Wednesday, 31 July</td>
+<td>17:42, Wednesday, 31 July</td>
 </tr>
 </table>
 

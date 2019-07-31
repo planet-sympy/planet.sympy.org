@@ -285,6 +285,28 @@ only algorithm part is left which will be performed in this week.&lt;/p&gt;
 &lt;p&gt;Thanks!&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-07-30-week-9.html</guid>
+      <author>Ankit Pandey (anpandey)</author>
+      <title>Ankit Pandey (anpandey): Google Summer of Code Week 9: Matrices to Indexed</title>
+      <pubDate>Mon, 22 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://anpandey.github.io/posts/sympy/2019-07-30-week-9.html</link>
+      <description>&lt;p&gt;&lt;em&gt;See the &lt;a href="https://anpandey.github.io/2019-07-22-week-8.html"&gt;previous post&lt;/a&gt; for Week 8&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;For this week, I&amp;#8217;ve started with &lt;a href="https://github.com/sympy/sympy/pull/17299"&gt;#17299&lt;/a&gt;. This pull request is meant to extend support for the &lt;code&gt;MatrixExpr&lt;/code&gt; class by allowing for conversion into an &lt;code&gt;Indexed&lt;/code&gt; class in which contractions equivalent to the matrix expression are represented.&lt;/p&gt;
+&lt;h2 id="conversion-to-indexed"&gt;Conversion to &lt;code&gt;Indexed&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;as_indexed&lt;/code&gt; method that the pull request introduces is pretty self-explanatory:&lt;/p&gt;
+&lt;div class="sourceCode" id="cb1"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb1-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; n, m &lt;span class="op"&gt;=&lt;/span&gt; symbols(&lt;span class="st"&gt;'n m'&lt;/span&gt;, integer&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="va"&gt;True&lt;/span&gt;)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; A &lt;span class="op"&gt;=&lt;/span&gt; MatrixSymbol(&lt;span class="st"&gt;'A'&lt;/span&gt;, n, m)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; B &lt;span class="op"&gt;=&lt;/span&gt; MatrixSymbol(&lt;span class="st"&gt;'B'&lt;/span&gt;, m, n)&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-4" title="4"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; e &lt;span class="op"&gt;=&lt;/span&gt; A&lt;span class="op"&gt;*&lt;/span&gt;B&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-5" title="5"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; e.as_indexed()&lt;/a&gt;
+&lt;a class="sourceLine" id="cb1-6" title="6"&gt;A[i, j]&lt;span class="op"&gt;*&lt;/span&gt;B[j, k]&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;A matrix multiplication between two matrix symbols is equivalent to a contraction along the index &lt;span class="math inline"&gt;&lt;em&gt;j&lt;/em&gt;&lt;/span&gt; (Since matrix multiplication is equivalent to a contraction along a single index).&lt;/p&gt;
+&lt;h3 id="relationship-to-codegen"&gt;Relationship to Codegen&lt;/h3&gt;
+&lt;p&gt;The purpose of the pull request is to allow conversion to help in the generation of code related to some matrix expressions. This is because there&amp;#8217;s already an existing infrastructure for code generation through contractions (something that the still-WIP &lt;a href="https://github.com/sympy/sympy/pull/17170"&gt;#17170&lt;/a&gt; addresses). The currently work in progress PR is meant to aid in extending code generation to matrix expressions instead of just &lt;code&gt;Indexed&lt;/code&gt; objects. This same conversion might also be possible using the &lt;code&gt;Codegen*&lt;/code&gt; classes in &lt;code&gt;array_utils&lt;/code&gt;, though this way seems to make more sense since it&amp;#8217;s entirely possible to use the function for non-codegen related purposes.&lt;/p&gt;
+&lt;h2 id="next-steps"&gt;Next steps&lt;/h2&gt;
+&lt;p&gt;My plans for this week are to continue working on the pull request and start with the new Matrix Wildcard pull request.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-07-22-week-8.html</guid>
       <author>Ankit Pandey (anpandey)</author>
       <title>Ankit Pandey (anpandey): Google Summer of Code Week 8: Non-Commutative Wildcards</title>
@@ -1214,20 +1236,6 @@ onwards.&lt;/p&gt;
 There is still scope for improvement in performance. In the coming week, I will try to work these out. I will also try to improve the performance of &lt;strong&gt;ask&lt;/strong&gt; module.&lt;/p&gt;
 
 &lt;p&gt;Also, the first evaluations are over now and I feel happy to announce that I passed it. During the first phase I learnt a lot. In last few weeks I got to explore profiling and got to understand how small segments can influence performance. Before this I felt that I already know the codebase, but in reality I had much to explore. My mentors always gave me a good starting point and a direction over the course of this phase. With the hope to work much better in the coming phases, I take your leave now &amp;#128516; .&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://czgdp1807.github.io/week_5</guid>
-      <author>Gagandeep Singh (czgdp1807)</author>
-      <title>Gagandeep Singh (czgdp1807): Week 5 - Transition towards Phase 2</title>
-      <pubDate>Tue, 02 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://czgdp1807.github.io/week_5/</link>
-      <description>&lt;p&gt;The evaluation results for phase 1 are out, and I am very glad to share with you that I have passed with flying colors. I received, &amp;#8220;Well done so far.&amp;#8221; as the feedback for my work till now.&lt;/p&gt;
-
-&lt;p&gt;So now let us move to the work done in the gap between phase 1 and phase 2. Firstly, both of my open PRs of the previous phase, i.e., &lt;a href="https://github.com/sympy/sympy/pull/16962"&gt;#16962&lt;/a&gt; and &lt;a href="https://github.com/sympy/sympy/pull/16934"&gt;#16934&lt;/a&gt; have been merged. Though for symbolic dimensions some more work has to be done to make &lt;code class="highlighter-rouge"&gt;sympy.stats.frv&lt;/code&gt; more efficient and maintainable. I have also started my work, PR &lt;a href="https://github.com/sympy/sympy/pull/17083"&gt;#17083&lt;/a&gt;, to extend the scope of queries for &lt;code class="highlighter-rouge"&gt;DiscreteMarkovChain&lt;/code&gt; and the system has become a bit smarter. In fact, during this week, while working on the PR, &lt;a href="https://github.com/sympy/sympy/pull/17103"&gt;#17103&lt;/a&gt;, I came across the news that Tensorflow has changed a lot of APIs  while migrating from 1.x to 2.x. AFAIK, they are moving towards &lt;code class="highlighter-rouge"&gt;Function&lt;/code&gt; approach from the previous &lt;code class="highlighter-rouge"&gt;Session&lt;/code&gt; approach, and due to that, SymPy&amp;#8217;s &lt;code class="highlighter-rouge"&gt;lambdify&lt;/code&gt; faced some issues which I will be fixing soon with the help of other members. The Tensorflow details can be seen &lt;a href="https://github.com/tensorflow/community/blob/b1d83bf2ee3fc72650140b89656e29932db36226/rfcs/20180918-functions-not-sessions-20.md"&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Now, let&amp;#8217;s move to the learning part. During the transition period I learnt about the dependencies of &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt;. Moreover, I came across, how, some bugs can be unnoticed when left untested. Thanks again to &lt;a href="https://github.com/oscarbenjamin"&gt;oscarbenjamin&lt;/a&gt; for letting me know about the bugs related to variance of finite random variables. I also got to know that, how bare &lt;code class="highlighter-rouge"&gt;except&lt;/code&gt; can even catch keyboard interrupt and that&amp;#8217;s what makes it quite vulnerable. Thanks to &lt;a href="https://github.com/sidhantnagpal"&gt;sidhantnagpal&lt;/a&gt; for helping me with this.&lt;/p&gt;
-
-&lt;p&gt;So, that&amp;#8217;s all for this, see you next week. Bye!!&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
