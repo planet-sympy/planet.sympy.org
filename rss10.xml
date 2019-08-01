@@ -7,6 +7,20 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://shubhamkjha.github.io/2019/07/31/GSoC-Week-9</guid>
+      <author>Shubham Kumar Jha (ShubhamKJha)</author>
+      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 9</title>
+      <pubDate>Wed, 31 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://shubhamkjha.github.io/2019/07/31/GSoC-Week-9.html</link>
+      <description>&lt;p&gt;I spent most of this week getting &lt;a href="https://github.com/sympy/sympy/pull/17144"&gt;#17144&lt;/a&gt; ready to be merged. I had to change a lot of things from the last attempt. One of such was an attempt on &lt;strong&gt;early encoding&lt;/strong&gt;, I had tried it on &lt;strong&gt;Literals&lt;/strong&gt;. They were eventually going to be encoded so I tried to do this when &lt;strong&gt;Literals&lt;/strong&gt; were created only. But as Aaron suggested, my approach had left encodings in the global space and hence could leak memory. During the week, I tried to attach encoding to the &lt;strong&gt;CNF&lt;/strong&gt; object itself but it would have needed a lot of refactoring, since &lt;strong&gt;CNF&lt;/strong&gt; objects interacted with other such objects. So, after some attempts, at the end I left the encoding to be done at last in &lt;strong&gt;EncodedCNF&lt;/strong&gt; object. Currently, this is ready to be merged.&lt;/p&gt;
+
+&lt;p&gt;For the coming weeks, I would try to improve over this.&lt;/p&gt;
+
+&lt;p&gt;This was also the week for second monthly evaluation and I feel happy to announce that I passed it. From this week my college has also started but I am still able to give the required time to this project and complete it.&lt;/p&gt;
+
+&lt;p&gt;Will keep you updated. Thank you !&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=74</guid>
       <author>Ishan Joshi (ishanaj)</author>
       <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-9- Analyzing the draw() function</title>
@@ -1195,47 +1209,6 @@ onwards.&lt;/p&gt;
       <link>https://sc0rpi0n101.github.io/2019/07/week-6-the-most-chaotic-week-ever/</link>
       <description>&lt;p&gt;&amp;#8220;A language that doesn&amp;rsquo;t affect the way you think about programming is not worth knowing.&amp;#8221;  &amp;#8213; Alan J. Perlis
  Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week was one of the most chaotic weeks till now if not the most chaotic. I had to move places as the Uni opens next week, had the summer classes exams and had to convert the C parser to use SymPy&amp;rsquo;s Codegen AST from Python AST all in one week.</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://shubhamkjha.github.io/2019/07/03/GSoC-2019-Week-5</guid>
-      <author>Shubham Kumar Jha (ShubhamKJha)</author>
-      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 5</title>
-      <pubDate>Wed, 03 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://shubhamkjha.github.io/2019/07/03/GSoC-2019-Week-5.html</link>
-      <description>&lt;p&gt;With this the fifth week and the first phase of the official coding period has ended. I will try to give a brief summary of my work during this week.&lt;/p&gt;
-
-&lt;p&gt;I spent most of this week learning the inner working of &lt;strong&gt;satask&lt;/strong&gt; module. It took a lot of debugging to understand the on-going processes efficiently &amp;#128517; . My major job was to reduce the unwanted slowing portions in the code. I had  &lt;a href="https://github.com/sympy/sympy/pull/11789"&gt;#11789&lt;/a&gt; for reference. Some of such performance reducing portions of code were:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;A major segment of code was creating &lt;strong&gt;And&lt;/strong&gt; objects unnecessarily. As suggested in &lt;a href="https://github.com/sympy/sympy/issues/17087"&gt;#17087&lt;/a&gt; the sorting in the &lt;strong&gt;And&lt;/strong&gt; constructor takes up a significant amount of time. These have to be reduced.&lt;/li&gt;
-  &lt;li&gt;Using SymPy objects is itself a bottleneck for performance. Having a system built over SymPy objects slows things down. Python&amp;#8217;s built-in types should be used as much as possible.&lt;/li&gt;
-  &lt;li&gt;A specific segment (used many times in the code) calls &lt;code class="highlighter-rouge"&gt;rcall&lt;/code&gt; over propositions. The &lt;code class="highlighter-rouge"&gt;rcall&lt;/code&gt; which is a recursive process also takes a significant of time.&lt;/li&gt;
-  &lt;li&gt;Also, I have tried to pre-compile results as much as possible.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;With the above and some other changes, the overall performance of &lt;code class="highlighter-rouge"&gt;satask&lt;/code&gt; has improved much. I have made a PR over this &lt;a href="https://github.com/sympy/sympy/pull/17144"&gt;#17144&lt;/a&gt;. For an instance,&lt;/p&gt;
-&lt;table style="padding: 15px;"&gt;
-    &lt;thead&gt;
-        &lt;th&gt;Tests&lt;/th&gt;
-        &lt;th&gt;After this PR&lt;/th&gt;
-        &lt;th&gt;In master&lt;/th&gt;
-    &lt;/thead&gt;
-    &lt;tbody&gt;
-        &lt;tr&gt;
-            &lt;td&gt;test_satask&lt;/td&gt;
-            &lt;td&gt;2.39 s&lt;/td&gt;
-            &lt;td&gt;36.26 s&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;assumptions/tests&lt;/td&gt;
-            &lt;td&gt;16.74 s&lt;/td&gt;
-            &lt;td&gt;127.21 s&lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;br /&gt;
-There is still scope for improvement in performance. In the coming week, I will try to work these out. I will also try to improve the performance of &lt;strong&gt;ask&lt;/strong&gt; module.&lt;/p&gt;
-
-&lt;p&gt;Also, the first evaluations are over now and I feel happy to announce that I passed it. During the first phase I learnt a lot. In last few weeks I got to explore profiling and got to understand how small segments can influence performance. Before this I felt that I already know the codebase, but in reality I had much to explore. My mentors always gave me a good starting point and a direction over the course of this phase. With the hope to work much better in the coming phases, I take your leave now &amp;#128516; .&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
