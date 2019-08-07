@@ -7,6 +7,19 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html</guid>
+      <author>Ankit Pandey (anpandey)</author>
+      <title>Ankit Pandey (anpandey): Google Summer of Code Week 10: Matrix Wildcard Redux</title>
+      <pubDate>Tue, 06 Aug 2019 00:00:00 GMT</pubDate>
+      <link>https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html</link>
+      <description>&lt;p&gt;For this week, I&amp;#8217;ve made some more minor changes to the &lt;a href="https://github.com/sympy/sympy/pull/17299"&gt;&lt;code&gt;Indexed&lt;/code&gt; pull request&lt;/a&gt; from last week, in addition to filing a new &lt;a href="https://github.com/sympy/sympy/pull/17347"&gt;matrix wildcard pull request&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id="matrix-wildcards-again"&gt;Matrix Wildcards (again)&lt;/h3&gt;
+&lt;p&gt;Since &lt;a href="https://github.com/sympy/sympy/pull/17223"&gt;#17223&lt;/a&gt; was merged this week, I started with an implementation of matrix wildcards that takes advantage of the functionality included in the pull request. I thought that this would be relatively straightforward, with an implementation of the &lt;code&gt;matches&lt;/code&gt; method for the &lt;code&gt;MatrixWild&lt;/code&gt; subclass being enough. There was one problem though: the underlying matching implementation assumes that all powers in the expression are an instance of the &lt;code&gt;Pow&lt;/code&gt; class. However, this isn&amp;#8217;t true for matrix expressions: the &lt;code&gt;MatPow&lt;/code&gt; class, which represents matrix powers, is a subclass of its own. I&amp;#8217;m not exactly sure what the reason for this is, since a quick change of &lt;code&gt;MatPow&lt;/code&gt; to inherit from &lt;code&gt;Pow&lt;/code&gt; doesn&amp;#8217;t seem to break anything. I&amp;#8217;ll probably look into this a bit more, since I think this might have something to do with the fact that Matrix exponents can also include other matrices.&lt;/p&gt;
+&lt;p&gt;My solution for this was to allow temporarily allow expansion of powers by recursing through the expression tree and setting the &lt;code&gt;is_Pow&lt;/code&gt; field of each matrix power to &lt;code&gt;True&lt;/code&gt; and later reverting these states later. It doesn&amp;#8217;t look pretty, but it does seem to work (you can see the code &lt;a href="https://github.com/sympy/sympy/blob/17fb5010e36e10de156dad032d2aea376051df24/sympy/matrices/expressions/matmul.py#L178-L197"&gt;here&lt;/a&gt;).&lt;/p&gt;
+&lt;h2 id="next-steps"&gt;Next Steps&lt;/h2&gt;
+&lt;p&gt;I&amp;#8217;ll try to get started with some optimizations that utilize this wildcard class once the pull request gets merged.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://czgdp1807.github.io/week_10</guid>
       <author>Gagandeep Singh (czgdp1807)</author>
       <title>Gagandeep Singh (czgdp1807): Week 10 - Debugging, testing and Haar measure</title>
@@ -1200,43 +1213,6 @@ args = [d/(a*b)*t for t in roots(t**p - e, t).keys()]
 &lt;p&gt;Let me share with you about my discoveries and learnings in this week. Well, thanks to Francesco for telling me about, &lt;code class="highlighter-rouge"&gt;sympy.multipledispatch&lt;/code&gt;. It helps in implementing operator overloading like in C/C++. I liked it very much. I also read about continuous Markov chain and discovered about generator matrix, forward and backward equations. Adding one interesting fact, that Poisson process and continuous Markov chain are very closely related via generator matrices it will make the implementation of the former much easier :D.&lt;/p&gt;
 
 &lt;p&gt;Leaving you for now, Bye!!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://divyanshu132.github.io//gsoc-week-6</guid>
-      <author>Divyanshu Thakur (divyanshu132)</author>
-      <title>Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 6 - Computation of Polycyclic presentation</title>
-      <pubDate>Mon, 08 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://divyanshu132.github.io//gsoc-week-6</link>
-      <description>&lt;p&gt;The sixth week of coding period has ended and a good amount of work has been done on polycyclic groups. Polycyclic presentation, Polycyclic generating sequence(pcgs) and it&amp;#8217;s series is implemented which for sure need some improvement &lt;a href="https://github.com/sympy/sympy/pull/16991"&gt;sympy/sympy#16991&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;The polycyclic series is computed starting from the bottom of the derived series of a group by adding the missing generators in the subgroups, and collecting these missing generators provide us the polycyclic generating sequence.&lt;/p&gt;
-
-&lt;p&gt;As we discussed last week &lt;a href="https://divyanshu132.github.io/gsoc-week-5"&gt;here&lt;/a&gt; that to compute conjugate relators of a polycyclic group we were missing the &lt;code class="highlighter-rouge"&gt;RHS&lt;/code&gt; term, which was of the form &lt;code class="highlighter-rouge"&gt;x[i]**-1*x[i+1]*x[i] == RHS&lt;/code&gt;. So, starting from the bottom of the polycyclic generating sequence forming the subgroup and finding all the generators of the RHS using &lt;code class="highlighter-rouge"&gt;generator_product&lt;/code&gt;, mapping these generators with the free group elements and forming a word, finally collect the above formed word which will give us the collected RHS.&lt;/p&gt;
-
-&lt;p&gt;Below is an example to compute polycyclic presentation for S(9).sylow_subgroup(3)&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
-&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics.free_groups import free_group
-&amp;gt;&amp;gt;&amp;gt; F, x0, x1, x2, x3 = free_group("x0, x1, x2, x3")
-&amp;gt;&amp;gt;&amp;gt; S = SymmetricGroup(9)
-&amp;gt;&amp;gt;&amp;gt; G = S.sylow_subgroup(3)
-&amp;gt;&amp;gt;&amp;gt; pc_group = G.polycyclic_group()
-&amp;gt;&amp;gt;&amp;gt; group = F
-&amp;gt;&amp;gt;&amp;gt; pc_group.pc_presentation(group)
-{x3**3: (), x2**3: (), x1**3: (), x0**3: (), x2**-1*x3*x2: x3, x1**-1*x3*x1: x3, x1**-1*x2*x1: x2, x0**-1*x3*x0: x2**2*x3**2, x0**-1*x2*x0: x3, x0**-1*x1*x0: x1*x3}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;One problem that we&amp;#8217;ve encountered is that the generators in pcgs may change for the same group on executing it several times which makes it difficult to test pc_presentation but, Kalevi advised me to initalize &lt;code class="highlighter-rouge"&gt;random.seed&lt;/code&gt; with some chosen value and then it will result in the same repeatable result, will try it by today!&lt;/p&gt;
-
-&lt;p&gt;The tasks that I&amp;#8217;m hopping to accomplish next week are&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Add tests for plycyclic presentation and be sure that it works properly.&lt;/li&gt;
-  &lt;li&gt;Include more functionalities to pc groups like &lt;code class="highlighter-rouge"&gt;exponent_vector&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;element_depth&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;leading_coefficient&lt;/code&gt;.&lt;/li&gt;
-  &lt;li&gt;Add documentation for all the functions.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Till then, good byee..&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
