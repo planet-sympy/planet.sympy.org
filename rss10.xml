@@ -7,6 +7,20 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://czgdp1807.github.io/week_11</guid>
+      <author>Gagandeep Singh (czgdp1807)</author>
+      <title>Gagandeep Singh (czgdp1807): Week 11 - Final touches</title>
+      <pubDate>Tue, 13 Aug 2019 00:00:00 GMT</pubDate>
+      <link>https://czgdp1807.github.io/week_11/</link>
+      <description>&lt;p&gt;So, the second last week of the project is over and we have decided to improve on the work we have done so far in the last few days. Read below to know more.&lt;/p&gt;
+
+&lt;p&gt;In this week, I worked on, &lt;a href="https://github.com/sympy/sympy/pull/17146"&gt;#17146&lt;/a&gt; concered with symbolic &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt;, &lt;a href="https://github.com/sympy/sympy/pull/17387"&gt;#17387&lt;/a&gt; related to assumptions of dependence among random variables, &lt;a href="https://github.com/sympy/sympy/pull/17336"&gt;#17336&lt;/a&gt; which fixed the bug in &lt;code class="highlighter-rouge"&gt;Q.hermitian&lt;/code&gt; the one I told you about in my previous post, and &lt;a href="https://github.com/sympy/sympy/pull/17306"&gt;#17306&lt;/a&gt;, implementing the matrices with random expressions.&lt;/p&gt;
+
+&lt;p&gt;In fact, the last two PRs are merged. Now, coming on to symbolic &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt;, I have completed the testing of all the methods except &lt;code class="highlighter-rouge"&gt;slicing&lt;/code&gt; feature of &lt;code class="highlighter-rouge"&gt;__getitem__&lt;/code&gt;, which I will do in this week. Regarding, the bug in &lt;code class="highlighter-rouge"&gt;Q.hermitian&lt;/code&gt;, well, my code at first, was giving incorrect results due to overriding problems in the logic. Francesco, helped me correct them and it&amp;#8217;s finally in. The major part of the week was devoted to assumptions of dependence. I did some study from Wikipedia, and implemented the class &lt;code class="highlighter-rouge"&gt;DependentPSpace&lt;/code&gt;. I have kept the class static because it will handle queries of the type, &lt;code class="highlighter-rouge"&gt;density(X + Y, Eq(Covariance(X, Y), S(1)/2)&lt;/code&gt; which from my point of view doesn&amp;#8217;t require creation of a probability space object.&lt;/p&gt;
+
+&lt;p&gt;Coming on to the plan for the last week, we have decided that no new PRs will be opened and focus will be towards completing the already open PRs, so that we have most of our work completed. Francesco has also suggested to test the newly introduced classes with the ones of Wolfram Alpha, so that there are no inconsistencies.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html</guid>
       <author>Ankit Pandey (anpandey)</author>
       <title>Ankit Pandey (anpandey): Google Summer of Code Week 10: Matrix Wildcard Redux</title>
@@ -1142,54 +1156,6 @@ args = [d/(a*b)*t for t in roots(t**p - e, t).keys()]
 &lt;p&gt;Apart from that, I will also try to shift my focus towards the other part of my project and write some theory solvers. After all, I need to enhance the assumptions not just make it faster &amp;#128526;.&lt;/p&gt;
 
 &lt;p&gt;&lt;em&gt;Peace&lt;/em&gt;&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-07-14-week-7.html</guid>
-      <author>Ankit Pandey (anpandey)</author>
-      <title>Ankit Pandey (anpandey): Google Summer of Code Week 7: Matrix Wildcards</title>
-      <pubDate>Sun, 14 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://anpandey.github.io/posts/sympy/2019-07-14-week-7.html</link>
-      <description>&lt;p&gt;&lt;em&gt;See the &lt;a href="https://anpandey.github.io/2019-07-07-week-6.html"&gt;previous post&lt;/a&gt; for Week 6&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;I spent most of this week on extending wildcard support for matrix expressions, along with some more explorations in printing array contractions.&lt;/p&gt;
-&lt;h2 id="matrices-and-wildcards"&gt;Matrices and Wildcards&lt;/h2&gt;
-&lt;p&gt;As I&amp;#8217;ve probably mentioned in the last two blog posts, SymPy&amp;#8217;s support for matching matrix expressions through the &lt;code&gt;Wild&lt;/code&gt; class is currently severely limited (&lt;a href="https://github.com/sympy/sympy/issues/17172"&gt;when it works&lt;/a&gt;). While it is possible to construct a non-commutative &lt;code&gt;Wild&lt;/code&gt;, it isn&amp;#8217;t able to match expressions in a matrix multiplication:&lt;/p&gt;
-&lt;div class="sourceCode" id="cb1"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb1-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; W, X &lt;span class="op"&gt;=&lt;/span&gt; symbols(&lt;span class="st"&gt;'W, X'&lt;/span&gt;, cls&lt;span class="op"&gt;=&lt;/span&gt;Wild, commutative&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="va"&gt;False&lt;/span&gt;)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.abc &lt;span class="im"&gt;import&lt;/span&gt;  N&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; A, B &lt;span class="op"&gt;=&lt;/span&gt; MatrixSymbol(&lt;span class="st"&gt;'A'&lt;/span&gt;, N, N), MatrixSymbol(&lt;span class="st"&gt;'B'&lt;/span&gt;, N, N)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-4" title="4"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="bu"&gt;type&lt;/span&gt;((A &lt;span class="op"&gt;*&lt;/span&gt; B).match(W &lt;span class="op"&gt;*&lt;/span&gt; X))&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-5" title="5"&gt;&lt;span class="op"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kw"&gt;class&lt;/span&gt; &lt;span class="st"&gt;'NoneType'&lt;/span&gt;&lt;span class="op"&gt;&amp;gt;&lt;/span&gt;&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;It&amp;#8217;s also currently not possible to combine matrices and wildcards in expressions, since wildcards don&amp;#8217;t have a defined shape and so may only function as scalars:&lt;/p&gt;
-&lt;div class="sourceCode" id="cb2"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb2-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; W &lt;span class="op"&gt;+&lt;/span&gt; A&lt;/a&gt;
-&lt;a class="sourceLine" id="cb2-2" title="2"&gt;&lt;span class="pp"&gt;TypeError&lt;/span&gt;: Mix of Matrix &lt;span class="kw"&gt;and&lt;/span&gt; Scalar symbols&lt;/a&gt;
-&lt;a class="sourceLine" id="cb2-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; W &lt;span class="op"&gt;*&lt;/span&gt; A&lt;/a&gt;
-&lt;a class="sourceLine" id="cb2-4" title="4"&gt;&lt;span class="pp"&gt;NotImplementedError&lt;/span&gt;: noncommutative scalars &lt;span class="kw"&gt;in&lt;/span&gt; MatMul are &lt;span class="kw"&gt;not&lt;/span&gt; supported.&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h3 id="matrixwild"&gt;&lt;code&gt;MatrixWild&lt;/code&gt;&lt;/h3&gt;
-&lt;p&gt;I spent most of this week working on &lt;a href="https://github.com/sympy/sympy/pull/17177"&gt;#17177&lt;/a&gt;, which implements a &lt;code&gt;MatrixWild&lt;/code&gt; class that functions as both a wildcard and a matrix expression. In order to construct the wildcard, we need to give it a shape:&lt;/p&gt;
-&lt;div class="sourceCode" id="cb3"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb3-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.abc &lt;span class="im"&gt;import&lt;/span&gt; N&lt;/a&gt;
-&lt;a class="sourceLine" id="cb3-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.matrices.expressions.matexpr &lt;span class="im"&gt;import&lt;/span&gt; MatrixWild&lt;/a&gt;
-&lt;a class="sourceLine" id="cb3-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; W, X &lt;span class="op"&gt;=&lt;/span&gt; MatrixWild(&lt;span class="st"&gt;'W'&lt;/span&gt;, N, N), MatrixWild(&lt;span class="st"&gt;'X'&lt;/span&gt;, N, N)&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Unlike in the example above using &lt;code&gt;Wild&lt;/code&gt;, compound expressions are able to match against a matrix multiplication:&lt;/p&gt;
-&lt;div class="sourceCode" id="cb4"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb4-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; A, B &lt;span class="op"&gt;=&lt;/span&gt; MatrixSymbol(&lt;span class="st"&gt;'A'&lt;/span&gt;, N, N), MatrixSymbol(&lt;span class="st"&gt;'B'&lt;/span&gt;, N, N)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb4-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; (A &lt;span class="op"&gt;*&lt;/span&gt; B).match(W &lt;span class="op"&gt;*&lt;/span&gt; X)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb4-3" title="3"&gt;{W_: A, X_: B}&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Note that in order for matrix wildcards to match, their shape must match with the target expression:&lt;/p&gt;
-&lt;div class="sourceCode" id="cb5"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb5-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; x &lt;span class="op"&gt;=&lt;/span&gt; MatrixSymbol(&lt;span class="st"&gt;'x'&lt;/span&gt;, N, &lt;span class="dv"&gt;1&lt;/span&gt;)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb5-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; e &lt;span class="op"&gt;=&lt;/span&gt; A &lt;span class="op"&gt;*&lt;/span&gt; x&lt;/a&gt;
-&lt;a class="sourceLine" id="cb5-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; e.shape&lt;/a&gt;
-&lt;a class="sourceLine" id="cb5-4" title="4"&gt;(N, &lt;span class="dv"&gt;1&lt;/span&gt;)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb5-5" title="5"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="bu"&gt;type&lt;/span&gt;(e.match(W))&lt;/a&gt;
-&lt;a class="sourceLine" id="cb5-6" title="6"&gt;&lt;span class="op"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kw"&gt;class&lt;/span&gt; &lt;span class="st"&gt;'NoneType'&lt;/span&gt;&lt;span class="op"&gt;&amp;gt;&lt;/span&gt;&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;However, if we don&amp;#8217;t care about dimension, we can include another wildcard in the matrix wildcard&amp;#8217;s shape:&lt;/p&gt;
-&lt;div class="sourceCode" id="cb6"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb6-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; M &lt;span class="op"&gt;=&lt;/span&gt; MatrixSymbol(&lt;span class="st"&gt;'M'&lt;/span&gt;, &lt;span class="dv"&gt;3&lt;/span&gt;, &lt;span class="dv"&gt;3&lt;/span&gt;)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb6-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; w &lt;span class="op"&gt;=&lt;/span&gt; Wild(&lt;span class="st"&gt;'w'&lt;/span&gt;)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb6-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; Y &lt;span class="op"&gt;=&lt;/span&gt; MatrixWild(&lt;span class="st"&gt;'Y'&lt;/span&gt;, w, w)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb6-4" title="4"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; M.match(Y)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb6-5" title="5"&gt;{w_: &lt;span class="dv"&gt;3&lt;/span&gt;, Y_: M}&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;While this is a good first step to the matching functionality I was looking for with &lt;code&gt;unify&lt;/code&gt; for rewriting matrix expressions, there is still quite a bit of functionality (and tests) to be implemented, along with an unknown number of bugs to fix.&lt;/p&gt;
-&lt;h2 id="printing-indexed-bases"&gt;Printing Indexed Bases&lt;/h2&gt;
-&lt;p&gt;I&amp;#8217;ve also been working on a small pull request to improve the functionality the printing &lt;code&gt;IndexedBases&lt;/code&gt; so that it instead uses intermediate values (represented through the new code generation classes) to accumulate the values of contractions. Currently, this does nothing but break existing compatibility (Fortran versions older than Fortran 95 don&amp;#8217;t support variable declarations in arbitrary locations, and the variable currently defaults to a 32-bit floating point number), though I think this is a good first step for supporting the printing of more complex contractions.&lt;/p&gt;
-&lt;h2 id="next-steps"&gt;Next Steps&lt;/h2&gt;
-&lt;p&gt;For this week, I plan to finish with the implementation of&lt;code&gt;MatrixWild&lt;/code&gt; (and hopefully get started with using it for rewriting matrix expressions), along with making some more progress on the indexed bases pull request.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
