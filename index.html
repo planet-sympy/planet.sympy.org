@@ -93,6 +93,148 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-eb3e3c3b feed-" id="item-29d92984">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/ishanaj.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Ishan Joshi (ishanaj) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://ishanaj.wordpress.com/2019/08/13/gsoc19-week-11-heading-to-the-final-week/">17:26, Tuesday, 13 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/08/13/gsoc19-week-11-heading-to-the-final-week/">Ishan Joshi (ishanaj): GSoC&#8217;19: Week-11- Heading to the final week</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/ishanaj.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Ishan Joshi (ishanaj) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://ishanaj.wordpress.com/2019/08/13/gsoc19-week-11-heading-to-the-final-week/">17:26, Tuesday, 13 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/08/13/gsoc19-week-11-heading-to-the-final-week/">GSoC&#8217;19: Week-11- Heading to the final week</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>With the end of this week the <strong>draw()</strong> function has been completely implemented. The work on <a href="https://github.com/sympy/sympy/pull/17345">PR #17345</a> has been completed along with the documentations.</p>
+
+
+
+<p>As mentioned in the previous blog this PR was an attempt to make the <strong>draw()</strong> function use SymPy&#8217;s own plot() rather than importing matplotlib externally to plot the diagram. The idea was to plot the load equation which is in terms of singularity function. This would directly plot uniformly distributed load, uniformly varying load and other higher order loads except for point loads and moment loads.<br /> The task was now to plot the remaining parts of the diagram which were:</p>
+
+
+
+<ul><li>A rectangle for drawing the beam</li><li>Arrows for point loads</li><li>Markers for moment loads and supports </li><li>Colour filling to fill colour in inside the higher order loads (order &gt;=0).<span id="more-105"></span></li></ul>
+
+
+
+<p>Instead of making temporary hacks to implement these, I went a step further to give the plotting module some additional functionalities. Apart from helping in implementing the <strong>draw()</strong> function, &nbsp;this would also enhance the plotting module.</p>
+
+
+
+<p>The basic idea was to have some additional keyworded arguments in the <strong>plot()</strong> function. Every keyworded argument would be a list of dictionaries where each dictionary would represent the arguments (or parameters) that would have been passed in the corresponding matplotlib functions.</p>
+
+
+
+<p>These are the functions of matplotlib that can now be accessed using <strong>sympy&#8217;s plot()</strong>, along with where there are used in our current situation:</p>
+
+
+
+<ul><li><a href="https://matplotlib.org/api/_as_gen/matplotlib.patches.Rectangle.html">matplotlib.patches.Rectangle</a>&nbsp;-to draw the beam</li><li><a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.annotate.html">matplotlib.pyplot.annotate</a>&nbsp;&#8211; to draw arrows of load</li><li><a href="https://matplotlib.org/3.1.1/api/markers_api.html">matplotlib.markers</a>&#8211; to draw supports and moment loads</li><li><a href="https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.fill_between.html">fill_between()</a> &#8211; to fill an area with color</li></ul>
+
+
+
+<p>Another thing which is worth mentioning is that to use <strong>fill_between() </strong>we would require numpy&#8217;s <strong>arange()</strong> for sure. Although it might be better if we could avoid using an external module directly, but I guess this is unavoidable for now. </p>
+
+
+
+<p>Also, I have added an option for the user to scale the plot and get a pictorial view of it in case where the plotting with the exact dimensions doesn&#8217;t produce a decent diagram. For eg. If the magnitude of the load (order &gt;= 0) is relatively higher to other applied loads or to the length of the beam, the load plot might get out of the final plot window. </p>
+
+
+
+<p>Here is an example:</p>
+
+
+<pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate">
+&gt;&gt;&gt; R1, R2 = symbols('R1, R2')
+&gt;&gt;&gt; E, I = symbols('E, I')
+
+&gt;&gt;&gt; b1 = Beam(50, 20, 30)
+
+&gt;&gt;&gt; b1.apply_load(10, 2, -1)
+&gt;&gt;&gt; b1.apply_load(R1, 10, -1)
+&gt;&gt;&gt; b1.apply_load(R2, 30, -1)
+&gt;&gt;&gt; b1.apply_load(90, 5, 0, 23)
+&gt;&gt;&gt; b1.apply_load(10, 30, 1, 50)
+&gt;&gt;&gt; b1.apply_support(50, "pin")
+&gt;&gt;&gt; b1.apply_support(0, "fixed")
+&gt;&gt;&gt; b1.apply_support(20, "roller")
+# case 1 on the left
+&gt;&gt;&gt; p = b1.draw()
+&gt;&gt;&gt; p.show()
+
+# case 2 on the right
+&gt;&gt;&gt; p1 = b1.draw(pictorial=True)
+&gt;&gt;&gt; p1.show()
+</pre>
+
+
+
+<figure class="wp-block-image size-large"><img alt="" class="wp-image-107" src="https://ishanaj.files.wordpress.com/2019/08/screenshot-10-08-2019-23_04_45.png?w=736" /></figure>
+
+
+
+<h2><strong>Next Week:</strong></h2>
+
+
+
+<ul><li>Getting leftover PR&#8217;s merged</li><li>Initiating implementation of Truss class</li></ul>
+
+
+
+<p>Will keep you updated!</p>
+
+
+
+<p>Thanks!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-93d9ff54 feed-" id="item-e550ccdc">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -2783,120 +2925,6 @@ args = [d/(a*b)*t for t in roots(t**p - e, t).keys()]
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-403273e0 feed-" id="item-525c2b0f">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/shubhamkjha.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://shubhamkjha.github.io/2019/07/15/GSoC-2019-Week-6-and-7.html">00:00, Monday, 15 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://shubhamkjha.github.io/2019/07/15/GSoC-2019-Week-6-and-7.html">Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 6 and 7</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/shubhamkjha.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://shubhamkjha.github.io/2019/07/15/GSoC-2019-Week-6-and-7.html">00:00, Monday, 15 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://shubhamkjha.github.io/2019/07/15/GSoC-2019-Week-6-and-7.html">GSoC 2019: Week 6 and 7</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>With this ends the seventh week of the official coding period. During the end of 6th week and the beginning of 7th week, I was mostly travelling, so I was not able to write a blog for the sixth week. Instead, I will try to summarize my work during the last two weeks here.</p>
-
-<p>For the last few weeks, I have been focused on optimizing the code of new assumptions to enhance its performance. Most of my work has been exploratory, as Aaron says &#128517;. Indeed I have dry-run, backtracked, profiled, and ran the same code with a debugger too many times to understand the slow parts and the improvements I can make here and there. Mostly the code is optimized given the class structure of SymPy. But it is also the class structure that is adding up to the performance issues. Already noted in my last blog, classes like <code class="highlighter-rouge">And</code> and <code class="highlighter-rouge">Or</code> sorts their <em>args</em>, hence take a great amount of time. But other SymPy class constructors also take significant time.</p>
-
-<p>With the success of fifth week&#8217;s attempt, I have been desperate to bring down the execution time &#128517;. Some of the attempts I have made, which are included in <a href="https://github.com/sympy/sympy/pull/17144">#17144</a>, are:</p>
-
-<ul>
-  <li>I have modified <strong>CNF</strong> class, which essentially is a low-level implementation for the <a href="https://en.wikipedia.org/wiki/Conjunctive_normal_form">cnf</a> of any boolean expression. <strong>CNF</strong> object holds a set of clauses. These clauses are themselves <code class="highlighter-rouge">frozenset</code> of <strong>Literal</strong> objects. <strong>Literal</strong> class is being implemented just to reduce the unnecessary creation of <code class="highlighter-rouge">Not</code> objects (It takes significant execution time and is called many times).</li>
-  <li>I have also modified the code of <em>sympify()</em>, it appeared to take more time than expected when the argument is a SymPy object already. Consider this, almost one-third execution time.</li>
-</ul>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="s">'x'</span><span class="p">)</span>
-
-<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">timeit</span> <span class="n">sympify</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c"># before change</span>
-<span class="mi">601</span> <span class="n">ns</span> <span class="err">&#177;</span> <span class="mf">14.6</span> <span class="n">ns</span> <span class="n">per</span> <span class="n">loop</span> <span class="p">(</span><span class="n">mean</span> <span class="err">&#177;</span> <span class="n">std</span><span class="o">.</span> <span class="n">dev</span><span class="o">.</span> <span class="n">of</span> <span class="mi">7</span> <span class="n">runs</span><span class="p">,</span> <span class="mi">1000000</span> <span class="n">loops</span> <span class="n">each</span><span class="p">)</span>
-
-<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">timeit</span> <span class="n">sympify</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c"># after change</span>
-<span class="mi">239</span> <span class="n">ns</span> <span class="err">&#177;</span> <span class="mf">11.8</span> <span class="n">ns</span> <span class="n">per</span> <span class="n">loop</span> <span class="p">(</span><span class="n">mean</span> <span class="err">&#177;</span> <span class="n">std</span><span class="o">.</span> <span class="n">dev</span><span class="o">.</span> <span class="n">of</span> <span class="mi">7</span> <span class="n">runs</span><span class="p">,</span> <span class="mi">1000000</span> <span class="n">loops</span> <span class="n">each</span><span class="p">)</span>
-</code></pre></div></div>
-
-<ul>
-  <li>Finally, I rewrote <code class="highlighter-rouge">to_cnf()</code> for <strong>CNF</strong> objects. By using mostly Python&#8217;s built-ins and removing any SymPy object construction during its execution. The performance gain is quite subtle &#128526;.</li>
-</ul>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="o">*</span>
-
-<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">sympy.abc</span> <span class="kn">import</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span>
-
-<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&amp;</span> <span class="n">y</span> <span class="o">&amp;</span> <span class="n">z</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span> <span class="n">a</span> <span class="o">&amp;</span> <span class="n">b</span> <span class="o">&amp;</span> <span class="n">c</span><span class="p">)</span>
-
-<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">sympy.logic.boolalg</span> <span class="kn">import</span> <span class="n">CNF</span>
-
-<span class="c"># Before</span>
-<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">timeit</span> <span class="n">CNF</span><span class="o">.</span><span class="n">from_prop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="c"># It is using to_cnf()</span>
-<span class="mf">1.41</span> <span class="n">ms</span> <span class="err">&#177;</span> <span class="mi">18</span> <span class="err">&#181;</span><span class="n">s</span> <span class="n">per</span> <span class="n">loop</span> <span class="p">(</span><span class="n">mean</span> <span class="err">&#177;</span> <span class="n">std</span><span class="o">.</span> <span class="n">dev</span><span class="o">.</span> <span class="n">of</span> <span class="mi">7</span> <span class="n">runs</span><span class="p">,</span> <span class="mi">1000</span> <span class="n">loops</span> <span class="n">each</span><span class="p">)</span>
-
-<span class="c"># after</span>
-<span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">timeit</span> <span class="n">CNF</span><span class="o">.</span><span class="n">from_prop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="c"># It is using the new to_CNF()</span>
-<span class="mf">31.5</span> <span class="err">&#181;</span><span class="n">s</span> <span class="err">&#177;</span> <span class="mf">1.48</span> <span class="err">&#181;</span><span class="n">s</span> <span class="n">per</span> <span class="n">loop</span> <span class="p">(</span><span class="n">mean</span> <span class="err">&#177;</span> <span class="n">std</span><span class="o">.</span> <span class="n">dev</span><span class="o">.</span> <span class="n">of</span> <span class="mi">7</span> <span class="n">runs</span><span class="p">,</span> <span class="mi">10000</span> <span class="n">loops</span> <span class="n">each</span><span class="p">)</span>
-</code></pre></div></div>
-
-<p>There is definitely a limit to performance we can get with Python. But implementing most of the things in Python built-ins we can definitely make things much faster.</p>
-
-<p>For the upcoming week, I will try to complete the following:</p>
-<ul>
-  <li>The CNF objects are still not simplified. I have to implement simplification to reduce the number of clauses. These have to be fed into <code class="highlighter-rouge">satisfiable</code> at the end, which can benefit from lesser number of clauses.</li>
-  <li><code class="highlighter-rouge">rcall</code> used with <strong>sathandlers</strong> is another major portion having high execution time. I will try to work it out.</li>
-  <li>Clean up the code and make it ready for reviewing.</li>
-</ul>
-
-<p>Apart from that, I will also try to shift my focus towards the other part of my project and write some theory solvers. After all, I need to enhance the assumptions not just make it faster &#128526;.</p>
-
-<p><em>Peace</em></p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
@@ -2925,218 +2953,218 @@ args = [d/(a*b)*t for t in roots(t**p - e, t).keys()]
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.com/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
 <td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://divyanshu132.github.io//">Divyanshu Thakur</a></td>
 <td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arighnaiitg.github.io">GSoC Days</a></td>
 <td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sc0rpi0n101.github.io/categories/gsoc/">Gsoc on Sc0rpi0n's Journey</a></td>
 <td><a class="xmlbutton" href="https://sc0rpi0n101.github.io/categories/gsoc/index.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
 <td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://czgdp1807.github.io/">OpenBlog</a></td>
 <td><a class="xmlbutton" href="https://czgdp1807.github.io/feed.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shikharj.github.io//">Shikhar Jaiswal</a></td>
 <td><a class="xmlbutton" href="https://shikharj.github.io/feed.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamkjha.github.io/">Shubham&#8217;s Blog</a></td>
 <td><a class="xmlbutton" href="https://shubhamkjha.github.io/sympy_feed.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
 <td><a class="xmlbutton" href="https://sidhantnagpal.com/rss-gsoc.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://www.kangzhiq.com">sympy &#8211; Kangzhiq's blog</a></td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ritesh99rakesh.github.io/">Thoughts that Matter</a></td>
 <td><a class="xmlbutton" href="https://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>17:21, Tuesday, 13 August</td>
-<td>17:36, Tuesday, 13 August</td>
+<td>18:22, Tuesday, 13 August</td>
+<td>18:37, Tuesday, 13 August</td>
 </tr>
 </table>
 

@@ -7,6 +7,94 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=105</guid>
+      <author>Ishan Joshi (ishanaj)</author>
+      <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-11- Heading to the final week</title>
+      <pubDate>Tue, 13 Aug 2019 17:26:54 GMT</pubDate>
+      <link>https://ishanaj.wordpress.com/2019/08/13/gsoc19-week-11-heading-to-the-final-week/</link>
+      <description>&lt;p&gt;With the end of this week the &lt;strong&gt;draw()&lt;/strong&gt; function has been completely implemented. The work on &lt;a href="https://github.com/sympy/sympy/pull/17345"&gt;PR #17345&lt;/a&gt; has been completed along with the documentations.&lt;/p&gt;
+
+
+
+&lt;p&gt;As mentioned in the previous blog this PR was an attempt to make the &lt;strong&gt;draw()&lt;/strong&gt; function use SymPy&amp;#8217;s own plot() rather than importing matplotlib externally to plot the diagram. The idea was to plot the load equation which is in terms of singularity function. This would directly plot uniformly distributed load, uniformly varying load and other higher order loads except for point loads and moment loads.&lt;br /&gt; The task was now to plot the remaining parts of the diagram which were:&lt;/p&gt;
+
+
+
+&lt;ul&gt;&lt;li&gt;A rectangle for drawing the beam&lt;/li&gt;&lt;li&gt;Arrows for point loads&lt;/li&gt;&lt;li&gt;Markers for moment loads and supports &lt;/li&gt;&lt;li&gt;Colour filling to fill colour in inside the higher order loads (order &amp;gt;=0).&lt;span id="more-105"&gt;&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;
+
+
+
+&lt;p&gt;Instead of making temporary hacks to implement these, I went a step further to give the plotting module some additional functionalities. Apart from helping in implementing the &lt;strong&gt;draw()&lt;/strong&gt; function, &amp;nbsp;this would also enhance the plotting module.&lt;/p&gt;
+
+
+
+&lt;p&gt;The basic idea was to have some additional keyworded arguments in the &lt;strong&gt;plot()&lt;/strong&gt; function. Every keyworded argument would be a list of dictionaries where each dictionary would represent the arguments (or parameters) that would have been passed in the corresponding matplotlib functions.&lt;/p&gt;
+
+
+
+&lt;p&gt;These are the functions of matplotlib that can now be accessed using &lt;strong&gt;sympy&amp;#8217;s plot()&lt;/strong&gt;, along with where there are used in our current situation:&lt;/p&gt;
+
+
+
+&lt;ul&gt;&lt;li&gt;&lt;a href="https://matplotlib.org/api/_as_gen/matplotlib.patches.Rectangle.html"&gt;matplotlib.patches.Rectangle&lt;/a&gt;&amp;nbsp;-to draw the beam&lt;/li&gt;&lt;li&gt;&lt;a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.annotate.html"&gt;matplotlib.pyplot.annotate&lt;/a&gt;&amp;nbsp;&amp;#8211; to draw arrows of load&lt;/li&gt;&lt;li&gt;&lt;a href="https://matplotlib.org/3.1.1/api/markers_api.html"&gt;matplotlib.markers&lt;/a&gt;&amp;#8211; to draw supports and moment loads&lt;/li&gt;&lt;li&gt;&lt;a href="https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.fill_between.html"&gt;fill_between()&lt;/a&gt; &amp;#8211; to fill an area with color&lt;/li&gt;&lt;/ul&gt;
+
+
+
+&lt;p&gt;Another thing which is worth mentioning is that to use &lt;strong&gt;fill_between() &lt;/strong&gt;we would require numpy&amp;#8217;s &lt;strong&gt;arange()&lt;/strong&gt; for sure. Although it might be better if we could avoid using an external module directly, but I guess this is unavoidable for now. &lt;/p&gt;
+
+
+
+&lt;p&gt;Also, I have added an option for the user to scale the plot and get a pictorial view of it in case where the plotting with the exact dimensions doesn&amp;#8217;t produce a decent diagram. For eg. If the magnitude of the load (order &amp;gt;= 0) is relatively higher to other applied loads or to the length of the beam, the load plot might get out of the final plot window. &lt;/p&gt;
+
+
+
+&lt;p&gt;Here is an example:&lt;/p&gt;
+
+
+&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
+&amp;gt;&amp;gt;&amp;gt; R1, R2 = symbols('R1, R2')
+&amp;gt;&amp;gt;&amp;gt; E, I = symbols('E, I')
+
+&amp;gt;&amp;gt;&amp;gt; b1 = Beam(50, 20, 30)
+
+&amp;gt;&amp;gt;&amp;gt; b1.apply_load(10, 2, -1)
+&amp;gt;&amp;gt;&amp;gt; b1.apply_load(R1, 10, -1)
+&amp;gt;&amp;gt;&amp;gt; b1.apply_load(R2, 30, -1)
+&amp;gt;&amp;gt;&amp;gt; b1.apply_load(90, 5, 0, 23)
+&amp;gt;&amp;gt;&amp;gt; b1.apply_load(10, 30, 1, 50)
+&amp;gt;&amp;gt;&amp;gt; b1.apply_support(50, "pin")
+&amp;gt;&amp;gt;&amp;gt; b1.apply_support(0, "fixed")
+&amp;gt;&amp;gt;&amp;gt; b1.apply_support(20, "roller")
+# case 1 on the left
+&amp;gt;&amp;gt;&amp;gt; p = b1.draw()
+&amp;gt;&amp;gt;&amp;gt; p.show()
+
+# case 2 on the right
+&amp;gt;&amp;gt;&amp;gt; p1 = b1.draw(pictorial=True)
+&amp;gt;&amp;gt;&amp;gt; p1.show()
+&lt;/pre&gt;
+
+
+
+&lt;figure class="wp-block-image size-large"&gt;&lt;img alt="" class="wp-image-107" src="https://ishanaj.files.wordpress.com/2019/08/screenshot-10-08-2019-23_04_45.png?w=736" /&gt;&lt;/figure&gt;
+
+
+
+&lt;h2&gt;&lt;strong&gt;Next Week:&lt;/strong&gt;&lt;/h2&gt;
+
+
+
+&lt;ul&gt;&lt;li&gt;Getting leftover PR&amp;#8217;s merged&lt;/li&gt;&lt;li&gt;Initiating implementation of Truss class&lt;/li&gt;&lt;/ul&gt;
+
+
+
+&lt;p&gt;Will keep you updated!&lt;/p&gt;
+
+
+
+&lt;p&gt;Thanks!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://czgdp1807.github.io/week_11</guid>
       <author>Gagandeep Singh (czgdp1807)</author>
       <title>Gagandeep Singh (czgdp1807): Week 11 - Final touches</title>
@@ -1096,66 +1184,6 @@ args = [d/(a*b)*t for t in roots(t**p - e, t).keys()]
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;Thank you! Thats all it was!!.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://shubhamkjha.github.io/2019/07/15/GSoC-2019-Week-6-and-7</guid>
-      <author>Shubham Kumar Jha (ShubhamKJha)</author>
-      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 6 and 7</title>
-      <pubDate>Mon, 15 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://shubhamkjha.github.io/2019/07/15/GSoC-2019-Week-6-and-7.html</link>
-      <description>&lt;p&gt;With this ends the seventh week of the official coding period. During the end of 6th week and the beginning of 7th week, I was mostly travelling, so I was not able to write a blog for the sixth week. Instead, I will try to summarize my work during the last two weeks here.&lt;/p&gt;
-
-&lt;p&gt;For the last few weeks, I have been focused on optimizing the code of new assumptions to enhance its performance. Most of my work has been exploratory, as Aaron says &amp;#128517;. Indeed I have dry-run, backtracked, profiled, and ran the same code with a debugger too many times to understand the slow parts and the improvements I can make here and there. Mostly the code is optimized given the class structure of SymPy. But it is also the class structure that is adding up to the performance issues. Already noted in my last blog, classes like &lt;code class="highlighter-rouge"&gt;And&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Or&lt;/code&gt; sorts their &lt;em&gt;args&lt;/em&gt;, hence take a great amount of time. But other SymPy class constructors also take significant time.&lt;/p&gt;
-
-&lt;p&gt;With the success of fifth week&amp;#8217;s attempt, I have been desperate to bring down the execution time &amp;#128517;. Some of the attempts I have made, which are included in &lt;a href="https://github.com/sympy/sympy/pull/17144"&gt;#17144&lt;/a&gt;, are:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;I have modified &lt;strong&gt;CNF&lt;/strong&gt; class, which essentially is a low-level implementation for the &lt;a href="https://en.wikipedia.org/wiki/Conjunctive_normal_form"&gt;cnf&lt;/a&gt; of any boolean expression. &lt;strong&gt;CNF&lt;/strong&gt; object holds a set of clauses. These clauses are themselves &lt;code class="highlighter-rouge"&gt;frozenset&lt;/code&gt; of &lt;strong&gt;Literal&lt;/strong&gt; objects. &lt;strong&gt;Literal&lt;/strong&gt; class is being implemented just to reduce the unnecessary creation of &lt;code class="highlighter-rouge"&gt;Not&lt;/code&gt; objects (It takes significant execution time and is called many times).&lt;/li&gt;
-  &lt;li&gt;I have also modified the code of &lt;em&gt;sympify()&lt;/em&gt;, it appeared to take more time than expected when the argument is a SymPy object already. Consider this, almost one-third execution time.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Symbol&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'x'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;timeit&lt;/span&gt; &lt;span class="n"&gt;sympify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c"&gt;# before change&lt;/span&gt;
-&lt;span class="mi"&gt;601&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="mf"&gt;14.6&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="n"&gt;per&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1000000&lt;/span&gt; &lt;span class="n"&gt;loops&lt;/span&gt; &lt;span class="n"&gt;each&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;timeit&lt;/span&gt; &lt;span class="n"&gt;sympify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c"&gt;# after change&lt;/span&gt;
-&lt;span class="mi"&gt;239&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="mf"&gt;11.8&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="n"&gt;per&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1000000&lt;/span&gt; &lt;span class="n"&gt;loops&lt;/span&gt; &lt;span class="n"&gt;each&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Finally, I rewrote &lt;code class="highlighter-rouge"&gt;to_cnf()&lt;/code&gt; for &lt;strong&gt;CNF&lt;/strong&gt; objects. By using mostly Python&amp;#8217;s built-ins and removing any SymPy object construction during its execution. The performance gain is quite subtle &amp;#128526;.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;
-
-&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy.abc&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;
-
-&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy.logic.boolalg&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;CNF&lt;/span&gt;
-
-&lt;span class="c"&gt;# Before&lt;/span&gt;
-&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;timeit&lt;/span&gt; &lt;span class="n"&gt;CNF&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;from_prop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c"&gt;# It is using to_cnf()&lt;/span&gt;
-&lt;span class="mf"&gt;1.41&lt;/span&gt; &lt;span class="n"&gt;ms&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="mi"&gt;18&lt;/span&gt; &lt;span class="err"&gt;&amp;#181;&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="n"&gt;per&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1000&lt;/span&gt; &lt;span class="n"&gt;loops&lt;/span&gt; &lt;span class="n"&gt;each&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-
-&lt;span class="c"&gt;# after&lt;/span&gt;
-&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;timeit&lt;/span&gt; &lt;span class="n"&gt;CNF&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;from_prop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c"&gt;# It is using the new to_CNF()&lt;/span&gt;
-&lt;span class="mf"&gt;31.5&lt;/span&gt; &lt;span class="err"&gt;&amp;#181;&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="mf"&gt;1.48&lt;/span&gt; &lt;span class="err"&gt;&amp;#181;&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="n"&gt;per&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10000&lt;/span&gt; &lt;span class="n"&gt;loops&lt;/span&gt; &lt;span class="n"&gt;each&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;There is definitely a limit to performance we can get with Python. But implementing most of the things in Python built-ins we can definitely make things much faster.&lt;/p&gt;
-
-&lt;p&gt;For the upcoming week, I will try to complete the following:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;The CNF objects are still not simplified. I have to implement simplification to reduce the number of clauses. These have to be fed into &lt;code class="highlighter-rouge"&gt;satisfiable&lt;/code&gt; at the end, which can benefit from lesser number of clauses.&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;rcall&lt;/code&gt; used with &lt;strong&gt;sathandlers&lt;/strong&gt; is another major portion having high execution time. I will try to work it out.&lt;/li&gt;
-  &lt;li&gt;Clean up the code and make it ready for reviewing.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Apart from that, I will also try to shift my focus towards the other part of my project and write some theory solvers. After all, I need to enhance the assumptions not just make it faster &amp;#128526;.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;Peace&lt;/em&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
