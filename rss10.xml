@@ -133,6 +133,15 @@
 &lt;p&gt;For the last week of coding, my attempt would be to complete both of these PRs and get them merged. Also, I will try to add new facts to sathandlers.&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://arighnaiitg.github.io/2019-08-12-gsoc-week11/</guid>
+      <author>Arighna Chakrabarty (arighnaiitg)</author>
+      <title>Arighna Chakrabarty (arighnaiitg): GSoC Week 11 !!</title>
+      <pubDate>Mon, 12 Aug 2019 07:00:00 GMT</pubDate>
+      <link>https://arighnaiitg.github.io/2019-08-12-gsoc-week11/</link>
+      <description>&lt;p&gt;Week 11 ends.. - 
+          The second last week has also come to an end. We are almost there at the end of the ride. Me and Sartaj had a meeting on 13th of August about the final leftovers to be done, and wrapping up the GSoC work successfully. Here are the works which have...</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html</guid>
       <author>Ankit Pandey (anpandey)</author>
       <title>Ankit Pandey (anpandey): Google Summer of Code Week 10: Matrix Wildcard Redux</title>
@@ -974,71 +983,6 @@ not really sure if it would get merged before final evaluation.&lt;/p&gt;
 &lt;p&gt;This week I learnt to combine the concepts from algorithms and software engineering to develop the stuff I mentioned above. This was the best week of my overall GSoC experience till now.&lt;/p&gt;
 
 &lt;p&gt;A lot more lies ahead. Bye!!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://divyanshu132.github.io//gsoc-week-7</guid>
-      <author>Divyanshu Thakur (divyanshu132)</author>
-      <title>Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 7 - Modify Presentation and Addition of Methods</title>
-      <pubDate>Mon, 15 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://divyanshu132.github.io//gsoc-week-7</link>
-      <description>&lt;p&gt;The seventh week of coding period has ended and a few methods has been introduced to polycyclic groups, also pc presentation has been modified. Previously for pc presentation we were computing the LHS for both power and conjugate relators via separate methods and then finally their RHS was computed.&lt;/p&gt;
-
-&lt;p&gt;Now, the computation of presentation starts from the bottom of the polycyclic generating sequence(pcgs) and polycyclic series. Storing all the previous generators from pcgs and then taking the last generator as the generator which acts as a conjugator and conjugates all the previous generators in the list.&lt;/p&gt;
-
-&lt;p&gt;To get a clear picture let&amp;#8217;s take an example of &lt;code class="highlighter-rouge"&gt;S(4)&lt;/code&gt;
-For S(4) we&amp;#8217;ll have 4 generators in pcgs say &lt;code class="highlighter-rouge"&gt;[x0, x1, x2, x3]&lt;/code&gt; and the &lt;code class="highlighter-rouge"&gt;relative_order vector as [2, 3, 2, 2]&lt;/code&gt;. Starting from bottom of this sequence the presentation is computed in order as below.&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x3**2	       	---| ---&amp;gt; using only [x3] from pcgs and pc_series[1]
-x2**2		   |
-x2**-1*x3*x2	---| from bottom up because pc_series[0] is an identity.
-
-x1**3		---| ---&amp;gt; using [x3, x2] from pcgs and pc_series[2]	
-x1**-1*x3*x1	   | 
-x1**-1*x2*x1	---|      from bottom up(which have both the gens).
-
-x0**2		---| ---&amp;gt; using [x3, x2, x1] from pcgs and pc_series[3]
-x0**-1*x3*x0	   |
-x0**-1*x2*x0	   |      from bottom up(which have all three gens).
-x0**-1*x1*x0	---|
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;There were 3-methods which were added namely:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Exponent vector&lt;/li&gt;
-  &lt;li&gt;Depth&lt;/li&gt;
-  &lt;li&gt;Leading Exponent&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
-&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics.free_groups import free_group
-&amp;gt;&amp;gt;&amp;gt; G = SymmetricGroup(4)
-&amp;gt;&amp;gt;&amp;gt; PcGroup = G.polycyclic_group()
-&amp;gt;&amp;gt;&amp;gt; pcgs = PcGroup.pcgs
-&amp;gt;&amp;gt;&amp;gt; group, x0, x1, x2, x3 = free_group("x0, x1, x2, x3")
-&amp;gt;&amp;gt;&amp;gt; PcGroup.exponent_vector(G[0], group)
-[1, 0, 0, 0]
-&amp;gt;&amp;gt;&amp;gt; exp = PcGroup.exponent_vector(G[1], group)
-&amp;gt;&amp;gt;&amp;gt; g = Permutation()
-&amp;gt;&amp;gt;&amp;gt; for i in range(len(exp)):
-...     g = g*pcgs[i] if exp[i] else g
-... 
-&amp;gt;&amp;gt;&amp;gt; g == G[1]
-True
-&amp;gt;&amp;gt;&amp;gt; 
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;For the details of these methods one can look into the docstrings and doctests of these methods in the PR &lt;a href="https://github.com/sympy/sympy/pull/16991"&gt;sympy/sympy#16991&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Tasks I hope to complete next week:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Get the polycyclic group pr ready to be merged.&lt;/li&gt;
-  &lt;li&gt;Get started with quotient groups.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Till then good byee..&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
