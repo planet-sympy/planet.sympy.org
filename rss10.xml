@@ -142,6 +142,178 @@
           The second last week has also come to an end. We are almost there at the end of the ride. Me and Sartaj had a meeting on 13th of August about the final leftovers to be done, and wrapping up the GSoC work successfully. Here are the works which have...</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://jmig5776.github.io//gsoc-week-11</guid>
+      <author>Jogi Miglani (jmig5776)</author>
+      <title>Jogi Miglani (jmig5776): GSoC 2019 - Week 11</title>
+      <pubDate>Sun, 11 Aug 2019 00:00:00 GMT</pubDate>
+      <link>https://jmig5776.github.io//gsoc-week-11</link>
+      <description>&lt;p&gt;This was the eleventh week meeting with the GSoC mentors which was scheduled on
+Sunday 11th August, 2019 between 11:30 - 12:30 PM (IST). Me, Yathartha and Amit
+were the attendees of the meeting. &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; was discussed in this meeting.&lt;/p&gt;
+
+&lt;p&gt;Here is all the brief description about new solver &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; for solving
+modular equations.&lt;/p&gt;
+&lt;h3 id="what-type-of-equations-to-be-considered-and-what-domain"&gt;What type of equations to be considered and what domain?&lt;/h3&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;A - Mod(B, C) = 0
+
+    A -&amp;gt; This can or cannot be a function specifically(Linear, nth degree single
+         Pow, a**f_x and Add and Mul) of symbol.(But currently its not a
+        function of x)
+    B -&amp;gt; This is surely a function of symbol.
+    C -&amp;gt; It is an integer.
+And domain should be a subset of S.Integers.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h3 id="filtering-out-equations"&gt;Filtering out equations&lt;/h3&gt;
+&lt;p&gt;A check is being applied named &lt;code class="highlighter-rouge"&gt;_is_modular&lt;/code&gt; which verifies that only above
+mentioned type equation should return True.&lt;/p&gt;
+
+&lt;h3 id="working-of-_solve_modular"&gt;Working of &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;&lt;/h3&gt;
+&lt;p&gt;In the starting of it there is a check if domain is a subset of Integers.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;domain.is_subset(S.Integers)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Only domain of integers and it subset are being considered while solving
+these equations.
+Now after this it separates out a modterm and the rest term on either
+sides by this code.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;modterm = list(f.atoms(Mod))[0]
+rhs = -(S.One)*(f.subs(modterm, S.Zero))
+if f.as_coefficients_dict()[modterm].is_negative:
+    # f.as_coefficient(modterm) was returning None don't know why
+    # checks if coefficient of modterm is negative in main equation.
+    rhs *= -(S.One)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Now the equation is being inverted with the helper routine &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt;
+like this.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;n = Dummy('n', integer=True)
+f_x, g_n = _invert_modular(modterm, rhs, n, symbol)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;I am defining n in &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; because &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; contains
+recursive calls to itself so if define the n there then it was going to have
+many instances which of no use. Thats y I am defining it in &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now after the equation is inverted now solution finding takes place.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if f_x is modterm and g_n is rhs:
+        return unsolved_result
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;First of all if &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; fails to invert then a ConditionSet is being
+returned.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;    if f_x is symbol:
+        if domain is not S.Integers:
+            return domain.intersect(g_n)
+        return g_n
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;And if &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; is fully able to invert the equation then only domain
+intersection needs to takes place. &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; inverts the equation
+considering S.Integers as its default domain.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;    if isinstance(g_n, ImageSet):
+        lamda_expr = g_n.lamda.expr
+        lamda_vars = g_n.lamda.variables
+        base_set = g_n.base_set
+        sol_set = _solveset(f_x - lamda_expr, symbol, S.Integers)
+        if isinstance(sol_set, FiniteSet):
+            tmp_sol = EmptySet()
+            for sol in sol_set:
+                tmp_sol += ImageSet(Lambda(lamda_vars, sol), base_set)
+            sol_set = tmp_sol
+        return domain.intersect(sol_set)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;In this case when g_n is an ImageSet of n and f_x is not symbol so the
+equation is being solved by calling &lt;code class="highlighter-rouge"&gt;_solveset&lt;/code&gt; (this will not lead to
+recursion because equation to be entered is free from Mod) and then
+the domain intersection takes place.&lt;/p&gt;
+
+&lt;h3 id="what-does-_invert_modular-do"&gt;What does &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; do?&lt;/h3&gt;
+&lt;p&gt;This function helps to convert the equation &lt;code class="highlighter-rouge"&gt;A - Mod(B, C) = 0&lt;/code&gt; to a
+form (f_x, g_n).
+First of all it checks the possible instances of invertible cases if not then
+it returns the equation as it is.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;a, m = modterm.args
+if not isinstance(a, (Dummy, Symbol, Add, Mul, Pow)):
+        return modterm, rhs
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Now here is the check for complex arguments and returns the equation as it is
+if somewhere it finds I.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if rhs.is_real is False or any(term.is_real is False \
+            for term in list(_term_factors(a))):
+        # Check for complex arguments
+        return modterm, rhs
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Now after this we check of emptyset as a solution by checking range of both
+sides of equation.
+As modterm can have values between [0, m - 1] and if rhs is out of this range
+then emptySet is being returned.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if (abs(rhs) - abs(m)).is_positive or (abs(rhs) - abs(m)) is S.Zero:
+        # if rhs has value greater than value of m.
+        return symbol, EmptySet()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Now the equation haveing these types are being returned as the following&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if a is symbol:
+        return symbol, ImageSet(Lambda(n, m*n + rhs), S.Integers)
+
+    if a.is_Add:
+        # g + h = a
+        g, h = a.as_independent(symbol)
+        if g is not S.Zero:
+            return _invert_modular(Mod(h, m), (rhs - Mod(g, m)) % m, n, symbol)
+
+    if a.is_Mul:
+        # g*h = a
+        g, h = a.as_independent(symbol)
+        if g is not S.One:
+            return _invert_modular(Mod(h, m), (rhs*invert(g, m)) % m, n, symbol)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;The more peculiar case is of &lt;code class="highlighter-rouge"&gt;a.is_Pow&lt;/code&gt; which is handled as following.&lt;/p&gt;
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if a.is_Pow:
+        # base**expo = a
+        base, expo = a.args
+        if expo.has(symbol) and not base.has(symbol):
+            # remainder -&amp;gt; solution independent of n of equation.
+            # m, rhs are made coprime by dividing igcd(m, rhs)
+            try:
+                remainder = discrete_log(m / igcd(m, rhs), rhs, a.base)
+            except ValueError: # log does not exist
+                return modterm, rhs
+            # period -&amp;gt; coefficient of n in the solution and also referred as
+            # the least period of expo in which it is repeats itself.
+            # (a**(totient(m)) - 1) divides m. Here is link of theoram:
+            # (https://en.wikipedia.org/wiki/Euler's_theorem)
+            period = totient(m)
+            for p in divisors(period):
+                # there might a lesser period exist than totient(m).
+                if pow(a.base, p, m / igcd(m, a.base)) == 1:
+                    period = p
+                    break
+            return expo, ImageSet(Lambda(n, period*n + remainder), S.Naturals0)
+        elif base.has(symbol) and not expo.has(symbol):
+            remainder_list = nthroot_mod(rhs, expo, m, all_roots=True)
+            if remainder_list is None:
+                return symbol, EmptySet()
+            g_n = EmptySet()
+            for rem in remainder_list:
+                g_n += ImageSet(Lambda(n, m*n + rem), S.Integers)
+            return base, g_n
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Two cases are being created based of a.is_Pow&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;x**a&lt;/li&gt;
+  &lt;li&gt;a**x&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;x**a -  It is being handled by the helper function &lt;code class="highlighter-rouge"&gt;nthroot_mod&lt;/code&gt; which returns
+        required solution. I am not going into very mch detail for more
+        information you can read the documentation of nthroot_mod.&lt;/p&gt;
+
+&lt;p&gt;a**x - For this &lt;code class="highlighter-rouge"&gt;totient&lt;/code&gt; is being used in the picture whose meaning can be
+       find on this &lt;a href="https://en.wikipedia.org/wiki/Euler's_theorem"&gt;Wikipedia&lt;/a&gt;
+       page. And then its divisors are being checked to find the least period
+       of solutions.&lt;/p&gt;
+
+&lt;p&gt;Hope I am able to clear out everything!!&lt;/p&gt;
+
+&lt;p&gt;Code improvement takes time!!&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html</guid>
       <author>Ankit Pandey (anpandey)</author>
       <title>Ankit Pandey (anpandey): Google Summer of Code Week 10: Matrix Wildcard Redux</title>
@@ -969,20 +1141,6 @@ not really sure if it would get merged before final evaluation.&lt;/p&gt;
 
 
 &lt;p&gt;Thanks!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://czgdp1807.github.io/week_7</guid>
-      <author>Gagandeep Singh (czgdp1807)</author>
-      <title>Gagandeep Singh (czgdp1807): Week 7 - All about logics and algorithms</title>
-      <pubDate>Mon, 15 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://czgdp1807.github.io/week_7/</link>
-      <description>&lt;p&gt;This week required a lot of thinking before jumping to code the stuff. Interested? Okay move on to next paragraph.&lt;/p&gt;
-
-&lt;p&gt;Basically, I worked on three PRs, &lt;a href="https://github.com/sympy/sympy/pull/17163"&gt;#17163&lt;/a&gt; for continuous time Markov chains, &lt;a href="https://github.com/sympy/sympy/pull/17174"&gt;#17174&lt;/a&gt; for random matrices and &lt;a href="https://github.com/sympy/sympy/pull/17146"&gt;#17146&lt;/a&gt; for symbolic Ranges. The first and the last PRs are very much intensive. I developed a new algorithm for the query handler of &lt;code class="highlighter-rouge"&gt;ContinuousMarkovChain.probability&lt;/code&gt; method, because the previous one which I implemented in &lt;code class="highlighter-rouge"&gt;DiscreteMarkovChain.probability&lt;/code&gt;, was not easy to maintain, quite ad-hoc, rigid and difficult to extend. The philosophy behind the algorithm is recursion i.e., boil everything down to &lt;code class="highlighter-rouge"&gt;Relational&lt;/code&gt; query, convert them to sets and then calculate the probability. You can find the complete description &lt;a href="https://github.com/sympy/sympy/pull/17163#issuecomment-510939984"&gt;here&lt;/a&gt;. I am waiting for any critical objections from my mentors and after that I will refactor the code as suggested by &lt;a href="https://github.com/oscarbenjamin"&gt;oscarbenjamin&lt;/a&gt; and &lt;a href="https://github.com/jksuom"&gt;jksuom&lt;/a&gt;. So, now let&amp;#8217;s move on to random matrices. As it was to be implemented from scratch, it required a bit of thinking to reach a decent architecture. Currently, the PR is at a basic level, and some more testing is to be done. Now, coming on to symbolic &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt;. Let me tell you, it requires a lot of logical thinking to make &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; accept symbolic parameters. A lot of tests fail, and a lot of debugging has to be done to make a method work. In fact, we might deprecate &lt;code class="highlighter-rouge"&gt;xrange&lt;/code&gt; support from &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; because we are going to drop &lt;code class="highlighter-rouge"&gt;Python 2&lt;/code&gt; support from &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;This week I learnt to combine the concepts from algorithms and software engineering to develop the stuff I mentioned above. This was the best week of my overall GSoC experience till now.&lt;/p&gt;
-
-&lt;p&gt;A lot more lies ahead. Bye!!&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
