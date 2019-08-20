@@ -7,6 +7,32 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://divyanshu132.github.io//gsoc-week-12</guid>
+      <author>Divyanshu Thakur (divyanshu132)</author>
+      <title>Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 11 and 12 - Phase-III Completion</title>
+      <pubDate>Mon, 19 Aug 2019 00:00:00 GMT</pubDate>
+      <link>https://divyanshu132.github.io//gsoc-week-12</link>
+      <description>&lt;p&gt;We&amp;#8217;ve reached to the end of GSoC 2019, end to the really productive and wonderful summer. In the last two weeks I worked on documenting polycyclic groups which got merged as well, here is the PR &lt;a href="https://github.com/sympy/sympy/pull/17399"&gt;sympy/sympy#17399&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Also, the PR on Induced-pcgs and exponent vector for polycyclic subgroups got merged &lt;a href="https://github.com/sympy/sympy/pull/17317"&gt;sympy/sympy#17317&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;#8217;s have a look at some of the highlights of documentation.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The parameters of both the classes(&lt;code class="highlighter-rouge"&gt;PolycyclicGroup&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Collector&lt;/code&gt;) has been discussed in detail.&lt;/li&gt;
+  &lt;li&gt;Conditions for a word to be collected or uncollected is highlighted.&lt;/li&gt;
+  &lt;li&gt;Computation of polycyclic presentation has been explained in detail highlighting the sequence in which presentation is computed with the corresponding pcgs and and polycyclic series elements used.&lt;/li&gt;
+  &lt;li&gt;Other methods like &lt;code class="highlighter-rouge"&gt;subword_index&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;exponent_vector&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;depth&lt;/code&gt; are also documented.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;An example is provided for every functionality.
+For more details one can visit:
+&lt;a href="https://docs.sympy.org/dev/modules/combinatorics/pc_groups.html"&gt;https://docs.sympy.org/dev/modules/combinatorics/pc_groups.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Now, I&amp;#8217;m supposed to prepare a final report presenting all the work done. Will update with report next week.
+In addition to the report preparation I&amp;#8217;ll try to add &lt;code class="highlighter-rouge"&gt;Parameters&lt;/code&gt; section int the &lt;code class="highlighter-rouge"&gt;docstrings&lt;/code&gt; for various classes and methods of &lt;code class="highlighter-rouge"&gt;pc_groups&lt;/code&gt;.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=105</guid>
       <author>Ishan Joshi (ishanaj)</author>
       <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-11- Heading to the final week</title>
@@ -997,107 +1023,6 @@ Overall, according to me phase 2 was a great learning and logical experience.&lt
 
 
 &lt;p&gt;By the end of this week, 3 formats are basically implemented: List Of List(LIL), Coordiante list(COO) and Compressed Sparse Row(CSR). &lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://divyanshu132.github.io//gsoc-week-8</guid>
-      <author>Divyanshu Thakur (divyanshu132)</author>
-      <title>Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 8 - Phase-II Completion</title>
-      <pubDate>Sat, 20 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://divyanshu132.github.io//gsoc-week-8</link>
-      <description>&lt;p&gt;Phase-II has been completed and now it&amp;#8217;s time to present all the work done during this phase. This week&amp;#8217;s blog is little early in comparison to my previous blogs because I&amp;#8217;ll not be active for next 2 upcoming days. In the whole phase we worked on &lt;strong&gt;Computations with Polycyclic Groups&lt;/strong&gt; though the tasks mentioned in proposal for this phase were quite different. But let me tell you it worth that much time, Computation with Polycyclic groups(solvable groups) shows the actual development in computational group theory.&lt;/p&gt;
-
-&lt;p&gt;Below are the functioalities that were added to the polycyclic group in this phase, Here is the PR &lt;a href="https://github.com/sympy/sympy/pull/16991"&gt;sympy/sympy#16991&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Testing Collector&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;As discussed in &lt;a href="https://divyanshu132.github.io/gsoc-week-5"&gt;week-5 blog&lt;/a&gt; at the time of Collector implementation we did not have the implementation of polycyclic presentation so some hand made tests were used. Here is an example of &lt;code class="highlighter-rouge"&gt;S(4)&lt;/code&gt;.&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
-&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics.free_groups import free_group
-&amp;gt;&amp;gt;&amp;gt; F, x0, x1, x2, x3 = free_group("x0, x1, x2, x3")
-&amp;gt;&amp;gt;&amp;gt; pc_relators = { x0**2: (), x1**3: (), x2**2: (), x3**2: (),
-...                 x0**-1*x1*x0: x1**2, x0**-1*x2*x0: x2*x3,
-...                 x0**-1*x3*x0: x3, x1**-1*x2*x1: x3,
-...                 x1**-1*x3*x1: x2*x3, x2**-1*x3*x2: x3
-...               }
-&amp;gt;&amp;gt;&amp;gt; word = x3*x2*x1*x0
-&amp;gt;&amp;gt;&amp;gt; relative_order = [2, 3, 2, 2]
-&amp;gt;&amp;gt;&amp;gt; group = word.group
-&amp;gt;&amp;gt;&amp;gt; collector = Collector(pc_relators, relative_order, group)
-&amp;gt;&amp;gt;&amp;gt; collector.collected_word(word)
-x0*x1**2*x2*x3
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;The final word &lt;code class="highlighter-rouge"&gt;x0*x1**2*x2*x3&lt;/code&gt; is said to be collected. For more information about collected word please look into the docstrings of the method &lt;code class="highlighter-rouge"&gt;Collector.collected_word()&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Computation of Polycyclic Sequence and Series&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Polycyclic sequence and series are the building blocks of polycyclic presentation (have a look at &lt;a href="https://divyanshu132.github.io/gsoc-week-6"&gt;week-6 blog&lt;/a&gt;) . One thing to note is that, the derived series of a group may change on different course of execution so we may have different pc sequence and series for the same group.&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
-&amp;gt;&amp;gt;&amp;gt; G = SymmetricGroup(4)
-&amp;gt;&amp;gt;&amp;gt; PcGroup = G.polycyclic_group()
-&amp;gt;&amp;gt;&amp;gt; PcGroup.pcgs
-[Permutation(0, 1, 2, 3), Permutation(3)(0, 2, 1), Permutation(0, 3)(1, 2), Permutation(0, 1)(2, 3)]
-&amp;gt;&amp;gt;&amp;gt; 
-&amp;gt;&amp;gt;&amp;gt; PcGroup.pc_series[0] == G
-True
-&amp;gt;&amp;gt;&amp;gt; PcGroup.pc_series[1] == AlternatingGroup(4)
-True
-&amp;gt;&amp;gt;&amp;gt; PcGroup.relative_order()
-[2, 3, 2, 2]
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;strong&gt;Computation of Polycyclic Presentation&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Few approaches were used to compute polycyclic presentation, the current implementation is discussed in &lt;a href="https://divyanshu132.github.io/gsoc-week-7"&gt;week-7 blog&lt;/a&gt;. Below is a small example to show the functionality.&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
-&amp;gt;&amp;gt;&amp;gt; G = SymmetricGroup(4)
-&amp;gt;&amp;gt;&amp;gt; PcGroup = G.polycyclic_group()
-&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics.free_groups import free_group
-&amp;gt;&amp;gt;&amp;gt; len(PcGroup.pcgs)
-4
-&amp;gt;&amp;gt;&amp;gt; free_group, x0, x1, x2, x3 = free_group("x0, x1, x2, x3")
-&amp;gt;&amp;gt;&amp;gt; PcGroup.pc_presentation(free_group)
-{x3**2: (), x2**2: (), x2**-1*x3*x2: x3, x1**3: (), x1**-1*x3*x1: x2*x3, x1**-1*x2*x1: x3, x0**2: x2*x3, x0**-1*x3*x0: x2, x0**-1*x2*x0: x3, x0**-1*x1*x0: x1**2*x3}
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;As I mentioned above &lt;code class="highlighter-rouge"&gt;pc_sequence&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;pc_series&lt;/code&gt; may change on different course of execution and hence the &lt;code class="highlighter-rouge"&gt;pc_presentation&lt;/code&gt; changes accordingly.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Testing Presentation&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Due to the changing &lt;code class="highlighter-rouge"&gt;pc_presentation&lt;/code&gt; initially, it was difficult to test presentation but later on a method has been developed and a good amount of code is introduced to test the presentation. The details can be found in the module &lt;code class="highlighter-rouge"&gt;test_pc_groups.py&lt;/code&gt; in the above PR.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Additional methods for Polycyclic groups&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;There were few additional methods added to the polycyclic group.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;exponent_vector()&lt;/code&gt; :- It represents the given generator of a polycyclic group with the help of product of &lt;code class="highlighter-rouge"&gt;pcgs&lt;/code&gt;.&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;depth()&lt;/code&gt; :- Depth of the first non-zero element in &lt;code class="highlighter-rouge"&gt;exponent_vector&lt;/code&gt;.&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;leading_exponent()&lt;/code&gt; :- It represents the power of polycyclic generator at the above depth.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
-&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics.free_groups import free_group
-&amp;gt;&amp;gt;&amp;gt; G = SymmetricGroup(4)
-&amp;gt;&amp;gt;&amp;gt; PcGroup = G.polycyclic_group()
-&amp;gt;&amp;gt;&amp;gt; pcgs = PcGroup.pcgs
-&amp;gt;&amp;gt;&amp;gt; len(pcgs)
-4
-&amp;gt;&amp;gt;&amp;gt; free_group, x0, x1, x2, x3 = free_group("x0, x1, x2, x3")
-&amp;gt;&amp;gt;&amp;gt; PcGroup.exponent_vector(G[1], F)
-[1, 1, 1, 1]
-&amp;gt;&amp;gt;&amp;gt; G[1] == pcgs[0]*pcgs[1]*pcgs[2]*pcgs[3]
-True
-&amp;gt;&amp;gt;&amp;gt; PcGroup.depth(G[1], free_group) == 1
-&amp;gt;&amp;gt;&amp;gt; PcGroup.leading_exponent(G[1], free_group) == 1
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Currently, we are discussing about organizing above methods of polycyclic group. As Kalevi feels that the suitable place for &lt;code class="highlighter-rouge"&gt;pc_presentation&lt;/code&gt;(currently, it&amp;#8217;s a method of &lt;code class="highlighter-rouge"&gt;PolycyclicGroup class&lt;/code&gt;) is the &lt;code class="highlighter-rouge"&gt;Collector class&lt;/code&gt;, Perhaps the structure of both the classes should be changed and the same will be reflected in the examples mentioned above.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
