@@ -7,6 +7,398 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://asmeurer.com/blog/posts/quansight-labs-work-update-for-september-2019/</guid>
+      <author>Aaron Meurer (asmeurer)</author>
+      <title>Aaron Meurer (asmeurer): Quansight Labs Work Update for September, 2019</title>
+      <pubDate>Mon, 07 Oct 2019 05:00:00 GMT</pubDate>
+      <link>https://asmeurer.com/blog/posts/quansight-labs-work-update-for-september-2019/</link>
+      <description>&lt;div&gt;&lt;p&gt;&lt;em&gt;This post has been cross-posted on the &lt;a href="https://labs.quansight.org/blog/2019/10/quansight-labs-work-update-for-september-2019/"&gt;Quansight Labs
+Blog&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;As of November, 2018, I have been working at
+&lt;a href="https://www.quansight.com/"&gt;Quansight&lt;/a&gt;. Quansight is a new startup founded by
+the same people who started Anaconda, which aims to connect companies and open
+source communities, and offers consulting, training, support and mentoring
+services. I work under the heading of &lt;a href="https://www.quansight.com/labs"&gt;Quansight
+Labs&lt;/a&gt;. Quansight Labs is a public-benefit
+division of Quansight. It provides a home for a "PyData Core Team" which
+consists of developers, community managers, designers, and documentation
+writers who build open-source technology and grow open-source communities
+around all aspects of the AI and Data Science workflow.&lt;/p&gt;
+&lt;p&gt;My work at Quansight is split between doing open source consulting for various
+companies, and working on SymPy.
+&lt;a href="https://www.sympy.org/en/index.html"&gt;SymPy&lt;/a&gt;, for those who do not know, is a
+symbolic mathematics library written in pure Python. I am the lead maintainer
+of SymPy.&lt;/p&gt;
+&lt;p&gt;In this post, I will detail some of the open source work that I have done
+recently, both as part of my open source consulting, and as part of my work on
+SymPy for Quansight Labs.&lt;/p&gt;
+&lt;h3&gt;Bounds Checking in Numba&lt;/h3&gt;
+&lt;p&gt;As part of work on a client project, I have been working on contributing code
+to the &lt;a href="https://numba.pydata.org"&gt;numba&lt;/a&gt; project. Numba is a just-in-time
+compiler for Python. It lets you write native Python code and with the use of
+a simple &lt;code&gt;@jit&lt;/code&gt; decorator, the code will be automatically sped up using LLVM.
+This can result in code that is up to 1000x faster in some cases:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+In [1]: import numba
+
+In [2]: import numpy
+
+In [3]: def test(x):
+   ...:     A = 0
+   ...:     for i in range(len(x)):
+   ...:         A += i*x[i]
+   ...:     return A
+   ...:
+
+In [4]: @numba.njit
+   ...: def test_jit(x):
+   ...:     A = 0
+   ...:     for i in range(len(x)):
+   ...:         A += i*x[i]
+   ...:     return A
+   ...:
+
+In [5]: x = numpy.arange(1000)
+
+In [6]: %timeit test(x)
+249 &amp;#181;s &amp;#177; 5.77 &amp;#181;s per loop (mean &amp;#177; std. dev. of 7 runs, 1000 loops each)
+
+In [7]: %timeit test_jit(x)
+336 ns &amp;#177; 0.638 ns per loop (mean &amp;#177; std. dev. of 7 runs, 1000000 loops each)
+
+In [8]: 249/.336
+Out[8]: 741.0714285714286
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Numba only works for a subset of Python code, and primarily targets code that
+uses NumPy arrays.&lt;/p&gt;
+&lt;p&gt;Numba, with the help of LLVM, achieves this level of performance through many
+optimizations. One thing that it does to improve performance is to remove all
+bounds checking from array indexing. This means that if an array index is out
+of bounds, instead of receiving an &lt;code&gt;IndexError&lt;/code&gt;, you will get garbage, or
+possibly a segmentation fault.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; import numpy as np
+&amp;gt;&amp;gt;&amp;gt; from numba import njit
+&amp;gt;&amp;gt;&amp;gt; def outtabounds(x):
+...     A = 0
+...     for i in range(1000):
+...         A += x[i]
+...     return A
+&amp;gt;&amp;gt;&amp;gt; x = np.arange(100)
+&amp;gt;&amp;gt;&amp;gt; outtabounds(x) # pure Python/NumPy behavior
+Traceback (most recent call last):
+  File "&amp;lt;stdin&amp;gt;", line 1, in &amp;lt;module&amp;gt;
+  File "&amp;lt;stdin&amp;gt;", line 4, in outtabounds
+IndexError: index 100 is out of bounds for axis 0 with size 100
+&amp;gt;&amp;gt;&amp;gt; njit(outtabounds)(x) # the default numba behavior
+-8557904790533229732
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In numba pull request &lt;a href="https://github.com/numba/numba/pull/4432"&gt;#4432&lt;/a&gt;, I am
+working on adding a flag to &lt;code&gt;@njit&lt;/code&gt; that will enable bounds checks for array
+indexing. This will remain disabled by default for performance purposes. But
+you will be able to enable it by passing &lt;code&gt;boundscheck=True&lt;/code&gt; to &lt;code&gt;@njit&lt;/code&gt;, or by
+setting the &lt;code&gt;NUMBA_BOUNDSCHECK=1&lt;/code&gt; environment variable. This will make it
+easier to detect out of bounds issues like the one above. It will work like&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-pycon"&gt;&amp;gt;&amp;gt;&amp;gt; @njit(boundscheck=True)
+... def outtabounds(x):
+...     A = 0
+...     for i in range(1000):
+...         A += x[i]
+...     return A
+&amp;gt;&amp;gt;&amp;gt; x = np.arange(100)
+&amp;gt;&amp;gt;&amp;gt; outtabounds(x) # numba behavior in my pull request #4432
+Traceback (most recent call last):
+  File "&amp;lt;stdin&amp;gt;", line 1, in &amp;lt;module&amp;gt;
+IndexError: index is out of bounds
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The pull request is still in progress, and many things such as the quality of
+the error message reporting will need to be improved. This should make
+debugging issues easier for people who write numba code once it is merged.&lt;/p&gt;
+&lt;h3&gt;removestar&lt;/h3&gt;
+&lt;p&gt;&lt;a href="https://www.asmeurer.com/removestar/"&gt;removestar&lt;/a&gt; is a new tool I wrote to
+automatically replace &lt;code&gt;import *&lt;/code&gt; in Python modules with explicit imports.&lt;/p&gt;
+&lt;p&gt;For those who don't know, Python's &lt;code&gt;import&lt;/code&gt; statement supports so-called
+"wildcard" or "star" imports, like&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-py"&gt;from sympy import *
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This will import every public name from the &lt;code&gt;sympy&lt;/code&gt; module into the current
+namespace. This is often useful because it saves on typing every name that is
+used in the import line. This is especially useful when working interactively,
+where you just want to import every name and minimize typing.&lt;/p&gt;
+&lt;p&gt;However, doing &lt;code&gt;from module import *&lt;/code&gt; is generally frowned upon in Python. It is
+considered acceptable when working interactively at a &lt;code&gt;python&lt;/code&gt; prompt, or in
+&lt;code&gt;__init__.py&lt;/code&gt; files (removestar skips &lt;code&gt;__init__.py&lt;/code&gt; files by default).&lt;/p&gt;
+&lt;p&gt;Some reasons why &lt;code&gt;import *&lt;/code&gt; is bad:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It hides which names are actually imported.&lt;/li&gt;
+&lt;li&gt;It is difficult both for human readers and static analyzers such as
+pyflakes to tell where a given name comes from when &lt;code&gt;import *&lt;/code&gt; is used. For
+example, pyflakes cannot detect unused names (for instance, from typos) in
+the presence of &lt;code&gt;import *&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;If there are multiple &lt;code&gt;import *&lt;/code&gt; statements, it may not be clear which names
+come from which module. In some cases, both modules may have a given name,
+but only the second import will end up being used. This can break people's
+intuition that the order of imports in a Python file generally does not
+matter.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;import *&lt;/code&gt; often imports more names than you would expect. Unless the module
+you import defines &lt;code&gt;__all__&lt;/code&gt; or carefully &lt;code&gt;del&lt;/code&gt;s unused names at the module
+level, &lt;code&gt;import *&lt;/code&gt; will import every public (doesn't start with an
+underscore) name defined in the module file. This can often include things
+like standard library imports or loop variables defined at the top-level of
+the file. For imports from modules (from &lt;code&gt;__init__.py&lt;/code&gt;), &lt;code&gt;from module import *&lt;/code&gt; will include every submodule defined in that module. Using &lt;code&gt;__all__&lt;/code&gt; in
+modules and &lt;code&gt;__init__.py&lt;/code&gt; files is also good practice, as these things are
+also often confusing even for interactive use where &lt;code&gt;import *&lt;/code&gt; is
+acceptable.&lt;/li&gt;
+&lt;li&gt;In Python 3, &lt;code&gt;import *&lt;/code&gt; is syntactically not allowed inside of a function
+definition.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Here are some official Python references stating not to use &lt;code&gt;import *&lt;/code&gt; in
+files:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://docs.python.org/3/faq/programming.html?highlight=faq#what-are-the-best-practices-for-using-import-in-a-module"&gt;The official Python
+FAQ&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In general, don&amp;#8217;t use &lt;code&gt;from modulename import *&lt;/code&gt;. Doing so clutters the
+importer&amp;#8217;s namespace, and makes it much harder for linters to detect
+undefined names.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://www.python.org/dev/peps/pep-0008/#imports"&gt;PEP 8&lt;/a&gt; (the official
+Python style guide):&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Wildcard imports (&lt;code&gt;from &amp;lt;module&amp;gt; import *&lt;/code&gt;) should be avoided, as they
+make it unclear which names are present in the namespace, confusing both
+readers and many automated tools.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Unfortunately, if you come across a file in the wild that uses &lt;code&gt;import *&lt;/code&gt;, it
+can be hard to fix it, because you need to find every name in the file that is
+imported from the &lt;code&gt;*&lt;/code&gt; and manually add an import for it. Removestar makes this
+easy by finding which names come from &lt;code&gt;*&lt;/code&gt; imports and replacing the import
+lines in the file automatically.&lt;/p&gt;
+&lt;p&gt;As an example, suppose you have a module &lt;code&gt;mymod&lt;/code&gt; like&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;mymod/
+  | __init__.py
+  | a.py
+  | b.py
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;with&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-py"&gt;# mymod/a.py
+from .b import *
+
+def func(x):
+    return x + y
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;and&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-py"&gt;# mymod/b.py
+x = 1
+y = 2
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then &lt;code&gt;removestar&lt;/code&gt; works like:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ removestar -i mymod/
+$ cat mymod/a.py
+# mymod/a.py
+from .b import y
+
+def func(x):
+    return x + y
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;-i&lt;/code&gt; flag causes it to edit &lt;code&gt;a.py&lt;/code&gt; in-place. Without it, it would just
+print a diff to the terminal.&lt;/p&gt;
+&lt;p&gt;For implicit star imports and explicit star imports from the same module,
+&lt;code&gt;removestar&lt;/code&gt; works statically, making use of
+&lt;a href="https://github.com/PyCQA/pyflakes"&gt;pyflakes&lt;/a&gt;. This means none of the code is
+actually executed. For external imports, it is not possible to work statically
+as external imports may include C extension modules, so in that case, it
+imports the names dynamically.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;removestar&lt;/code&gt; can be installed with pip or conda:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;pip install removestar
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;or if you use conda&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;conda install -c conda-forge removestar
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;sphinx-math-dollar&lt;/h3&gt;
+&lt;p&gt;In SymPy, we make heavy use of LaTeX math in our documentation. For example,
+in our &lt;a href="https://docs.sympy.org/dev/modules/functions/special.html#sympy.functions.special.hyper.hyper"&gt;special functions
+documentation&lt;/a&gt;,
+most special functions are defined using a LaTeX formula, like &lt;img alt="The docs for besselj" src="https://asmeurer.com/blog/besselj_docs.png" /&gt;&lt;/p&gt;
+&lt;p&gt;(from &lt;a href="https://docs.sympy.org/dev/modules/functions/special.html#sympy.functions.special.bessel.besselj"&gt;https://docs.sympy.org/dev/modules/functions/special.html#sympy.functions.special.bessel.besselj&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;However, the source for this math in the docstring of the function uses RST
+syntax:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-py"&gt;class besselj(BesselBase):
+    """
+    Bessel function of the first kind.
+
+    The Bessel `J` function of order `\nu` is defined to be the function
+    satisfying Bessel's differential equation
+
+    .. math ::
+        z^2 \frac{\mathrm{d}^2 w}{\mathrm{d}z^2}
+        + z \frac{\mathrm{d}w}{\mathrm{d}z} + (z^2 - \nu^2) w = 0,
+
+    with Laurent expansion
+
+    .. math ::
+        J_\nu(z) = z^\nu \left(\frac{1}{\Gamma(\nu + 1) 2^\nu} + O(z^2) \right),
+
+    if :math:`\nu` is not a negative integer. If :math:`\nu=-n \in \mathbb{Z}_{&amp;lt;0}`
+    *is* a negative integer, then the definition is
+
+    .. math ::
+        J_{-n}(z) = (-1)^n J_n(z).
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Furthermore, in SymPy's documentation we have configured it so that text
+between `single backticks` is rendered as math. This was originally done for
+convenience, as the alternative way is to write &lt;code&gt;:math:`\nu`&lt;/code&gt; every
+time you want to use inline math. But this has lead to many people being
+confused, as they are used to Markdown where `single backticks` produce
+&lt;code&gt;code&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;A better way to write this would be if we could delimit math with dollar
+signs, like &lt;code&gt;$\nu$&lt;/code&gt;. This is how things are done in LaTeX documents, as well
+as in things like the Jupyter notebook.&lt;/p&gt;
+&lt;p&gt;With the new &lt;a href="https://www.sympy.org/sphinx-math-dollar/"&gt;sphinx-math-dollar&lt;/a&gt;
+Sphinx extension, this is now possible. Writing &lt;code&gt;$\nu$&lt;/code&gt; produces $\nu$, and
+the above docstring can now be written as&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-py"&gt;class besselj(BesselBase):
+    """
+    Bessel function of the first kind.
+
+    The Bessel $J$ function of order $\nu$ is defined to be the function
+    satisfying Bessel's differential equation
+
+    .. math ::
+        z^2 \frac{\mathrm{d}^2 w}{\mathrm{d}z^2}
+        + z \frac{\mathrm{d}w}{\mathrm{d}z} + (z^2 - \nu^2) w = 0,
+
+    with Laurent expansion
+
+    .. math ::
+        J_\nu(z) = z^\nu \left(\frac{1}{\Gamma(\nu + 1) 2^\nu} + O(z^2) \right),
+
+    if $\nu$ is not a negative integer. If $\nu=-n \in \mathbb{Z}_{&amp;lt;0}$
+    *is* a negative integer, then the definition is
+
+    .. math ::
+        J_{-n}(z) = (-1)^n J_n(z).
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We also plan to add support for &lt;code&gt;$$double dollars$$&lt;/code&gt; for display math so that &lt;code&gt;.. math ::&lt;/code&gt; is no longer needed either .&lt;/p&gt;
+&lt;p&gt;For end users, the documentation on &lt;a href="https://docs.sympy.org"&gt;docs.sympy.org&lt;/a&gt;
+will continue to render exactly the same, but for developers, it is much
+easier to read and write.&lt;/p&gt;
+&lt;p&gt;This extension can be easily used in any Sphinx project. Simply install it
+with pip or conda:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;pip install sphinx-math-dollar
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;or&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;conda install -c conda-forge sphinx-math-dollar
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then enable it in your &lt;code&gt;conf.py&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-py"&gt;extensions = ['sphinx_math_dollar', 'sphinx.ext.mathjax']
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;Google Season of Docs&lt;/h3&gt;
+&lt;p&gt;The above work on sphinx-math-dollar is part of work I have been doing to
+improve the tooling around SymPy's documentation. This has been to assist our
+technical writer Lauren Glattly, who is working with SymPy for the next three
+months as part of the new &lt;a href="https://developers.google.com/season-of-docs/"&gt;Google Season of
+Docs&lt;/a&gt; program. Lauren's project
+is to improve the consistency of our docstrings in SymPy. She has already
+identified many key ways our docstring documentation can be improved, and is
+currently working on a style guide for writing docstrings. Some of the issues
+that Lauren has identified require improved tooling around the way the HTML
+documentation is built to fix. So some other SymPy developers and I have been
+working on improving this, so that she can focus on the technical writing
+aspects of our documentation.&lt;/p&gt;
+&lt;p&gt;Lauren has created a draft style guide for documentation at
+&lt;a href="https://github.com/sympy/sympy/wiki/SymPy-Documentation-Style-Guide"&gt;https://github.com/sympy/sympy/wiki/SymPy-Documentation-Style-Guide&lt;/a&gt;. Please
+take a moment to look at it and if you have any feedback on it, comment below
+or write to the SymPy mailing list.&lt;/p&gt;&lt;/div&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://shikharj.github.io//2019/10/06/Literature-Recommendation-Introduction-To-Linear-Algebra-by-Gilbert-Strang</guid>
+      <author>Shikhar Jaiswal (ShikharJ)</author>
+      <title>Shikhar Jaiswal (ShikharJ): Literature Recommendation - Introduction To Linear Algebra by Gilbert Strang</title>
+      <pubDate>Sun, 06 Oct 2019 00:00:00 GMT</pubDate>
+      <link>https://shikharj.github.io//2019/10/06/Literature-Recommendation-Introduction-To-Linear-Algebra-by-Gilbert-Strang/</link>
+      <description>&lt;p&gt;&lt;img align="center" src="https://shikharj.github.io/assets/ILAGS.png" /&gt;&lt;/p&gt;
+
+&lt;p&gt;For those of you greenhorns that have just made your venture into the world of machine learning, it must not come as a surprise to you that linear algebra is the purest soul of the realm. Most of the ML and optimization world borrows ideas heavily from the same, and it is single-handedly the most important area of mathematics that will dictate your level of thinking while tackling ML problems.&lt;/p&gt;
+
+&lt;p&gt;As such, it is altogether fitting to write about a text that has probably helped thousands of undergraduates to get up and running with their knowledge of linear algebra. Prof. Gilbert Strang&amp;#8217;s book is one such epitome of awesome insights into the field. There are probably very books out there that are worth reading over and over again, Strang&amp;#8217;s book being one such gem. I have personally read this book many times over the course of my undergrad, and have always felt that I learnt something completely new each time. I would not be exaggerating if I said that you should keep this book in your personal collection of self-help books. Here are some of the points which I must mention, which make it such an important read.&lt;/p&gt;
+
+&lt;h2 id="the-writing-style"&gt;The Writing Style&lt;/h2&gt;
+&lt;p&gt;Strang takes up a non-rigorous approach to teaching the subject. He mentions a concept dead straight, tells you why it is important and mentions how it relates to the bigger picture of algebraic and geometric meaning. Very few formal proofs are provided in the text, with the author emphasizing on the importance to derive the non-rigorous connections to other fields of mathematics.&lt;/p&gt;
+
+&lt;p&gt;While many professionals would argue that this method of teaching is specifically aimed at non-mathematicians (since the flavour is rather numerical than theoretical), I personally think this is an amazing way to approach a deeply theoretical subject without having to raise the bar of abstraction to the level that is incomprehensible to most people. If you have read any standard book on abstract algebra, you would notice that linear algebra and vector fields are typically not even introduced in the first ten or so chapters. This leads to a huge jump in abstraction that most undergraduates would not be prepared to handle. That being said, one should first strive to master the concepts introduced in the text before moving on to a more theory oriented text. The book is entirely self-contained, and the recommended way to learning the material would be to rather forget the concepts of matrices and determinants that one learns during the typical high school system, and approach the book with a fresh mind.&lt;/p&gt;
+
+&lt;h2 id="important-sections"&gt;Important Sections&lt;/h2&gt;
+
+&lt;h3 id="chapters-1-2"&gt;Chapters 1-2&lt;/h3&gt;
+
+&lt;p&gt;The first couple of chapters act as a refresher material for the concepts of vectors, coordinate geometry and matrix operations that a student typically learns during their high school, while introducing the concepts of &lt;code class="highlighter-rouge"&gt;Gaussian&lt;/code&gt; elimination techniques for solving systems of equations. Extremely insightful and important, especially from a standpoint of numerical linear algebra.&lt;/p&gt;
+
+&lt;h3 id="chapters-3-4"&gt;Chapters 3-4&lt;/h3&gt;
+
+&lt;p&gt;Next up, we move to the essence of the subject, where the concepts of vector spaces, independence of vectors, basis and dimension of a space, and the general overview of the four fundamental subspaces (rowspace, columnspace, nullspace and left nullspace) of a matrix are introduced. Further, the author introduces the concept of orthogonal subspaces, uses it to develop the intuition regarding projection of vectors and therefore matrices. These concepts are then applied to finding the least squares approximation to regression problems, and the connection between the least squares error criterion and the left nullspace of a matrix is shown. &lt;code class="highlighter-rouge"&gt;Gram-Schmidt&lt;/code&gt; process is another important concept presented. This material essentially wraps up with what the author calls the &lt;code class="highlighter-rouge"&gt;Fundamental Theorem of Linear Algebra&lt;/code&gt;, with the general idea regarding the dimensionality and orthogonality of the aforementioned subspaces. Probably the most important section of the book, which is developed further in the next couple of chapters.&lt;/p&gt;
+
+&lt;h3 id="chapter-5"&gt;Chapter 5&lt;/h3&gt;
+
+&lt;p&gt;Primarily deals with the properties of determinants of matrices, and the formulas derived from using those properties are presented as intuitive generalizations. Want to know how determinant formula you learnt back in high school came to be? Want to know the geometric meaning of the determinant of an n-dimensional matrix? Want to revisit the old formulas that you once read about, but found exceedingly dry back in school? Give this chapter a solid read.&lt;/p&gt;
+
+&lt;h3 id="chapter-6"&gt;Chapter 6&lt;/h3&gt;
+
+&lt;p&gt;Formally wraps up the conceptual journey presented by the book, and is the most important chapter in the entire manuscript in context of machine learning. Most of the ML that we see today is heavily influenced and derived as a result of the properties of eigenvalues and eigenvectors of the matrices that we model the real world problems on. This chapter formally marks the end of the first half of the book, and only the applications of the concepts presented until then are exposited in the following material. Be sure not to miss a single concept presented here, it will only come back to haunt you later.&lt;/p&gt;
+
+&lt;h3 id="chapters-7-12"&gt;Chapters 7-12&lt;/h3&gt;
+
+&lt;p&gt;Heavy on applications of the concepts introduced in the first half. &lt;code class="highlighter-rouge"&gt;Singular Value Decomposition&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;Principal Components Analysis&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;Linear Transformations&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;Fast Fourier Transforms&lt;/code&gt;, applications in computer graphics, cryptography and so on, are covered in heavy detail. The last chapter also doubles up as a subtle introduction to the use of linear algebra in probability theory. While I might suggest to read specific portions from the said chapters, it might be in your interest to cover these depending on your field of interest. You might also be tempted to skip a few chapters in between, and I don&amp;#8217;t personally think you would be missing a lot of conceptual understanding while doing so.&lt;/p&gt;
+
+&lt;p&gt;In conclusion, I would also like to mention that Prof. Strang&amp;#8217;s &lt;a href="https://ocw.mit.edu/courses/mathematics/18-06-linear-algebra-spring-2010/index.htm"&gt;MIT OCW course&lt;/a&gt; (from 2010) contains a much faster explanation to the text, and is a nice alternative to those who do not have a lot of time on their hands to spare. Be advised, the text covers some material he doesn&amp;#8217;t teach in his course, and vice versa.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Let&amp;#8217;s Cut The Check For Now, Shall We?&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://shikharj.github.io//2019/10/05/Revival-of-the-Blog</guid>
+      <author>Shikhar Jaiswal (ShikharJ)</author>
+      <title>Shikhar Jaiswal (ShikharJ): Revival of the Blog</title>
+      <pubDate>Sat, 05 Oct 2019 00:00:00 GMT</pubDate>
+      <link>https://shikharj.github.io//2019/10/05/Revival-of-the-Blog/</link>
+      <description>&lt;p&gt;It&amp;#8217;s been more than a couple of years now since I last wrote a &lt;a href="https://shikharj.github.io/2017/08/29/Wrapping-Up-GSoC/"&gt;blog post&lt;/a&gt; detailing my experiences in &lt;code class="highlighter-rouge"&gt;GSoC&lt;/code&gt; 2017. After wrapping up with that, I pretty much gave up on writing regular blog posts until now. So what changed in that time?&lt;/p&gt;
+
+&lt;h2 id="new-experiences"&gt;New Experiences&lt;/h2&gt;
+&lt;p&gt;My first &lt;code class="highlighter-rouge"&gt;GSoC&lt;/code&gt; experience gave me a lot of confidence and exposure to the world of open-source and programming. As such, I went on to participate as a student in 2018 under &lt;a href="https://www.mlpack.org/"&gt;&lt;code class="highlighter-rouge"&gt;mlpack&lt;/code&gt;&lt;/a&gt; and also interned at &lt;a href="https://www.hackerrank.com/"&gt;&lt;code class="highlighter-rouge"&gt;Hackerrank&lt;/code&gt;&lt;/a&gt; and &lt;a href="https://www.openmainframeproject.org/"&gt;&lt;code class="highlighter-rouge"&gt;OpenMainframeProject&lt;/code&gt;&lt;/a&gt;. I also wrapped up mentoring two students for &lt;code class="highlighter-rouge"&gt;mlpack&lt;/code&gt; this year. It has been an enriching experience for me to learn so much while collaborating with the best people around the world.&lt;/p&gt;
+
+&lt;h2 id="changed-outlook"&gt;Changed Outlook&lt;/h2&gt;
+&lt;p&gt;During my internship at &lt;code class="highlighter-rouge"&gt;Hackerrank&lt;/code&gt;, I realized that software development wasn&amp;#8217;t something that motivated me heavily. Even though the people I met there were some of the very skilled I had interacted with, I found myself lost and unenergetic (which in part might have also been because of my picky attitude when it comes to working on problems). Since, I was also a &lt;code class="highlighter-rouge"&gt;GSoC&lt;/code&gt; student that summer, I ended up discovering my love for mathematics, and machine learning while contributing to &lt;code class="highlighter-rouge"&gt;mlpack&lt;/code&gt;. That experience only made me realize my affinity for theoretical work, which I later affirmed during my internship at University of Southern California&amp;#8217;s Institute for Creative Technologies (USC-ICT).&lt;/p&gt;
+
+&lt;p&gt;While the work at ICT wasn&amp;#8217;t super-theoretical as I had hoped, I thoroughly enjoyed myself working on open ended research problems, while writing code to test out different hypotheses. I&amp;#8217;m heavily motivated for a career in theoretical research, and currently I&amp;#8217;m building the prerequisite math background for the same.&lt;/p&gt;
+
+&lt;h2 id="the-future"&gt;The Future&lt;/h2&gt;
+&lt;p&gt;One of the many reasons why I wanted to revive this blog is to help me exposit and explain the concepts that I spend time learning on in my journey, and help other academic nomads like me to get up and running with a theory heavy background, while not having been already superb at higher level mathematics while in school. As such, I would also try and post resources that I find useful, in hopes that they might help others in their journey.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Let&amp;#8217;s Roll For Now, Shall We?&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/08/week-12-the-final-week/</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 12: The Final Week</title>
+      <pubDate>Fri, 23 Aug 2019 00:00:00 GMT</pubDate>
+      <link>https://sc0rpi0n101.github.io/2019/08/week-12-the-final-week/</link>
+      <description>&lt;p&gt;&amp;#8220;Software is like entropy: It is difficult to grasp, weighs nothing, and obeys the Second Law of Thermodynamics; i.e., it always increases.&amp;#8221;  &amp;#8212; Norman Augustine
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week will be the last week of coding for GSoC 2019. It is time to finish work now.
+ The C Parser Travis Build Tests Documentation  The C Parser I completed the C Parser last week along with the documentation for the module.</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/08/week-11-the-other-parser/</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 11: The Other Parser</title>
+      <pubDate>Thu, 22 Aug 2019 00:00:00 GMT</pubDate>
+      <link>https://sc0rpi0n101.github.io/2019/08/week-11-the-other-parser/</link>
+      <description>&lt;p&gt;Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week we&amp;rsquo;re talking about the C parser.
+ The Fortran Parser The C Parser Documentation Travis Build  The Fortran Parser The Fortran Parser is complete. The Pull Request has also been merged. The parser is merged in master and will be a part of the next SymPy release. You can check out the source code for the Parser at the Pull Request.</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shubhamjha.com/2019/08/21/GSoC-Week-12-(The-Final-Week)</guid>
       <author>Shubham Kumar Jha (ShubhamKJha)</author>
       <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 12 (The Final Week)</title>
@@ -101,6 +493,191 @@ next week ends.&lt;/p&gt;
       <link>https://arighnaiitg.github.io/2019-08-20-gsoc-week12/</link>
       <description>&lt;p&gt;Week 12 ends.. - 
           So, finally after a long summer GSoC has come to an end!! It has been a great experience, and something which I will cherish for the rest of my life. I would like to thank my mentor Sartaj, who has been guiding me through the thick and thin of times....</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://czgdp1807.github.io/week_12</guid>
+      <author>Gagandeep Singh (czgdp1807)</author>
+      <title>Gagandeep Singh (czgdp1807): Week 12 - Ending GSoC 2019</title>
+      <pubDate>Tue, 20 Aug 2019 00:00:00 GMT</pubDate>
+      <link>https://czgdp1807.github.io/week_12/</link>
+      <description>&lt;p&gt;As the title suggests, with the third phase, the journey of my GSoC 2019 comes to an end. It was full of challanges, learning experiences, and above all interaction with the open source community of &lt;code class="highlighter-rouge"&gt;SymPy&lt;/code&gt;.&lt;br /&gt;
+In this blog post I will share with you the work done between phase 2 and phase 3, in terms of PRs, merged and open.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Merged&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17174"&gt;#17174&lt;/a&gt; : In this PR, Gaussian ensembles were added to &lt;code class="highlighter-rouge"&gt;sympy.stats&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17304"&gt;#17304&lt;/a&gt; : While working on the above PR, I got an idea to open this one to add cicular ensembles to &lt;code class="highlighter-rouge"&gt;sympy.stats&lt;/code&gt;. I learned a lot about Haar measure while working on this.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17306"&gt;#17306&lt;/a&gt;: This PR added matrices with random expressions. The challenging part of this PR was to generate canonical results for passing the tests.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17336"&gt;#17336&lt;/a&gt; : This was related to bug fix in &lt;code class="highlighter-rouge"&gt;Q.ask&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Matrix&lt;/code&gt;. Take a look at an example &lt;a href="https://github.com/sympy/sympy/pull/17336#issue-304058013"&gt;here&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Open&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17387"&gt;#17387&lt;/a&gt; : This PR aims to add support for assumptions of dependence among random variables, like, &lt;code class="highlighter-rouge"&gt;Covariance&lt;/code&gt;, etc.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17146"&gt;#17146&lt;/a&gt; : This PR is in its last stages to fix and upgrade the &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; set and we are finalizing few things, like changes in the output of &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt;. As planned I was successful at writing exhaustive and systematic tests.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Well, now, time to say good bye! It was a nice experience writing about journey in this blog. If you have read this from the beginning then thanks a lot buddy, and I wish for your acceptance in GSoC 2020. Keep Open Sourcing :D&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://czgdp1807.github.io/z_final_report</guid>
+      <author>Gagandeep Singh (czgdp1807)</author>
+      <title>Gagandeep Singh (czgdp1807): Final Report</title>
+      <pubDate>Tue, 20 Aug 2019 00:00:00 GMT</pubDate>
+      <link>https://czgdp1807.github.io/z_final_report/</link>
+      <description>&lt;p&gt;This report summarizes the work done in my GSoC 2019 project, &lt;strong&gt;Enhancement of Statistics Module&lt;/strong&gt; wth SymPy. A step by step development of the project is available at &lt;a href="https://czgdp1807.github.io"&gt;czgdp1807.github.io&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;About Me&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;I am a third year Bachelor of Technology student at Indian Institute of Technology, Jodhpur in the department of Computer Science and Engineering.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Project Outline&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The project plan was focused on the following areas of statistics that were required to be added to &lt;code class="highlighter-rouge"&gt;sympy.stats&lt;/code&gt;.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Community Bonding&lt;/strong&gt; - I was supposed to add, Dirichlet Distribution, Multivariate Ewens Distribution, Multinomial Distribution, Negative multinomial distribution, and Generalized multivariate log-gamma distribution to &lt;code class="highlighter-rouge"&gt;sympy.stats.joint_rv_types&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Phase 1&lt;/strong&gt; - I was supposed to work on stochastic processes, primraly on Markov chains, including it&amp;#8217;s API design, algorithm and implementation.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Phase 2&lt;/strong&gt; - I was expected to work on random matrices, including Gaussian ensembles and matrices with random expressions as their elements.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Phase 3&lt;/strong&gt; - I planned to work on assumptions of dependence, improving result generation by &lt;code class="highlighter-rouge"&gt;sympy.stats&lt;/code&gt; and improving other modules so that &lt;code class="highlighter-rouge"&gt;sympy.stats&lt;/code&gt; can function properly.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;Pull Requests&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;This section describes the actual work done during the coding period in terms of merged PRs.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Community Bonding&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16576"&gt;#16576&lt;/a&gt;: This PR added &lt;code class="highlighter-rouge"&gt;Dirichlet&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;MultivariteEwens&lt;/code&gt; distributions.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16808"&gt;#16808&lt;/a&gt; : This PR added &lt;code class="highlighter-rouge"&gt;Multinomial&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;NegativeMultinomial&lt;/code&gt; distribution.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16810"&gt;#16810&lt;/a&gt; : This PR improved the API of &lt;code class="highlighter-rouge"&gt;Sum&lt;/code&gt; by allowing &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; as the limits.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16825"&gt;#16825&lt;/a&gt; : This PR in continuation, added &lt;code class="highlighter-rouge"&gt;GeneralizedMultivariateLogGamma&lt;/code&gt; distribution. This was an interesting one due to the complexity involved in its PDF.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16834"&gt;#16834&lt;/a&gt; : This PR enhanced the &lt;code class="highlighter-rouge"&gt;Multinomial&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;NegativeMultinomial&lt;/code&gt; distributions by allowing symbolic dimensions for them.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Phase 1&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16897"&gt;#16897&lt;/a&gt; : This was related to &lt;code class="highlighter-rouge"&gt;sympy.core&lt;/code&gt; and it helped in removing disparity in the results of special function &lt;code class="highlighter-rouge"&gt;gamma&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16908"&gt;#16908&lt;/a&gt; : This PR improved &lt;code class="highlighter-rouge"&gt;sympy.stats.frv&lt;/code&gt; by allowing conditions with foriegn symbols.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16913"&gt;#16913&lt;/a&gt; : This removed the unreachable code from &lt;code class="highlighter-rouge"&gt;sympy.stats.frv&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16914"&gt;#16914&lt;/a&gt; : This PR allowed symbolic dimensions to &lt;code class="highlighter-rouge"&gt;MultivariateEwens&lt;/code&gt; distribution.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16929"&gt;#16929&lt;/a&gt; : This one was for the &lt;code class="highlighter-rouge"&gt;sympy.tensor&lt;/code&gt; module. It optimized the &lt;code class="highlighter-rouge"&gt;ArrayComprehension&lt;/code&gt; and covered some corner cases.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16981"&gt;#16981&lt;/a&gt; : This PR added the architecture of stochastic processes. It also added discrete Markov chain to &lt;code class="highlighter-rouge"&gt;sympy.stats&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17030"&gt;#17030&lt;/a&gt; : Some features like, &lt;code class="highlighter-rouge"&gt;joint_dsitribution&lt;/code&gt; were added to stochastic processes in this PR.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17046"&gt;#17046&lt;/a&gt; : Some common properties of discrete Markov chains, like fundamental matrix, fixed row vector were added.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Phase 2&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16934"&gt;#16934&lt;/a&gt; : The bug fixes for &lt;code class="highlighter-rouge"&gt;sympy.stats.joint_rv_types&lt;/code&gt; were complete and the further work has been handed over to my co-student, Ritesh.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16962"&gt;#16962&lt;/a&gt; : This was continuation of the work done in phase 1 for allowing symbolic dimensions in finite random variables. As I planned, this PR got merged in phase 2, after some changes.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17083"&gt;#17083&lt;/a&gt;: The work done in this PR framed the platform and reason for the next one. The algorithm that got merged was a bit difficult to extend, and maintain. Thanks to Francesco for his &lt;a href="https://github.com/sympy/sympy/pull/17083#issuecomment-508256359"&gt;comment&lt;/a&gt; for motivating me to re-think the whole framework.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17163"&gt;#17163&lt;/a&gt; : This was one of the most challenging PRs of the project, because, it involved re-designing the algorithm, refactoring the code and moreover lot of thinking. The details can be found at &lt;a href="https://github.com/sympy/sympy/pull/17163#issuecomment-510939984"&gt;this comment&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Phase 3&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17174"&gt;#17174&lt;/a&gt; : In this PR, Gaussian ensembles were added to &lt;code class="highlighter-rouge"&gt;sympy.stats&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17304"&gt;#17304&lt;/a&gt; : While working on the above PR, I got an idea to open this one to add cicular ensembles to &lt;code class="highlighter-rouge"&gt;sympy.stats&lt;/code&gt;. I learned a lot about Haar measure while working.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17306"&gt;#17306&lt;/a&gt;: This PR added matrices with random expressions. The challenging part of this PR was to generate canonical results for passing the tests.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17336"&gt;#17336&lt;/a&gt; : This was related to bug fix in &lt;code class="highlighter-rouge"&gt;Q.ask&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;Matrix&lt;/code&gt;. Take a look at an example &lt;a href="https://github.com/sympy/sympy/pull/17336#issue-304058013"&gt;here&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Miscellaneous Work&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;This section contains some of my PRs related to miscellanous issues like, workflow improvement, etc.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16899"&gt;#16899&lt;/a&gt; : This was a workflow related to PR to ignore the &lt;code class="highlighter-rouge"&gt;.vscode&lt;/code&gt; folder.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17003"&gt;#17003&lt;/a&gt; : This PR ignored the &lt;code class="highlighter-rouge"&gt;__pycahce__&lt;/code&gt; folder by adding it &lt;code class="highlighter-rouge"&gt;.gitignore&lt;/code&gt; file.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Future Work&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;The following PRs are open and are in their last stages for merging. Any interested student can take a look at them to extend my work in his/her GSoC project.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17387"&gt;#17387&lt;/a&gt; : This PR aims to add support for assumptions of dependence among random variables, like, &lt;code class="highlighter-rouge"&gt;Covariance&lt;/code&gt;, etc.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17146"&gt;#17146&lt;/a&gt; : This PR is in its last stages to fix and upgrade the &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; set and we are finalizing few things, like changes in the output of &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt;. As planned I was successful at writing exhaustive and systematic tests.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Apart from the above, work on densities of Circular ensembles remains to be done. One can read the Theorem 3, page 8 of &lt;a href="https://arxiv.org/pdf/1103.3408.pdf"&gt;this paper&lt;/a&gt;.&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">https://divyanshu132.github.io//gsoc-week-12</guid>
@@ -617,6 +1194,20 @@ Proposal and/or thought over during the SoC) which can extend my GSoC project.&l
 &lt;p&gt;Thanks!&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://czgdp1807.github.io/week_11</guid>
+      <author>Gagandeep Singh (czgdp1807)</author>
+      <title>Gagandeep Singh (czgdp1807): Week 11 - Final touches</title>
+      <pubDate>Tue, 13 Aug 2019 00:00:00 GMT</pubDate>
+      <link>https://czgdp1807.github.io/week_11/</link>
+      <description>&lt;p&gt;So, the second last week of the project is over and we have decided to improve on the work we have done so far in the last few days. Read below to know more.&lt;/p&gt;
+
+&lt;p&gt;In this week, I worked on, &lt;a href="https://github.com/sympy/sympy/pull/17146"&gt;#17146&lt;/a&gt; concered with symbolic &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt;, &lt;a href="https://github.com/sympy/sympy/pull/17387"&gt;#17387&lt;/a&gt; related to assumptions of dependence among random variables, &lt;a href="https://github.com/sympy/sympy/pull/17336"&gt;#17336&lt;/a&gt; which fixed the bug in &lt;code class="highlighter-rouge"&gt;Q.hermitian&lt;/code&gt; the one I told you about in my previous post, and &lt;a href="https://github.com/sympy/sympy/pull/17306"&gt;#17306&lt;/a&gt;, implementing the matrices with random expressions.&lt;/p&gt;
+
+&lt;p&gt;In fact, the last two PRs are merged. Now, coming on to symbolic &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt;, I have completed the testing of all the methods except &lt;code class="highlighter-rouge"&gt;slicing&lt;/code&gt; feature of &lt;code class="highlighter-rouge"&gt;__getitem__&lt;/code&gt;, which I will do in this week. Regarding, the bug in &lt;code class="highlighter-rouge"&gt;Q.hermitian&lt;/code&gt;, well, my code at first, was giving incorrect results due to overriding problems in the logic. Francesco, helped me correct them and it&amp;#8217;s finally in. The major part of the week was devoted to assumptions of dependence. I did some study from Wikipedia, and implemented the class &lt;code class="highlighter-rouge"&gt;DependentPSpace&lt;/code&gt;. I have kept the class static because it will handle queries of the type, &lt;code class="highlighter-rouge"&gt;density(X + Y, Eq(Covariance(X, Y), S(1)/2)&lt;/code&gt; which from my point of view doesn&amp;#8217;t require creation of a probability space object.&lt;/p&gt;
+
+&lt;p&gt;Coming on to the plan for the last week, we have decided that no new PRs will be opened and focus will be towards completing the already open PRs, so that we have most of our work completed. Francesco has also suggested to test the newly introduced classes with the ones of Wolfram Alpha, so that there are no inconsistencies.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://shubhamjha.com/2019/08/13/GSoC-Week-10-and-11</guid>
       <author>Shubham Kumar Jha (ShubhamKJha)</author>
       <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 10 and 11</title>
@@ -845,6 +1436,31 @@ then emptySet is being returned.&lt;/p&gt;
 &lt;p&gt;My solution for this was to allow temporarily allow expansion of powers by recursing through the expression tree and setting the &lt;code&gt;is_Pow&lt;/code&gt; field of each matrix power to &lt;code&gt;True&lt;/code&gt; and later reverting these states later. It doesn&amp;#8217;t look pretty, but it does seem to work (you can see the code &lt;a href="https://github.com/sympy/sympy/blob/17fb5010e36e10de156dad032d2aea376051df24/sympy/matrices/expressions/matmul.py#L178-L197"&gt;here&lt;/a&gt;).&lt;/p&gt;
 &lt;h2 id="next-steps"&gt;Next Steps&lt;/h2&gt;
 &lt;p&gt;I&amp;#8217;ll try to get started with some optimizations that utilize this wildcard class once the pull request gets merged.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://czgdp1807.github.io/week_10</guid>
+      <author>Gagandeep Singh (czgdp1807)</author>
+      <title>Gagandeep Singh (czgdp1807): Week 10 - Debugging, testing and Haar measure</title>
+      <pubDate>Tue, 06 Aug 2019 00:00:00 GMT</pubDate>
+      <link>https://czgdp1807.github.io/week_10/</link>
+      <description>&lt;p&gt;This week was about a lot of debugging and testing. I also got to know some facts about random matrices and group theory.&lt;/p&gt;
+
+&lt;p&gt;With the ending of 10th week, we have entered the second last week of the project. Well, this week was full of finding bugs, correcting and testing them. Mainly, I worked on, &lt;a href="https://github.com/sympy/sympy/pull/17146"&gt;#17146&lt;/a&gt;, &lt;a href="https://github.com/sympy/sympy/pull/17304"&gt;#17304&lt;/a&gt;, &lt;a href="https://github.com/sympy/sympy/pull/17336"&gt;#17336&lt;/a&gt; and &lt;a href="https://github.com/sympy/sympy/pull/17306"&gt;#17306&lt;/a&gt;. The first one was related to symbolic &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt;, and it lacked systematic and robust tests. I pushed some commits to resolve the issue, though more is to be done. Now, coming to the second PR, it was related to circular ensembles. I got to know that distribution of these ensembles is something called Haar measure on &lt;code class="highlighter-rouge"&gt;U(n)&lt;/code&gt;, group of unitary matrices. I was not familiar with this. Thanks to &lt;a href="https://github.com/jksuom"&gt;jksuom&lt;/a&gt; for sharing some papers for the same. I will go through them in the following week. The third PR fixes a bug which was found while working on circular ensembles. Acutally, &lt;code class="highlighter-rouge"&gt;ask(Q.hermitian(Matrix([[2, 2 + I, 4], [2 - I, 3, I], [4, -I, 1]])))&lt;/code&gt; was giving &lt;code class="highlighter-rouge"&gt;False&lt;/code&gt;, however clearly the matrix is hermitian. So, I went ahead fixing it and waiting for reviews on my approach. The last one is related to matrices with random elements and it is complete after fixing a few bugs related to canonical outputs.&lt;/p&gt;
+
+&lt;p&gt;What I learnt this week? 
+Well, I learnt, &lt;strong&gt;When you think your work is complete, well, sorry to say, that&amp;#8217;s the beginning ;-)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Bye!!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/08/week-10-the-finished-parser/</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 10: The Finished Parser</title>
+      <pubDate>Tue, 06 Aug 2019 00:00:00 GMT</pubDate>
+      <link>https://sc0rpi0n101.github.io/2019/08/week-10-the-finished-parser/</link>
+      <description>&lt;p&gt;&amp;#8220;Software is like entropy: It is difficult to grasp, weighs nothing, and obeys the Second Law of Thermodynamics; i.e., it always increases.&amp;#8221;  &amp;#8212; Norman Augustine
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and we will talk all about the Fortran Parser this week. I have passed the second evaluation and Fortran Parser pull request is complete.
+ The Week Fortran Parser SymPy Expression Travis Builds The C Parser The Meeting  The Week This week began with me working on the C parser to finalize that.</description>
     </item>
     <item>
       <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=91</guid>
@@ -1105,449 +1721,18 @@ keep you updated!&lt;/p&gt;
 &lt;p&gt;Thanks!&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://divyanshu132.github.io//gsoc-week-9</guid>
-      <author>Divyanshu Thakur (divyanshu132)</author>
-      <title>Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 9 - Merged Polycyclic groups</title>
+      <guid isPermaLink="false">https://czgdp1807.github.io/week_9</guid>
+      <author>Gagandeep Singh (czgdp1807)</author>
+      <title>Gagandeep Singh (czgdp1807): Week 9 - Lots of reviews</title>
       <pubDate>Mon, 29 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://divyanshu132.github.io//gsoc-week-9</link>
-      <description>&lt;p&gt;Hello everyone, the ninth week of coding period has ended and there is a really good news the polycyclic group PR &lt;a href="https://github.com/sympy/sympy/pull/16991"&gt;sympy/sympy#16991&lt;/a&gt; that we were working from the last one and half months is finally merged. This week I didn&amp;#8217;t do that much work except organizing different methods and fixing small issues in the above pr to get it merged.&lt;/p&gt;
+      <link>https://czgdp1807.github.io/week_9/</link>
+      <description>&lt;p&gt;This week I recieved a lot of reviews from the members of community on my various PRs and this has formed the base of the work for the next week. Let me share some of those reviews with you.&lt;/p&gt;
 
-&lt;p&gt;There has been a lot of rearrangement of methods, where most of the methods were moved to the class &lt;code class="highlighter-rouge"&gt;Collector&lt;/code&gt; from the class &lt;code class="highlighter-rouge"&gt;PolycyclicGroup&lt;/code&gt;. Now, we do not need free symbols in-hand, they can be computed by the Collector if not provided by the user. There are few more things which are changed like relative order is computed in the course of polycyclic sequence and series computation. For better look one can go through the above Pr.&lt;/p&gt;
+&lt;p&gt;As I told you that the PR &lt;a href="https://github.com/sympy/sympy/pull/17146"&gt;#17146&lt;/a&gt; was pending for reviews. Well, I received a lot of comments from &lt;a href="https://github.com/oscarbenjamin"&gt;@oscarbenjamin&lt;/a&gt; and &lt;a href="https://github.com/smichr"&gt;@smichr&lt;/a&gt; on pretty printing of symbolic &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt;, the way tests are written, about &lt;code class="highlighter-rouge"&gt;inf&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;sup&lt;/code&gt; of &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt;. This in turn helped me to discover bugs in other features of &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt;, like, &lt;code class="highlighter-rouge"&gt;reversed&lt;/code&gt;. In the following week, I will work on this stuff and will correct the things. Now moving on to the random matrices, i.e., the PR &lt;a href="https://github.com/sympy/sympy/pull/17174"&gt;#17174&lt;/a&gt; has been merged but more work is to be done for &lt;code class="highlighter-rouge"&gt;Matrix&lt;/code&gt; with entries as random variables. In fact, I studied about expressions of random matrices and summarised the results &lt;a href="https://github.com/sympy/sympy/pull/17174#issuecomment-514985333"&gt;here&lt;/a&gt;. Though the findings suggest specific algorithms for specific expressions like sum. I am still looking for a more generalized technique and will update you if found any.&lt;/p&gt;
 
-&lt;p&gt;I&amp;#8217;m hopping to implement few things next week which are mentioned below.&lt;/p&gt;
+&lt;p&gt;So, coming to the learning aspect. This week I learnt about the importance of exhaustive and systematic tests. The tests which I wrote for symbolic &lt;code class="highlighter-rouge"&gt;Range&lt;/code&gt; aren&amp;#8217;t so systematic and robust. I have found a way to improve them from &lt;a href="https://github.com/sympy/sympy/pull/17146#discussion_r307971324"&gt;this comment&lt;/a&gt;.&lt;/p&gt;
 
-&lt;ul&gt;
-  &lt;li&gt;Induced polycyclic sequence for a subgroup.&lt;/li&gt;
-  &lt;li&gt;Get started with writing docs for polycyclic groups.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Till then, good byee..&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://jmig5776.github.io//gsoc-week-9</guid>
-      <author>Jogi Miglani (jmig5776)</author>
-      <title>Jogi Miglani (jmig5776): GSoC 2019 - Week 9</title>
-      <pubDate>Sat, 27 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://jmig5776.github.io//gsoc-week-9</link>
-      <description>&lt;p&gt;This was the eigth week meeting with the GSoC mentors which was scheduled on
-Saturday 27th July, 2019 between 1:30 - 2:30 PM (IST). Me, Yathartha and Amit
-were the attendees of the meeting.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Discussing previous week&amp;#8217;s progress&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Progress of &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;:- In PR &lt;a href="https://github.com/sympy/sympy/pull/16976"&gt;#16976&lt;/a&gt;
-I implemented the basic design of &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;. Some very good suggestion by
-Yathartha for creating &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; were very helpful. Now basically the
-&lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; first do preprocessing and invert it and then find solution and
-in final domain intersection takes place.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Progress of ImageSet Union:- In PR &lt;a href="https://github.com/sympy/sympy/pull/17079"&gt;#17079&lt;/a&gt;
-I will be implementing an algorithm based on heurestics for performing ImageSet
-Union this week. Basic code is being already written for defining a function and
-only algorithm part is left which will be performed in this week.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Next week goals&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Work upon &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; and ImageSet Union PR&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Code improvement takes time!!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://www.kangzhiq.com/?p=34</guid>
-      <author>Zhiqi KANG (kangzhiq)</author>
-      <title>Zhiqi KANG (kangzhiq): [GSoC 2019] Week 8!</title>
-      <pubDate>Fri, 26 Jul 2019 16:32:54 GMT</pubDate>
-      <link>https://www.kangzhiq.com/2019/07/27/gsoc-2019-week-8/</link>
-      <description>&lt;p&gt;This is the week of second evaluation.&lt;/p&gt;
-
-
-
-&lt;p&gt;I have been working on a new issue, which is about modifying the behavior of &lt;code&gt;Array&lt;/code&gt; module to follow the example of NumPy. As I discussed with my mentor at the very beginning of the project, the &lt;code&gt;Array&lt;/code&gt; module is newly created and has fewer users at present, so it is still possible to standardize the behaviour of this module. Following a mature library such as NumPy will be a good idea because it would not only increase the consistency between Python&amp;#8217;s libraries but also increase the efficiency of code in many cases.&lt;/p&gt;
-
-
-
-&lt;p&gt;The first step is modifying &lt;code&gt;__getitem__&lt;/code&gt; this function. What we had before is to access the value with a absolute index in the flatten array, while the standard in NumPy is that a index that is not complete will be added slice of `:` to extract all available values.&lt;/p&gt;
-
-
-
-&lt;p&gt;In order to do so, an new PR is opened and merged: &lt;a href="https://github.com/sympy/sympy/pull/17226"&gt;#17226&lt;/a&gt; &lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://arighnaiitg.github.io/2019-07-23-gsoc-week8/</guid>
-      <author>Arighna Chakrabarty (arighnaiitg)</author>
-      <title>Arighna Chakrabarty (arighnaiitg): GSoC Week 8 !!</title>
-      <pubDate>Tue, 23 Jul 2019 07:00:00 GMT</pubDate>
-      <link>https://arighnaiitg.github.io/2019-07-23-gsoc-week8/</link>
-      <description>&lt;p&gt;Week 8 ends.. - 
-          Phase 2 of the GSoC coding period is coming to an end. !! I and Sartaj had a meeting on the 18th of July, about the timeline of the next 4 weeks. Here are the deliverables that have been completed in this week, including the minutes of the meeting. The...</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://shubhamjha.com/2019/07/23/GSoC-Week-8</guid>
-      <author>Shubham Kumar Jha (ShubhamKJha)</author>
-      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 8</title>
-      <pubDate>Tue, 23 Jul 2019 00:00:00 GMT</pubDate>
-      <link>http://shubhamjha.com/2019/07/23/GSoC-Week-8.html</link>
-      <description>&lt;p&gt;Now, the eighth week of official coding period has ended. I would give you a summary of my work during this week.&lt;/p&gt;
-
-&lt;p&gt;I spent most of this week polishing and finishing my work on &lt;a href="https://github.com/sympy/sympy/pull/17144"&gt;#17144&lt;/a&gt;. The performance gain from this PR was very subtle but I had tested this only on the &lt;code class="highlighter-rouge"&gt;\assumptions\tests&lt;/code&gt; of SymPy. During this week&amp;#8217;s meeting, Aaron suggested an example that had become slower than before:&lt;/p&gt;
-&lt;div class="language-py highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;random_poly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="n"&gt;ask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Q&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;positive&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;Q&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;positive&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;This made me realize that my strategy had a flaw. I had converted the smallest expressions into &lt;strong&gt;CNF&lt;/strong&gt; objects and applied Boolean functions (&lt;code class="highlighter-rouge"&gt;or&lt;/code&gt;, &lt;code class="highlighter-rouge"&gt;and&lt;/code&gt;, and &lt;code class="highlighter-rouge"&gt;not&lt;/code&gt;) on them keeping the CNF structure intact. The performance regression was coming from operations &lt;code class="highlighter-rouge"&gt;or&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;not&lt;/code&gt;. In case of CNF structures, the number of expressions increased exponentially for these operations. Since the test suite didn&amp;#8217;t have such examples, all the tests passed without any visible performance issue.&lt;/p&gt;
-
-&lt;p&gt;With some research, I found that the best approach to handle this (without any kind of pruning) was to convert these expression into &lt;a href="https://en.wikipedia.org/wiki/Negation_normal_form"&gt;&lt;strong&gt;NNF&lt;/strong&gt;&lt;/a&gt; form first. So, I implemented a function &lt;code class="highlighter-rouge"&gt;to_NNF&lt;/code&gt; which works with low-level constructs (SymPy&amp;#8217;s &lt;code class="highlighter-rouge"&gt;to_nnf&lt;/code&gt; would have been too costly) and converts an expression into NNF. This is then converted into &lt;strong&gt;CNF&lt;/strong&gt; with ease. It keeps the number of clauses in check and hence also increases the performance outcome. The results are such: the above example now takes about &lt;code class="highlighter-rouge"&gt;0.4 s&lt;/code&gt; on this PR while it takes about &lt;code class="highlighter-rouge"&gt;6 s&lt;/code&gt; in master.&lt;/p&gt;
-
-&lt;p&gt;Currently, the work on this PR is almost complete and it is under review.&lt;/p&gt;
-
-&lt;p&gt;For the next week,&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;My first priority is to get &lt;a href="https://github.com/sympy/sympy/pull/17144"&gt;#17144&lt;/a&gt; merged.&lt;/li&gt;
-  &lt;li&gt;Then, work on optimizing &lt;code class="highlighter-rouge"&gt;rcall&lt;/code&gt;. This is an extension for the above work.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Will keep you updated. Thank you !&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=60</guid>
-      <author>Ishan Joshi (ishanaj)</author>
-      <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-8- The draw() function in action</title>
-      <pubDate>Mon, 22 Jul 2019 04:50:39 GMT</pubDate>
-      <link>https://ishanaj.wordpress.com/2019/07/22/gsoc19-week-8-the-draw-function-in-action/</link>
-      <description>&lt;p&gt;The 8&lt;sup&gt;th&lt;/sup&gt; week has ended and we are now in the middle of phase &amp;#8211;III.&lt;/p&gt;
-
-
-
-&lt;p&gt;Last week was a bit of research-based, understanding &lt;strong&gt;matplotlib &lt;/strong&gt;and how it can be used to plot a beam diagram. I had a conversation with Jason Moore and Jashan where Jason shared a link of a &lt;a href="https://github.com/alfredocarella/simplebendingpractice"&gt;repository&lt;/a&gt;, which also was a bit of help as I took some hints from it for the &lt;strong&gt;draw() &lt;/strong&gt;function. After a lot of investigation and analysis, I was finally able to make a draft &lt;a href="https://github.com/sympy/sympy/pull/17240"&gt;PR # 17240&lt;/a&gt; which did the work as we intended.&lt;/p&gt;
-
-
-
-&lt;p&gt;Here is an example of how it would function:&lt;span id="more-60"&gt;&lt;/span&gt;&lt;/p&gt;
-
-
-&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
-
-# This example has no prior logic involved. It just tests whether every functionality works or not
-
-&amp;gt;&amp;gt;&amp;gt; E, I = symbols('E, I')
-
-&amp;gt;&amp;gt;&amp;gt; b1 = Beam(50, E, I)
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_load(-10, 0, -1)
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_load(R1, 10, -1)
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_load(R2, 30, -1)
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_load(9, 5, 0, 23)
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_load(9, 30, 1, 50)
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_support(50, "pin")
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_support(0, "fixed")
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_support(20, "roller")
-
-&amp;gt;&amp;gt;&amp;gt; b1.draw()
-
-&lt;/pre&gt;
-
-
-
-&lt;figure class="wp-block-image size-large is-resized .single-blog-image {display: none; }"&gt;&lt;img alt="" class="wp-image-62" height="387" src="https://ishanaj.files.wordpress.com/2019/07/61594696-552b5900-ac0c-11e9-96f9-4ba257dbf92c-1.png" width="467" /&gt;&lt;/figure&gt;
-
-
-
-&lt;p&gt;Here we are using &lt;strong&gt;matplotlib&lt;/strong&gt; and &lt;strong&gt;numpy&lt;/strong&gt; by importing them as external modules. Of course, it would be better to have it done via &lt;strong&gt;SymPy&amp;#8217;s&lt;/strong&gt; own &lt;strong&gt;plot()&lt;/strong&gt;, but I think that is something we could work on in later stages as&lt;strong&gt; SymPy&amp;#8217;s plot()&lt;/strong&gt; is limited to work on equations and stuff (although on can use &lt;strong&gt;_backend &lt;/strong&gt;attribute for further functionalities). &amp;nbsp;Also to be noted here that &lt;strong&gt;SymPy&amp;#8217;s plot()&lt;/strong&gt; is not a replica of &lt;strong&gt;matplotib&amp;#8217;s plot()&lt;/strong&gt; but it makes it easier for SymPy equation to be plotted and it uses&amp;nbsp;&lt;strong&gt;matplotlib&lt;/strong&gt; to do so.&lt;/p&gt;
-
-
-
-&lt;p&gt;Following are the&lt;strong&gt; m&lt;/strong&gt;&lt;strong&gt;atplotlib&lt;/strong&gt; modules/classes used:&lt;/p&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;&lt;a href="https://matplotlib.org/api/_as_gen/matplotlib.patches.Rectangle.html"&gt;matplotlib.patches.Rectangle&lt;/a&gt;&amp;nbsp;-to draw the beam&lt;/li&gt;&lt;li&gt;&lt;a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.annotate.html"&gt;matplotlib.pyplot.annotate&lt;/a&gt;&amp;nbsp;&amp;#8211; to draw arrows of load&lt;/li&gt;&lt;li&gt;&lt;a href="https://matplotlib.org/3.1.1/api/markers_api.html"&gt;matplotlib.markers&lt;/a&gt;&amp;#8211; to draw supports&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;p&gt;Also, considering Jason&amp;#8217;s &lt;a href="https://github.com/sympy/sympy/pull/17240#issuecomment-513577696"&gt;comment&lt;/a&gt; in the PR, I will have to work on making &lt;strong&gt;SymPy&amp;#8217;s plot()&lt;/strong&gt; to accept a singularity function, so that it would be easier to plot &lt;strong&gt;loads &lt;/strong&gt;which are indeed equations of Singularity function. This is still in consideration, so I will have to look into it and of course will have a discussion on how it is to be done.&lt;/p&gt;
-
-
-
-&lt;p&gt;Currently, I am not able to determine how to plot parabolic loads. I think this could be added later as we should currently focus on plotting simple parts and certainly work on other complexities later. But we can have a discussion on it.&lt;/p&gt;
-
-
-
-&lt;p&gt;Other PR&amp;#8217;s are still being parallelly worked on.&lt;/p&gt;
-
-
-
-&lt;h2&gt;&lt;strong&gt;Next Week:&lt;/strong&gt;&lt;/h2&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;Working on the idea of plotting singularity function via SymPy&amp;#8217;s plot()&lt;/li&gt;&lt;li&gt;Plotting parabolic loads&lt;/li&gt;&lt;li&gt;Writing documentation and tests&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;p&gt;Will keep you updated!&lt;/p&gt;
-
-
-
-&lt;p&gt;Thanks!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-07-30-week-9.html</guid>
-      <author>Ankit Pandey (anpandey)</author>
-      <title>Ankit Pandey (anpandey): Google Summer of Code Week 9: Matrices to Indexed</title>
-      <pubDate>Mon, 22 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://anpandey.github.io/posts/sympy/2019-07-30-week-9.html</link>
-      <description>&lt;p&gt;&lt;em&gt;See the &lt;a href="https://anpandey.github.io/2019-07-22-week-8.html"&gt;previous post&lt;/a&gt; for Week 8&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;For this week, I&amp;#8217;ve started with &lt;a href="https://github.com/sympy/sympy/pull/17299"&gt;#17299&lt;/a&gt;. This pull request is meant to extend support for the &lt;code&gt;MatrixExpr&lt;/code&gt; class by allowing for conversion into an &lt;code&gt;Indexed&lt;/code&gt; class in which contractions equivalent to the matrix expression are represented.&lt;/p&gt;
-&lt;h2 id="conversion-to-indexed"&gt;Conversion to &lt;code&gt;Indexed&lt;/code&gt;&lt;/h2&gt;
-&lt;p&gt;The &lt;code&gt;as_indexed&lt;/code&gt; method that the pull request introduces is pretty self-explanatory:&lt;/p&gt;
-&lt;div class="sourceCode" id="cb1"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb1-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; n, m &lt;span class="op"&gt;=&lt;/span&gt; symbols(&lt;span class="st"&gt;'n m'&lt;/span&gt;, integer&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="va"&gt;True&lt;/span&gt;)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; A &lt;span class="op"&gt;=&lt;/span&gt; MatrixSymbol(&lt;span class="st"&gt;'A'&lt;/span&gt;, n, m)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; B &lt;span class="op"&gt;=&lt;/span&gt; MatrixSymbol(&lt;span class="st"&gt;'B'&lt;/span&gt;, m, n)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-4" title="4"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; e &lt;span class="op"&gt;=&lt;/span&gt; A&lt;span class="op"&gt;*&lt;/span&gt;B&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-5" title="5"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; e.as_indexed()&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-6" title="6"&gt;A[i, j]&lt;span class="op"&gt;*&lt;/span&gt;B[j, k]&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;A matrix multiplication between two matrix symbols is equivalent to a contraction along the index &lt;span class="math inline"&gt;&lt;em&gt;j&lt;/em&gt;&lt;/span&gt; (Since matrix multiplication is equivalent to a contraction along a single index).&lt;/p&gt;
-&lt;h3 id="relationship-to-codegen"&gt;Relationship to Codegen&lt;/h3&gt;
-&lt;p&gt;The purpose of the pull request is to allow conversion to help in the generation of code related to some matrix expressions. This is because there&amp;#8217;s already an existing infrastructure for code generation through contractions (something that the still-WIP &lt;a href="https://github.com/sympy/sympy/pull/17170"&gt;#17170&lt;/a&gt; addresses). The currently work in progress PR is meant to aid in extending code generation to matrix expressions instead of just &lt;code&gt;Indexed&lt;/code&gt; objects. This same conversion might also be possible using the &lt;code&gt;Codegen*&lt;/code&gt; classes in &lt;code&gt;array_utils&lt;/code&gt;, though this way seems to make more sense since it&amp;#8217;s entirely possible to use the function for non-codegen related purposes.&lt;/p&gt;
-&lt;h2 id="next-steps"&gt;Next steps&lt;/h2&gt;
-&lt;p&gt;My plans for this week are to continue working on the pull request and start with the new Matrix Wildcard pull request.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-07-22-week-8.html</guid>
-      <author>Ankit Pandey (anpandey)</author>
-      <title>Ankit Pandey (anpandey): Google Summer of Code Week 8: Non-Commutative Wildcards</title>
-      <pubDate>Mon, 22 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://anpandey.github.io/posts/sympy/2019-07-22-week-8.html</link>
-      <description>&lt;p&gt;&lt;em&gt;See the &lt;a href="https://anpandey.github.io/2019-07-14-week-7.html"&gt;previous post&lt;/a&gt; for Week 7&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;I spent most of this week rewriting the non-commutative matching code in Sympy&amp;#8217;s core as Aaron suggested. The pull request for this rewrite is available at &lt;a href="https://github.com/sympy/sympy/pull/17223"&gt;#17223&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id="non-commutative-matching-in-sympy"&gt;Non-commutative matching in SymPy&lt;/h2&gt;
-&lt;p&gt;SymPy already supports matching within non-commutative multiplication expressions. While I mentioned in my last blog post that this matching support was limited, I&amp;#8217;ll go into a bit more detail about what those limitations (which sometimes produce wrong results) are:&lt;/p&gt;
-&lt;h3 id="no-matching-based-on-structure"&gt;No matching based on structure&lt;/h3&gt;
-&lt;p&gt;Matching within commutative SymPy expressions allows for taking the structure of expressions into account. Two commutative SymPy expressions match only if both contain the same non-wildcard symbols:&lt;/p&gt;
-&lt;div class="sourceCode" id="cb1"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb1-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.abc &lt;span class="im"&gt;import&lt;/span&gt; a, x, y, z&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; w &lt;span class="op"&gt;=&lt;/span&gt; Wild(&lt;span class="st"&gt;'w'&lt;/span&gt;)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; m &lt;span class="op"&gt;=&lt;/span&gt; x&lt;span class="op"&gt;*&lt;/span&gt;y&lt;span class="op"&gt;*&lt;/span&gt;w&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-4" title="4"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; m.matches(x&lt;span class="op"&gt;*&lt;/span&gt;y&lt;span class="op"&gt;*&lt;/span&gt;z)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-5" title="5"&gt;{w_: z}&lt;/a&gt;
-&lt;a class="sourceLine" id="cb1-6" title="6"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; m.matches(a&lt;span class="op"&gt;*&lt;/span&gt;x&lt;span class="op"&gt;*&lt;/span&gt;z)&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;&lt;code&gt;m&lt;/code&gt; specifies that the expression must contain both &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; in addition to whatever the wildcard matches. For this reason, &lt;code&gt;m&lt;/code&gt; matches &lt;code&gt;x*y*z&lt;/code&gt; but not &lt;code&gt;a*x*z&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;The corresponding example for non-commutative expressions does not work as expected, as it does not match when we expect it to:&lt;/p&gt;
-&lt;div class="sourceCode" id="cb2"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb2-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; A, B, C, D &lt;span class="op"&gt;=&lt;/span&gt; symbols(&lt;span class="st"&gt;'A:D'&lt;/span&gt;, commutative&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="va"&gt;False&lt;/span&gt;)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb2-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; W &lt;span class="op"&gt;=&lt;/span&gt; Wild(&lt;span class="st"&gt;'W'&lt;/span&gt;, commutative&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="va"&gt;False&lt;/span&gt;)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb2-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; M &lt;span class="op"&gt;=&lt;/span&gt; A&lt;span class="op"&gt;*&lt;/span&gt;B&lt;span class="op"&gt;*&lt;/span&gt;W&lt;/a&gt;
-&lt;a class="sourceLine" id="cb2-4" title="4"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; M.matches(A&lt;span class="op"&gt;*&lt;/span&gt;B&lt;span class="op"&gt;*&lt;/span&gt;C)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb2-5" title="5"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; M.matches(A&lt;span class="op"&gt;*&lt;/span&gt;D&lt;span class="op"&gt;*&lt;/span&gt;C)&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h3 id="expressions-dont-respect-non-commutativity"&gt;Expressions don&amp;#8217;t respect non-commutativity&lt;/h3&gt;
-&lt;p&gt;In instances where matching does seem to work, the non-commutativity of expressions is not respected:&lt;/p&gt;
-&lt;div class="sourceCode" id="cb3"&gt;&lt;pre class="sourceCode python"&gt;&lt;code class="sourceCode python"&gt;&lt;a class="sourceLine" id="cb3-1" title="1"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; A, B, C, D &lt;span class="op"&gt;=&lt;/span&gt; symbols(&lt;span class="st"&gt;'A:D'&lt;/span&gt;, commutative&lt;span class="op"&gt;=&lt;/span&gt;&lt;span class="va"&gt;False&lt;/span&gt;)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb3-2" title="2"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; w &lt;span class="op"&gt;=&lt;/span&gt; Wild(&lt;span class="st"&gt;'w'&lt;/span&gt;)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb3-3" title="3"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="im"&gt;from&lt;/span&gt; sympy.abc &lt;span class="im"&gt;import&lt;/span&gt; x&lt;/a&gt;
-&lt;a class="sourceLine" id="cb3-4" title="4"&gt;&lt;span class="op"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; (w&lt;span class="op"&gt;*&lt;/span&gt;A&lt;span class="op"&gt;*&lt;/span&gt;B&lt;span class="op"&gt;*&lt;/span&gt;C).matches(x&lt;span class="op"&gt;*&lt;/span&gt;C&lt;span class="op"&gt;*&lt;/span&gt;B&lt;span class="op"&gt;*&lt;/span&gt;A)&lt;/a&gt;
-&lt;a class="sourceLine" id="cb3-5" title="5"&gt;{w_: x}&lt;/a&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The two expressions should &lt;em&gt;not&lt;/em&gt; have matched, since the order of the non-commutative expressions were different. I reported this same error for matrix expressions in issue &lt;a href="https://github.com/sympy/sympy/issues/17172"&gt;#17172&lt;/a&gt;.&lt;/p&gt;
-&lt;h3 id="sub-expressions-arent-expanded"&gt;Sub-expressions aren&amp;#8217;t expanded&lt;/h3&gt;
-&lt;p&gt;The matching code should be able to match portions of powers, which are represented differently in the SymPy AST. As an example, a non-commutative matcher such as &lt;span class="math inline"&gt;&lt;em&gt;A&lt;/em&gt;&lt;em&gt;W&lt;/em&gt;&lt;/span&gt; (where &lt;span class="math inline"&gt;&lt;em&gt;W&lt;/em&gt;&lt;/span&gt; is a wildcard) should match &lt;span class="math inline"&gt;&lt;em&gt;A&lt;/em&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/span&gt; with &lt;span class="math inline"&gt;{&lt;em&gt;W&lt;/em&gt;&amp;#8196;&amp;#8614;&amp;#8196;&lt;em&gt;A&lt;/em&gt;}&lt;/span&gt;. I wasn&amp;#8217;t able create a working example of this using the existing matching code.&lt;/p&gt;
-&lt;h2 id="matching-implementation"&gt;Matching Implementation&lt;/h2&gt;
-&lt;p&gt;Since order needs to be taken into account for matching non-commutative expressions, the new matching code essentially does what a regular expression matcher would do, with nodes taking the place of characters and wildcards taking the place of the &lt;code&gt;.+&lt;/code&gt; regular expression.&lt;/p&gt;
-&lt;h2 id="next-steps"&gt;Next Steps&lt;/h2&gt;
-&lt;p&gt;The matching PR still needs to be polished, and the related documentation needs to be updated, so I&amp;#8217;ll be working on that. I&amp;#8217;ll also start with extending matrix matching from this PR.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://www.kangzhiq.com/?p=30</guid>
-      <author>Zhiqi KANG (kangzhiq)</author>
-      <title>Zhiqi KANG (kangzhiq): [GSoC 2019] WEEK 7!</title>
-      <pubDate>Sat, 20 Jul 2019 13:10:56 GMT</pubDate>
-      <link>https://www.kangzhiq.com/2019/07/20/gsoc-2019-week-7/</link>
-      <description>&lt;p&gt;This week is also dedicated to the implementation of new format for sparse array. &lt;a href="https://github.com/sympy/sympy/pull/17160"&gt;#17160&lt;/a&gt; I have figured out the way to dynamically handle the dimension problem for different formats. &lt;/p&gt;
-
-
-
-&lt;p&gt;The most difficult part is for  Compressed Sparse Row (CSR) format. This format is used by Matlab and Julia as a default format. (In fact the exact foramt is Compressed Sparse Column, which is transposed storage for CSR format.) CSR format used 3 list for storage: a flattened list for all non-zero value, a list of column index for each non-zero value and a list of pointer for first non-zero value in each row. In a two-dimension matrix, the notion of row is straight forward. But how to define a row in a multidimensional array? &lt;/p&gt;
-
-
-
-&lt;p&gt;In order solve this problem, I have defined the last dimension of each array as a row and flattened the first n-1 dimensions, with n as the rank of the array. I this way, a sparse array can be stored in 3 lists as the way CSR proposes. &lt;/p&gt;
-
-
-
-&lt;p&gt;This format is said to have a very good performance in item accessing and slicing, as well as vector product. Unfortunately, I haven&amp;#8217;t figured out how to implement the __mul__ function to make good use of this format.  &lt;/p&gt;
-
-
-
-&lt;p&gt;By the end of this week, 3 formats are basically implemented: List Of List(LIL), Coordiante list(COO) and Compressed Sparse Row(CSR). &lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://divyanshu132.github.io//gsoc-week-8</guid>
-      <author>Divyanshu Thakur (divyanshu132)</author>
-      <title>Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 8 - Phase-II Completion</title>
-      <pubDate>Sat, 20 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://divyanshu132.github.io//gsoc-week-8</link>
-      <description>&lt;p&gt;Phase-II has been completed and now it&amp;#8217;s time to present all the work done during this phase. This week&amp;#8217;s blog is little early in comparison to my previous blogs because I&amp;#8217;ll not be active for next 2 upcoming days. In the whole phase we worked on &lt;strong&gt;Computations with Polycyclic Groups&lt;/strong&gt; though the tasks mentioned in proposal for this phase were quite different. But let me tell you it worth that much time, Computation with Polycyclic groups(solvable groups) shows the actual development in computational group theory.&lt;/p&gt;
-
-&lt;p&gt;Below are the functioalities that were added to the polycyclic group in this phase, Here is the PR &lt;a href="https://github.com/sympy/sympy/pull/16991"&gt;sympy/sympy#16991&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Testing Collector&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;As discussed in &lt;a href="https://divyanshu132.github.io/gsoc-week-5"&gt;week-5 blog&lt;/a&gt; at the time of Collector implementation we did not have the implementation of polycyclic presentation so some hand made tests were used. Here is an example of &lt;code class="highlighter-rouge"&gt;S(4)&lt;/code&gt;.&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
-&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics.free_groups import free_group
-&amp;gt;&amp;gt;&amp;gt; F, x0, x1, x2, x3 = free_group("x0, x1, x2, x3")
-&amp;gt;&amp;gt;&amp;gt; pc_relators = { x0**2: (), x1**3: (), x2**2: (), x3**2: (),
-...                 x0**-1*x1*x0: x1**2, x0**-1*x2*x0: x2*x3,
-...                 x0**-1*x3*x0: x3, x1**-1*x2*x1: x3,
-...                 x1**-1*x3*x1: x2*x3, x2**-1*x3*x2: x3
-...               }
-&amp;gt;&amp;gt;&amp;gt; word = x3*x2*x1*x0
-&amp;gt;&amp;gt;&amp;gt; relative_order = [2, 3, 2, 2]
-&amp;gt;&amp;gt;&amp;gt; group = word.group
-&amp;gt;&amp;gt;&amp;gt; collector = Collector(pc_relators, relative_order, group)
-&amp;gt;&amp;gt;&amp;gt; collector.collected_word(word)
-x0*x1**2*x2*x3
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;The final word &lt;code class="highlighter-rouge"&gt;x0*x1**2*x2*x3&lt;/code&gt; is said to be collected. For more information about collected word please look into the docstrings of the method &lt;code class="highlighter-rouge"&gt;Collector.collected_word()&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Computation of Polycyclic Sequence and Series&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Polycyclic sequence and series are the building blocks of polycyclic presentation (have a look at &lt;a href="https://divyanshu132.github.io/gsoc-week-6"&gt;week-6 blog&lt;/a&gt;) . One thing to note is that, the derived series of a group may change on different course of execution so we may have different pc sequence and series for the same group.&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
-&amp;gt;&amp;gt;&amp;gt; G = SymmetricGroup(4)
-&amp;gt;&amp;gt;&amp;gt; PcGroup = G.polycyclic_group()
-&amp;gt;&amp;gt;&amp;gt; PcGroup.pcgs
-[Permutation(0, 1, 2, 3), Permutation(3)(0, 2, 1), Permutation(0, 3)(1, 2), Permutation(0, 1)(2, 3)]
-&amp;gt;&amp;gt;&amp;gt; 
-&amp;gt;&amp;gt;&amp;gt; PcGroup.pc_series[0] == G
-True
-&amp;gt;&amp;gt;&amp;gt; PcGroup.pc_series[1] == AlternatingGroup(4)
-True
-&amp;gt;&amp;gt;&amp;gt; PcGroup.relative_order()
-[2, 3, 2, 2]
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;strong&gt;Computation of Polycyclic Presentation&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Few approaches were used to compute polycyclic presentation, the current implementation is discussed in &lt;a href="https://divyanshu132.github.io/gsoc-week-7"&gt;week-7 blog&lt;/a&gt;. Below is a small example to show the functionality.&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
-&amp;gt;&amp;gt;&amp;gt; G = SymmetricGroup(4)
-&amp;gt;&amp;gt;&amp;gt; PcGroup = G.polycyclic_group()
-&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics.free_groups import free_group
-&amp;gt;&amp;gt;&amp;gt; len(PcGroup.pcgs)
-4
-&amp;gt;&amp;gt;&amp;gt; free_group, x0, x1, x2, x3 = free_group("x0, x1, x2, x3")
-&amp;gt;&amp;gt;&amp;gt; PcGroup.pc_presentation(free_group)
-{x3**2: (), x2**2: (), x2**-1*x3*x2: x3, x1**3: (), x1**-1*x3*x1: x2*x3, x1**-1*x2*x1: x3, x0**2: x2*x3, x0**-1*x3*x0: x2, x0**-1*x2*x0: x3, x0**-1*x1*x0: x1**2*x3}
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;As I mentioned above &lt;code class="highlighter-rouge"&gt;pc_sequence&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;pc_series&lt;/code&gt; may change on different course of execution and hence the &lt;code class="highlighter-rouge"&gt;pc_presentation&lt;/code&gt; changes accordingly.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Testing Presentation&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Due to the changing &lt;code class="highlighter-rouge"&gt;pc_presentation&lt;/code&gt; initially, it was difficult to test presentation but later on a method has been developed and a good amount of code is introduced to test the presentation. The details can be found in the module &lt;code class="highlighter-rouge"&gt;test_pc_groups.py&lt;/code&gt; in the above PR.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Additional methods for Polycyclic groups&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;There were few additional methods added to the polycyclic group.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;exponent_vector()&lt;/code&gt; :- It represents the given generator of a polycyclic group with the help of product of &lt;code class="highlighter-rouge"&gt;pcgs&lt;/code&gt;.&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;depth()&lt;/code&gt; :- Depth of the first non-zero element in &lt;code class="highlighter-rouge"&gt;exponent_vector&lt;/code&gt;.&lt;/li&gt;
-  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;leading_exponent()&lt;/code&gt; :- It represents the power of polycyclic generator at the above depth.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
-&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics.free_groups import free_group
-&amp;gt;&amp;gt;&amp;gt; G = SymmetricGroup(4)
-&amp;gt;&amp;gt;&amp;gt; PcGroup = G.polycyclic_group()
-&amp;gt;&amp;gt;&amp;gt; pcgs = PcGroup.pcgs
-&amp;gt;&amp;gt;&amp;gt; len(pcgs)
-4
-&amp;gt;&amp;gt;&amp;gt; free_group, x0, x1, x2, x3 = free_group("x0, x1, x2, x3")
-&amp;gt;&amp;gt;&amp;gt; PcGroup.exponent_vector(G[1], F)
-[1, 1, 1, 1]
-&amp;gt;&amp;gt;&amp;gt; G[1] == pcgs[0]*pcgs[1]*pcgs[2]*pcgs[3]
-True
-&amp;gt;&amp;gt;&amp;gt; PcGroup.depth(G[1], free_group) == 1
-&amp;gt;&amp;gt;&amp;gt; PcGroup.leading_exponent(G[1], free_group) == 1
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Currently, we are discussing about organizing above methods of polycyclic group. As Kalevi feels that the suitable place for &lt;code class="highlighter-rouge"&gt;pc_presentation&lt;/code&gt;(currently, it&amp;#8217;s a method of &lt;code class="highlighter-rouge"&gt;PolycyclicGroup class&lt;/code&gt;) is the &lt;code class="highlighter-rouge"&gt;Collector class&lt;/code&gt;, Perhaps the structure of both the classes should be changed and the same will be reflected in the examples mentioned above.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://jmig5776.github.io//gsoc-week-8</guid>
-      <author>Jogi Miglani (jmig5776)</author>
-      <title>Jogi Miglani (jmig5776): GSoC 2019 - Week 8</title>
-      <pubDate>Sat, 20 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://jmig5776.github.io//gsoc-week-8</link>
-      <description>&lt;p&gt;This was the eigth week meeting with the GSoC mentors which was scheduled on
-Saturday 20th July, 2019 between 12:30 - 1:30 PM (IST). Me, Yathartha and Amit
-were the attendees of the meeting.
-Finally the PR &lt;a href="https://github.com/sympy/sympy/pull/16890"&gt;#16890&lt;/a&gt; is merged to
-Sympy master and the work for Lambert has been completed. It was only possible
-because of the mentors and especially @smichr for his great suggestions in code.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Discussing previous week&amp;#8217;s progress&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;In this meeting the goals for the time left for GSoC were decided as follows:-&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Lambert:- Completed and merged.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Solve modular:-
-What I experienced with lambert&amp;#8217;s PR that got stretched so much which I was not
-expecting. Algorithms made from heuristics takes so much time to be ready for
-merging so I really don&amp;#8217;t know how much time it will take. But It is sure that
-it will be completed before the final evaluation.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;ImageSet Union:- This task will be taken after the solve modular. This is a
-very complex task and will need proper guidance and algorithm. I had searched
-for some research papers, but what I found out was not that what we want.
-Before GSoC final evaluation this task will be started to implement, but I am
-not really sure if it would get merged before final evaluation.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Next week goals&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Work upon &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; PR&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;If time left then find plan for Imageset Union.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Code improvement takes time!!&lt;/p&gt;</description>
+&lt;p&gt;That&amp;#8217;s all for now, signing off!!&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
