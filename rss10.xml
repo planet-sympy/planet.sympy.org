@@ -1587,6 +1587,19 @@ then emptySet is being returned.&lt;/p&gt;
 &lt;p&gt;The PR is merged to the master branch.&lt;/p&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html</guid>
+      <author>Ankit Pandey (anpandey)</author>
+      <title>Ankit Pandey (anpandey): Google Summer of Code Week 10: Matrix Wildcard Redux</title>
+      <pubDate>Tue, 06 Aug 2019 00:00:00 GMT</pubDate>
+      <link>https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html</link>
+      <description>&lt;p&gt;For this week, I&amp;#8217;ve made some more minor changes to the &lt;a href="https://github.com/sympy/sympy/pull/17299"&gt;&lt;code&gt;Indexed&lt;/code&gt; pull request&lt;/a&gt; from last week, in addition to filing a new &lt;a href="https://github.com/sympy/sympy/pull/17347"&gt;matrix wildcard pull request&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id="matrix-wildcards-again"&gt;Matrix Wildcards (again)&lt;/h3&gt;
+&lt;p&gt;Since &lt;a href="https://github.com/sympy/sympy/pull/17223"&gt;#17223&lt;/a&gt; was merged this week, I started with an implementation of matrix wildcards that takes advantage of the functionality included in the pull request. I thought that this would be relatively straightforward, with an implementation of the &lt;code&gt;matches&lt;/code&gt; method for the &lt;code&gt;MatrixWild&lt;/code&gt; subclass being enough. There was one problem though: the underlying matching implementation assumes that all powers in the expression are an instance of the &lt;code&gt;Pow&lt;/code&gt; class. However, this isn&amp;#8217;t true for matrix expressions: the &lt;code&gt;MatPow&lt;/code&gt; class, which represents matrix powers, is a subclass of its own. I&amp;#8217;m not exactly sure what the reason for this is, since a quick change of &lt;code&gt;MatPow&lt;/code&gt; to inherit from &lt;code&gt;Pow&lt;/code&gt; doesn&amp;#8217;t seem to break anything. I&amp;#8217;ll probably look into this a bit more, since I think this might have something to do with the fact that Matrix exponents can also include other matrices.&lt;/p&gt;
+&lt;p&gt;My solution for this was to allow temporarily allow expansion of powers by recursing through the expression tree and setting the &lt;code&gt;is_Pow&lt;/code&gt; field of each matrix power to &lt;code&gt;True&lt;/code&gt; and later reverting these states later. It doesn&amp;#8217;t look pretty, but it does seem to work (you can see the code &lt;a href="https://github.com/sympy/sympy/blob/17fb5010e36e10de156dad032d2aea376051df24/sympy/matrices/expressions/matmul.py#L178-L197"&gt;here&lt;/a&gt;).&lt;/p&gt;
+&lt;h2 id="next-steps"&gt;Next Steps&lt;/h2&gt;
+&lt;p&gt;I&amp;#8217;ll try to get started with some optimizations that utilize this wildcard class once the pull request gets merged.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://czgdp1807.github.io/week_10</guid>
       <author>Gagandeep Singh (czgdp1807)</author>
       <title>Gagandeep Singh (czgdp1807): Week 10 - Debugging, testing and Haar measure</title>
@@ -1901,15 +1914,6 @@ keep you updated!&lt;/p&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;Till then, good byee..&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/07/week-9-its-the-evaluation-week/</guid>
-      <author>Nikhil Maan (Sc0rpi0n101)</author>
-      <title>Nikhil Maan (Sc0rpi0n101): Week 9: It's the Evaluation Week!!</title>
-      <pubDate>Sun, 28 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://sc0rpi0n101.github.io/2019/07/week-9-its-the-evaluation-week/</link>
-      <description>&lt;p&gt;Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this time we will be talking about the second evaluation for GSoC. The main objective of the week was to get the Fortran parser ready.
- The Fortran Parser Traivs and the Tests LFortran Evaluation!!! The meeting What Now  The Fortran Parser The Fortran parser is finally complete after shifting to using SymPy&amp;rsquo;s codegen AST. It can now parser all the stuff that the parser could do before shifting.</description>
     </item>
   </channel>
 </rss>
