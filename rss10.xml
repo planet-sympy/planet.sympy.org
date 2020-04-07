@@ -7,576 +7,6 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
-      <guid isPermaLink="false">https://asmeurer.com/blog/posts/verifying-the-riemann-hypothesis-with-sympy-and-mpmath/</guid>
-      <author>Aaron Meurer (asmeurer)</author>
-      <title>Aaron Meurer (asmeurer): Verifying the Riemann Hypothesis with SymPy and mpmath</title>
-      <pubDate>Tue, 31 Mar 2020 21:12:54 GMT</pubDate>
-      <link>https://asmeurer.com/blog/posts/verifying-the-riemann-hypothesis-with-sympy-and-mpmath/</link>
-      <description>&lt;div&gt;&lt;p&gt;Like most people, I've had a lot of free time recently, and I've spent some of
-it watching various YouTube videos about the &lt;a href="https://en.wikipedia.org/wiki/Riemann_hypothesis"&gt;Riemann
-Hypothesis&lt;/a&gt;. I've collected
-the videos I've watched into &lt;a href="https://www.youtube.com/playlist?list=PLrFrByaoJbcqKjzgJvLs2-spSmzP7jolT"&gt;YouTube
-playlist&lt;/a&gt;.
-The playlist is sorted with the most mathematically approachable videos first,
-so even if you haven't studied complex analysis before, you can watch the
-first few. If you have studied complex analysis, all the videos will be within
-your reach (none of them are highly technical with proofs). Each video
-contains parts that aren't in any of the other videos, so you will get
-something out of watching each of them.&lt;/p&gt;
-&lt;p&gt;The &lt;a href="https://www.youtube.com/watch?v=lyf9W2PWm40&amp;amp;list=PLrFrByaoJbcqKjzgJvLs2-spSmzP7jolT&amp;amp;index=8"&gt;last video in the
-playlist&lt;/a&gt;
-is a lecture by Keith Conrad. In it, he mentioned a method by which one could
-go about verifying the Riemann Hypothesis with a computer. I wanted to see if
-I could do this with SymPy and mpmath. It turns out you can.&lt;/p&gt;
-&lt;h2&gt;Background Mathematics&lt;/h2&gt;
-&lt;h3&gt;Euler's Product Formula&lt;/h3&gt;
-&lt;p&gt;Before we get to the computations, let's go over some mathematical background.
-As you may know, the Riemann Hypothesis is one of the 7 &lt;a href="https://en.wikipedia.org/wiki/Millennium_Prize_Problems"&gt;Millennium Prize
-Problems&lt;/a&gt; outlined by
-the Clay Mathematics Institute in 2000. The problems have gained some fame
-because each problem comes with a $1,000,000 prize if solved. One problem, the
-&lt;a href="https://en.wikipedia.org/wiki/Poincar%C3%A9_conjecture"&gt;Poincar&amp;#233; conjecture&lt;/a&gt;,
-has already been solved (Grigori Perelman who solved it turned down the 1
-million dollar prize). The remainder remain unsolved.&lt;/p&gt;
-&lt;p&gt;The Riemann Hypothesis is one of the most famous of these problems. The reason
-for this is that the problem is central many open questions in number theory.
-There are hundreds of theorems which are only known to be true contingent on
-the Riemann Hypothesis, meaning that if the Riemann Hypothesis were proven,
-immediately hundreds of theorems would be proven as well. Also, unlike some
-other Millennium Prize problems, like P=NP, the Riemann Hypothesis is almost
-universally believed to be true by mathematicians. So it's not a question of
-whether or not it is true, just one of how to actually prove it. The problem
-has been open for over 160 years, and while many advances have been made, no
-one has yet come up with a proof of it (crackpot proofs aside).&lt;/p&gt;
-&lt;p&gt;To understand the statement of the hypothesis, we must first define the zeta
-function. Let&lt;/p&gt;
-&lt;p&gt;$$\zeta(s) = \sum_{n=1}^\infty \frac{1}{n^s}$$&lt;/p&gt;
-&lt;p&gt;(that squiggle $\zeta$ is the lowercase Greek letter zeta). This expression
-makes sense if $s$ is an integer greater than or equal to 2, $s=2, 3, 4, \ldots$,
-since we know from simple arguments from calculus that the summation converges
-in those cases (it isn't important for us what those values are, only that the
-summation converges). The story begins with Euler, who in 1740 considered the
-following infinite product:&lt;/p&gt;
-&lt;p&gt;$$\prod_{\text{$p$ prime}}\frac{1}{1 -
-\frac{1}{p^s}}.$$&lt;/p&gt;
-&lt;p&gt;The product ranges over all prime numbers, i.e., it is
-$$\left(\frac{1}{1 - \frac{1}{2^s}}\right)\cdot\left(\frac{1}{1 -
-\frac{1}{3^s}}\right)\cdot\left(\frac{1}{1 - \frac{1}{5^s}}\right)\cdots.$$
-The fraction $\frac{1}{1 - \frac{1}{p}}$ may seem odd at first, but consider
-the famous geometric series formula, $$\sum_{k=0}^\infty r^k = \frac{1}{1 -
-r},$$ which is true for $|r| &amp;lt; 1$. Our fraction is exactly of this form, with
-$r = \frac{1}{p^s}$. So substituting, we have&lt;/p&gt;
-&lt;p&gt;$$\prod_{\text{$p$ prime}}\frac{1}{1 - \frac{1}{p^s}} =
-\prod_{\text{$p$ prime}}\sum_{k=0}^\infty \left(\frac{1}{p^s}\right)^k =
-\prod_{\text{$p$ prime}}\sum_{k=0}^\infty \left(\frac{1}{p^k}\right)^s.$$&lt;/p&gt;
-&lt;p&gt;Let's take a closer look at what this is. It is&lt;/p&gt;
-&lt;p&gt;$$\left(\frac{1}{p_1^s} + \frac{1}{p_1^{2s}} + \frac{1}{p_1^{3s}} +
-\cdots\right)\cdot\left(\frac{1}{p_2^s} + \frac{1}{p_2^{2s}} +
-\frac{1}{p_2^{3s}} + \cdots\right)\cdot\left(\frac{1}{p_3^s} + \frac{1}{p_3^{2s}} +
-\frac{1}{p_3^{3s}} + \cdots\right)\cdots,$$&lt;/p&gt;
-&lt;p&gt;where $p_1$ is the first prime, $p_2$ is the second prime, and so on. Now
-think about how to expand finite products of finite sums, for instance,
-$$(x_1 + x_2 + x_3)(y_1 + y_2 + y_3)(z_1 + z_2 + z_3).$$ To expand the above,
-you would take a sum of every combination where you pick one $x$ term, one $y$
-term, and one $z$ term, giving&lt;/p&gt;
-&lt;p&gt;$$x_1y_1z_1 + x_1y_1z_2 + \cdots + x_2y_1z_3 + \cdots + x_3y_2z_1 + \cdots + x_3y_3z_3.$$&lt;/p&gt;
-&lt;p&gt;So to expand the infinite product, we do the same thing. We take every
-combination of picking $1/p_i^{ks}$, with one $k$ for each $i$. If we pick
-infinitely many non-$1$ powers, the product will be zero, so we only need to
-consider terms where there are finitely many primes. The resulting sum will be
-something like&lt;/p&gt;
-&lt;p&gt;$$\frac{1}{1^s} + \frac{1}{p_1^s} + \frac{1}{p_2^s} + \frac{1}{\left(p_1^2\right)^s} +
-\frac{1}{p_3^s} + \frac{1}{\left(p_1p_2\right)^s} + \cdots,$$&lt;/p&gt;
-&lt;p&gt;where each prime power combination is picked exactly once. However, we know by
-the &lt;a href="https://en.wikipedia.org/wiki/Fundamental_theorem_of_arithmetic"&gt;Fundamental Theorem of
-Arithmetic&lt;/a&gt;
-that when you take all combinations of products of primes that you get each
-positive integer exactly once. So the above sum is just&lt;/p&gt;
-&lt;p&gt;$$\frac{1}{1^s} + \frac{1}{2^s} + \frac{1}{3^s} + \cdots,$$ which is just
-$\zeta(s)$ as we defined it above.&lt;/p&gt;
-&lt;p&gt;In other words,&lt;/p&gt;
-&lt;p&gt;$$\zeta(s) = \sum_{n=1}^\infty \frac{1}{n^s} = \prod_{\text{$p$
-prime}}\frac{1}{1 - \frac{1}{p^s}},$$ for $s = 2, 3, 4, \ldots$. This is known
-as Euler's product formula for the zeta function. Euler's product formula
-gives us our first clue as to why the zeta function can give us insights into
-prime numbers.&lt;/p&gt;
-&lt;h3&gt;Analytic Continuation&lt;/h3&gt;
-&lt;p&gt;In 1859, Bernhard Riemann wrote a &lt;a href="https://en.wikipedia.org/wiki/On_the_Number_of_Primes_Less_Than_a_Given_Magnitude"&gt;short 9 page paper on number theory and the
-zeta
-function&lt;/a&gt;.
-It was the only paper Riemann ever wrote on the subject of number theory, but
-it is undoubtedly one of the most important papers every written on the
-subject.&lt;/p&gt;
-&lt;p&gt;In the paper, Riemann considered that the zeta function summation,&lt;/p&gt;
-&lt;p&gt;$$\zeta(s) = \sum_{n=1}^\infty \frac{1}{n^s},$$&lt;/p&gt;
-&lt;p&gt;makes sense not just for integers $s = 2, 3, 4, \ldots$, but for any real
-number $s &amp;gt; 1$ (if $s = 1$, the summation is the &lt;a href="https://en.wikipedia.org/wiki/Harmonic_series_(mathematics)"&gt;harmonic
-series&lt;/a&gt;, which
-famously diverges). In fact, it is not hard to see that for complex $s$, the
-summation makes sense so long as $\mathrm{Re}(s) &amp;gt; 1$ (for more about what it
-even means for $s$ to be complex in that formula, and the basic ideas of
-analytic continuation, I recommend &lt;a href="https://www.youtube.com/watch?v=sD0NjbwqlYw&amp;amp;list=PLrFrByaoJbcqKjzgJvLs2-spSmzP7jolT&amp;amp;index=3"&gt;3Blue1Brown's
-video&lt;/a&gt;
-from my YouTube playlist).&lt;/p&gt;
-&lt;p&gt;Riemann wanted to extend this function to the entire complex plane, not just
-$\mathrm{Re}(s) &amp;gt; 1$. The process of doing this is called &lt;a href="https://en.wikipedia.org/wiki/Analytic_continuation"&gt;analytic
-continuation&lt;/a&gt;. The theory
-of complex analysis tells us that if we can find an extension of $\zeta(s)$ to
-the whole complex plan that remains differentiable, then that extension is
-unique, and we can reasonably say that that &lt;em&gt;is&lt;/em&gt; the definition of the
-function everywhere.&lt;/p&gt;
-&lt;p&gt;Riemann used the following approach. Consider what we might call the
-"completed zeta function"&lt;/p&gt;
-&lt;p&gt;$$Z(s) = \pi^{-\frac{s}{2}}\Gamma\left(\frac{s}{2}\right)\zeta(s).$$&lt;/p&gt;
-&lt;p&gt;Using Fourier analysis, Riemann gave a formula for $Z(s)$ that is defined
-everywhere, allowing us to use it to define $\zeta(s)$ to the left of 1. I
-won't repeat Riemann's formula for $Z(s)$ as the exact formula isn't
-important, but from it one could also see&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;$Z(s)$ is defined everywhere in the complex plane, except for simple poles at 0
-and 1.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;$Z(s) = Z(1 - s).$ This means if we have a value for $s$ that is right of
-the line $\mathrm{Re}(z) = \frac{1}{2},$ we can get a value to the left of
-it by reflecting it over the real-axis and the line at $\frac{1}{2}$ (to
-see this, note that the average of $s$ and $1 - s$ is $1/2$, so the
-midpoint of a line connecting the two should always go through the point
-$1/2$).&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;img alt="Reflection of s and 1 - s" src="https://asmeurer.com/blog/s-and-1-s.svg" width="608" /&gt;
-&lt;p&gt;(Reflection of $s$ and $1 - s$. Created with
-&lt;a href="https://www.geogebra.org/graphing/c9rzy9hj"&gt;Geogebra&lt;/a&gt;)&lt;/p&gt;
-&lt;h3&gt;Zeros&lt;/h3&gt;
-&lt;p&gt;Looking at $Z(s)$, it is a product of three parts. So the zeros and poles of
-$Z(s)$ correspond to the zeros and poles of these parts, unless they cancel.
-$\pi^{-\frac{s}{2}}$ is the easiest: it has no zeros and no poles. The second
-part is the &lt;a href="https://en.wikipedia.org/wiki/Gamma_function"&gt;gamma function&lt;/a&gt;.
-$\Gamma(z)$ has no zeros and has simple poles at nonpositive integers $z=0,
--1, -2, \ldots$.&lt;/p&gt;
-&lt;p&gt;So taking this, along with the fact that $Z(s)$ is entire except for simple
-poles at 0 and 1, we get from $$\zeta(s) =
-\frac{Z(s)}{\pi^{-\frac{s}{2}}\Gamma\left(\frac{s}{2}\right)}$$&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;$Z(s)$ has a simple pole at 1, which means that $\zeta(s)$ does as well.
-This is not surprising, since we already know the summation formula from
-above diverges as $s$ approaches 1.&lt;/li&gt;
-&lt;li&gt;$Z(s)$ has a simple pole at 0. Since $\Gamma\left(\frac{s}{2}\right)$ also
-has a simple pole at 0, they must cancel and $\zeta(s)$ must have neither a
-zero nor a pole at 0 (in fact, $\zeta(0) = -1/2$).&lt;/li&gt;
-&lt;li&gt;Since $\Gamma\left(\frac{s}{2}\right)$ has no zeros, there are no further
-poles of $\zeta(s)$. Thus, $\zeta(s)$ is entire everywhere except for a
-simple pole at $s=1$.&lt;/li&gt;
-&lt;li&gt;$\Gamma\left(\frac{s}{2}\right)$ has poles at the remaining negative even
-integers. Since $Z(s)$ has no poles there, these must correspond to zeros
-of $\zeta(s)$. These are the so-called "trivial" zeros of the zeta
-function, at $s=-2, -4, -6, \ldots$. The term "trivial" here is a relative
-one. They are trivial to see from the above formula, whereas other zeros of
-$\zeta(s)$ are much harder to find.&lt;/li&gt;
-&lt;li&gt;$\zeta(s) \neq 0$ if $\mathrm{Re}(s) &amp;gt; 1$. One way to see this is from the
-Euler product formula. Since each term in the product is not zero, the
-function itself cannot be zero (this is a bit hand-wavy, but it can be made
-rigorous). This implies that $Z(s) \neq 0$ in this region as well. We can
-reflect $\mathrm{Re}(s) &amp;gt; 1$ over the line at $\frac{1}{2}$ by considering
-$\zeta(1 - s)$. Using the above formula and the fact that $Z(s) = Z(1 -
-s)$, we see that $\zeta(s)$ cannot be zero for $\mathrm{Re}(s) &amp;lt; 0$ either,
-with the exception of the aforementioned trivial zeros at $s=-2, -4, -6,
-\ldots$.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Thus, any non-trivial zeros of $\zeta(s)$ must have real part between 0 and 1.
-This is the so-called "critical strip". Riemann hypothesized that these zeros
-are not only between 0 and 1, but are in fact on the line dividing the strip
-at real part equal to $1/2$. This line is called the "critical line". This is
-Riemann's famous hypothesis: that all the non-trivial zeros of $\zeta(s)$ have
-real part equal to $1/2$.&lt;/p&gt;
-&lt;h3&gt;Computational Verification&lt;/h3&gt;
-&lt;p&gt;Whenever you have a mathematical hypothesis, it is good to check if it is true
-numerically. Riemann himself used some methods (not the same ones we use here)
-to numerically estimate the first few non-trivial zeros of $\zeta(s)$, and
-found that they lied on the critical line, hence the motivation for his
-hypothesis. Here is an &lt;a href="https://www.maths.tcd.ie/pub/HistMath/People/Riemann/Zeta/EZeta.pdf"&gt;English
-translation&lt;/a&gt;
-of his original paper if you are interested.&lt;/p&gt;
-&lt;p&gt;If we verified that all the zeros in the critical strip from, say,
-$\mathrm{Im}(s) = 0$ to $\mathrm{Im}(s) = N$ are in fact on the critical line
-for some large $N$, then it would give evidence that the Riemann Hypothesis is
-true. However, to be sure, this would not constitute a proof.
-&lt;a href="https://en.wikipedia.org/wiki/G._H._Hardy"&gt;Hardy&lt;/a&gt; showed in 1914 that
-$\zeta(s)$ has infinitely many zeros on the critical strip, so only finding
-finitely many of them would not suffice as a proof. (Although if we were to
-find a counter-example, a zero &lt;em&gt;not&lt;/em&gt; on the critical line, that WOULD
-constitute a proof that the Hypothesis is false. However, there are strong
-reasons to believe that the hypothesis is not false, so this would be unlikely
-to happen.)&lt;/p&gt;
-&lt;p&gt;How would we verify that the zeros are all on the line $1/2$. We can find
-zeros of $\zeta(s)$ numerically, but how would we know if the real part is
-really exactly 0.5 and not 0.500000000000000000000000000000000001? And more
-importantly, just because we find some zeros, it doesn't mean that we have all
-of them. Maybe we can find a bunch of zeros on the critical line, but how
-would we be sure that there aren't other zeros lurking around elsewhere on the
-critical strip?&lt;/p&gt;
-&lt;p&gt;We want to find rigorous answers to these two questions:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;How can we count the number of zeros between $\mathrm{Im}(s) = 0$ and
-$\mathrm{Im}(s) = N$ of $\zeta(s)$?&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;How can we verify that all those zeros lie on the critical line, that is,
-they have real part equal to exactly $1/2$?&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h4&gt;Counting Zeros Part 1&lt;/h4&gt;
-&lt;p&gt;To answer the first question, we can make use of a powerful theorem from
-complex analysis called the &lt;a href="https://en.wikipedia.org/wiki/Argument_principle#Generalized_argument_principle"&gt;argument
-principle&lt;/a&gt;.
-The argument principle says that if $f$ is a meromorphic function on some
-closed contour $C$, and does not have any zeros or poles on $C$ itself, then&lt;/p&gt;
-&lt;p&gt;$$\frac{1}{2\pi i}\oint_C \frac{f'(z)}{f(z)}\,dz = \#\left\{\text{zeros of $f$
-inside of C}\right\} - \#\left\{\text{poles of $f$
-inside of C}\right\},$$ where all zeros and poles are counted with
-multiplicity.&lt;/p&gt;
-&lt;p&gt;In other words, the integral on the left-hand side counts the number of zeros
-of $f$ minus the number of poles of $f$ in a region. The argument principle is
-quite easy to show given the Cauchy residue theorem (see the above linked
-Wikipedia article for a proof). The expression $f'(z)/f(z)$ is called the
-"&lt;a href="https://en.wikipedia.org/wiki/Logarithmic_derivative"&gt;logarithmic
-derivative&lt;/a&gt; of $f$",
-because it equals $\frac{d}{dz} \log(f(z))$ (although it makes sense even without
-defining what "$\log$" means).&lt;/p&gt;
-&lt;p&gt;One should take a moment to appreciate the beauty of this result. The
-left-hand side is an integral, something we generally think of as being a
-continuous quantity. But it is always exactly equal to an integer. Results
-such as these give us a further glimpse at how analytic functions and complex
-analysis can produce theorems about number theory, a field which one would
-naively think can only be studied via discrete means. In fact, these methods
-are far more powerful than discrete methods. For many results in number
-theory, we only know how to prove them using complex analytic means. So-called
-&lt;a href="https://en.wikipedia.org/wiki/Elementary_proof"&gt;"elementary" proofs&lt;/a&gt; for
-these results, or proofs that only use discrete methods and do not use complex
-analysis, have not yet been found.&lt;/p&gt;
-&lt;p&gt;Practically speaking, the fact that the above integral is exactly an integer
-means that if we compute it numerically and it comes out to something like
-0.9999999, we know that it must in fact equal exactly 1. So as long as we get
-a result that is near an integer, we can round it to the exact answer.&lt;/p&gt;
-&lt;p&gt;We can integrate a contour along the critical strip up to some $\mathrm{Im}(s)
-= N$ to count the number of zeros up to $N$ (we have to make sure to account
-for the poles. I go into more details about this when I actually compute the
-integral below).&lt;/p&gt;
-&lt;h4&gt;Counting Zeros Part 2&lt;/h4&gt;
-&lt;p&gt;So using the argument principle, we can count the number of zeros in a region.
-Now how can we verify that they all lie on the critical line? The answer lies
-in the $Z(s)$ function defined above. By the points outlined in the previous
-section, we can see that $Z(s)$ is zero exactly where $\zeta(s)$ is zero on
-the critical strip, and it is not zero anywhere else. In other words,&lt;/p&gt;
-&lt;div style="text-align: center;"&gt; &lt;b&gt;the zeros of $Z(s)$ are exactly the non-trivial zeros of $\zeta(s)$.&lt;/b&gt;&lt;/div&gt;
-&lt;p&gt;This helps us because $Z(s)$ has a nice property on the critical line. First
-we note that $Z(s)$ commutes with conjugation, that is $\overline{Z(s)} =
-Z(\overline{s})$ (this isn't obvious from what I have shown, but it is true).
-On the critical line $\frac{1}{2} + it$, we have&lt;/p&gt;
-&lt;p&gt;$$\overline{Z\left(\frac{1}{2} + it\right)} = Z\left(\overline{\frac{1}{2} +
-it}\right) = Z\left(\frac{1}{2} - it\right).$$&lt;/p&gt;
-&lt;p&gt;However, $Z(s) = Z(1 - s)$, and $1 - \left(\frac{1}{2} - it\right) =
-\frac{1}{2} + it$, so&lt;/p&gt;
-&lt;p&gt;$$\overline{Z\left(\frac{1}{2} + it\right)} = Z\left(\frac{1}{2} +
-it\right),$$&lt;/p&gt;
-&lt;p&gt;which means that $Z\left(\frac{1}{2} + it\right)$ is real valued for real $t$.&lt;/p&gt;
-&lt;p&gt;This simplifies things a lot, because it is much easier to find zeros of a real
-function. In fact, we don't even care about finding the zeros, only counting
-them. Since $Z(s)$ is continuous, we can use a simple method: counting sign
-changes. If a continuous real function changes signs from negative to positive or from
-positive to negative n times in an interval, then it must have at least n
-zeros in that interval. It may have more, for instance, if some zeros are
-clustered close together, or if a zero has a multiplicity greater than 1, but
-we know that there must be at least n.&lt;/p&gt;
-&lt;p&gt;So our approach to verifying the Riemann Hypothesis is as such:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Integrate $\frac{1}{2\pi i}\oint_C Z'(s)/Z(s)\,ds$ along a contour $C$
-that runs along the critical strip up to some $\mathrm{Im}(s) = N$. The
-integral will tell us there are exactly $n$ zeros in the contour, counting
-multiplicity.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Try to find $n$ sign changes of $Z(1/2 + it)$ for $t\in [0, N]$. If we can
-find $n$ of them, we are done. We have confirmed all the zeros are on the
-critical line.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Step 2 would fail if the Riemann Hypothesis is false, in which case a zero
-wouldn't be on the critical line. But it would also fail if a zero has a
-multiplicity greater than 1, since the integral would count it more times than
-the sign changes. Fortunately, as it turns out, the Riemann Hypothesis has
-been verified up to N = 10000000000000, and no one has yet found a zero of the
-zeta function yet that has a multiplicity greater than 1, so we should not
-expect that to happen (no one has yet found a counterexample to the Riemann
-Hypothesis either).&lt;/p&gt;
-&lt;h2&gt;Verification with SymPy and mpmath&lt;/h2&gt;
-&lt;p&gt;We now use SymPy and mpmath to compute the above quantities. We use
-&lt;a href="https://www.sympy.org/"&gt;SymPy&lt;/a&gt; to do symbolic manipulation for us, but the
-heavy work is done by &lt;a href="http://mpmath.org/doc/current/index.html"&gt;mpmath&lt;/a&gt;.
-mpmath is a pure Python library for arbitrary precision numerics. It is used
-by SymPy under the hood, but it will be easier for us to use it directly. It
-can do, among other things, numeric integration. When I first tried to do
-this, I tried using the &lt;a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.zeta.html"&gt;&lt;code&gt;scipy.special&lt;/code&gt; zeta
-function&lt;/a&gt;,
-but unfortunately, it does not support complex arguments.&lt;/p&gt;
-&lt;p&gt;First we do some basic imports&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; from sympy import *
-&amp;gt;&amp;gt;&amp;gt; import mpmath
-&amp;gt;&amp;gt;&amp;gt; import numpy as np
-&amp;gt;&amp;gt;&amp;gt; import matplotlib.pyplot as plt
-&amp;gt;&amp;gt;&amp;gt; s = symbols('s')
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Define the completed zeta function $Z = \pi^{-s/2}\Gamma(s/2)\zeta(s)$.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; Z = pi**(-s/2)*gamma(s/2)*zeta(s)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We can verify that Z is indeed real for $s = \frac{1}{2} + it.$&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; Z.subs(s, 1/2 + 0.5j).evalf()
--1.97702795164031 + 5.49690501450151e-17*I
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We get a small imaginary part due to the way floating point arithmetic works.
-Since it is below &lt;code&gt;1e-15&lt;/code&gt;, we can safely ignore it.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;D&lt;/code&gt; will be the logarithmic derivative of &lt;code&gt;Z&lt;/code&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; D = simplify(Z.diff(s)/Z)
-&amp;gt;&amp;gt;&amp;gt; D
-polygamma(0, s/2)/2 - log(pi)/2 + Derivative(zeta(s), s)/zeta(s)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This is $$\frac{\operatorname{polygamma}{\left(0,\frac{s}{2} \right)}}{2} -
-\frac{\log{\left(\pi \right)}}{2} + \frac{
-\zeta'\left(s\right)}{\zeta\left(s\right)}.$$&lt;/p&gt;
-&lt;p&gt;Note that logarithmic derivatives behave similar to logarithms. The
-logarithmic derivative of a product is the sum of logarithmic derivatives (the
-$\operatorname{polygamma}$ function is the derivative of $\Gamma$).&lt;/p&gt;
-&lt;p&gt;We now use
-&lt;a href="https://docs.sympy.org/latest/modules/utilities/lambdify.html#sympy.utilities.lambdify.lambdify"&gt;&lt;code&gt;lambdify&lt;/code&gt;&lt;/a&gt;
-to convert the SymPy expressions &lt;code&gt;Z&lt;/code&gt; and &lt;code&gt;D&lt;/code&gt; into functions that are evaluated
-using mpmath. A technical difficulty here is that the derivative of the zeta
-function $\zeta'(s)$ does not have a closed-form expression. &lt;a href="http://mpmath.org/doc/current/functions/zeta.html?highlight=zeta#mpmath.zeta"&gt;mpmath's &lt;code&gt;zeta&lt;/code&gt;
-can evaluate
-$\zeta'$&lt;/a&gt;
-but it doesn't yet work with &lt;code&gt;sympy.lambdify&lt;/code&gt; (see &lt;a href="https://github.com/sympy/sympy/issues/11802"&gt;SymPy issue
-11802&lt;/a&gt;). So we have to manually
-define &lt;code&gt;"Derivative"&lt;/code&gt; in lambdify, knowing that it will be the derivative of
-&lt;code&gt;zeta&lt;/code&gt; when it is called. Beware that this is only correct for this specific
-expression where we know that &lt;code&gt;Derivative&lt;/code&gt; will be &lt;code&gt;Derivative(zeta(s), s)&lt;/code&gt;.&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; Z_func = lambdify(s, Z, 'mpmath')
-&amp;gt;&amp;gt;&amp;gt; D_func = lambdify(s, D, modules=['mpmath',
-...     {'Derivative': lambda expr, z: mpmath.zeta(z, derivative=1)}])
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now define a function to use the argument principle to count the number of
-zeros up to $Ni$. Due to the symmetry $Z(s) = Z(1 - s)$, it is only necessary
-to count zeros in the top half-plane.&lt;/p&gt;
-&lt;p&gt;We have to be careful about the poles of $Z(s)$ at 0 and 1. We can either
-integrate right above them, or expand the contour to include them. I chose to
-do the former, starting at $0.1i$. It is known that there $\zeta(s)$ has no
-zeros near the real axis on the critical strip. I could have also expanded the
-contour to go around 0 and 1, and offset the result by 2 to account for the
-integral counting those points as poles.&lt;/p&gt;
-&lt;p&gt;It has also been shown that there are no zeros on the lines $\mathrm{Re}(s) =
-0$ or $\mathrm{Re}(s) = 1$, so we do not need to worry about that. If the
-upper point of our contour happens to have zeros exactly on it, we would be
-very unlucky, but even if this were to happen we could just adjust it up a
-little bit.&lt;/p&gt;
-&lt;img alt="Our contour" src="https://asmeurer.com/blog/contour-c.svg" width="608" /&gt;
-&lt;p&gt;(Our contour with $N=10$. Created with &lt;a href="https://www.geogebra.org/graphing/nmnsaywd"&gt;Geogebra&lt;/a&gt;)&lt;/p&gt;
-&lt;p&gt;&lt;a href="http://mpmath.org/doc/current/calculus/integration.html#mpmath.quad"&gt;&lt;code&gt;mpmath.quad&lt;/code&gt;&lt;/a&gt;
-can take a list of points to compute a contour. The &lt;code&gt;maxdegree&lt;/code&gt; parameter
-allows us to increase the degree of the quadrature if it becomes necessary to
-get an accurate result.&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; def argument_count(func, N, maxdegree=6):
-...     return 1/(2*mpmath.pi*1j)*(mpmath.quad(func,
-...         [1 + 0.1j, 1 + N*1j, 0 + N*1j, 0 + 0.1j,  1 + 0.1j],
-...         maxdegree=maxdegree))
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now let's test it. Lets count the zeros of $$s^2 - s + 1/2$$ in the box
-bounded by the above rectangle ($N = 10$).&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; expr = s**2 - s + S(1)/2
-&amp;gt;&amp;gt;&amp;gt; argument_count(lambdify(s, expr.diff(s)/expr), 10)
-mpc(real='1.0', imag='3.4287545414000525e-24')
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The integral is 1. We can confirm there is indeed one
-zero in this box, at $\frac{1}{2} + \frac{i}{2}$.&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; solve(s**2 - s + S(1)/2)
-[1/2 - I/2, 1/2 + I/2]
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now compute points of $Z$ along the critical line so we can count the sign
-changes. We also make provisions in case we have to increase the precision of
-mpmath to get correct results here. &lt;code&gt;dps&lt;/code&gt; is the number of digits of precision
-the values are computed to. The default is 15, but mpmath can compute values
-to any number of digits.
-&lt;a href="http://mpmath.org/doc/current/general.html#chop"&gt;&lt;code&gt;mpmath.chop&lt;/code&gt;&lt;/a&gt; zeros out
-values that are close to &lt;code&gt;0&lt;/code&gt;, which removes any numerically insignificant
-imaginary parts that arise from the floating point evaluation.&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; def compute_points(Z_func, N, npoints=10000, dps=15):
-...     import warnings
-...     old_dps = mpmath.mp.dps
-...     points = np.linspace(0, N, npoints)
-...     try:
-...         mpmath.mp.dps = dps
-...         L = [mpmath.chop(Z_func(i)) for i in 1/2 + points*1j]
-...     finally:
-...         mpmath.mp.dps = old_dps
-...     if L[-1] == 0:
-...         # mpmath will give 0 if the precision is not high enough, since Z
-...         # decays rapidly on the critical line.
-...         warnings.warn("You may need to increase the precision")
-...     return L
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Next define a function to count the number of sign changes in a list of real
-values.&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; def sign_changes(L):
-...     """
-...     Count the number of sign changes in L
-...
-...     Values of L should all be real.
-...     """
-...     changes = 0
-...     assert im(L[0]) == 0, L[0]
-...     s = sign(L[0])
-...     for i in L[1:]:
-...         assert im(i) == 0, i
-...         s_ = sign(i)
-...         if s_ == 0:
-...             # Assume these got chopped to 0
-...             continue
-...         if s_ != s:
-...             changes += 1
-...         s = s_
-...     return changes
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;For example, for $\sin(s)$ from -10 to 10, there are 7 zeros ($3\pi\approx
-9.42$).&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; sign_changes(lambdify(s, sin(s))(np.linspace(-10, 10)))
-7
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now we can check how many zeros of $Z(s)$ (and hence non-trivial zeros of
-$\zeta(s)$) we can find. According to
-&lt;a href="https://en.wikipedia.org/wiki/Riemann_hypothesis"&gt;Wikipedia&lt;/a&gt;, the first few
-non-trivial zeros of $\zeta(s)$ in the upper half-plane are 14.135, 21.022,
-and 25.011.&lt;/p&gt;
-&lt;p&gt;First try up to $N=20$.&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; argument_count(D_func, 20)
-mpc(real='0.99999931531867581', imag='-3.2332902529067346e-24')
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Mathematically, the above value &lt;em&gt;must&lt;/em&gt; be an integer, so we know it is 1.&lt;/p&gt;
-&lt;p&gt;Now check the number of sign changes of $Z(s)$ from $\frac{1}{2} + 0i$ to
-$\frac{1}{2} + 20i$.&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; L = compute_points(Z_func, 20)
-&amp;gt;&amp;gt;&amp;gt; sign_changes(L)
-1
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;So it checks out. There is one zero between $0$ and $20i$ on the critical
-strip, and it is in fact on the critical line, as expected!&lt;/p&gt;
-&lt;p&gt;Now let's verify the other two zeros from Wikipedia.&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; argument_count(D_func, 25)
-mpc(real='1.9961479945577916', imag='-3.2332902529067346e-24')
-&amp;gt;&amp;gt;&amp;gt; L = compute_points(Z_func, 25)
-&amp;gt;&amp;gt;&amp;gt; sign_changes(L)
-2
-&amp;gt;&amp;gt;&amp;gt; argument_count(D_func, 30)
-mpc(real='2.9997317058520916', imag='-3.2332902529067346e-24')
-&amp;gt;&amp;gt;&amp;gt; L = compute_points(Z_func, 30)
-&amp;gt;&amp;gt;&amp;gt; sign_changes(L)
-3
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Both check out as well.&lt;/p&gt;
-&lt;p&gt;Since we are computing the points, we can go ahead and make a plot as well.
-However, there is a technical difficulty. If you naively try to plot $Z(1/2 +
-it)$, you will find that it decays rapidly, so fast that you cannot really
-tell where it crosses 0:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; def plot_points_bad(L, N):
-...     npoints = len(L)
-...     points = np.linspace(0, N, npoints)
-...     plt.figure()
-...     plt.plot(points, L)
-...     plt.plot(points, [0]*npoints, linestyle=':')
-&amp;gt;&amp;gt;&amp;gt; plot_points_bad(L, 30)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;img src="https://asmeurer.com/blog/riemann-bad.svg" width="608" /&gt;
-&lt;p&gt;So instead of plotting $Z(1/2 + it)$, we plot $\log(|Z(1/2 + it)|)$. The
-logarithm will make the zeros go to $-\infty$, but these will be easy to see.&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; def plot_points(L, N):
-...     npoints = len(L)
-...     points = np.linspace(0, N, npoints)
-...     p = [mpmath.log(abs(i)) for i in L]
-...     plt.figure()
-...     plt.plot(points, p)
-...     plt.plot(points, [0]*npoints, linestyle=':')
-&amp;gt;&amp;gt;&amp;gt; plot_points(L, 30)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;img src="https://asmeurer.com/blog/riemann-30.svg" width="608" /&gt;
-&lt;p&gt;The spikes downward are the zeros.&lt;/p&gt;
-&lt;p&gt;Finally, let's check up to N=100. &lt;a href="https://oeis.org/A072080"&gt;OEIS A072080&lt;/a&gt;
-gives the number of zeros of $\zeta(s)$ in upper half-plane up to $10^ni$.
-According to it, we should get 29 zeros between $0$ and $100i$.&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; argument_count(D_func, 100)
-mpc(real='28.248036536895913', imag='-3.2332902529067346e-24')
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This is not near an integer. This means we need to increase the precision of
-the quadrature (the &lt;code&gt;maxdegree&lt;/code&gt; argument).&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; argument_count(D_func, 100, maxdegree=9)
-mpc(real='29.000000005970151', imag='-3.2332902529067346e-24')
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;And the sign changes...&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; L = compute_points(Z_func, 100)
-__main__:11: UserWarning: You may need to increase the precision
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Our guard against the precision being too low was triggered. Try raising it
-(the default dps is 15).&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; L = compute_points(Z_func, 100, dps=50)
-&amp;gt;&amp;gt;&amp;gt; sign_changes(L)
-29
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;They both give 29. So we have verified the Riemann Hypothesis up to $100i$!&lt;/p&gt;
-&lt;p&gt;Here is a plot of these 29 zeros.&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;&amp;gt;&amp;gt;&amp;gt; plot_points(L, 100)
-&lt;/code&gt;&lt;/pre&gt;
-&lt;img src="https://asmeurer.com/blog/riemann-100.svg" width="608" /&gt;
-&lt;p&gt;(remember that the spikes downward are the zeros)&lt;/p&gt;
-&lt;h2&gt;Conclusion&lt;/h2&gt;
-&lt;p&gt;$N=100$ takes a few minutes to compute, and I imagine larger and larger values
-would require increasing the precision more, slowing it down even further, so
-I didn't go higher than this. But it is clear that this method works.&lt;/p&gt;
-&lt;p&gt;This was just me playing around with SymPy and mpmath, but if I wanted to
-actually verify the Riemann Hypothesis, I would try to find a more efficient
-method of computing the above quantities. For the sake of simplicity, I used
-$Z(s)$ for both the argument principle and sign changes computations, but it
-would have been more efficient to use $\zeta(s)$ for the argument principle
-integral, since it has a simpler formula. It would also be useful if there
-were a formula with similar properties to $Z(s)$ (real on the critical line
-with the same zeros as $\zeta(s)$), but that did not decay as rapidly.&lt;/p&gt;
-&lt;p&gt;Furthermore, for the argument principle integral, I would like to see precise
-error estimates for the integral. We saw above with $N=100$ with the default
-quadrature that we got a value of 28.248, which is not close to an integer.
-This tipped us off that we should increase the quadrature, which ended up
-giving us the right answer, but if the original number happened to be close to
-an integer, we might have been fooled. Ideally, one would like know the exact
-quadrature degree needed. If you can get error estimates guaranteeing the
-error for the integral will be less than 0.5, you can always round the answer
-to the nearest integer. For the sign changes, you don't need to be as
-rigorous, because simply seeing as many sign changes as you have zeros is
-sufficient. However, one could certainly be more efficient in computing the
-values along the interval, rather than just naively computing 10000 points and
-raising the precision until it works, as I have done.&lt;/p&gt;
-&lt;p&gt;One would also probably want to use a faster integrator than mpmath (like one
-written in C), and perhaps also find a faster to evaluate expression than the
-one I used for $Z(s)$. It is also possible that one could special-case the
-quadrature algorithm knowing that it will be computed on $\zeta'(s)/\zeta(s)$.&lt;/p&gt;
-&lt;p&gt;In this post I described the Riemann zeta function and the Riemann Hypothesis,
-and showed how to computationally verify it. But I didn't really go over the
-details of why the Riemann Hypothesis matters. I encourage you to watch the
-videos in my &lt;a href="https://www.youtube.com/playlist?list=PLrFrByaoJbcqKjzgJvLs2-spSmzP7jolT"&gt;YouTube
-playlist&lt;/a&gt;
-if you want to know this. Among other things, the truth of the Riemann
-Hypothesis would give a very precise bound on the distribution of prime
-numbers. Also, the non-trivial zeros of $\zeta(s)$ are, in some sense, the
-"spectrum" of the prime numbers, meaning they exactly encode the position of
-every prime on the number line.&lt;/p&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">https://czgdp1807.github.io/gsoc</guid>
       <author>Gagandeep Singh (czgdp1807)</author>
       <title>Gagandeep Singh (czgdp1807): Google Summer of Code - What &amp; How?</title>
@@ -844,334 +274,6 @@ self._critical_load = solve(defl_eqs, P, dict=True)[0][P]
 
 
 &lt;p&gt;Thanks!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://asmeurer.com/blog/posts/quansight-labs-work-update-for-september-2019/</guid>
-      <author>Aaron Meurer (asmeurer)</author>
-      <title>Aaron Meurer (asmeurer): Quansight Labs Work Update for September, 2019</title>
-      <pubDate>Mon, 07 Oct 2019 05:00:00 GMT</pubDate>
-      <link>https://asmeurer.com/blog/posts/quansight-labs-work-update-for-september-2019/</link>
-      <description>&lt;div&gt;&lt;p&gt;&lt;em&gt;This post has been cross-posted on the &lt;a href="https://labs.quansight.org/blog/2019/10/quansight-labs-work-update-for-september-2019/"&gt;Quansight Labs
-Blog&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;As of November, 2018, I have been working at
-&lt;a href="https://www.quansight.com/"&gt;Quansight&lt;/a&gt;. Quansight is a new startup founded by
-the same people who started Anaconda, which aims to connect companies and open
-source communities, and offers consulting, training, support and mentoring
-services. I work under the heading of &lt;a href="https://www.quansight.com/labs"&gt;Quansight
-Labs&lt;/a&gt;. Quansight Labs is a public-benefit
-division of Quansight. It provides a home for a "PyData Core Team" which
-consists of developers, community managers, designers, and documentation
-writers who build open-source technology and grow open-source communities
-around all aspects of the AI and Data Science workflow.&lt;/p&gt;
-&lt;p&gt;My work at Quansight is split between doing open source consulting for various
-companies, and working on SymPy.
-&lt;a href="https://www.sympy.org/en/index.html"&gt;SymPy&lt;/a&gt;, for those who do not know, is a
-symbolic mathematics library written in pure Python. I am the lead maintainer
-of SymPy.&lt;/p&gt;
-&lt;p&gt;In this post, I will detail some of the open source work that I have done
-recently, both as part of my open source consulting, and as part of my work on
-SymPy for Quansight Labs.&lt;/p&gt;
-&lt;h3&gt;Bounds Checking in Numba&lt;/h3&gt;
-&lt;p&gt;As part of work on a client project, I have been working on contributing code
-to the &lt;a href="https://numba.pydata.org"&gt;numba&lt;/a&gt; project. Numba is a just-in-time
-compiler for Python. It lets you write native Python code and with the use of
-a simple &lt;code&gt;@jit&lt;/code&gt; decorator, the code will be automatically sped up using LLVM.
-This can result in code that is up to 1000x faster in some cases:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-In [1]: import numba
-
-In [2]: import numpy
-
-In [3]: def test(x):
-   ...:     A = 0
-   ...:     for i in range(len(x)):
-   ...:         A += i*x[i]
-   ...:     return A
-   ...:
-
-In [4]: @numba.njit
-   ...: def test_jit(x):
-   ...:     A = 0
-   ...:     for i in range(len(x)):
-   ...:         A += i*x[i]
-   ...:     return A
-   ...:
-
-In [5]: x = numpy.arange(1000)
-
-In [6]: %timeit test(x)
-249 &amp;#181;s &amp;#177; 5.77 &amp;#181;s per loop (mean &amp;#177; std. dev. of 7 runs, 1000 loops each)
-
-In [7]: %timeit test_jit(x)
-336 ns &amp;#177; 0.638 ns per loop (mean &amp;#177; std. dev. of 7 runs, 1000000 loops each)
-
-In [8]: 249/.336
-Out[8]: 741.0714285714286
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Numba only works for a subset of Python code, and primarily targets code that
-uses NumPy arrays.&lt;/p&gt;
-&lt;p&gt;Numba, with the help of LLVM, achieves this level of performance through many
-optimizations. One thing that it does to improve performance is to remove all
-bounds checking from array indexing. This means that if an array index is out
-of bounds, instead of receiving an &lt;code&gt;IndexError&lt;/code&gt;, you will get garbage, or
-possibly a segmentation fault.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; import numpy as np
-&amp;gt;&amp;gt;&amp;gt; from numba import njit
-&amp;gt;&amp;gt;&amp;gt; def outtabounds(x):
-...     A = 0
-...     for i in range(1000):
-...         A += x[i]
-...     return A
-&amp;gt;&amp;gt;&amp;gt; x = np.arange(100)
-&amp;gt;&amp;gt;&amp;gt; outtabounds(x) # pure Python/NumPy behavior
-Traceback (most recent call last):
-  File "&amp;lt;stdin&amp;gt;", line 1, in &amp;lt;module&amp;gt;
-  File "&amp;lt;stdin&amp;gt;", line 4, in outtabounds
-IndexError: index 100 is out of bounds for axis 0 with size 100
-&amp;gt;&amp;gt;&amp;gt; njit(outtabounds)(x) # the default numba behavior
--8557904790533229732
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In numba pull request &lt;a href="https://github.com/numba/numba/pull/4432"&gt;#4432&lt;/a&gt;, I am
-working on adding a flag to &lt;code&gt;@njit&lt;/code&gt; that will enable bounds checks for array
-indexing. This will remain disabled by default for performance purposes. But
-you will be able to enable it by passing &lt;code&gt;boundscheck=True&lt;/code&gt; to &lt;code&gt;@njit&lt;/code&gt;, or by
-setting the &lt;code&gt;NUMBA_BOUNDSCHECK=1&lt;/code&gt; environment variable. This will make it
-easier to detect out of bounds issues like the one above. It will work like&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-pycon"&gt;&amp;gt;&amp;gt;&amp;gt; @njit(boundscheck=True)
-... def outtabounds(x):
-...     A = 0
-...     for i in range(1000):
-...         A += x[i]
-...     return A
-&amp;gt;&amp;gt;&amp;gt; x = np.arange(100)
-&amp;gt;&amp;gt;&amp;gt; outtabounds(x) # numba behavior in my pull request #4432
-Traceback (most recent call last):
-  File "&amp;lt;stdin&amp;gt;", line 1, in &amp;lt;module&amp;gt;
-IndexError: index is out of bounds
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The pull request is still in progress, and many things such as the quality of
-the error message reporting will need to be improved. This should make
-debugging issues easier for people who write numba code once it is merged.&lt;/p&gt;
-&lt;h3&gt;removestar&lt;/h3&gt;
-&lt;p&gt;&lt;a href="https://www.asmeurer.com/removestar/"&gt;removestar&lt;/a&gt; is a new tool I wrote to
-automatically replace &lt;code&gt;import *&lt;/code&gt; in Python modules with explicit imports.&lt;/p&gt;
-&lt;p&gt;For those who don't know, Python's &lt;code&gt;import&lt;/code&gt; statement supports so-called
-"wildcard" or "star" imports, like&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;from sympy import *
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This will import every public name from the &lt;code&gt;sympy&lt;/code&gt; module into the current
-namespace. This is often useful because it saves on typing every name that is
-used in the import line. This is especially useful when working interactively,
-where you just want to import every name and minimize typing.&lt;/p&gt;
-&lt;p&gt;However, doing &lt;code&gt;from module import *&lt;/code&gt; is generally frowned upon in Python. It is
-considered acceptable when working interactively at a &lt;code&gt;python&lt;/code&gt; prompt, or in
-&lt;code&gt;__init__.py&lt;/code&gt; files (removestar skips &lt;code&gt;__init__.py&lt;/code&gt; files by default).&lt;/p&gt;
-&lt;p&gt;Some reasons why &lt;code&gt;import *&lt;/code&gt; is bad:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;It hides which names are actually imported.&lt;/li&gt;
-&lt;li&gt;It is difficult both for human readers and static analyzers such as
-pyflakes to tell where a given name comes from when &lt;code&gt;import *&lt;/code&gt; is used. For
-example, pyflakes cannot detect unused names (for instance, from typos) in
-the presence of &lt;code&gt;import *&lt;/code&gt;.&lt;/li&gt;
-&lt;li&gt;If there are multiple &lt;code&gt;import *&lt;/code&gt; statements, it may not be clear which names
-come from which module. In some cases, both modules may have a given name,
-but only the second import will end up being used. This can break people's
-intuition that the order of imports in a Python file generally does not
-matter.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;import *&lt;/code&gt; often imports more names than you would expect. Unless the module
-you import defines &lt;code&gt;__all__&lt;/code&gt; or carefully &lt;code&gt;del&lt;/code&gt;s unused names at the module
-level, &lt;code&gt;import *&lt;/code&gt; will import every public (doesn't start with an
-underscore) name defined in the module file. This can often include things
-like standard library imports or loop variables defined at the top-level of
-the file. For imports from modules (from &lt;code&gt;__init__.py&lt;/code&gt;), &lt;code&gt;from module import *&lt;/code&gt; will include every submodule defined in that module. Using &lt;code&gt;__all__&lt;/code&gt; in
-modules and &lt;code&gt;__init__.py&lt;/code&gt; files is also good practice, as these things are
-also often confusing even for interactive use where &lt;code&gt;import *&lt;/code&gt; is
-acceptable.&lt;/li&gt;
-&lt;li&gt;In Python 3, &lt;code&gt;import *&lt;/code&gt; is syntactically not allowed inside of a function
-definition.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Here are some official Python references stating not to use &lt;code&gt;import *&lt;/code&gt; in
-files:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href="https://docs.python.org/3/faq/programming.html?highlight=faq#what-are-the-best-practices-for-using-import-in-a-module"&gt;The official Python
-FAQ&lt;/a&gt;:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;In general, don&amp;#8217;t use &lt;code&gt;from modulename import *&lt;/code&gt;. Doing so clutters the
-importer&amp;#8217;s namespace, and makes it much harder for linters to detect
-undefined names.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;a href="https://www.python.org/dev/peps/pep-0008/#imports"&gt;PEP 8&lt;/a&gt; (the official
-Python style guide):&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Wildcard imports (&lt;code&gt;from &amp;lt;module&amp;gt; import *&lt;/code&gt;) should be avoided, as they
-make it unclear which names are present in the namespace, confusing both
-readers and many automated tools.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Unfortunately, if you come across a file in the wild that uses &lt;code&gt;import *&lt;/code&gt;, it
-can be hard to fix it, because you need to find every name in the file that is
-imported from the &lt;code&gt;*&lt;/code&gt; and manually add an import for it. Removestar makes this
-easy by finding which names come from &lt;code&gt;*&lt;/code&gt; imports and replacing the import
-lines in the file automatically.&lt;/p&gt;
-&lt;p&gt;As an example, suppose you have a module &lt;code&gt;mymod&lt;/code&gt; like&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;mymod/
-  | __init__.py
-  | a.py
-  | b.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;with&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;# mymod/a.py
-from .b import *
-
-def func(x):
-    return x + y
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;and&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;# mymod/b.py
-x = 1
-y = 2
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Then &lt;code&gt;removestar&lt;/code&gt; works like:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;$ removestar -i mymod/
-$ cat mymod/a.py
-# mymod/a.py
-from .b import y
-
-def func(x):
-    return x + y
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The &lt;code&gt;-i&lt;/code&gt; flag causes it to edit &lt;code&gt;a.py&lt;/code&gt; in-place. Without it, it would just
-print a diff to the terminal.&lt;/p&gt;
-&lt;p&gt;For implicit star imports and explicit star imports from the same module,
-&lt;code&gt;removestar&lt;/code&gt; works statically, making use of
-&lt;a href="https://github.com/PyCQA/pyflakes"&gt;pyflakes&lt;/a&gt;. This means none of the code is
-actually executed. For external imports, it is not possible to work statically
-as external imports may include C extension modules, so in that case, it
-imports the names dynamically.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;removestar&lt;/code&gt; can be installed with pip or conda:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;pip install removestar
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;or if you use conda&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;conda install -c conda-forge removestar
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h3&gt;sphinx-math-dollar&lt;/h3&gt;
-&lt;p&gt;In SymPy, we make heavy use of LaTeX math in our documentation. For example,
-in our &lt;a href="https://docs.sympy.org/dev/modules/functions/special.html#sympy.functions.special.hyper.hyper"&gt;special functions
-documentation&lt;/a&gt;,
-most special functions are defined using a LaTeX formula, like &lt;img alt="The docs for besselj" src="https://asmeurer.com/blog/besselj_docs.png" /&gt;&lt;/p&gt;
-&lt;p&gt;(from &lt;a href="https://docs.sympy.org/dev/modules/functions/special.html#sympy.functions.special.bessel.besselj"&gt;https://docs.sympy.org/dev/modules/functions/special.html#sympy.functions.special.bessel.besselj&lt;/a&gt;)&lt;/p&gt;
-&lt;p&gt;However, the source for this math in the docstring of the function uses RST
-syntax:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;class besselj(BesselBase):
-    """
-    Bessel function of the first kind.
-
-    The Bessel `J` function of order `\nu` is defined to be the function
-    satisfying Bessel's differential equation
-
-    .. math ::
-        z^2 \frac{\mathrm{d}^2 w}{\mathrm{d}z^2}
-        + z \frac{\mathrm{d}w}{\mathrm{d}z} + (z^2 - \nu^2) w = 0,
-
-    with Laurent expansion
-
-    .. math ::
-        J_\nu(z) = z^\nu \left(\frac{1}{\Gamma(\nu + 1) 2^\nu} + O(z^2) \right),
-
-    if :math:`\nu` is not a negative integer. If :math:`\nu=-n \in \mathbb{Z}_{&amp;lt;0}`
-    *is* a negative integer, then the definition is
-
-    .. math ::
-        J_{-n}(z) = (-1)^n J_n(z).
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Furthermore, in SymPy's documentation we have configured it so that text
-between `single backticks` is rendered as math. This was originally done for
-convenience, as the alternative way is to write &lt;code&gt;:math:`\nu`&lt;/code&gt; every
-time you want to use inline math. But this has lead to many people being
-confused, as they are used to Markdown where `single backticks` produce
-&lt;code&gt;code&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;A better way to write this would be if we could delimit math with dollar
-signs, like &lt;code&gt;$\nu$&lt;/code&gt;. This is how things are done in LaTeX documents, as well
-as in things like the Jupyter notebook.&lt;/p&gt;
-&lt;p&gt;With the new &lt;a href="https://www.sympy.org/sphinx-math-dollar/"&gt;sphinx-math-dollar&lt;/a&gt;
-Sphinx extension, this is now possible. Writing &lt;code&gt;$\nu$&lt;/code&gt; produces $\nu$, and
-the above docstring can now be written as&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;class besselj(BesselBase):
-    """
-    Bessel function of the first kind.
-
-    The Bessel $J$ function of order $\nu$ is defined to be the function
-    satisfying Bessel's differential equation
-
-    .. math ::
-        z^2 \frac{\mathrm{d}^2 w}{\mathrm{d}z^2}
-        + z \frac{\mathrm{d}w}{\mathrm{d}z} + (z^2 - \nu^2) w = 0,
-
-    with Laurent expansion
-
-    .. math ::
-        J_\nu(z) = z^\nu \left(\frac{1}{\Gamma(\nu + 1) 2^\nu} + O(z^2) \right),
-
-    if $\nu$ is not a negative integer. If $\nu=-n \in \mathbb{Z}_{&amp;lt;0}$
-    *is* a negative integer, then the definition is
-
-    .. math ::
-        J_{-n}(z) = (-1)^n J_n(z).
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We also plan to add support for &lt;code&gt;$$double dollars$$&lt;/code&gt; for display math so that &lt;code&gt;.. math ::&lt;/code&gt; is no longer needed either .&lt;/p&gt;
-&lt;p&gt;For end users, the documentation on &lt;a href="https://docs.sympy.org"&gt;docs.sympy.org&lt;/a&gt;
-will continue to render exactly the same, but for developers, it is much
-easier to read and write.&lt;/p&gt;
-&lt;p&gt;This extension can be easily used in any Sphinx project. Simply install it
-with pip or conda:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;pip install sphinx-math-dollar
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;or&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;conda install -c conda-forge sphinx-math-dollar
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Then enable it in your &lt;code&gt;conf.py&lt;/code&gt;:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="language-py"&gt;extensions = ['sphinx_math_dollar', 'sphinx.ext.mathjax']
-&lt;/code&gt;&lt;/pre&gt;
-&lt;h3&gt;Google Season of Docs&lt;/h3&gt;
-&lt;p&gt;The above work on sphinx-math-dollar is part of work I have been doing to
-improve the tooling around SymPy's documentation. This has been to assist our
-technical writer Lauren Glattly, who is working with SymPy for the next three
-months as part of the new &lt;a href="https://developers.google.com/season-of-docs/"&gt;Google Season of
-Docs&lt;/a&gt; program. Lauren's project
-is to improve the consistency of our docstrings in SymPy. She has already
-identified many key ways our docstring documentation can be improved, and is
-currently working on a style guide for writing docstrings. Some of the issues
-that Lauren has identified require improved tooling around the way the HTML
-documentation is built to fix. So some other SymPy developers and I have been
-working on improving this, so that she can focus on the technical writing
-aspects of our documentation.&lt;/p&gt;
-&lt;p&gt;Lauren has created a draft style guide for documentation at
-&lt;a href="https://github.com/sympy/sympy/wiki/SymPy-Documentation-Style-Guide"&gt;https://github.com/sympy/sympy/wiki/SymPy-Documentation-Style-Guide&lt;/a&gt;. Please
-take a moment to look at it and if you have any feedback on it, comment below
-or write to the SymPy mailing list.&lt;/p&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/08/week-12-the-final-week/</guid>
-      <author>Nikhil Maan (Sc0rpi0n101)</author>
-      <title>Nikhil Maan (Sc0rpi0n101): Week 12: The Final Week</title>
-      <pubDate>Fri, 23 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://sc0rpi0n101.github.io/2019/08/week-12-the-final-week/</link>
-      <description>&lt;p&gt;&amp;#8220;Software is like entropy: It is difficult to grasp, weighs nothing, and obeys the Second Law of Thermodynamics; i.e., it always increases.&amp;#8221; &amp;#8212; Norman Augustine
- Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week will be the last week of coding for GSoC 2019. It is time to finish work now.
- The C Parser Travis Build Tests Documentation  The C Parser I completed the C Parser last week along with the documentation for the module.</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/08/week-11-the-other-parser/</guid>
-      <author>Nikhil Maan (Sc0rpi0n101)</author>
-      <title>Nikhil Maan (Sc0rpi0n101): Week 11: The Other Parser</title>
-      <pubDate>Thu, 22 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://sc0rpi0n101.github.io/2019/08/week-11-the-other-parser/</link>
-      <description>&lt;p&gt;Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week we&amp;rsquo;re talking about the C parser.
- The Fortran Parser The C Parser Documentation Travis Build  The Fortran Parser The Fortran Parser is complete. The Pull Request has also been merged. The parser is merged in master and will be a part of the next SymPy release. You can check out the source code for the Parser at the Pull Request.</description>
     </item>
     <item>
       <guid isPermaLink="false">https://www.shubhamjha.com/posts/GSoC-Week-12-(The-Final-Week)</guid>
@@ -1493,406 +595,6 @@ For more details one can visit:
 In addition to the report preparation I&amp;#8217;ll try to add &lt;code class="highlighter-rouge"&gt;Parameters&lt;/code&gt; section in the &lt;code class="highlighter-rouge"&gt;docstrings&lt;/code&gt; for various classes and methods of &lt;code class="highlighter-rouge"&gt;pc_groups&lt;/code&gt;.&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://jmig5776.github.io//gsoc-final-report</guid>
-      <author>Jogi Miglani (jmig5776)</author>
-      <title>Jogi Miglani (jmig5776): Final report for GSoC 2019 (Week 12)</title>
-      <pubDate>Sun, 18 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://jmig5776.github.io//gsoc-final-report</link>
-      <description>&lt;p&gt;It&amp;#8217;s finally the last week of the Google Summer of Code 2019. Before I start
-discussing my work over the summer I would like to highlight my general
-experience with the GSoC program.&lt;/p&gt;
-
-&lt;p&gt;GSoC gives students all over the world the opportunity to connect and
-collaborate with some of the best programmers involved in open source from
-around the world. I found the programme tremendusly enriching both in terms of
-the depth in which I got to explore some of the areas involved in my project
-and also gave me exxposure to some areas I had no previous idea about.
-The role of a mentor in GSoC is the most important and I consider myself
-very lucky to have got Yathartha Anirudh Joshi and Amit Kumar as my mentors.
-Amit and Yathartha has been tremendously encouraging and helpful throughout the summer.
-I would also like to mention the importance of the entire community involved,
-just being part of the SymPy community.&lt;/p&gt;
-
-&lt;h3 id="work-completed"&gt;Work Completed&lt;/h3&gt;
-
-&lt;p&gt;Here is a list of PRs which were opened during the span of GSoC:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16976"&gt;#16796 Added &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; for handling equations a - Mod(b, c) = 0 where only b is expr&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16890"&gt;#16890 Fixing lambert in bivariate to give all real solutions&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16960"&gt;#16960 (Don&amp;#8217;t Merge)(Prototype) Adding abs while converting equation to log form to get solved by &lt;code class="highlighter-rouge"&gt;_lambert&lt;/code&gt;&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17043"&gt;#17043 Feature power_list to return all powers of a variable present in f&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17079"&gt;#17079 Defining ImageSet Union&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Here is a list of PRs merged:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16976"&gt;#16796 Added &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; for handling equations a - Mod(b, c) = 0 where only b is expr&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16890"&gt;#16890 Fixing lambert in bivariate to give all real solutions&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Here is all the brief description about the PRs merged:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/16976"&gt;#16796 Added &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; for handling equations a - Mod(b, c) = 0 where only b is expr&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;In this PR a new solver &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; was made for solving modular equations.&lt;/p&gt;
-
-&lt;h3 id="what-type-of-equations-to-be-considered-and-what-domain"&gt;What type of equations to be considered and what domain?&lt;/h3&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;A - Mod(B, C) = 0
-
-    A -&amp;gt; This can or cannot be a function specifically(Linear, nth degree single
-         Pow, a**f_x and Add and Mul) of symbol.(But currently its not a
-        function of x)
-    B -&amp;gt; This is surely a function of symbol.
-    C -&amp;gt; It is an integer.
-And domain should be a subset of S.Integers.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;h3 id="filtering-out-equations"&gt;Filtering out equations&lt;/h3&gt;
-&lt;p&gt;A check is being applied named &lt;code class="highlighter-rouge"&gt;_is_modular&lt;/code&gt; which verifies that only above
-mentioned type equation should return True.&lt;/p&gt;
-
-&lt;h3 id="working-of-_solve_modular"&gt;Working of &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;&lt;/h3&gt;
-&lt;p&gt;In the starting of it there is a check if domain is a subset of Integers.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;domain.is_subset(S.Integers)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Only domain of integers and it subset are being considered while solving
-these equations.
-Now after this it separates out a modterm and the rest term on either
-sides by this code.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;modterm = list(f.atoms(Mod))[0]
-rhs = -(S.One)*(f.subs(modterm, S.Zero))
-if f.as_coefficients_dict()[modterm].is_negative:
-    # f.as_coefficient(modterm) was returning None don't know why
-    # checks if coefficient of modterm is negative in main equation.
-    rhs *= -(S.One)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now the equation is being inverted with the helper routine &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt;
-like this.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;n = Dummy('n', integer=True)
-f_x, g_n = _invert_modular(modterm, rhs, n, symbol)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;I am defining n in &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; because &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; contains
-recursive calls to itself so if define the n there then it was going to have
-many instances which of no use. Thats y I am defining it in &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Now after the equation is inverted now solution finding takes place.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if f_x is modterm and g_n is rhs:
-        return unsolved_result
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;First of all if &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; fails to invert then a ConditionSet is being
-returned.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;    if f_x is symbol:
-        if domain is not S.Integers:
-            return domain.intersect(g_n)
-        return g_n
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;And if &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; is fully able to invert the equation then only domain
-intersection needs to takes place. &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; inverts the equation
-considering S.Integers as its default domain.&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;    if isinstance(g_n, ImageSet):
-        lamda_expr = g_n.lamda.expr
-        lamda_vars = g_n.lamda.variables
-        base_set = g_n.base_set
-        sol_set = _solveset(f_x - lamda_expr, symbol, S.Integers)
-        if isinstance(sol_set, FiniteSet):
-            tmp_sol = EmptySet()
-            for sol in sol_set:
-                tmp_sol += ImageSet(Lambda(lamda_vars, sol), base_set)
-            sol_set = tmp_sol
-        return domain.intersect(sol_set)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;In this case when g_n is an ImageSet of n and f_x is not symbol so the
-equation is being solved by calling &lt;code class="highlighter-rouge"&gt;_solveset&lt;/code&gt; (this will not lead to
-recursion because equation to be entered is free from Mod) and then
-the domain intersection takes place.&lt;/p&gt;
-
-&lt;h3 id="what-does-_invert_modular-do"&gt;What does &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; do?&lt;/h3&gt;
-&lt;p&gt;This function helps to convert the equation &lt;code class="highlighter-rouge"&gt;A - Mod(B, C) = 0&lt;/code&gt; to a
-form (f_x, g_n).
-First of all it checks the possible instances of invertible cases if not then
-it returns the equation as it is.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;a, m = modterm.args
-if not isinstance(a, (Dummy, Symbol, Add, Mul, Pow)):
-        return modterm, rhs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now here is the check for complex arguments and returns the equation as it is
-if somewhere it finds I.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if rhs.is_real is False or any(term.is_real is False \
-            for term in list(_term_factors(a))):
-        # Check for complex arguments
-        return modterm, rhs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now after this we check of emptyset as a solution by checking range of both
-sides of equation.
-As modterm can have values between [0, m - 1] and if rhs is out of this range
-then emptySet is being returned.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if (abs(rhs) - abs(m)).is_positive or (abs(rhs) - abs(m)) is S.Zero:
-        # if rhs has value greater than value of m.
-        return symbol, EmptySet()
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now the equation haveing these types are being returned as the following&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if a is symbol:
-        return symbol, ImageSet(Lambda(n, m*n + rhs), S.Integers)
-
-    if a.is_Add:
-        # g + h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.Zero:
-            return _invert_modular(Mod(h, m), (rhs - Mod(g, m)) % m, n, symbol)
-
-    if a.is_Mul:
-        # g*h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.One:
-            return _invert_modular(Mod(h, m), (rhs*invert(g, m)) % m, n, symbol)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;The more peculiar case is of &lt;code class="highlighter-rouge"&gt;a.is_Pow&lt;/code&gt; which is handled as following.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if a.is_Pow:
-        # base**expo = a
-        base, expo = a.args
-        if expo.has(symbol) and not base.has(symbol):
-            # remainder -&amp;gt; solution independent of n of equation.
-            # m, rhs are made coprime by dividing igcd(m, rhs)
-            try:
-                remainder = discrete_log(m / igcd(m, rhs), rhs, a.base)
-            except ValueError: # log does not exist
-                return modterm, rhs
-            # period -&amp;gt; coefficient of n in the solution and also referred as
-            # the least period of expo in which it is repeats itself.
-            # (a**(totient(m)) - 1) divides m. Here is link of theoram:
-            # (https://en.wikipedia.org/wiki/Euler's_theorem)
-            period = totient(m)
-            for p in divisors(period):
-                # there might a lesser period exist than totient(m).
-                if pow(a.base, p, m / igcd(m, a.base)) == 1:
-                    period = p
-                    break
-            return expo, ImageSet(Lambda(n, period*n + remainder), S.Naturals0)
-        elif base.has(symbol) and not expo.has(symbol):
-            remainder_list = nthroot_mod(rhs, expo, m, all_roots=True)
-            if remainder_list is None:
-                return symbol, EmptySet()
-            g_n = EmptySet()
-            for rem in remainder_list:
-                g_n += ImageSet(Lambda(n, m*n + rem), S.Integers)
-            return base, g_n
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Two cases are being created based of a.is_Pow&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;x**a&lt;/li&gt;
-  &lt;li&gt;a**x&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;x**a -  It is being handled by the helper function &lt;code class="highlighter-rouge"&gt;nthroot_mod&lt;/code&gt; which returns
-        required solution. I am not going into very mch detail for more
-        information you can read the documentation of nthroot_mod.&lt;/p&gt;
-
-&lt;p&gt;a**x - For this &lt;code class="highlighter-rouge"&gt;totient&lt;/code&gt; is being used in the picture whose meaning can be
-       find on this &lt;a href="https://en.wikipedia.org/wiki/Euler's_theorem"&gt;Wikipedia&lt;/a&gt;
-       page. And then its divisors are being checked to find the least period
-       of solutions.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/16890"&gt;#16890 Fixing lambert in bivariate to give all real solutions&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;This PR went through many up and downs and nearly made to the most commented PR.
-And with the help of @smichr it was successfully merged. It mainly solved the
-bug for not returning all solutions of lambert.&lt;/p&gt;
-
-&lt;h2 id="explaining-the-function-_solve_lambert-main-function-to-solve-lambert-equations"&gt;Explaining the function &lt;code class="highlighter-rouge"&gt;_solve_lambert&lt;/code&gt; (main function to solve lambert equations)&lt;/h2&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;Input - f, symbol, gens
-OutPut - Solution of f = 0 if its lambert type expression else NotImplementedError
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;This function separates out cases as below based on the main function present in
-the main equation.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;For the first ones:
-1a1) B**B = R != 0 (when 0, there is only a solution if the base is 0,
-                   but if it is, the exp is 0 and 0**0=1
-                   comes back as B*log(B) = log(R)
-1a2) B*(a + b*log(B))**p = R or with monomial expanded or with whole
-                            thing expanded comes back unchanged
-   log(B) + p*log(a + b*log(B)) = log(R)
-   lhs is Mul:
-       expand log of both sides to give:
-       log(B) + log(log(B)) = log(log(R))
-1b) d*log(a*B + b) + c*B = R
-   lhs is Add:
-       isolate c*B and expand log of both sides:
-       log(c) + log(B) = log(R - d*log(a*B + b))
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;If the equation are of type 1a1, 1a2 and 1b then the mainlog of the equation is
-taken into concern as the deciding factor lies in the main logarithmic term of equation.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;For the next two,
-   collect on main exp
-   2a) (b*B + c)*exp(d*B + g) = R
-       lhs is mul:
-           log to give
-           log(b*B + c) + d*B = log(R) - g
-   2b) -b*B + g*exp(d*B + h) = R
-       lhs is add:
-           add b*B
-           log and rearrange
-           log(R + b*B) - d*B = log(g) + h
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;If the equation are of type 2a and 2b then the mainexp of the equation is
-taken into concern as the deciding factor lies in the main exponential term of equation.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;3) d*p**(a*B + b) + c*B = R
-   collect on main pow
-   log(R - c*B) - a*B*log(p) = log(d) + b*log(p)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;If the equation are of type 3 then the mainpow of the equation is
-taken into concern as the deciding factor lies in the main power term of equation.&lt;/p&gt;
-
-&lt;p&gt;Eventually from all of the three cases the equation is meant to be converted to this form:-&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;f(x, a..f) = a*log(b*X + c) + d*X - f = 0 which has the
-solution,  X = -c/b + (a/d)*W(d/(a*b)*exp(c*d/a/b)*exp(f/a)).
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;And the solution calculation process is done by &lt;code class="highlighter-rouge"&gt;_lambert&lt;/code&gt; function.&lt;/p&gt;
-
-&lt;p&gt;Everything seems flawless?? You might be thinking no modification is required. Lets
-see what loopholes are there in it.&lt;/p&gt;
-
-&lt;h2 id="what-does-pr-16890-do"&gt;What does PR &lt;a href="https://github.com/sympy/sympy/pull/16890"&gt;#16890&lt;/a&gt; do?&lt;/h2&gt;
-
-&lt;p&gt;There are basically two flaws present with the this approach.&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Not considering all branches of equation while taking log both sides.&lt;/li&gt;
-  &lt;li&gt;Calculation of roots should consider all roots in case having rational power.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id="1-not-considering-all-branches-of-equation-while-taking-log-both-sides"&gt;1. Not considering all branches of equation while taking log both sides.&lt;/h3&gt;
-
-&lt;p&gt;Let us consider this equation to be solved by &lt;code class="highlighter-rouge"&gt;_solve_lambert&lt;/code&gt; function.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;-1/x**2 + exp(x/2)/2 = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;So what the old &lt;code class="highlighter-rouge"&gt;_solve_lambert&lt;/code&gt; do is to convert this equation to following.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;2*log(x) + x/2 = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;and calculates its roots from &lt;code class="highlighter-rouge"&gt;_lambert&lt;/code&gt;.
-But it missed this branch of equation while taking log on main equation.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;2*log(-x) + x/2 = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Yeah you can reproduce the original equation from this equation.So basically the problem
-was that it missed the branches of equation while taking log. And when does the
-main equation have more than one branch?? The terms having even powers of variable x
-leads to two different branches of equation.&lt;/p&gt;
-
-&lt;p&gt;So how it is solved?
-What I has done is that before actually gets into solving I preprocess the main equation
-and if it has more than one branches of equation while converting taking log then I consider
-all the equations generated from them.(with the help of &lt;code class="highlighter-rouge"&gt;_solve_even_degree_expr&lt;/code&gt;)&lt;/p&gt;
-
-&lt;p&gt;How I preprocess the equation?
-So what I do is I replace all the even powers of x present with even powers of t(dummy variable).&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;Code for targeted replacement
-lhs = lhs.replace(
-            lambda i:  # find symbol**even
-                i.is_Pow and i.base == symbol and i.exp.is_even,
-            lambda i:  # replace t**even
-                t**i.exp)
-Example:-
-Main equation -&amp;gt; -1/x**2 + exp(x/2)/2 = 0
-After replacement -&amp;gt; -1/t**2 + exp(x/2)/2 = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now I take logarithms on both sides and simplify it.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;After simplifying -&amp;gt; 2*log(t) + x/2 = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now I call function &lt;code class="highlighter-rouge"&gt;_solve_even_degree_expr&lt;/code&gt; to replace the t with +/-x to generate two equations.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;Replacing t with +/-x
-1. 2*log(x) + x/2 = 0
-2. 2*log(-x) + x/2 = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;And consider the solutions of both of the equations to return all lambert real solutions
-of &lt;code class="highlighter-rouge"&gt;-1/x**2 + exp(x/2)/2 = 0&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Hope you could understand the logic behind this work.&lt;/p&gt;
-
-&lt;h3 id="2-calculation-of-roots-should-consider-all-roots-in-case-having-rational-power"&gt;2. Calculation of roots should consider all roots in case having rational power.&lt;/h3&gt;
-
-&lt;p&gt;This flaw is in the calculation of roots in function &lt;code class="highlighter-rouge"&gt;_lambert&lt;/code&gt;.
-Earlier the function_lambert has the working like :-&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Find all the values of a, b, c, d, e in the required loagrithmic equation&lt;/li&gt;
-  &lt;li&gt;Then it defines a solution of the form
-    &lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;-c/b + (a/d)*l where l = LambertW(d/(a*b)*exp(c*d/a/b)*exp(-f/a), k)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;and then it included that solution.
-I agree everything seems flawless here. but try to see the step where we are defining l.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Let us suppose a hypothetical algorithm just like algorithm used in &lt;code class="highlighter-rouge"&gt;_lambert&lt;/code&gt;
-in which equation to be solved is&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x**3 - 1 = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;and in which we define solution of the form&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x = exp(I*2*pi/n) where n is the power of x in equation
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;so the algorithm will give solution&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x = exp(I*2*pi/3) # but expected was [1, exp(I*2*pi/3), exp(-I*2*pi/3)]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;which can be found by finding all solutions of&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x**n - exp(2*I*pi) = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;by a different correct algorithm. Thats y it was wrong.
-The above algorithm would have given correct values for &lt;code class="highlighter-rouge"&gt;x - 1 = 0&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;And the question in your mind may arise that why only exp() because the
-possiblity of having more than one roots is in exp(), because if the algorithm
-would have been like &lt;code class="highlighter-rouge"&gt;x = a&lt;/code&gt;, where a is some real constant then there is not
-any possiblity of further roots rather than solution like &lt;code class="highlighter-rouge"&gt;x = a**(1/n)&lt;/code&gt;.
-And its been done in code like this:&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;code
-num, den = ((c*d-b*f)/a/b).as_numer_denom()
-p, den = den.as_coeff_Mul()
-e = exp(num/den)
-t = Dummy('t')
-args = [d/(a*b)*t for t in roots(t**p - e, t).keys()]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id="work-under-development"&gt;Work under development&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/17079"&gt;#17079 Defining ImageSet Union&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;This PR tends to define a unifying algorithm for linear relations.&lt;/p&gt;
-
-&lt;h3 id="future-work"&gt;Future Work&lt;/h3&gt;
-&lt;p&gt;Here is a list that comprises of all the ideas (which were a part of my GSoC
-Proposal and/or thought over during the SoC) which can extend my GSoC project.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Integrating helper solvers within solveset: linsolve, solve_decomposition, nonlinsolve&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Handle nested trigonometric equations.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=105</guid>
       <author>Ishan Joshi (ishanaj)</author>
       <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-11- Heading to the final week</title>
@@ -2031,191 +733,6 @@ Proposal and/or thought over during the SoC) which can extend my GSoC project.&l
           The second last week has also come to an end. We are almost there at the end of the ride. Me and Sartaj had a meeting on 13th of August about the final leftovers to be done, and wrapping up the GSoC work successfully. Here are the works which have...</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://jmig5776.github.io//gsoc-week-11</guid>
-      <author>Jogi Miglani (jmig5776)</author>
-      <title>Jogi Miglani (jmig5776): GSoC 2019 - Week 11</title>
-      <pubDate>Sun, 11 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://jmig5776.github.io//gsoc-week-11</link>
-      <description>&lt;p&gt;This was the eleventh week meeting with the GSoC mentors which was scheduled on
-Sunday 11th August, 2019 between 11:30 - 12:30 PM (IST). Me, Yathartha and Amit
-were the attendees of the meeting. &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; was discussed in this meeting.&lt;/p&gt;
-
-&lt;p&gt;Here is all the brief description about new solver &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; for solving
-modular equations.&lt;/p&gt;
-&lt;h3 id="what-type-of-equations-to-be-considered-and-what-domain"&gt;What type of equations to be considered and what domain?&lt;/h3&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;A - Mod(B, C) = 0
-
-    A -&amp;gt; This can or cannot be a function specifically(Linear, nth degree single
-         Pow, a**f_x and Add and Mul) of symbol.(But currently its not a
-        function of x)
-    B -&amp;gt; This is surely a function of symbol.
-    C -&amp;gt; It is an integer.
-And domain should be a subset of S.Integers.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;h3 id="filtering-out-equations"&gt;Filtering out equations&lt;/h3&gt;
-&lt;p&gt;A check is being applied named &lt;code class="highlighter-rouge"&gt;_is_modular&lt;/code&gt; which verifies that only above
-mentioned type equation should return True.&lt;/p&gt;
-
-&lt;h3 id="working-of-_solve_modular"&gt;Working of &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;&lt;/h3&gt;
-&lt;p&gt;In the starting of it there is a check if domain is a subset of Integers.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;domain.is_subset(S.Integers)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Only domain of integers and it subset are being considered while solving
-these equations.
-Now after this it separates out a modterm and the rest term on either
-sides by this code.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;modterm = list(f.atoms(Mod))[0]
-rhs = -(S.One)*(f.subs(modterm, S.Zero))
-if f.as_coefficients_dict()[modterm].is_negative:
-    # f.as_coefficient(modterm) was returning None don't know why
-    # checks if coefficient of modterm is negative in main equation.
-    rhs *= -(S.One)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now the equation is being inverted with the helper routine &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt;
-like this.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;n = Dummy('n', integer=True)
-f_x, g_n = _invert_modular(modterm, rhs, n, symbol)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;I am defining n in &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; because &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; contains
-recursive calls to itself so if define the n there then it was going to have
-many instances which of no use. Thats y I am defining it in &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Now after the equation is inverted now solution finding takes place.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if f_x is modterm and g_n is rhs:
-        return unsolved_result
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;First of all if &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; fails to invert then a ConditionSet is being
-returned.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;    if f_x is symbol:
-        if domain is not S.Integers:
-            return domain.intersect(g_n)
-        return g_n
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;And if &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; is fully able to invert the equation then only domain
-intersection needs to takes place. &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; inverts the equation
-considering S.Integers as its default domain.&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;    if isinstance(g_n, ImageSet):
-        lamda_expr = g_n.lamda.expr
-        lamda_vars = g_n.lamda.variables
-        base_set = g_n.base_set
-        sol_set = _solveset(f_x - lamda_expr, symbol, S.Integers)
-        if isinstance(sol_set, FiniteSet):
-            tmp_sol = EmptySet()
-            for sol in sol_set:
-                tmp_sol += ImageSet(Lambda(lamda_vars, sol), base_set)
-            sol_set = tmp_sol
-        return domain.intersect(sol_set)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;In this case when g_n is an ImageSet of n and f_x is not symbol so the
-equation is being solved by calling &lt;code class="highlighter-rouge"&gt;_solveset&lt;/code&gt; (this will not lead to
-recursion because equation to be entered is free from Mod) and then
-the domain intersection takes place.&lt;/p&gt;
-
-&lt;h3 id="what-does-_invert_modular-do"&gt;What does &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; do?&lt;/h3&gt;
-&lt;p&gt;This function helps to convert the equation &lt;code class="highlighter-rouge"&gt;A - Mod(B, C) = 0&lt;/code&gt; to a
-form (f_x, g_n).
-First of all it checks the possible instances of invertible cases if not then
-it returns the equation as it is.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;a, m = modterm.args
-if not isinstance(a, (Dummy, Symbol, Add, Mul, Pow)):
-        return modterm, rhs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now here is the check for complex arguments and returns the equation as it is
-if somewhere it finds I.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if rhs.is_real is False or any(term.is_real is False \
-            for term in list(_term_factors(a))):
-        # Check for complex arguments
-        return modterm, rhs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now after this we check of emptyset as a solution by checking range of both
-sides of equation.
-As modterm can have values between [0, m - 1] and if rhs is out of this range
-then emptySet is being returned.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if (abs(rhs) - abs(m)).is_positive or (abs(rhs) - abs(m)) is S.Zero:
-        # if rhs has value greater than value of m.
-        return symbol, EmptySet()
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now the equation haveing these types are being returned as the following&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if a is symbol:
-        return symbol, ImageSet(Lambda(n, m*n + rhs), S.Integers)
-
-    if a.is_Add:
-        # g + h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.Zero:
-            return _invert_modular(Mod(h, m), (rhs - Mod(g, m)) % m, n, symbol)
-
-    if a.is_Mul:
-        # g*h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.One:
-            return _invert_modular(Mod(h, m), (rhs*invert(g, m)) % m, n, symbol)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;The more peculiar case is of &lt;code class="highlighter-rouge"&gt;a.is_Pow&lt;/code&gt; which is handled as following.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if a.is_Pow:
-        # base**expo = a
-        base, expo = a.args
-        if expo.has(symbol) and not base.has(symbol):
-            # remainder -&amp;gt; solution independent of n of equation.
-            # m, rhs are made coprime by dividing igcd(m, rhs)
-            try:
-                remainder = discrete_log(m / igcd(m, rhs), rhs, a.base)
-            except ValueError: # log does not exist
-                return modterm, rhs
-            # period -&amp;gt; coefficient of n in the solution and also referred as
-            # the least period of expo in which it is repeats itself.
-            # (a**(totient(m)) - 1) divides m. Here is link of theoram:
-            # (https://en.wikipedia.org/wiki/Euler's_theorem)
-            period = totient(m)
-            for p in divisors(period):
-                # there might a lesser period exist than totient(m).
-                if pow(a.base, p, m / igcd(m, a.base)) == 1:
-                    period = p
-                    break
-            return expo, ImageSet(Lambda(n, period*n + remainder), S.Naturals0)
-        elif base.has(symbol) and not expo.has(symbol):
-            remainder_list = nthroot_mod(rhs, expo, m, all_roots=True)
-            if remainder_list is None:
-                return symbol, EmptySet()
-            g_n = EmptySet()
-            for rem in remainder_list:
-                g_n += ImageSet(Lambda(n, m*n + rem), S.Integers)
-            return base, g_n
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Two cases are being created based of a.is_Pow&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;x**a&lt;/li&gt;
-  &lt;li&gt;a**x&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;x**a -  It is being handled by the helper function &lt;code class="highlighter-rouge"&gt;nthroot_mod&lt;/code&gt; which returns
-        required solution. I am not going into very mch detail for more
-        information you can read the documentation of nthroot_mod.&lt;/p&gt;
-
-&lt;p&gt;a**x - For this &lt;code class="highlighter-rouge"&gt;totient&lt;/code&gt; is being used in the picture whose meaning can be
-       find on this &lt;a href="https://en.wikipedia.org/wiki/Euler's_theorem"&gt;Wikipedia&lt;/a&gt;
-       page. And then its divisors are being checked to find the least period
-       of solutions.&lt;/p&gt;
-
-&lt;p&gt;Hope I am able to clear out everything!!&lt;/p&gt;
-
-&lt;p&gt;Code improvement takes time!!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html</guid>
-      <author>Ankit Pandey (anpandey)</author>
-      <title>Ankit Pandey (anpandey): Google Summer of Code Week 10: Matrix Wildcard Redux</title>
-      <pubDate>Tue, 06 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html</link>
-      <description>&lt;p&gt;For this week, I&amp;#8217;ve made some more minor changes to the &lt;a href="https://github.com/sympy/sympy/pull/17299"&gt;&lt;code&gt;Indexed&lt;/code&gt; pull request&lt;/a&gt; from last week, in addition to filing a new &lt;a href="https://github.com/sympy/sympy/pull/17347"&gt;matrix wildcard pull request&lt;/a&gt;.&lt;/p&gt;
-&lt;h3 id="matrix-wildcards-again"&gt;Matrix Wildcards (again)&lt;/h3&gt;
-&lt;p&gt;Since &lt;a href="https://github.com/sympy/sympy/pull/17223"&gt;#17223&lt;/a&gt; was merged this week, I started with an implementation of matrix wildcards that takes advantage of the functionality included in the pull request. I thought that this would be relatively straightforward, with an implementation of the &lt;code&gt;matches&lt;/code&gt; method for the &lt;code&gt;MatrixWild&lt;/code&gt; subclass being enough. There was one problem though: the underlying matching implementation assumes that all powers in the expression are an instance of the &lt;code&gt;Pow&lt;/code&gt; class. However, this isn&amp;#8217;t true for matrix expressions: the &lt;code&gt;MatPow&lt;/code&gt; class, which represents matrix powers, is a subclass of its own. I&amp;#8217;m not exactly sure what the reason for this is, since a quick change of &lt;code&gt;MatPow&lt;/code&gt; to inherit from &lt;code&gt;Pow&lt;/code&gt; doesn&amp;#8217;t seem to break anything. I&amp;#8217;ll probably look into this a bit more, since I think this might have something to do with the fact that Matrix exponents can also include other matrices.&lt;/p&gt;
-&lt;p&gt;My solution for this was to allow temporarily allow expansion of powers by recursing through the expression tree and setting the &lt;code&gt;is_Pow&lt;/code&gt; field of each matrix power to &lt;code&gt;True&lt;/code&gt; and later reverting these states later. It doesn&amp;#8217;t look pretty, but it does seem to work (you can see the code &lt;a href="https://github.com/sympy/sympy/blob/17fb5010e36e10de156dad032d2aea376051df24/sympy/matrices/expressions/matmul.py#L178-L197"&gt;here&lt;/a&gt;).&lt;/p&gt;
-&lt;h2 id="next-steps"&gt;Next Steps&lt;/h2&gt;
-&lt;p&gt;I&amp;#8217;ll try to get started with some optimizations that utilize this wildcard class once the pull request gets merged.&lt;/p&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">https://czgdp1807.github.io/week_10</guid>
       <author>Gagandeep Singh (czgdp1807)</author>
       <title>Gagandeep Singh (czgdp1807): Week 10 - Debugging, testing and Haar measure</title>
@@ -2229,16 +746,6 @@ then emptySet is being returned.&lt;/p&gt;
 Well, I learnt, &lt;strong&gt;When you think your work is complete, well, sorry to say, that&amp;#8217;s the beginning ;-)&lt;/strong&gt;&lt;/p&gt;
 
 &lt;p&gt;Bye!!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/08/week-10-the-finished-parser/</guid>
-      <author>Nikhil Maan (Sc0rpi0n101)</author>
-      <title>Nikhil Maan (Sc0rpi0n101): Week 10: The Finished Parser</title>
-      <pubDate>Tue, 06 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://sc0rpi0n101.github.io/2019/08/week-10-the-finished-parser/</link>
-      <description>&lt;p&gt;&amp;#8220;Software is like entropy: It is difficult to grasp, weighs nothing, and obeys the Second Law of Thermodynamics; i.e., it always increases.&amp;#8221; &amp;#8212; Norman Augustine
- Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and we will talk all about the Fortran Parser this week. I have passed the second evaluation and Fortran Parser pull request is complete.
- The Week Fortran Parser SymPy Expression Travis Builds The C Parser The Meeting  The Week This week began with me working on the C parser to finalize that.</description>
     </item>
     <item>
       <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=91</guid>
@@ -2345,45 +852,6 @@ Below is an example to show the functionality.&lt;/p&gt;
 &lt;p&gt;For the next week I&amp;#8217;ll try to complete the documentation work on polycyclic groups and open a PR for the same.&lt;/p&gt;
 
 &lt;p&gt;Till then, good byee..&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://jmig5776.github.io//gsoc-week-10</guid>
-      <author>Jogi Miglani (jmig5776)</author>
-      <title>Jogi Miglani (jmig5776): GSoC 2019 - Week 10</title>
-      <pubDate>Sun, 04 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://jmig5776.github.io//gsoc-week-10</link>
-      <description>&lt;p&gt;This was the tenth week meeting with the GSoC mentors which was scheduled on
-Sunday 4th August, 2019 between 1:00 - 2:00 PM (IST). Me, Yathartha
-were the attendees of the meeting.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Discussing previous week&amp;#8217;s progress&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Progress of &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;:- In PR &lt;a href="https://github.com/sympy/sympy/pull/16976"&gt;#16976&lt;/a&gt;
-After discussing with Yathartha, I decided to change the basic model of the &lt;code class="highlighter-rouge"&gt;_solve_modular &lt;/code&gt;
-such that I should be able to target equations more efficiently and also the rest
-of the types of equation should return ConditionSet. Cases like &lt;code class="highlighter-rouge"&gt;Mod(a**x, m) - rhs = 0&lt;/code&gt;
-are special type and will be handled differently with the helper functions of ntheory module.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Progress of ImageSet Union:- In PR &lt;a href="https://github.com/sympy/sympy/pull/17079"&gt;#17079&lt;/a&gt;
-This PR is currently been left for review.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Next week goals&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Work upon &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;In the following week I will be changing the domain of solving equations to
-Integers only.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Code improvement takes time!!&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">https://arighnaiitg.github.io/2019-08-01-gsoc-week9/</guid>
@@ -2510,6 +978,433 @@ keep you updated!&lt;/p&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;Till then, good byee..&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://arighnaiitg.github.io/2019-07-23-gsoc-week8/</guid>
+      <author>Arighna Chakrabarty (arighnaiitg)</author>
+      <title>Arighna Chakrabarty (arighnaiitg): GSoC Week 8 !!</title>
+      <pubDate>Tue, 23 Jul 2019 07:00:00 GMT</pubDate>
+      <link>https://arighnaiitg.github.io/2019-07-23-gsoc-week8/</link>
+      <description>&lt;p&gt;Week 8 ends.. - 
+          Phase 2 of the GSoC coding period is coming to an end. !! I and Sartaj had a meeting on the 18th of July, about the timeline of the next 4 weeks. Here are the deliverables that have been completed in this week, including the minutes of the meeting. The...</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://www.shubhamjha.com/posts/GSoC-Week-8</guid>
+      <author>Shubham Kumar Jha (ShubhamKJha)</author>
+      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 8</title>
+      <pubDate>Mon, 22 Jul 2019 18:30:00 GMT</pubDate>
+      <link>https://www.shubhamjha.com/posts/GSoC-Week-8/</link>
+      <description>&lt;p&gt;Now, the eighth week of official coding period has ended. I would give you a summary of my work during this week.&lt;/p&gt;
+
+&lt;p&gt;I spent most of this week polishing and finishing my work on &lt;a href="https://github.com/sympy/sympy/pull/17144"&gt;#17144&lt;/a&gt;. The performance gain from this PR was very subtle but I had tested this only on the &lt;code class="language-plaintext highlighter-rouge"&gt;/assumptions/tests&lt;/code&gt; of SymPy. During this week&amp;#8217;s meeting, Aaron suggested an example that had become slower than before:&lt;/p&gt;
+&lt;div class="language-py highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+2
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;random_poly&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="n"&gt;ask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Q&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;positive&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;Q&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;positive&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This made me realize that my strategy had a flaw. I had converted the smallest expressions into &lt;strong&gt;CNF&lt;/strong&gt; objects and applied Boolean functions (&lt;code class="language-plaintext highlighter-rouge"&gt;or&lt;/code&gt;, &lt;code class="language-plaintext highlighter-rouge"&gt;and&lt;/code&gt;, and &lt;code class="language-plaintext highlighter-rouge"&gt;not&lt;/code&gt;) on them keeping the CNF structure intact. The performance regression was coming from operations &lt;code class="language-plaintext highlighter-rouge"&gt;or&lt;/code&gt; and &lt;code class="language-plaintext highlighter-rouge"&gt;not&lt;/code&gt;. In case of CNF structures, the number of expressions increased exponentially for these operations. Since the test suite didn&amp;#8217;t have such examples, all the tests passed without any visible performance issue.&lt;/p&gt;
+
+&lt;p&gt;With some research, I found that the best approach to handle this (without any kind of pruning) was to convert these expression into &lt;a href="https://en.wikipedia.org/wiki/Negation_normal_form"&gt;&lt;strong&gt;NNF&lt;/strong&gt;&lt;/a&gt; form first. So, I implemented a function &lt;code class="language-plaintext highlighter-rouge"&gt;to_NNF&lt;/code&gt; which works with low-level constructs (SymPy&amp;#8217;s &lt;code class="language-plaintext highlighter-rouge"&gt;to_nnf&lt;/code&gt; would have been too costly) and converts an expression into NNF. This is then converted into &lt;strong&gt;CNF&lt;/strong&gt; with ease. It keeps the number of clauses in check and hence also increases the performance outcome. The results are such: the above example now takes about &lt;code class="language-plaintext highlighter-rouge"&gt;0.4 s&lt;/code&gt; on this PR while it takes about &lt;code class="language-plaintext highlighter-rouge"&gt;6 s&lt;/code&gt; in master.&lt;/p&gt;
+
+&lt;p&gt;Currently, the work on this PR is almost complete and it is under review.&lt;/p&gt;
+
+&lt;p&gt;For the next week,&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;My first priority is to get &lt;a href="https://github.com/sympy/sympy/pull/17144"&gt;#17144&lt;/a&gt; merged.&lt;/li&gt;
+  &lt;li&gt;Then, work on optimizing &lt;code class="language-plaintext highlighter-rouge"&gt;rcall&lt;/code&gt;. This is an extension for the above work.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Will keep you updated. Thank you !&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=60</guid>
+      <author>Ishan Joshi (ishanaj)</author>
+      <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-8- The draw() function in action</title>
+      <pubDate>Mon, 22 Jul 2019 04:50:39 GMT</pubDate>
+      <link>https://ishanaj.wordpress.com/2019/07/22/gsoc19-week-8-the-draw-function-in-action/</link>
+      <description>&lt;p&gt;The 8&lt;sup&gt;th&lt;/sup&gt; week has ended and we are now in the middle of phase &amp;#8211;III.&lt;/p&gt;
+
+
+
+&lt;p&gt;Last week was a bit of research-based, understanding &lt;strong&gt;matplotlib &lt;/strong&gt;and how it can be used to plot a beam diagram. I had a conversation with Jason Moore and Jashan where Jason shared a link of a &lt;a href="https://github.com/alfredocarella/simplebendingpractice"&gt;repository&lt;/a&gt;, which also was a bit of help as I took some hints from it for the &lt;strong&gt;draw() &lt;/strong&gt;function. After a lot of investigation and analysis, I was finally able to make a draft &lt;a href="https://github.com/sympy/sympy/pull/17240"&gt;PR # 17240&lt;/a&gt; which did the work as we intended.&lt;/p&gt;
+
+
+
+&lt;p&gt;Here is an example of how it would function:&lt;span id="more-60"&gt;&lt;/span&gt;&lt;/p&gt;
+
+
+&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
+
+# This example has no prior logic involved. It just tests whether every functionality works or not
+
+&amp;gt;&amp;gt;&amp;gt; E, I = symbols('E, I')
+
+&amp;gt;&amp;gt;&amp;gt; b1 = Beam(50, E, I)
+
+&amp;gt;&amp;gt;&amp;gt; b1.apply_load(-10, 0, -1)
+
+&amp;gt;&amp;gt;&amp;gt; b1.apply_load(R1, 10, -1)
+
+&amp;gt;&amp;gt;&amp;gt; b1.apply_load(R2, 30, -1)
+
+&amp;gt;&amp;gt;&amp;gt; b1.apply_load(9, 5, 0, 23)
+
+&amp;gt;&amp;gt;&amp;gt; b1.apply_load(9, 30, 1, 50)
+
+&amp;gt;&amp;gt;&amp;gt; b1.apply_support(50, "pin")
+
+&amp;gt;&amp;gt;&amp;gt; b1.apply_support(0, "fixed")
+
+&amp;gt;&amp;gt;&amp;gt; b1.apply_support(20, "roller")
+
+&amp;gt;&amp;gt;&amp;gt; b1.draw()
+
+&lt;/pre&gt;
+
+
+
+&lt;figure class="wp-block-image size-large is-resized .single-blog-image {display: none; }"&gt;&lt;img alt="" class="wp-image-62" height="387" src="https://ishanaj.files.wordpress.com/2019/07/61594696-552b5900-ac0c-11e9-96f9-4ba257dbf92c-1.png" width="467" /&gt;&lt;/figure&gt;
+
+
+
+&lt;p&gt;Here we are using &lt;strong&gt;matplotlib&lt;/strong&gt; and &lt;strong&gt;numpy&lt;/strong&gt; by importing them as external modules. Of course, it would be better to have it done via &lt;strong&gt;SymPy&amp;#8217;s&lt;/strong&gt; own &lt;strong&gt;plot()&lt;/strong&gt;, but I think that is something we could work on in later stages as&lt;strong&gt; SymPy&amp;#8217;s plot()&lt;/strong&gt; is limited to work on equations and stuff (although on can use &lt;strong&gt;_backend &lt;/strong&gt;attribute for further functionalities). &amp;nbsp;Also to be noted here that &lt;strong&gt;SymPy&amp;#8217;s plot()&lt;/strong&gt; is not a replica of &lt;strong&gt;matplotib&amp;#8217;s plot()&lt;/strong&gt; but it makes it easier for SymPy equation to be plotted and it uses&amp;nbsp;&lt;strong&gt;matplotlib&lt;/strong&gt; to do so.&lt;/p&gt;
+
+
+
+&lt;p&gt;Following are the&lt;strong&gt; m&lt;/strong&gt;&lt;strong&gt;atplotlib&lt;/strong&gt; modules/classes used:&lt;/p&gt;
+
+
+
+&lt;ul&gt;&lt;li&gt;&lt;a href="https://matplotlib.org/api/_as_gen/matplotlib.patches.Rectangle.html"&gt;matplotlib.patches.Rectangle&lt;/a&gt;&amp;nbsp;-to draw the beam&lt;/li&gt;&lt;li&gt;&lt;a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.annotate.html"&gt;matplotlib.pyplot.annotate&lt;/a&gt;&amp;nbsp;&amp;#8211; to draw arrows of load&lt;/li&gt;&lt;li&gt;&lt;a href="https://matplotlib.org/3.1.1/api/markers_api.html"&gt;matplotlib.markers&lt;/a&gt;&amp;#8211; to draw supports&lt;/li&gt;&lt;/ul&gt;
+
+
+
+&lt;p&gt;Also, considering Jason&amp;#8217;s &lt;a href="https://github.com/sympy/sympy/pull/17240#issuecomment-513577696"&gt;comment&lt;/a&gt; in the PR, I will have to work on making &lt;strong&gt;SymPy&amp;#8217;s plot()&lt;/strong&gt; to accept a singularity function, so that it would be easier to plot &lt;strong&gt;loads &lt;/strong&gt;which are indeed equations of Singularity function. This is still in consideration, so I will have to look into it and of course will have a discussion on how it is to be done.&lt;/p&gt;
+
+
+
+&lt;p&gt;Currently, I am not able to determine how to plot parabolic loads. I think this could be added later as we should currently focus on plotting simple parts and certainly work on other complexities later. But we can have a discussion on it.&lt;/p&gt;
+
+
+
+&lt;p&gt;Other PR&amp;#8217;s are still being parallelly worked on.&lt;/p&gt;
+
+
+
+&lt;h2&gt;&lt;strong&gt;Next Week:&lt;/strong&gt;&lt;/h2&gt;
+
+
+
+&lt;ul&gt;&lt;li&gt;Working on the idea of plotting singularity function via SymPy&amp;#8217;s plot()&lt;/li&gt;&lt;li&gt;Plotting parabolic loads&lt;/li&gt;&lt;li&gt;Writing documentation and tests&lt;/li&gt;&lt;/ul&gt;
+
+
+
+&lt;p&gt;Will keep you updated!&lt;/p&gt;
+
+
+
+&lt;p&gt;Thanks!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://czgdp1807.github.io/week_8</guid>
+      <author>Gagandeep Singh (czgdp1807)</author>
+      <title>Gagandeep Singh (czgdp1807): Week 8 - Heading towards completion</title>
+      <pubDate>Mon, 22 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://czgdp1807.github.io/week_8/</link>
+      <description>&lt;p&gt;With the 8th week, the second phase of my project is complete and we are heading towards the end of GSoC 2019. 
+This blog post summarises the work done between phase 1 and phase 3, in terms of PRs. Moreover, I will share with you my plans for the last phase.&lt;/p&gt;
+
+&lt;p&gt;I worked on the following PRs(listed in chronological order) during the second phase, some of them got merged and few are open.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Merged&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16934"&gt;#16934&lt;/a&gt; : The bug fixes were complete and the further work has been handed over to my co-student, Ritesh.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16962"&gt;#16962&lt;/a&gt; : This was continuation of the work done in phase 1 for allowing symbolic dimensions in finite random variables. As I planned, this PR got merged in phase 2, after some changes.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17083"&gt;#17083&lt;/a&gt;: The work done in this PR framed the platform and reason for the next one. The algorithm that got merged was a bit difficult to extend, and maintain. Thanks to Francesco for his &lt;a href="https://github.com/sympy/sympy/pull/17083#issuecomment-508256359"&gt;comment&lt;/a&gt; for motivating me to re-think the whole framework.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17163"&gt;#17163&lt;/a&gt; : This was one of the most challenging PRs of the project till now, because, it involved re-designing the algorithm, refactoring the code and moreover lot of thinking. The details can be found at &lt;a href="https://github.com/sympy/sympy/pull/17163#issuecomment-510939984"&gt;this comment&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Open&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17174"&gt;#17174&lt;/a&gt; : This PR aims at adding random matrices to sympy. Currently, I am studying about the expressions involving random matrices and computing their densities.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17146"&gt;#17146&lt;/a&gt; : This PR aims at allowing symbolic parameters to &lt;code class="language-plaintext highlighter-rouge"&gt;Range&lt;/code&gt;. The work is complete and I am waiting for final reviews. Hopefully it gets merged.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Apart from the above PRs I also reviewed code written by other contributors.
+Overall, according to me phase 2 was a great learning and logical experience.&lt;/p&gt;
+
+&lt;p&gt;Let me share with you the outline of my plan for phase 3.&lt;/p&gt;
+
+&lt;p&gt;The outline is given below,&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;I will work on enhancing the result generation by the stats module as was planned in the beginning.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;The work on random matrices will be extended and I will add more features to them.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Probably, if time permits, I will try to do some more refactoring of &lt;code class="language-plaintext highlighter-rouge"&gt;sympy.stats.frv&lt;/code&gt;, and will try to add some more stochastic processes.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;I will also try to merge my open PRs.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Thanks for reading and see you soon in phase 3. Bye!!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://divyanshu132.github.io//gsoc-week-8</guid>
+      <author>Divyanshu Thakur (divyanshu132)</author>
+      <title>Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 8 - Phase-II Completion</title>
+      <pubDate>Sat, 20 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://divyanshu132.github.io//gsoc-week-8</link>
+      <description>&lt;p&gt;Phase-II has been completed and now it&amp;#8217;s time to present all the work done during this phase. This week&amp;#8217;s blog is little early in comparison to my previous blogs because I&amp;#8217;ll not be active for next 2 upcoming days. In the whole phase we worked on &lt;strong&gt;Computations with Polycyclic Groups&lt;/strong&gt; though the tasks mentioned in proposal for this phase were quite different. But let me tell you it worth that much time, Computation with Polycyclic groups(solvable groups) shows the actual development in computational group theory.&lt;/p&gt;
+
+&lt;p&gt;Below are the functioalities that were added to the polycyclic group in this phase, Here is the PR &lt;a href="https://github.com/sympy/sympy/pull/16991"&gt;sympy/sympy#16991&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Testing Collector&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;As discussed in &lt;a href="https://divyanshu132.github.io/gsoc-week-5"&gt;week-5 blog&lt;/a&gt; at the time of Collector implementation we did not have the implementation of polycyclic presentation so some hand made tests were used. Here is an example of &lt;code class="highlighter-rouge"&gt;S(4)&lt;/code&gt;.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
+&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics.free_groups import free_group
+&amp;gt;&amp;gt;&amp;gt; F, x0, x1, x2, x3 = free_group("x0, x1, x2, x3")
+&amp;gt;&amp;gt;&amp;gt; pc_relators = { x0**2: (), x1**3: (), x2**2: (), x3**2: (),
+...                 x0**-1*x1*x0: x1**2, x0**-1*x2*x0: x2*x3,
+...                 x0**-1*x3*x0: x3, x1**-1*x2*x1: x3,
+...                 x1**-1*x3*x1: x2*x3, x2**-1*x3*x2: x3
+...               }
+&amp;gt;&amp;gt;&amp;gt; word = x3*x2*x1*x0
+&amp;gt;&amp;gt;&amp;gt; relative_order = [2, 3, 2, 2]
+&amp;gt;&amp;gt;&amp;gt; group = word.group
+&amp;gt;&amp;gt;&amp;gt; collector = Collector(pc_relators, relative_order, group)
+&amp;gt;&amp;gt;&amp;gt; collector.collected_word(word)
+x0*x1**2*x2*x3
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;The final word &lt;code class="highlighter-rouge"&gt;x0*x1**2*x2*x3&lt;/code&gt; is said to be collected. For more information about collected word please look into the docstrings of the method &lt;code class="highlighter-rouge"&gt;Collector.collected_word()&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Computation of Polycyclic Sequence and Series&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Polycyclic sequence and series are the building blocks of polycyclic presentation (have a look at &lt;a href="https://divyanshu132.github.io/gsoc-week-6"&gt;week-6 blog&lt;/a&gt;) . One thing to note is that, the derived series of a group may change on different course of execution so we may have different pc sequence and series for the same group.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
+&amp;gt;&amp;gt;&amp;gt; G = SymmetricGroup(4)
+&amp;gt;&amp;gt;&amp;gt; PcGroup = G.polycyclic_group()
+&amp;gt;&amp;gt;&amp;gt; PcGroup.pcgs
+[Permutation(0, 1, 2, 3), Permutation(3)(0, 2, 1), Permutation(0, 3)(1, 2), Permutation(0, 1)(2, 3)]
+&amp;gt;&amp;gt;&amp;gt; 
+&amp;gt;&amp;gt;&amp;gt; PcGroup.pc_series[0] == G
+True
+&amp;gt;&amp;gt;&amp;gt; PcGroup.pc_series[1] == AlternatingGroup(4)
+True
+&amp;gt;&amp;gt;&amp;gt; PcGroup.relative_order()
+[2, 3, 2, 2]
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Computation of Polycyclic Presentation&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Few approaches were used to compute polycyclic presentation, the current implementation is discussed in &lt;a href="https://divyanshu132.github.io/gsoc-week-7"&gt;week-7 blog&lt;/a&gt;. Below is a small example to show the functionality.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
+&amp;gt;&amp;gt;&amp;gt; G = SymmetricGroup(4)
+&amp;gt;&amp;gt;&amp;gt; PcGroup = G.polycyclic_group()
+&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics.free_groups import free_group
+&amp;gt;&amp;gt;&amp;gt; len(PcGroup.pcgs)
+4
+&amp;gt;&amp;gt;&amp;gt; free_group, x0, x1, x2, x3 = free_group("x0, x1, x2, x3")
+&amp;gt;&amp;gt;&amp;gt; PcGroup.pc_presentation(free_group)
+{x3**2: (), x2**2: (), x2**-1*x3*x2: x3, x1**3: (), x1**-1*x3*x1: x2*x3, x1**-1*x2*x1: x3, x0**2: x2*x3, x0**-1*x3*x0: x2, x0**-1*x2*x0: x3, x0**-1*x1*x0: x1**2*x3}
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;As I mentioned above &lt;code class="highlighter-rouge"&gt;pc_sequence&lt;/code&gt; and &lt;code class="highlighter-rouge"&gt;pc_series&lt;/code&gt; may change on different course of execution and hence the &lt;code class="highlighter-rouge"&gt;pc_presentation&lt;/code&gt; changes accordingly.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Testing Presentation&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Due to the changing &lt;code class="highlighter-rouge"&gt;pc_presentation&lt;/code&gt; initially, it was difficult to test presentation but later on a method has been developed and a good amount of code is introduced to test the presentation. The details can be found in the module &lt;code class="highlighter-rouge"&gt;test_pc_groups.py&lt;/code&gt; in the above PR.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Additional methods for Polycyclic groups&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;There were few additional methods added to the polycyclic group.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;exponent_vector()&lt;/code&gt; :- It represents the given generator of a polycyclic group with the help of product of &lt;code class="highlighter-rouge"&gt;pcgs&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;depth()&lt;/code&gt; :- Depth of the first non-zero element in &lt;code class="highlighter-rouge"&gt;exponent_vector&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;code class="highlighter-rouge"&gt;leading_exponent()&lt;/code&gt; :- It represents the power of polycyclic generator at the above depth.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
+&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics.free_groups import free_group
+&amp;gt;&amp;gt;&amp;gt; G = SymmetricGroup(4)
+&amp;gt;&amp;gt;&amp;gt; PcGroup = G.polycyclic_group()
+&amp;gt;&amp;gt;&amp;gt; pcgs = PcGroup.pcgs
+&amp;gt;&amp;gt;&amp;gt; len(pcgs)
+4
+&amp;gt;&amp;gt;&amp;gt; free_group, x0, x1, x2, x3 = free_group("x0, x1, x2, x3")
+&amp;gt;&amp;gt;&amp;gt; PcGroup.exponent_vector(G[1], F)
+[1, 1, 1, 1]
+&amp;gt;&amp;gt;&amp;gt; G[1] == pcgs[0]*pcgs[1]*pcgs[2]*pcgs[3]
+True
+&amp;gt;&amp;gt;&amp;gt; PcGroup.depth(G[1], free_group) == 1
+&amp;gt;&amp;gt;&amp;gt; PcGroup.leading_exponent(G[1], free_group) == 1
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Currently, we are discussing about organizing above methods of polycyclic group. As Kalevi feels that the suitable place for &lt;code class="highlighter-rouge"&gt;pc_presentation&lt;/code&gt;(currently, it&amp;#8217;s a method of &lt;code class="highlighter-rouge"&gt;PolycyclicGroup class&lt;/code&gt;) is the &lt;code class="highlighter-rouge"&gt;Collector class&lt;/code&gt;, Perhaps the structure of both the classes should be changed and the same will be reflected in the examples mentioned above.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://arighnaiitg.github.io/2019-07-15-gsoc-week7/</guid>
+      <author>Arighna Chakrabarty (arighnaiitg)</author>
+      <title>Arighna Chakrabarty (arighnaiitg): GSoC Week 7 !!</title>
+      <pubDate>Mon, 15 Jul 2019 07:00:00 GMT</pubDate>
+      <link>https://arighnaiitg.github.io/2019-07-15-gsoc-week7/</link>
+      <description>&lt;p&gt;Week 7 ends.. - 
+          Phase 2 of the coding period is smoothly being traversed. I recently had a meeting with Sartaj on 11th of July, Thursday. Here were the minutes of the meeting, along with the deliverables completed over the week. The FiniteFormalPowerSeries class PR needs some changes. Currently, it is taking in an...</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=58</guid>
+      <author>Ishan Joshi (ishanaj)</author>
+      <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-7- Starting with the phase-III draw() function</title>
+      <pubDate>Mon, 15 Jul 2019 03:02:10 GMT</pubDate>
+      <link>https://ishanaj.wordpress.com/2019/07/15/gsoc19-week-7-starting-with-the-phase-iii-draw-function/</link>
+      <description>&lt;p&gt;The week was successfully completed as planned. The work on &lt;a href="https://github.com/sympy/sympy/pull/17122"&gt;Column class&lt;/a&gt; has been completed.&lt;/p&gt;
+
+
+
+&lt;p&gt;The documentation and tests have been written and with some changes in the &lt;strong&gt;solve_slope_deflection()&lt;/strong&gt; and &lt;strong&gt;critical_load(),&lt;/strong&gt; the &lt;strong&gt;Column&lt;/strong&gt; class is now able to handle cases with trivial solutions of the constants ( C1 &amp;amp; C2) which made the deflection equation zero.&lt;/p&gt;
+
+
+
+&lt;p&gt;Apart from this, another problem that we had with the &lt;strong&gt;pinned-fixed&lt;/strong&gt; end condition, where &lt;strong&gt;solve()&lt;/strong&gt; wasn&amp;#8217;t giving the output in the required form, has temporary been handled by making an &lt;strong&gt;XFAIL &lt;/strong&gt;test against it. We can work on it later. Either there has to be some changes in &lt;strong&gt;solve()&lt;/strong&gt;&amp;nbsp;so that we would be able to handle our case or we might have to figure out a way to rewrite it into the desired form.&lt;span id="more-58"&gt;&lt;/span&gt;&lt;/p&gt;
+
+
+
+&lt;p&gt;With the end of this week,&amp;nbsp;&lt;a href="https://github.com/sympy/sympy/pull/17122"&gt;PR #17122&lt;/a&gt; and &lt;a href="https://github.com/sympy/sympy/pull/17153"&gt;PR #17153&lt;/a&gt; are complete and ready for review. I have made some changes addressing some of the reviews, and we can have further discussions on it.&lt;/p&gt;
+
+
+
+&lt;p&gt;Now, also moving on to the next phase, I have done a bit of research on it. I will most probably open a discussion to have an initial discussion regarding how work will progress in this stage. This phase is regarding plotting the beam diagrams using &lt;a href="https://matplotlib.org/"&gt;matplotlib&lt;/a&gt;. I have also considered &lt;strong&gt;pyglet&lt;/strong&gt; plotting module of SymPy, which according to the &lt;a href="https://docs.sympy.org/latest/modules/plotting.html#plotting-geometric-entities"&gt;documentation&lt;/a&gt; is capable of plotting geometries, but there has been some problems in this module and it doesn&amp;#8217;t seem to be working well. I had earlier made an &lt;a href="https://github.com/sympy/sympy/issues/16537"&gt;issue #16537&lt;/a&gt; regarding the same, but there seems to be no improvement here.&lt;/p&gt;
+
+
+
+&lt;p&gt;So, we will be discussing the rest in an issue-cum-discussion, in the upcoming week.&lt;/p&gt;
+
+
+
+&lt;p&gt;&lt;strong&gt;Next week:&lt;/strong&gt;&lt;/p&gt;
+
+
+
+&lt;ul&gt;&lt;li&gt;Working on the Stage-III&lt;/li&gt;&lt;li&gt;Simultaneously, discussing the leftover PR&amp;#8217;s and trying to finish them and make a merge.&lt;/li&gt;&lt;/ul&gt;
+
+
+
+&lt;p&gt;Most probably, on successful discussion and planning, I will be opening a draft work-in-progress PR for the &lt;strong&gt;draw()&lt;/strong&gt; function in stage &amp;#8211;III.&lt;/p&gt;
+
+
+
+&lt;p&gt;Will keep you updated!&lt;/p&gt;
+
+
+
+&lt;p&gt;Thanks!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://czgdp1807.github.io/week_7</guid>
+      <author>Gagandeep Singh (czgdp1807)</author>
+      <title>Gagandeep Singh (czgdp1807): Week 7 - All about logics and algorithms</title>
+      <pubDate>Mon, 15 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://czgdp1807.github.io/week_7/</link>
+      <description>&lt;p&gt;This week required a lot of thinking before jumping to code the stuff. Interested? Okay move on to next paragraph.&lt;/p&gt;
+
+&lt;p&gt;Basically, I worked on three PRs, &lt;a href="https://github.com/sympy/sympy/pull/17163"&gt;#17163&lt;/a&gt; for continuous time Markov chains, &lt;a href="https://github.com/sympy/sympy/pull/17174"&gt;#17174&lt;/a&gt; for random matrices and &lt;a href="https://github.com/sympy/sympy/pull/17146"&gt;#17146&lt;/a&gt; for symbolic Ranges. The first and the last PRs are very much intensive. I developed a new algorithm for the query handler of &lt;code class="language-plaintext highlighter-rouge"&gt;ContinuousMarkovChain.probability&lt;/code&gt; method, because the previous one which I implemented in &lt;code class="language-plaintext highlighter-rouge"&gt;DiscreteMarkovChain.probability&lt;/code&gt;, was not easy to maintain, quite ad-hoc, rigid and difficult to extend. The philosophy behind the algorithm is recursion i.e., boil everything down to &lt;code class="language-plaintext highlighter-rouge"&gt;Relational&lt;/code&gt; query, convert them to sets and then calculate the probability. You can find the complete description &lt;a href="https://github.com/sympy/sympy/pull/17163#issuecomment-510939984"&gt;here&lt;/a&gt;. I am waiting for any critical objections from my mentors and after that I will refactor the code as suggested by &lt;a href="https://github.com/oscarbenjamin"&gt;oscarbenjamin&lt;/a&gt; and &lt;a href="https://github.com/jksuom"&gt;jksuom&lt;/a&gt;. So, now let&amp;#8217;s move on to random matrices. As it was to be implemented from scratch, it required a bit of thinking to reach a decent architecture. Currently, the PR is at a basic level, and some more testing is to be done. Now, coming on to symbolic &lt;code class="language-plaintext highlighter-rouge"&gt;Range&lt;/code&gt;. Let me tell you, it requires a lot of logical thinking to make &lt;code class="language-plaintext highlighter-rouge"&gt;Range&lt;/code&gt; accept symbolic parameters. A lot of tests fail, and a lot of debugging has to be done to make a method work. In fact, we might deprecate &lt;code class="language-plaintext highlighter-rouge"&gt;xrange&lt;/code&gt; support from &lt;code class="language-plaintext highlighter-rouge"&gt;Range&lt;/code&gt; because we are going to drop &lt;code class="language-plaintext highlighter-rouge"&gt;Python 2&lt;/code&gt; support from &lt;code class="language-plaintext highlighter-rouge"&gt;SymPy&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;This week I learnt to combine the concepts from algorithms and software engineering to develop the stuff I mentioned above. This was the best week of my overall GSoC experience till now.&lt;/p&gt;
+
+&lt;p&gt;A lot more lies ahead. Bye!!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://divyanshu132.github.io//gsoc-week-7</guid>
+      <author>Divyanshu Thakur (divyanshu132)</author>
+      <title>Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 7 - Modify Presentation and Addition of Methods</title>
+      <pubDate>Mon, 15 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://divyanshu132.github.io//gsoc-week-7</link>
+      <description>&lt;p&gt;The seventh week of coding period has ended and a few methods has been introduced to polycyclic groups, also pc presentation has been modified. Previously for pc presentation we were computing the LHS for both power and conjugate relators via separate methods and then finally their RHS was computed.&lt;/p&gt;
+
+&lt;p&gt;Now, the computation of presentation starts from the bottom of the polycyclic generating sequence(pcgs) and polycyclic series. Storing all the previous generators from pcgs and then taking the last generator as the generator which acts as a conjugator and conjugates all the previous generators in the list.&lt;/p&gt;
+
+&lt;p&gt;To get a clear picture let&amp;#8217;s take an example of &lt;code class="highlighter-rouge"&gt;S(4)&lt;/code&gt;
+For S(4) we&amp;#8217;ll have 4 generators in pcgs say &lt;code class="highlighter-rouge"&gt;[x0, x1, x2, x3]&lt;/code&gt; and the &lt;code class="highlighter-rouge"&gt;relative_order vector as [2, 3, 2, 2]&lt;/code&gt;. Starting from bottom of this sequence the presentation is computed in order as below.&lt;/p&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x3**2	       	---| ---&amp;gt; using only [x3] from pcgs and pc_series[1]
+x2**2		   |
+x2**-1*x3*x2	---| from bottom up because pc_series[0] is an identity.
+
+x1**3		---| ---&amp;gt; using [x3, x2] from pcgs and pc_series[2]	
+x1**-1*x3*x1	   | 
+x1**-1*x2*x1	---|      from bottom up(which have both the gens).
+
+x0**2		---| ---&amp;gt; using [x3, x2, x1] from pcgs and pc_series[3]
+x0**-1*x3*x0	   |
+x0**-1*x2*x0	   |      from bottom up(which have all three gens).
+x0**-1*x1*x0	---|
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;There were 3-methods which were added namely:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Exponent vector&lt;/li&gt;
+  &lt;li&gt;Depth&lt;/li&gt;
+  &lt;li&gt;Leading Exponent&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics import *
+&amp;gt;&amp;gt;&amp;gt; from sympy.combinatorics.free_groups import free_group
+&amp;gt;&amp;gt;&amp;gt; G = SymmetricGroup(4)
+&amp;gt;&amp;gt;&amp;gt; PcGroup = G.polycyclic_group()
+&amp;gt;&amp;gt;&amp;gt; pcgs = PcGroup.pcgs
+&amp;gt;&amp;gt;&amp;gt; group, x0, x1, x2, x3 = free_group("x0, x1, x2, x3")
+&amp;gt;&amp;gt;&amp;gt; PcGroup.exponent_vector(G[0], group)
+[1, 0, 0, 0]
+&amp;gt;&amp;gt;&amp;gt; exp = PcGroup.exponent_vector(G[1], group)
+&amp;gt;&amp;gt;&amp;gt; g = Permutation()
+&amp;gt;&amp;gt;&amp;gt; for i in range(len(exp)):
+...     g = g*pcgs[i] if exp[i] else g
+... 
+&amp;gt;&amp;gt;&amp;gt; g == G[1]
+True
+&amp;gt;&amp;gt;&amp;gt; 
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;For the details of these methods one can look into the docstrings and doctests of these methods in the PR &lt;a href="https://github.com/sympy/sympy/pull/16991"&gt;sympy/sympy#16991&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Tasks I hope to complete next week:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Get the polycyclic group pr ready to be merged.&lt;/li&gt;
+  &lt;li&gt;Get started with quotient groups.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Till then good byee..&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
