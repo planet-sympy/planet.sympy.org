@@ -35,7 +35,7 @@ of the function &lt;code class="language-plaintext highlighter-rouge"&gt;f(x)&lt
         &lt;/ul&gt;
 
         &lt;p&gt;I enjoyed implementing all this because at every step we had to ensure that we are not compromising with the efficiency of the code. 
-Finally this issue was resolved, and we ended up adding an extremely optimised implementation of the function to the codebase.
+Finally, this issue was resolved and we ended up adding an extremely optimised implementation of the function to the codebase.
 &lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
       &lt;/li&gt;
     &lt;/ul&gt;
@@ -48,13 +48,13 @@ Finally this issue was resolved, and we ended up adding an extremely optimised i
         &lt;p&gt;In this PR, we made use of the &lt;code class="language-plaintext highlighter-rouge"&gt;is_meromorphic()&lt;/code&gt; function of SymPy to speed up limit evaluations for certain type of cases.&lt;/p&gt;
 
         &lt;p&gt;A function is said to be &lt;code class="language-plaintext highlighter-rouge"&gt;meromorphic&lt;/code&gt; at a point, if at that point the &lt;code class="language-plaintext highlighter-rouge"&gt;limit of the function exists but is infinite&lt;/code&gt;. 
-In these cases, the value of the limit can usually be determined with the help of the &lt;code class="language-plaintext highlighter-rouge"&gt;series expansion of that function&lt;/code&gt;and 
+In these cases, the value of the limit can usually be determined with the help of the &lt;code class="language-plaintext highlighter-rouge"&gt;series expansion of that function&lt;/code&gt; and 
 thus, there is no need to invoke the &lt;code class="language-plaintext highlighter-rouge"&gt;Gruntz algorithm&lt;/code&gt;.&lt;/p&gt;
 
-        &lt;p&gt;While working on the implementation of this functionality, we required the &lt;code class="language-plaintext highlighter-rouge"&gt;leading term&lt;/code&gt; of the &lt;code class="language-plaintext highlighter-rouge"&gt;series expansion of the function in the limit expression at the point at which the limit needs to be evaluated&lt;/code&gt; .&lt;/p&gt;
+        &lt;p&gt;While working on the implementation of this functionality, we required the &lt;code class="language-plaintext highlighter-rouge"&gt;leading term&lt;/code&gt; of the &lt;code class="language-plaintext highlighter-rouge"&gt;series expansion of the function in the limit expression at the point at which the limit needs to be evaluated&lt;/code&gt;.&lt;/p&gt;
 
-        &lt;p&gt;But, we came across a weird situation, where for some functions, we got &lt;code class="language-plaintext highlighter-rouge"&gt;Complex Infinity&lt;/code&gt; as the &lt;code class="language-plaintext highlighter-rouge"&gt;leading term&lt;/code&gt;.
-Thus, we had to rectify the &lt;code class="language-plaintext highlighter-rouge"&gt;_eval_as_leading_term()&lt;/code&gt; methods for these functions (done in a separate &lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/19461"&gt;PR&lt;/a&gt;&lt;/strong&gt;)/&lt;/p&gt;
+        &lt;p&gt;But we came across a weird situation, where for some functions, we got &lt;code class="language-plaintext highlighter-rouge"&gt;Complex Infinity&lt;/code&gt; as the &lt;code class="language-plaintext highlighter-rouge"&gt;leading term&lt;/code&gt;.
+Thus, we had to rectify the &lt;code class="language-plaintext highlighter-rouge"&gt;_eval_as_leading_term()&lt;/code&gt; methods of these functions (done in a separate &lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/19461"&gt;PR&lt;/a&gt;&lt;/strong&gt;).&lt;/p&gt;
 
         &lt;p&gt;After resolving this issue, we succeeded in adding the required functionality and hence, increased the efficiency of the limit evaluation algorithm of SymPy.&lt;/p&gt;
       &lt;/li&gt;
@@ -236,8 +236,8 @@ Thus, we had to rectify the &lt;code class="language-plaintext highlighter-rouge
       &lt;li&gt;In this issue, due to different assumptions of the limit variable, the output was coming out to be different and incorrect for the same limit expression.
 On digging deep into this issue, we observed that the assumption &lt;code class="language-plaintext highlighter-rouge"&gt;integer = True&lt;/code&gt; was common between all the incorrectly evaluated limit expressions.
 Thus, we concluded that the &lt;code class="language-plaintext highlighter-rouge"&gt;Gruntz algorithm&lt;/code&gt; is not able to correctly evaluate those expressions where the limit variable possesses &lt;code class="language-plaintext highlighter-rouge"&gt;integer = True&lt;/code&gt; property.
-So, in order to get all the correct mathematical behavior from the expression, we decided to define a dummy variable lacking &lt;code class="language-plaintext highlighter-rouge"&gt;integer = True&lt;/code&gt; property. 
-Afterwhich, we simply had to substitute the limit variable with this dummy variable for these type of limit expressions to resolve the issue.
+So, in order to get all the correct mathematical behaviour from the expression, we decided to define a dummy variable lacking &lt;code class="language-plaintext highlighter-rouge"&gt;integer = True&lt;/code&gt; property. 
+After which, we simply had to substitute the limit variable with this dummy variable for these type of limit expressions to resolve the issue.
 &lt;br /&gt;&lt;br /&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
