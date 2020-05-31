@@ -7,6 +7,62 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-2</guid>
+      <author>Sachin Agarwal (sachin-4099)</author>
+      <title>Sachin Agarwal (sachin-4099): GSoC 2020 - Week 2</title>
+      <pubDate>Sun, 31 May 2020 00:00:00 GMT</pubDate>
+      <link>https://sachin-4099.github.io//GSoC-2020-Week-2</link>
+      <description>&lt;p&gt;Key &lt;code class="language-plaintext highlighter-rouge"&gt;highlights&lt;/code&gt; of this week&amp;#8217;s work are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/19369"&gt;Fixed _eval_nseries() of Mul&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;This was a long pending issue. 
+Previously, in the codebase the &lt;code class="language-plaintext highlighter-rouge"&gt;series expansion of a product&lt;/code&gt; was computed as the &lt;code class="language-plaintext highlighter-rouge"&gt;product of expansions of the factors&lt;/code&gt;. 
+This approach was correct only when the &lt;code class="language-plaintext highlighter-rouge"&gt;leading term of each series&lt;/code&gt; is a &lt;code class="language-plaintext highlighter-rouge"&gt;constant&lt;/code&gt; but not in general.&lt;/p&gt;
+
+        &lt;p&gt;For example, to compute the expansion of &lt;code class="language-plaintext highlighter-rouge"&gt;f(x)/x**10&lt;/code&gt; at &lt;code class="language-plaintext highlighter-rouge"&gt;x = 0&lt;/code&gt; to order &lt;code class="language-plaintext highlighter-rouge"&gt;O(x**10)&lt;/code&gt; it is necessary to compute the series expansion 
+of the function &lt;code class="language-plaintext highlighter-rouge"&gt;f(x)&lt;/code&gt; to order &lt;code class="language-plaintext highlighter-rouge"&gt;O(x**20)&lt;/code&gt; and thus, computing till order &lt;code class="language-plaintext highlighter-rouge"&gt;O(x**10)&lt;/code&gt; would not suffice.&lt;/p&gt;
+
+        &lt;p&gt;The strategy we implemented to resolve this issue was:&lt;/p&gt;
+        &lt;ul&gt;
+          &lt;li&gt;Compute the order &lt;code class="language-plaintext highlighter-rouge"&gt;n0&lt;/code&gt; of the &lt;code class="language-plaintext highlighter-rouge"&gt;leading term of the product&lt;/code&gt; as the &lt;code class="language-plaintext highlighter-rouge"&gt;sum of the orders&lt;/code&gt; of the &lt;code class="language-plaintext highlighter-rouge"&gt;leading terms of the factors&lt;/code&gt;.&lt;/li&gt;
+          &lt;li&gt;For each factor, compute &lt;code class="language-plaintext highlighter-rouge"&gt;n - n0&lt;/code&gt; terms of its series expansion (starting from its &lt;code class="language-plaintext highlighter-rouge"&gt;leading term of order n1&lt;/code&gt; and &lt;code class="language-plaintext highlighter-rouge"&gt;ending at order n - n0 + n1&lt;/code&gt;).&lt;/li&gt;
+          &lt;li&gt;Multiply the expansions (&lt;code class="language-plaintext highlighter-rouge"&gt;truncating at terms of order n&lt;/code&gt;).&lt;/li&gt;
+        &lt;/ul&gt;
+
+        &lt;p&gt;I enjoyed implementing all this because at every step we had to ensure that we are not compromising with the efficiency of the code. 
+Finally this issue was resolved, and we ended up adding an extremely optimised implementation of the function to the codebase.
+&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/19432"&gt;Used is_meromorphic() function to speed up limit evaluations&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;In this PR, we made use of the &lt;code class="language-plaintext highlighter-rouge"&gt;is_meromorphic()&lt;/code&gt; function of SymPy to speed up limit evaluations for certain type of cases.&lt;/p&gt;
+
+        &lt;p&gt;A function is said to be &lt;code class="language-plaintext highlighter-rouge"&gt;meromorphic&lt;/code&gt; at a point, if at that point the &lt;code class="language-plaintext highlighter-rouge"&gt;limit of the function exists but is infinite&lt;/code&gt;. 
+In these cases, the value of the limit can usually be determined with the help of the &lt;code class="language-plaintext highlighter-rouge"&gt;series expansion of that function&lt;/code&gt;and 
+thus, there is no need to invoke the &lt;code class="language-plaintext highlighter-rouge"&gt;Gruntz algorithm&lt;/code&gt;.&lt;/p&gt;
+
+        &lt;p&gt;While working on the implementation of this functionality, we required the &lt;code class="language-plaintext highlighter-rouge"&gt;leading term&lt;/code&gt; of the &lt;code class="language-plaintext highlighter-rouge"&gt;series expansion of the function in the limit expression at the point at which the limit needs to be evaluated&lt;/code&gt; .&lt;/p&gt;
+
+        &lt;p&gt;But, we came across a weird situation, where for some functions, we got &lt;code class="language-plaintext highlighter-rouge"&gt;Complex Infinity&lt;/code&gt; as the &lt;code class="language-plaintext highlighter-rouge"&gt;leading term&lt;/code&gt;.
+Thus, we had to rectify the &lt;code class="language-plaintext highlighter-rouge"&gt;_eval_as_leading_term()&lt;/code&gt; methods for these functions (done in a separate &lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/19461"&gt;PR&lt;/a&gt;&lt;/strong&gt;)/&lt;/p&gt;
+
+        &lt;p&gt;After resolving this issue, we succeeded in adding the required functionality and hence, increased the efficiency of the limit evaluation algorithm of SymPy.&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/05/31/week_2</guid>
       <author>Smit Lunagariya (Smit-create)</author>
       <title>Smit Lunagariya (Smit-create): Week 2-GSoC 2020</title>
@@ -2361,45 +2417,6 @@ Below is an example to show the functionality.&lt;/p&gt;
 &lt;p&gt;For the next week I&amp;#8217;ll try to complete the documentation work on polycyclic groups and open a PR for the same.&lt;/p&gt;
 
 &lt;p&gt;Till then, good byee..&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://jmig5776.github.io//gsoc-week-10</guid>
-      <author>Jogi Miglani (jmig5776)</author>
-      <title>Jogi Miglani (jmig5776): GSoC 2019 - Week 10</title>
-      <pubDate>Sun, 04 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://jmig5776.github.io//gsoc-week-10</link>
-      <description>&lt;p&gt;This was the tenth week meeting with the GSoC mentors which was scheduled on
-Sunday 4th August, 2019 between 1:00 - 2:00 PM (IST). Me, Yathartha
-were the attendees of the meeting.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Discussing previous week&amp;#8217;s progress&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Progress of &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;:- In PR &lt;a href="https://github.com/sympy/sympy/pull/16976"&gt;#16976&lt;/a&gt;
-After discussing with Yathartha, I decided to change the basic model of the &lt;code class="highlighter-rouge"&gt;_solve_modular &lt;/code&gt;
-such that I should be able to target equations more efficiently and also the rest
-of the types of equation should return ConditionSet. Cases like &lt;code class="highlighter-rouge"&gt;Mod(a**x, m) - rhs = 0&lt;/code&gt;
-are special type and will be handled differently with the helper functions of ntheory module.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Progress of ImageSet Union:- In PR &lt;a href="https://github.com/sympy/sympy/pull/17079"&gt;#17079&lt;/a&gt;
-This PR is currently been left for review.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Next week goals&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Work upon &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;In the following week I will be changing the domain of solving equations to
-Integers only.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Code improvement takes time!!&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

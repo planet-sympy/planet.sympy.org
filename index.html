@@ -93,6 +93,116 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-f8f36e61 feed-" id="item-5107c906">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/sachin-4099.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Sachin Agarwal (sachin-4099) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://sachin-4099.github.io//GSoC-2020-Week-2">00:00, Sunday, 31 May UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://sachin-4099.github.io//GSoC-2020-Week-2">Sachin Agarwal (sachin-4099): GSoC 2020 - Week 2</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/sachin-4099.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Sachin Agarwal (sachin-4099) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://sachin-4099.github.io//GSoC-2020-Week-2">00:00, Sunday, 31 May UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://sachin-4099.github.io//GSoC-2020-Week-2">GSoC 2020 - Week 2</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Key <code class="language-plaintext highlighter-rouge">highlights</code> of this week&#8217;s work are:</p>
+
+<ul>
+  <li>
+    <p><strong><a href="https://github.com/sympy/sympy/pull/19369">Fixed _eval_nseries() of Mul</a></strong></p>
+
+    <ul>
+      <li>
+        <p>This was a long pending issue. 
+Previously, in the codebase the <code class="language-plaintext highlighter-rouge">series expansion of a product</code> was computed as the <code class="language-plaintext highlighter-rouge">product of expansions of the factors</code>. 
+This approach was correct only when the <code class="language-plaintext highlighter-rouge">leading term of each series</code> is a <code class="language-plaintext highlighter-rouge">constant</code> but not in general.</p>
+
+        <p>For example, to compute the expansion of <code class="language-plaintext highlighter-rouge">f(x)/x**10</code> at <code class="language-plaintext highlighter-rouge">x = 0</code> to order <code class="language-plaintext highlighter-rouge">O(x**10)</code> it is necessary to compute the series expansion 
+of the function <code class="language-plaintext highlighter-rouge">f(x)</code> to order <code class="language-plaintext highlighter-rouge">O(x**20)</code> and thus, computing till order <code class="language-plaintext highlighter-rouge">O(x**10)</code> would not suffice.</p>
+
+        <p>The strategy we implemented to resolve this issue was:</p>
+        <ul>
+          <li>Compute the order <code class="language-plaintext highlighter-rouge">n0</code> of the <code class="language-plaintext highlighter-rouge">leading term of the product</code> as the <code class="language-plaintext highlighter-rouge">sum of the orders</code> of the <code class="language-plaintext highlighter-rouge">leading terms of the factors</code>.</li>
+          <li>For each factor, compute <code class="language-plaintext highlighter-rouge">n - n0</code> terms of its series expansion (starting from its <code class="language-plaintext highlighter-rouge">leading term of order n1</code> and <code class="language-plaintext highlighter-rouge">ending at order n - n0 + n1</code>).</li>
+          <li>Multiply the expansions (<code class="language-plaintext highlighter-rouge">truncating at terms of order n</code>).</li>
+        </ul>
+
+        <p>I enjoyed implementing all this because at every step we had to ensure that we are not compromising with the efficiency of the code. 
+Finally this issue was resolved, and we ended up adding an extremely optimised implementation of the function to the codebase.
+<br /><br /></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><strong><a href="https://github.com/sympy/sympy/pull/19432">Used is_meromorphic() function to speed up limit evaluations</a></strong></p>
+
+    <ul>
+      <li>
+        <p>In this PR, we made use of the <code class="language-plaintext highlighter-rouge">is_meromorphic()</code> function of SymPy to speed up limit evaluations for certain type of cases.</p>
+
+        <p>A function is said to be <code class="language-plaintext highlighter-rouge">meromorphic</code> at a point, if at that point the <code class="language-plaintext highlighter-rouge">limit of the function exists but is infinite</code>. 
+In these cases, the value of the limit can usually be determined with the help of the <code class="language-plaintext highlighter-rouge">series expansion of that function</code>and 
+thus, there is no need to invoke the <code class="language-plaintext highlighter-rouge">Gruntz algorithm</code>.</p>
+
+        <p>While working on the implementation of this functionality, we required the <code class="language-plaintext highlighter-rouge">leading term</code> of the <code class="language-plaintext highlighter-rouge">series expansion of the function in the limit expression at the point at which the limit needs to be evaluated</code> .</p>
+
+        <p>But, we came across a weird situation, where for some functions, we got <code class="language-plaintext highlighter-rouge">Complex Infinity</code> as the <code class="language-plaintext highlighter-rouge">leading term</code>.
+Thus, we had to rectify the <code class="language-plaintext highlighter-rouge">_eval_as_leading_term()</code> methods for these functions (done in a separate <strong><a href="https://github.com/sympy/sympy/pull/19461">PR</a></strong>)/</p>
+
+        <p>After resolving this issue, we succeeded in adding the required functionality and hence, increased the efficiency of the limit evaluation algorithm of SymPy.</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-7c867291 feed-" id="item-c26237dc">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -4073,102 +4183,6 @@ Below is an example to show the functionality.</p>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">August 04, 2019</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-b30d7457 feed-" id="item-8016c464">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/jmig5776.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Jogi Miglani (jmig5776) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://jmig5776.github.io//gsoc-week-10">00:00, Sunday, 04 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-week-10">Jogi Miglani (jmig5776): GSoC 2019 - Week 10</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/jmig5776.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Jogi Miglani (jmig5776) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://jmig5776.github.io//gsoc-week-10">00:00, Sunday, 04 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-week-10">GSoC 2019 - Week 10</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This was the tenth week meeting with the GSoC mentors which was scheduled on
-Sunday 4th August, 2019 between 1:00 - 2:00 PM (IST). Me, Yathartha
-were the attendees of the meeting.</p>
-
-<ul>
-  <li>Discussing previous week&#8217;s progress</li>
-</ul>
-
-<ol>
-  <li>
-    <p>Progress of <code class="highlighter-rouge">_solve_modular</code>:- In PR <a href="https://github.com/sympy/sympy/pull/16976">#16976</a>
-After discussing with Yathartha, I decided to change the basic model of the <code class="highlighter-rouge">_solve_modular </code>
-such that I should be able to target equations more efficiently and also the rest
-of the types of equation should return ConditionSet. Cases like <code class="highlighter-rouge">Mod(a**x, m) - rhs = 0</code>
-are special type and will be handled differently with the helper functions of ntheory module.</p>
-  </li>
-  <li>
-    <p>Progress of ImageSet Union:- In PR <a href="https://github.com/sympy/sympy/pull/17079">#17079</a>
-This PR is currently been left for review.</p>
-  </li>
-</ol>
-
-<ul>
-  <li>
-    <p>Next week goals</p>
-  </li>
-  <li>Work upon <code class="highlighter-rouge">_solve_modular</code></li>
-  <li>In the following week I will be changing the domain of solving equations to
-Integers only.</li>
-</ul>
-
-<p>Code improvement takes time!!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -4196,236 +4210,236 @@ Integers only.</li>
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.com/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://abhinav28071999.github.io/">Abhinav Anand</a></td>
 <td><a class="xmlbutton" href="https://abhinav28071999.github.io/feed.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
 <td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://divyanshu132.github.io//">Divyanshu Thakur</a></td>
 <td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://friyaz.github.io">Faisal's Blog</a></td>
 <td><a class="xmlbutton" href="https://friyaz.github.io/feed.sympy.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arighnaiitg.github.io">GSoC Days</a></td>
 <td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sc0rpi0n101.github.io/categories/gsoc/">GSoC on Sc0rpi0n's Journey</a></td>
 <td><a class="xmlbutton" href="https://sc0rpi0n101.github.io/categories/gsoc/index.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss</td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ritesh99rakesh.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
+</tr>
+<tr class="feedsrow">
+<td>https://namannimmo10.github.io/emerald/atom.xml</td>
+<td><a class="xmlbutton" href="https://namannimmo10.github.io/emerald/atom.xml">XML</a></td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td>https://www.kangzhiq.com/tag/sympy/feed/</td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
 <td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://namannimmo10.github.io/emerald/">My-GSoC-blog | A simple Jekyll blog</a></td>
-<td><a class="xmlbutton" href="https://namannimmo10.github.io/emerald/atom.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sachin-4099.github.io//">Sachin Agarwal</a></td>
 <td><a class="xmlbutton" href="https://sachin-4099.github.io/feed.sympy.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://www.shubhamjha.com/">Shubham&#8217;s Blog</a></td>
 <td><a class="xmlbutton" href="https://shubhamjha.com/sympy_feed.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
 <td><a class="xmlbutton" href="http://sidhantnagpal.com/rss-gsoc.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://smit-create.github.io/Smit-create.github.io/">Smit-create</a></td>
 <td><a class="xmlbutton" href="https://smit-create.github.io/feed.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>12:26, Sunday, 31 May</td>
-<td>12:41, Sunday, 31 May</td>
+<td>12:46, Sunday, 31 May</td>
+<td>13:01, Sunday, 31 May</td>
 </tr>
 </table>
 
