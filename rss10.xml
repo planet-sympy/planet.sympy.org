@@ -7,6 +7,14 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/06/07/week_3</guid>
+      <author>Smit Lunagariya (Smit-create)</author>
+      <title>Smit Lunagariya (Smit-create): Week 3-GSoC 2020</title>
+      <pubDate>Sun, 07 Jun 2020 00:00:00 GMT</pubDate>
+      <link>https://smit-create.github.io/Smit-create.github.io/2020/06/07/week_3.html</link>
+      <description>&lt;p&gt;This blog provides the brief overview of the week 3 of the Phase 1. Some of the key highlights on the discussions and the implementation during this week are described below:</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://namannimmo10.github.io/emerald//week_1</guid>
       <author>Naman Gera (namannimmo10)</author>
       <title>Naman Gera (namannimmo10): Week 1 - GSoC 2020</title>
@@ -2327,76 +2335,6 @@ then emptySet is being returned.&lt;/p&gt;
       <description>&lt;p&gt;&amp;#8220;Software is like entropy: It is difficult to grasp, weighs nothing, and obeys the Second Law of Thermodynamics; i.e., it always increases.&amp;#8221; &amp;#8212; Norman Augustine
  Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and we will talk all about the Fortran Parser this week. I have passed the second evaluation and Fortran Parser pull request is complete.
  The Week Fortran Parser SymPy Expression Travis Builds The C Parser The Meeting  The Week This week began with me working on the C parser to finalize that.</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=91</guid>
-      <author>Ishan Joshi (ishanaj)</author>
-      <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-10- An alternative to the draw() function</title>
-      <pubDate>Mon, 05 Aug 2019 17:58:18 GMT</pubDate>
-      <link>https://ishanaj.wordpress.com/2019/08/05/gsoc19-week-10-an-alternative-to-the-draw-function/</link>
-      <description>&lt;p&gt;This was
-the end of the tenth week, and we have entered the final phase of the project.&lt;/p&gt;
-
-
-
-&lt;p&gt;For the last phase we have Truss calculations to be implemented in the continuum_mechanics module. I had initiated a discussion regarding what needs to be done and how the implementation will move forward in an &lt;a href="https://github.com/sympy/sympy/issues/17302"&gt;issue #17302&lt;/a&gt;. We will have to analyse a bit more about making Truss calculations symbolic and what benefits one might get in solving it symbolically. We have some good packages to compare from like &lt;a href="https://anastruct.readthedocs.io/en/latest/?badge=latest"&gt;this&lt;/a&gt;. I guess a bit more discussion is needed before we go ahead with it. &lt;/p&gt;
-
-
-
-&lt;p&gt;Besides this, I had worked on improving the &lt;strong&gt;draw()&lt;/strong&gt; function implemented in the previous week in &lt;a href="https://github.com/sympy/sympy/pull/17240"&gt;PR #17240&lt;/a&gt;. I modified it to use the &lt;strong&gt;_backend&lt;/strong&gt; attribute for plotting the beam diagram. This could have worked until &lt;span id="more-91"&gt;&lt;/span&gt;I realised that using the &lt;strong&gt;_backend&lt;/strong&gt; attribute doesn&amp;#8217;t really has affect the &lt;strong&gt;Plot object. &lt;/strong&gt;To understand the last statement, lets go to how &lt;strong&gt;sympy.plot() &lt;/strong&gt;works.&lt;/p&gt;
-
-
-
-&lt;p&gt;In simple terms, the equations that we pass through the &lt;strong&gt;plot()&lt;/strong&gt; function as arguments are actually stored in&lt;strong&gt; _series&lt;/strong&gt; attribute. So we can indirectly say that the basic data of the plot is stored in this attribute. But using the &lt;strong&gt;_backend &lt;/strong&gt;attribute wouldn&amp;#8217;t alter &lt;strong&gt;_series &lt;/strong&gt;at all and if &lt;strong&gt;_series &lt;/strong&gt;remains empty at the start it would end up storing nothing. &lt;/p&gt;
-
-
-
-&lt;p&gt;But we are of course getting a decent plot at the end, so shouldn&amp;#8217;t we probably ignore this? No, it would surely  give the plot but we won&amp;#8217;t be getting a fully defined&lt;strong&gt; Plot &lt;/strong&gt;object which we can further use with &lt;strong&gt;PlotGrid&lt;/strong&gt; to get a subplot which includes all the five plots related to the beam.&lt;/p&gt;
-
-
-
-&lt;p&gt;Keeping this in mind, I tried an alternative way to directly use&lt;strong&gt; sympy.plot() &lt;/strong&gt;&amp;nbsp;to give the plot. Although a bit hard and time taking to do, I have intiated this in a draft &lt;a href="https://github.com/sympy/sympy/pull/17345"&gt;PR #17345&lt;/a&gt;. This PR perfectly plots a rectangular beam and loads (except point and moment loads). Only things that are left here are to plot supports and arrows denoting the direction of the load.&lt;/p&gt;
-
-
-
-&lt;p&gt;The example below shows how it functions: (keep in mind it just plots the basic structure of the intended beam diagram, it hasn&amp;#8217;t been completed yet)&lt;/p&gt;
-
-
-
-&lt;div class="wp-block-group"&gt;&lt;div class="wp-block-group__inner-container"&gt;&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
-&amp;gt;&amp;gt;&amp;gt; E, I = symbols('E, I')
-&amp;gt;&amp;gt;&amp;gt; b = Beam(9, E, I)
-&amp;gt;&amp;gt;&amp;gt; b.apply_load(-12, 9, -1)  # gets skipped
-&amp;gt;&amp;gt;&amp;gt; b.apply_load(50, 5, -2)  # gets skipped
-&amp;gt;&amp;gt;&amp;gt; b.apply_load(3, 6, 1, end=8)
-&amp;gt;&amp;gt;&amp;gt; b.apply_load(4, 0, 0, end=5)
-&amp;gt;&amp;gt;&amp;gt; b.draw()
-&lt;/pre&gt;
-&lt;/div&gt;&lt;/div&gt;
-
-
-
-&lt;figure class="wp-block-image size-large is-resized"&gt;&lt;img alt="" class="wp-image-92" height="351" src="https://ishanaj.files.wordpress.com/2019/08/screenshot-05-08-2019-19_49_21.png" width="449" /&gt;&lt;/figure&gt;
-
-
-
-&lt;p&gt;I also tried to complete the leftover PR&amp;#8217;s in this week, but still some work is left.&lt;/p&gt;
-
-
-
-&lt;h2&gt;&lt;strong&gt;Next week:&lt;/strong&gt;&lt;/h2&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;Completing the &lt;strong&gt;draw() &lt;/strong&gt;function&lt;/li&gt;&lt;li&gt;Documentation and testing&lt;/li&gt;&lt;li&gt;Starting Truss implementations&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;p&gt;Will keep you updated!&lt;/p&gt;
-
-
-
-&lt;p&gt;Thanks!&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
