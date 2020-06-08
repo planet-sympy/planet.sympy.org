@@ -28,9 +28,10 @@ it was not written in a general way. As a result, the code was very long and it 
         &lt;p&gt;Hence, it was very important to completely rewrite and clean-up &lt;code class="language-plaintext highlighter-rouge"&gt;Pow._eval_nseries()&lt;/code&gt;, so that many issues get resolved and 
 it becomes easy to debug any further issues related to series expansions or limit evaluations.&lt;/p&gt;
 
-        &lt;p&gt;Thus, we came up with a &lt;code class="language-plaintext highlighter-rouge"&gt;general algorithm&lt;/code&gt; covering all the cases:&lt;/p&gt;
+        &lt;p&gt;Thus, we came up with a &lt;code class="language-plaintext highlighter-rouge"&gt;general algorithm&lt;/code&gt; covering all the cases.&lt;/p&gt;
 
         &lt;p&gt;The series expansion of &lt;code class="language-plaintext highlighter-rouge"&gt;b**e&lt;/code&gt; is computed as follows:&lt;/p&gt;
+
         &lt;ul&gt;
           &lt;li&gt;We express &lt;code class="language-plaintext highlighter-rouge"&gt;b&lt;/code&gt; as &lt;code class="language-plaintext highlighter-rouge"&gt;f*(1 + g)&lt;/code&gt; where &lt;code class="language-plaintext highlighter-rouge"&gt;f&lt;/code&gt; is the leading term of &lt;code class="language-plaintext highlighter-rouge"&gt;b&lt;/code&gt;. &lt;code class="language-plaintext highlighter-rouge"&gt;g&lt;/code&gt; has order &lt;code class="language-plaintext highlighter-rouge"&gt;O(x**d)&lt;/code&gt; where &lt;code class="language-plaintext highlighter-rouge"&gt;d&lt;/code&gt; is strictly positive.&lt;/li&gt;
           &lt;li&gt;Then &lt;code class="language-plaintext highlighter-rouge"&gt;b**e&lt;/code&gt; = &lt;code class="language-plaintext highlighter-rouge"&gt;(f**e)*((1 + g)**e)&lt;/code&gt;where, &lt;code class="language-plaintext highlighter-rouge"&gt;(1 + g)**e&lt;/code&gt; is computed using the concept of &lt;code class="language-plaintext highlighter-rouge"&gt;binomial series&lt;/code&gt;.&lt;/li&gt;
@@ -96,6 +97,7 @@ This approach was correct only when the &lt;code class="language-plaintext highl
 of the function &lt;code class="language-plaintext highlighter-rouge"&gt;f(x)&lt;/code&gt; to order &lt;code class="language-plaintext highlighter-rouge"&gt;O(x**20)&lt;/code&gt; and thus, computing till order &lt;code class="language-plaintext highlighter-rouge"&gt;O(x**10)&lt;/code&gt; would not suffice.&lt;/p&gt;
 
         &lt;p&gt;The strategy we implemented to resolve this issue was:&lt;/p&gt;
+
         &lt;ul&gt;
           &lt;li&gt;Compute the order &lt;code class="language-plaintext highlighter-rouge"&gt;n0&lt;/code&gt; of the &lt;code class="language-plaintext highlighter-rouge"&gt;leading term of the product&lt;/code&gt; as the &lt;code class="language-plaintext highlighter-rouge"&gt;sum of the orders&lt;/code&gt; of the &lt;code class="language-plaintext highlighter-rouge"&gt;leading terms of the factors&lt;/code&gt;.&lt;/li&gt;
           &lt;li&gt;For each factor, compute &lt;code class="language-plaintext highlighter-rouge"&gt;n - n0&lt;/code&gt; terms of its series expansion (starting from its &lt;code class="language-plaintext highlighter-rouge"&gt;leading term of order n1&lt;/code&gt; and &lt;code class="language-plaintext highlighter-rouge"&gt;ending at order n - n0 + n1&lt;/code&gt;).&lt;/li&gt;
