@@ -7,6 +7,50 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-3</guid>
+      <author>Sachin Agarwal (sachin-4099)</author>
+      <title>Sachin Agarwal (sachin-4099): GSoC 2020 - Week 3</title>
+      <pubDate>Sun, 07 Jun 2020 00:00:00 GMT</pubDate>
+      <link>https://sachin-4099.github.io//GSoC-2020-Week-3</link>
+      <description>&lt;p&gt;Key &lt;code class="language-plaintext highlighter-rouge"&gt;highlights&lt;/code&gt; of this week&amp;#8217;s work are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/19508"&gt;Fixed _eval_nseries() of Power&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;This was a long pending issue. 
+Previously, in the codebase the &lt;code class="language-plaintext highlighter-rouge"&gt;series expansion of b**e&lt;/code&gt; was computed by breaking the code into different cases, depending on the 
+values of the exponent or if the exponent has a symbol etc. Moreover, there was code to handle specific cases, and 
+it was not written in a general way. As a result, the code was very long and it was difficult to debug it when some issue popped up.&lt;/p&gt;
+
+        &lt;p&gt;Hence, it was very important to completely rewrite and clean-up &lt;code class="language-plaintext highlighter-rouge"&gt;Pow._eval_nseries()&lt;/code&gt;, so that many issues get resolved and 
+it becomes easy to debug any further issues related to series expansions or limit evaluations.&lt;/p&gt;
+
+        &lt;p&gt;Thus, we came up with a &lt;code class="language-plaintext highlighter-rouge"&gt;general algorithm&lt;/code&gt; covering all the cases:&lt;/p&gt;
+
+        &lt;p&gt;The series expansion of &lt;code class="language-plaintext highlighter-rouge"&gt;b**e&lt;/code&gt; is computed as follows:&lt;/p&gt;
+        &lt;ul&gt;
+          &lt;li&gt;We express &lt;code class="language-plaintext highlighter-rouge"&gt;b&lt;/code&gt; as &lt;code class="language-plaintext highlighter-rouge"&gt;f*(1 + g)&lt;/code&gt; where &lt;code class="language-plaintext highlighter-rouge"&gt;f&lt;/code&gt; is the leading term of &lt;code class="language-plaintext highlighter-rouge"&gt;b&lt;/code&gt;. &lt;code class="language-plaintext highlighter-rouge"&gt;g&lt;/code&gt; has order &lt;code class="language-plaintext highlighter-rouge"&gt;O(x**d)&lt;/code&gt; where &lt;code class="language-plaintext highlighter-rouge"&gt;d&lt;/code&gt; is strictly positive.&lt;/li&gt;
+          &lt;li&gt;Then &lt;code class="language-plaintext highlighter-rouge"&gt;b**e&lt;/code&gt; = &lt;code class="language-plaintext highlighter-rouge"&gt;(f**e)*((1 + g)**e)&lt;/code&gt;where, &lt;code class="language-plaintext highlighter-rouge"&gt;(1 + g)**e&lt;/code&gt; is computed using the concept of &lt;code class="language-plaintext highlighter-rouge"&gt;binomial series&lt;/code&gt;.&lt;/li&gt;
+        &lt;/ul&gt;
+
+        &lt;p&gt;The major challenge which we had to face was the fragile nature of the existing code of &lt;code class="language-plaintext highlighter-rouge"&gt;Pow._eval_nseries()&lt;/code&gt;. 
+Changing the code even a bit resulted in many test failures, as this function plays an important role in both series expansions and limit evaluations.&lt;/p&gt;
+
+        &lt;p&gt;At times, it became extremely difficult to debug the cause of failures because there were several other functions as well on which the code of this function depended. 
+Not only this, fixing one failure caused several others to pop-up.&lt;/p&gt;
+
+        &lt;p&gt;Ultimately, after a week of hard-work, we got everything working.
+After which, we further optimised the code ensuring that we are not compromising with efficiency.
+At last, this issue was resolved and we ended up adding an extremely optimised implementation of the function to the codebase.&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/06/07/week_3</guid>
       <author>Smit Lunagariya (Smit-create)</author>
       <title>Smit Lunagariya (Smit-create): Week 3-GSoC 2020</title>
@@ -2325,16 +2369,6 @@ then emptySet is being returned.&lt;/p&gt;
 &lt;p&gt;My solution for this was to allow temporarily allow expansion of powers by recursing through the expression tree and setting the &lt;code&gt;is_Pow&lt;/code&gt; field of each matrix power to &lt;code&gt;True&lt;/code&gt; and later reverting these states later. It doesn&amp;#8217;t look pretty, but it does seem to work (you can see the code &lt;a href="https://github.com/sympy/sympy/blob/17fb5010e36e10de156dad032d2aea376051df24/sympy/matrices/expressions/matmul.py#L178-L197"&gt;here&lt;/a&gt;).&lt;/p&gt;
 &lt;h2 id="next-steps"&gt;Next Steps&lt;/h2&gt;
 &lt;p&gt;I&amp;#8217;ll try to get started with some optimizations that utilize this wildcard class once the pull request gets merged.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/08/week-10-the-finished-parser/</guid>
-      <author>Nikhil Maan (Sc0rpi0n101)</author>
-      <title>Nikhil Maan (Sc0rpi0n101): Week 10: The Finished Parser</title>
-      <pubDate>Tue, 06 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://sc0rpi0n101.github.io/2019/08/week-10-the-finished-parser/</link>
-      <description>&lt;p&gt;&amp;#8220;Software is like entropy: It is difficult to grasp, weighs nothing, and obeys the Second Law of Thermodynamics; i.e., it always increases.&amp;#8221; &amp;#8212; Norman Augustine
- Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and we will talk all about the Fortran Parser this week. I have passed the second evaluation and Fortran Parser pull request is complete.
- The Week Fortran Parser SymPy Expression Travis Builds The C Parser The Meeting  The Week This week began with me working on the C parser to finalize that.</description>
     </item>
   </channel>
 </rss>
