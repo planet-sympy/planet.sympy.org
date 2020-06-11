@@ -12,26 +12,31 @@
       <title>Faisal Riyaz (friyaz): GSoC 2020 Week-1</title>
       <pubDate>Thu, 11 Jun 2020 00:00:00 GMT</pubDate>
       <link>http://friyaz.github.io/blog/GSoC-2020-Week-1</link>
-      <description>&lt;p&gt;The first week of GSoC has been completed. My goal of this week was to add ParametricRegion class.&lt;/p&gt;
+      <description>&lt;p&gt;The first week of GSoC has been completed. My goal for this week was to add ParametricRegion class. Many common regions have well known parametric representation. Calculation of Integrals on parametric regions is a common problem of vector calculus.&lt;/p&gt;
+
+&lt;p&gt;The PR for adding the ParametricRegion class is &lt;a href="https://github.com/sympy/sympy/pull/19472"&gt;#19472&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h1 id="parametricregion"&gt;ParametricRegion&lt;/h1&gt;
-&lt;p&gt;An object of ParametricRegion class represents a region in space defined in terms of parameters. Many common regions have well known parametric representation. If a user wants to perform integration on a region, they have to create a ParametricRegion object. This object can then be used to perform integration.&lt;/p&gt;
+&lt;p&gt;An object of ParametricRegion class represents a region in space defined in terms of parameters. If a user wants to perform integration on a region, they have to create a ParametricRegion object. This object can then be passed to other classes to perform integration.&lt;/p&gt;
 
-&lt;p&gt;The implementation part was easy. The difficulty was in deciding the API. Integrals on parametric regions are common problems of vector calculus so the API should be simple and intuitive.&lt;/p&gt;
+&lt;p&gt;The implementation part was easy. The difficulty was in deciding the API. I spent much of the week discussing the API, But it was worth it. The ParametricRegion class will most likely be used by many users so it is important for it to be simple and intuitive. I think I should have first completed writing test cases and examples.&lt;/p&gt;
 
-&lt;p&gt;The final API of ParametricRegion class:&lt;/p&gt;
+&lt;p&gt;The final &lt;strong&gt;API&lt;/strong&gt; of ParametricRegion class:&lt;/p&gt;
 
 &lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;parameters_or_coordsys&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;definition&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;limits&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Examples:&lt;/p&gt;
-&lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;p = ParametricRegion(t, (t, t**3)) 
+&lt;p&gt;Some &lt;strong&gt;Examples&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;p = ParametricRegion(t, (t, t**3), limits={t: (1, 2)})
 halfdisc = ParametricRegion((r, theta), (r*cos(theta), r* sin(theta)), {r: (-2, 2), theta: (0, pi)})
 cylinder = ParametricRegion((r, theta, z), (cos(theta), r*sin(theta), C.z), {theta: (0, 2*pi), z: (0, 4)})
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;** parameters_or_coordsys ** 
-This argument specifies the parameters of the parametric region. When a CoordSys3d object is passed, its base scalars are used as parameters.&lt;/p&gt;
+&lt;h3 id="parameters_or_coordsys"&gt;parameters_or_coordsys&lt;/h3&gt;
+&lt;p&gt;This argument specifies the parameters of the parametric region. When there are more than one parameter, the user has to pass them as tuple. When a CoordSys3d object is passed, its base scalars are used as parameters.&lt;/p&gt;
+
+&lt;h3 id="definition"&gt;definition&lt;/h3&gt;
+&lt;p&gt;definiton tuple maps the base scalars to thier parametric representation. It is not necessary for evey base scalar to have a parametric definition.&lt;/p&gt;
 
 &lt;h3 id="coordsys3d"&gt;CoordSys3D&lt;/h3&gt;
 &lt;p&gt;A parametric representation is just defining base scalars in terms of some parameters. If the base scalars are not knowm, the region cannot be completely specified. My intial approach was to include an argument to specify the coordinate system.&lt;/p&gt;
@@ -53,9 +58,8 @@ This argument specifies the parameters of the parametric region. When a CoordSys
 
 &lt;p&gt;There can be many methods for a user to define bounds of parametric region. We decied to use a dictionary which we named limits. The keys of the dictionary are parameters and the values are tuples (lower bound, upper bound). Another approach is to use a nested bound tuple. Every subtuple will represent the bounds of a parameter.&lt;/p&gt;
 
-&lt;p&gt;Every argument to a SymPy class must be an object of Basic class.&lt;br /&gt;
-I think I should have first completed writing test cases and examples.
-My next week task is to get started with ParametricIntegral class. This class will represent integral of a scalar/vector field on a parametric surface.&lt;/p&gt;
+&lt;h3 id="next-weeks-goal"&gt;Next week&amp;#8217;s goal&lt;/h3&gt;
+&lt;p&gt;My next week&amp;#8217;s task is to get started with ParametricIntegral class. This class will represent integral of a scalar/vector field on a parametric surface. I will first write the unit tests and examples.&lt;/p&gt;
 
 &lt;p&gt;&lt;/p&gt;
 &lt;div class="comment__form" id="respond"&gt;
