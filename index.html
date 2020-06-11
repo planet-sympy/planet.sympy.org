@@ -89,6 +89,151 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">June 11, 2020</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-6eefe67f feed-" id="item-6e7bac96">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/friyaz.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Faisal Riyaz (friyaz) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://friyaz.github.io/blog/GSoC-2020-Week-1">00:00, Thursday, 11 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://friyaz.github.io/blog/GSoC-2020-Week-1">Faisal Riyaz (friyaz): GSoC 2020 Week-1</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/friyaz.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Faisal Riyaz (friyaz) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://friyaz.github.io/blog/GSoC-2020-Week-1">00:00, Thursday, 11 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://friyaz.github.io/blog/GSoC-2020-Week-1">GSoC 2020 Week-1</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>The first week of GSoC has been completed. My goal of this week was to add ParametricRegion class.</p>
+
+<h1 id="parametricregion">ParametricRegion</h1>
+<p>An object of ParametricRegion class represents a region in space defined in terms of parameters. Many common regions have well known parametric representation. If a user wants to perform integration on a region, they have to create a ParametricRegion object. This object can then be used to perform integration.</p>
+
+<p>The implementation part was easy. The difficulty was in deciding the API. Integrals on parametric regions are common problems of vector calculus so the API should be simple and intuitive.</p>
+
+<p>The final API of ParametricRegion class:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ParametricRegion</span><span class="p">(</span><span class="n">parameters_or_coordsys</span><span class="p">,</span> <span class="n">definition</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Examples:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>p = ParametricRegion(t, (t, t**3)) 
+halfdisc = ParametricRegion((r, theta), (r*cos(theta), r* sin(theta)), {r: (-2, 2), theta: (0, pi)})
+cylinder = ParametricRegion((r, theta, z), (cos(theta), r*sin(theta), C.z), {theta: (0, 2*pi), z: (0, 4)})
+</code></pre></div></div>
+
+<p>** parameters_or_coordsys ** 
+This argument specifies the parameters of the parametric region. When a CoordSys3d object is passed, its base scalars are used as parameters.</p>
+
+<h3 id="coordsys3d">CoordSys3D</h3>
+<p>A parametric representation is just defining base scalars in terms of some parameters. If the base scalars are not knowm, the region cannot be completely specified. My intial approach was to include an argument to specify the coordinate system.</p>
+
+<p>Passing a CoordSys3D object can be non intuitive for users. In most cases, the base scalars of the parametric region are the same as that of vector/scalar field. We can avoid passing the CoordSys3D object if we assume that the base scalars of parametric region field are same.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">p</span> <span class="o">=</span> <span class="n">ParametricRegion</span><span class="p">((</span><span class="n">r</span><span class="p">,</span> <span class="n">theta</span><span class="p">),</span> <span class="p">(</span><span class="n">r</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">r</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)),</span> <span class="n">limits</span><span class="o">=</span><span class="p">{</span><span class="n">r</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">theta</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pi</span><span class="p">)})</span>
+<span class="n">Integral</span><span class="p">(</span><span class="n">C</span><span class="p">.</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">C</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+<span class="c1"># C.x = r*cos(theta),  C.y = r*sin(theta), C.z = C.z
+</span><span class="n">Integral</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">x</span><span class="o">*</span><span class="n">R</span><span class="p">.</span><span class="n">y</span><span class="o">*</span><span class="n">R</span><span class="p">.</span><span class="n">z</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+<span class="c1"># R.x = r*cos(theta),  R.y = r*sin(theta), R.z = R.z
+</span></code></pre></div></div>
+<p>There can be a situation where SymPy cannot determine the coordinate system of the field. In such situations, we can raise a ValueError. For example:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Integral</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="n">x</span><span class="o">*</span><span class="n">C</span><span class="p">.</span><span class="n">z</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="limits">limits</h3>
+<p>Most parametric region have bounds on the parameters. Note that it is not necessary for every parameter to have an upper and lower bound.</p>
+
+<p>There can be many methods for a user to define bounds of parametric region. We decied to use a dictionary which we named limits. The keys of the dictionary are parameters and the values are tuples (lower bound, upper bound). Another approach is to use a nested bound tuple. Every subtuple will represent the bounds of a parameter.</p>
+
+<p>Every argument to a SymPy class must be an object of Basic class.<br />
+I think I should have first completed writing test cases and examples.
+My next week task is to get started with ParametricIntegral class. This class will represent integral of a scalar/vector field on a parametric surface.</p>
+
+<p></p>
+<div class="comment__form" id="respond">
+    <h2 class="title">Leave a comment <small><a href="https://friyaz.github.io/blog/GSoC-2020-Week-1#respond" id="cancel-comment-reply-link" rel="nofollow" style="display: none;">Cancel reply</a></small></h2>
+    <form action="https://staticmann.herokuapp.com/v2/entry/friyaz/friyaz.github.io/master/comments" class="js-form" id="comment-form" method="post">
+      <div class="form__group">
+        <label for="comment-form-name">Name
+          <input id="comment-form-name" name="fields[name]" required="" type="text" />
+        </label>
+        <label for="comment-form-email">E-mail
+          <input id="comment-form-email" name="fields[email]" required="" type="email" />
+        </label>
+      </div>
+      <div class="notice">
+          Your email address is used to display your <a href="https://en.gravatar.com">Gravatar</a>, if applicable.
+          Your email address will not be displayed publicly or shared with anyone else.
+      </div>
+      <div class="form__group">
+        <label for="comment-form-message">Comment
+          <textarea id="comment-form-message" name="fields[message]" required="" rows="6" type="text"></textarea>
+        </label>
+      </div>
+      <input name="options[origin]" type="hidden" value="http://friyaz.github.io/blog/GSoC-2020-Week-1#comments" />
+      <input id="comment-replying-to" name="options[parent]" type="hidden" value="" />
+      <input id="comment-post-id" name="options[slug]" type="hidden" value="GSoC-2020-Week-1" />
+      <input name="options[reCaptcha][siteKey]" type="hidden" value="" />
+      <input name="options[reCaptcha][secret]" type="hidden" value="" />
+      <input name="options[subscribe]" type="hidden" value="email" />
+      <div class="g-recaptcha form__group"></div>
+      <button id="comment-form-submit" type="submit">Send comment</button>
+    </form>
+    <div class="hidden js-notice notice">
+      <p class="js-notice-text"></p>
+    </div>
+  </div>
+<p>
+  </p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">June 09, 2020</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -3906,235 +4051,6 @@ Proposal and/or thought over during the SoC) which can extend my GSoC project.</
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">August 11, 2019</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-b30d7457 feed-" id="item-d22f59bb">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/jmig5776.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Jogi Miglani (jmig5776) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://jmig5776.github.io//gsoc-week-11">00:00, Sunday, 11 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-week-11">Jogi Miglani (jmig5776): GSoC 2019 - Week 11</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/jmig5776.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Jogi Miglani (jmig5776) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://jmig5776.github.io//gsoc-week-11">00:00, Sunday, 11 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-week-11">GSoC 2019 - Week 11</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This was the eleventh week meeting with the GSoC mentors which was scheduled on
-Sunday 11th August, 2019 between 11:30 - 12:30 PM (IST). Me, Yathartha and Amit
-were the attendees of the meeting. <code class="highlighter-rouge">_solve_modular</code> was discussed in this meeting.</p>
-
-<p>Here is all the brief description about new solver <code class="highlighter-rouge">_solve_modular</code> for solving
-modular equations.</p>
-<h3 id="what-type-of-equations-to-be-considered-and-what-domain">What type of equations to be considered and what domain?</h3>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A - Mod(B, C) = 0
-
-    A -&gt; This can or cannot be a function specifically(Linear, nth degree single
-         Pow, a**f_x and Add and Mul) of symbol.(But currently its not a
-        function of x)
-    B -&gt; This is surely a function of symbol.
-    C -&gt; It is an integer.
-And domain should be a subset of S.Integers.
-</code></pre></div></div>
-<h3 id="filtering-out-equations">Filtering out equations</h3>
-<p>A check is being applied named <code class="highlighter-rouge">_is_modular</code> which verifies that only above
-mentioned type equation should return True.</p>
-
-<h3 id="working-of-_solve_modular">Working of <code class="highlighter-rouge">_solve_modular</code></h3>
-<p>In the starting of it there is a check if domain is a subset of Integers.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>domain.is_subset(S.Integers)
-</code></pre></div></div>
-<p>Only domain of integers and it subset are being considered while solving
-these equations.
-Now after this it separates out a modterm and the rest term on either
-sides by this code.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>modterm = list(f.atoms(Mod))[0]
-rhs = -(S.One)*(f.subs(modterm, S.Zero))
-if f.as_coefficients_dict()[modterm].is_negative:
-    # f.as_coefficient(modterm) was returning None don't know why
-    # checks if coefficient of modterm is negative in main equation.
-    rhs *= -(S.One)
-</code></pre></div></div>
-<p>Now the equation is being inverted with the helper routine <code class="highlighter-rouge">_invert_modular</code>
-like this.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>n = Dummy('n', integer=True)
-f_x, g_n = _invert_modular(modterm, rhs, n, symbol)
-</code></pre></div></div>
-<p>I am defining n in <code class="highlighter-rouge">_solve_modular</code> because <code class="highlighter-rouge">_invert_modular</code> contains
-recursive calls to itself so if define the n there then it was going to have
-many instances which of no use. Thats y I am defining it in <code class="highlighter-rouge">_solve_modular</code>.</p>
-
-<p>Now after the equation is inverted now solution finding takes place.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if f_x is modterm and g_n is rhs:
-        return unsolved_result
-</code></pre></div></div>
-<p>First of all if <code class="highlighter-rouge">_invert_modular</code> fails to invert then a ConditionSet is being
-returned.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    if f_x is symbol:
-        if domain is not S.Integers:
-            return domain.intersect(g_n)
-        return g_n
-</code></pre></div></div>
-<p>And if <code class="highlighter-rouge">_invert_modular</code> is fully able to invert the equation then only domain
-intersection needs to takes place. <code class="highlighter-rouge">_invert_modular</code> inverts the equation
-considering S.Integers as its default domain.</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    if isinstance(g_n, ImageSet):
-        lamda_expr = g_n.lamda.expr
-        lamda_vars = g_n.lamda.variables
-        base_set = g_n.base_set
-        sol_set = _solveset(f_x - lamda_expr, symbol, S.Integers)
-        if isinstance(sol_set, FiniteSet):
-            tmp_sol = EmptySet()
-            for sol in sol_set:
-                tmp_sol += ImageSet(Lambda(lamda_vars, sol), base_set)
-            sol_set = tmp_sol
-        return domain.intersect(sol_set)
-</code></pre></div></div>
-<p>In this case when g_n is an ImageSet of n and f_x is not symbol so the
-equation is being solved by calling <code class="highlighter-rouge">_solveset</code> (this will not lead to
-recursion because equation to be entered is free from Mod) and then
-the domain intersection takes place.</p>
-
-<h3 id="what-does-_invert_modular-do">What does <code class="highlighter-rouge">_invert_modular</code> do?</h3>
-<p>This function helps to convert the equation <code class="highlighter-rouge">A - Mod(B, C) = 0</code> to a
-form (f_x, g_n).
-First of all it checks the possible instances of invertible cases if not then
-it returns the equation as it is.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a, m = modterm.args
-if not isinstance(a, (Dummy, Symbol, Add, Mul, Pow)):
-        return modterm, rhs
-</code></pre></div></div>
-<p>Now here is the check for complex arguments and returns the equation as it is
-if somewhere it finds I.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if rhs.is_real is False or any(term.is_real is False \
-            for term in list(_term_factors(a))):
-        # Check for complex arguments
-        return modterm, rhs
-</code></pre></div></div>
-<p>Now after this we check of emptyset as a solution by checking range of both
-sides of equation.
-As modterm can have values between [0, m - 1] and if rhs is out of this range
-then emptySet is being returned.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if (abs(rhs) - abs(m)).is_positive or (abs(rhs) - abs(m)) is S.Zero:
-        # if rhs has value greater than value of m.
-        return symbol, EmptySet()
-</code></pre></div></div>
-<p>Now the equation haveing these types are being returned as the following</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if a is symbol:
-        return symbol, ImageSet(Lambda(n, m*n + rhs), S.Integers)
-
-    if a.is_Add:
-        # g + h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.Zero:
-            return _invert_modular(Mod(h, m), (rhs - Mod(g, m)) % m, n, symbol)
-
-    if a.is_Mul:
-        # g*h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.One:
-            return _invert_modular(Mod(h, m), (rhs*invert(g, m)) % m, n, symbol)
-</code></pre></div></div>
-<p>The more peculiar case is of <code class="highlighter-rouge">a.is_Pow</code> which is handled as following.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if a.is_Pow:
-        # base**expo = a
-        base, expo = a.args
-        if expo.has(symbol) and not base.has(symbol):
-            # remainder -&gt; solution independent of n of equation.
-            # m, rhs are made coprime by dividing igcd(m, rhs)
-            try:
-                remainder = discrete_log(m / igcd(m, rhs), rhs, a.base)
-            except ValueError: # log does not exist
-                return modterm, rhs
-            # period -&gt; coefficient of n in the solution and also referred as
-            # the least period of expo in which it is repeats itself.
-            # (a**(totient(m)) - 1) divides m. Here is link of theoram:
-            # (https://en.wikipedia.org/wiki/Euler's_theorem)
-            period = totient(m)
-            for p in divisors(period):
-                # there might a lesser period exist than totient(m).
-                if pow(a.base, p, m / igcd(m, a.base)) == 1:
-                    period = p
-                    break
-            return expo, ImageSet(Lambda(n, period*n + remainder), S.Naturals0)
-        elif base.has(symbol) and not expo.has(symbol):
-            remainder_list = nthroot_mod(rhs, expo, m, all_roots=True)
-            if remainder_list is None:
-                return symbol, EmptySet()
-            g_n = EmptySet()
-            for rem in remainder_list:
-                g_n += ImageSet(Lambda(n, m*n + rem), S.Integers)
-            return base, g_n
-</code></pre></div></div>
-<p>Two cases are being created based of a.is_Pow</p>
-<ol>
-  <li>x**a</li>
-  <li>a**x</li>
-</ol>
-
-<p>x**a -  It is being handled by the helper function <code class="highlighter-rouge">nthroot_mod</code> which returns
-        required solution. I am not going into very mch detail for more
-        information you can read the documentation of nthroot_mod.</p>
-
-<p>a**x - For this <code class="highlighter-rouge">totient</code> is being used in the picture whose meaning can be
-       find on this <a href="https://en.wikipedia.org/wiki/Euler's_theorem">Wikipedia</a>
-       page. And then its divisors are being checked to find the least period
-       of solutions.</p>
-
-<p>Hope I am able to clear out everything!!</p>
-
-<p>Code improvement takes time!!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -4162,236 +4078,236 @@ then emptySet is being returned.</p>
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.com/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://abhinav28071999.github.io/">Abhinav Anand</a></td>
 <td><a class="xmlbutton" href="https://abhinav28071999.github.io/feed.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
 <td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://divyanshu132.github.io//">Divyanshu Thakur</a></td>
 <td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://friyaz.github.io">Faisal's Blog</a></td>
 <td><a class="xmlbutton" href="https://friyaz.github.io/feed.sympy.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arighnaiitg.github.io">GSoC Days</a></td>
 <td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sc0rpi0n101.github.io/categories/gsoc/">GSoC on Sc0rpi0n's Journey</a></td>
 <td><a class="xmlbutton" href="https://sc0rpi0n101.github.io/categories/gsoc/index.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss</td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ritesh99rakesh.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td>https://www.kangzhiq.com/tag/sympy/feed/</td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
 <td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://namannimmo10.github.io/emerald/">My-GSoC-blog</a></td>
 <td><a class="xmlbutton" href="https://namannimmo10.github.io/emerald/atom.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sachin-4099.github.io//">Sachin Agarwal</a></td>
 <td><a class="xmlbutton" href="https://sachin-4099.github.io/feed.sympy.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://www.shubhamjha.com/">Shubham&#8217;s Blog</a></td>
 <td><a class="xmlbutton" href="https://shubhamjha.com/sympy_feed.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
 <td><a class="xmlbutton" href="http://sidhantnagpal.com/rss-gsoc.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://smit-create.github.io/Smit-create.github.io/">Smit-create</a></td>
 <td><a class="xmlbutton" href="https://smit-create.github.io/feed.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>17:26, Thursday, 11 June</td>
-<td>17:41, Thursday, 11 June</td>
+<td>17:46, Thursday, 11 June</td>
+<td>18:01, Thursday, 11 June</td>
 </tr>
 </table>
 

@@ -7,6 +7,94 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://friyaz.github.io/blog/GSoC-2020-Week-1</guid>
+      <author>Faisal Riyaz (friyaz)</author>
+      <title>Faisal Riyaz (friyaz): GSoC 2020 Week-1</title>
+      <pubDate>Thu, 11 Jun 2020 00:00:00 GMT</pubDate>
+      <link>http://friyaz.github.io/blog/GSoC-2020-Week-1</link>
+      <description>&lt;p&gt;The first week of GSoC has been completed. My goal of this week was to add ParametricRegion class.&lt;/p&gt;
+
+&lt;h1 id="parametricregion"&gt;ParametricRegion&lt;/h1&gt;
+&lt;p&gt;An object of ParametricRegion class represents a region in space defined in terms of parameters. Many common regions have well known parametric representation. If a user wants to perform integration on a region, they have to create a ParametricRegion object. This object can then be used to perform integration.&lt;/p&gt;
+
+&lt;p&gt;The implementation part was easy. The difficulty was in deciding the API. Integrals on parametric regions are common problems of vector calculus so the API should be simple and intuitive.&lt;/p&gt;
+
+&lt;p&gt;The final API of ParametricRegion class:&lt;/p&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;parameters_or_coordsys&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;definition&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;limits&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Examples:&lt;/p&gt;
+&lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;p = ParametricRegion(t, (t, t**3)) 
+halfdisc = ParametricRegion((r, theta), (r*cos(theta), r* sin(theta)), {r: (-2, 2), theta: (0, pi)})
+cylinder = ParametricRegion((r, theta, z), (cos(theta), r*sin(theta), C.z), {theta: (0, 2*pi), z: (0, 4)})
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;** parameters_or_coordsys ** 
+This argument specifies the parameters of the parametric region. When a CoordSys3d object is passed, its base scalars are used as parameters.&lt;/p&gt;
+
+&lt;h3 id="coordsys3d"&gt;CoordSys3D&lt;/h3&gt;
+&lt;p&gt;A parametric representation is just defining base scalars in terms of some parameters. If the base scalars are not knowm, the region cannot be completely specified. My intial approach was to include an argument to specify the coordinate system.&lt;/p&gt;
+
+&lt;p&gt;Passing a CoordSys3D object can be non intuitive for users. In most cases, the base scalars of the parametric region are the same as that of vector/scalar field. We can avoid passing the CoordSys3D object if we assume that the base scalars of parametric region field are same.&lt;/p&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt; &lt;span class="n"&gt;limits&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;)})&lt;/span&gt;
+&lt;span class="n"&gt;Integral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;# C.x = r*cos(theta),  C.y = r*sin(theta), C.z = C.z
+&lt;/span&gt;&lt;span class="n"&gt;Integral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;R&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;R&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;R&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;# R.x = r*cos(theta),  R.y = r*sin(theta), R.z = R.z
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;There can be a situation where SymPy cannot determine the coordinate system of the field. In such situations, we can raise a ValueError. For example:&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;Integral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;R&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id="limits"&gt;limits&lt;/h3&gt;
+&lt;p&gt;Most parametric region have bounds on the parameters. Note that it is not necessary for every parameter to have an upper and lower bound.&lt;/p&gt;
+
+&lt;p&gt;There can be many methods for a user to define bounds of parametric region. We decied to use a dictionary which we named limits. The keys of the dictionary are parameters and the values are tuples (lower bound, upper bound). Another approach is to use a nested bound tuple. Every subtuple will represent the bounds of a parameter.&lt;/p&gt;
+
+&lt;p&gt;Every argument to a SymPy class must be an object of Basic class.&lt;br /&gt;
+I think I should have first completed writing test cases and examples.
+My next week task is to get started with ParametricIntegral class. This class will represent integral of a scalar/vector field on a parametric surface.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
+&lt;div class="comment__form" id="respond"&gt;
+    &lt;h2 class="title"&gt;Leave a comment &lt;small&gt;&lt;a href="https://friyaz.github.io/blog/GSoC-2020-Week-1#respond" id="cancel-comment-reply-link" rel="nofollow" style="display: none;"&gt;Cancel reply&lt;/a&gt;&lt;/small&gt;&lt;/h2&gt;
+    &lt;form action="https://staticmann.herokuapp.com/v2/entry/friyaz/friyaz.github.io/master/comments" class="js-form" id="comment-form" method="post"&gt;
+      &lt;div class="form__group"&gt;
+        &lt;label for="comment-form-name"&gt;Name
+          &lt;input id="comment-form-name" name="fields[name]" required="" type="text" /&gt;
+        &lt;/label&gt;
+        &lt;label for="comment-form-email"&gt;E-mail
+          &lt;input id="comment-form-email" name="fields[email]" required="" type="email" /&gt;
+        &lt;/label&gt;
+      &lt;/div&gt;
+      &lt;div class="notice"&gt;
+          Your email address is used to display your &lt;a href="https://en.gravatar.com"&gt;Gravatar&lt;/a&gt;, if applicable.
+          Your email address will not be displayed publicly or shared with anyone else.
+      &lt;/div&gt;
+      &lt;div class="form__group"&gt;
+        &lt;label for="comment-form-message"&gt;Comment
+          &lt;textarea id="comment-form-message" name="fields[message]" required="" rows="6" type="text"&gt;&lt;/textarea&gt;
+        &lt;/label&gt;
+      &lt;/div&gt;
+      &lt;input name="options[origin]" type="hidden" value="http://friyaz.github.io/blog/GSoC-2020-Week-1#comments" /&gt;
+      &lt;input id="comment-replying-to" name="options[parent]" type="hidden" value="" /&gt;
+      &lt;input id="comment-post-id" name="options[slug]" type="hidden" value="GSoC-2020-Week-1" /&gt;
+      &lt;input name="options[reCaptcha][siteKey]" type="hidden" value="" /&gt;
+      &lt;input name="options[reCaptcha][secret]" type="hidden" value="" /&gt;
+      &lt;input name="options[subscribe]" type="hidden" value="email" /&gt;
+      &lt;div class="g-recaptcha form__group"&gt;&lt;/div&gt;
+      &lt;button id="comment-form-submit" type="submit"&gt;Send comment&lt;/button&gt;
+    &lt;/form&gt;
+    &lt;div class="hidden js-notice notice"&gt;
+      &lt;p class="js-notice-text"&gt;&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;p&gt;
+  &lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://namannimmo10.github.io/emerald//week_2</guid>
       <author>Naman Gera (namannimmo10)</author>
       <title>Naman Gera (namannimmo10): Week 2 - GSoC 2020</title>
@@ -2194,178 +2282,6 @@ Proposal and/or thought over during the SoC) which can extend my GSoC project.&l
       <link>https://arighnaiitg.github.io/2019-08-12-gsoc-week11/</link>
       <description>&lt;p&gt;Week 11 ends.. - 
           The second last week has also come to an end. We are almost there at the end of the ride. Me and Sartaj had a meeting on 13th of August about the final leftovers to be done, and wrapping up the GSoC work successfully. Here are the works which have...</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://jmig5776.github.io//gsoc-week-11</guid>
-      <author>Jogi Miglani (jmig5776)</author>
-      <title>Jogi Miglani (jmig5776): GSoC 2019 - Week 11</title>
-      <pubDate>Sun, 11 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://jmig5776.github.io//gsoc-week-11</link>
-      <description>&lt;p&gt;This was the eleventh week meeting with the GSoC mentors which was scheduled on
-Sunday 11th August, 2019 between 11:30 - 12:30 PM (IST). Me, Yathartha and Amit
-were the attendees of the meeting. &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; was discussed in this meeting.&lt;/p&gt;
-
-&lt;p&gt;Here is all the brief description about new solver &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; for solving
-modular equations.&lt;/p&gt;
-&lt;h3 id="what-type-of-equations-to-be-considered-and-what-domain"&gt;What type of equations to be considered and what domain?&lt;/h3&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;A - Mod(B, C) = 0
-
-    A -&amp;gt; This can or cannot be a function specifically(Linear, nth degree single
-         Pow, a**f_x and Add and Mul) of symbol.(But currently its not a
-        function of x)
-    B -&amp;gt; This is surely a function of symbol.
-    C -&amp;gt; It is an integer.
-And domain should be a subset of S.Integers.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;h3 id="filtering-out-equations"&gt;Filtering out equations&lt;/h3&gt;
-&lt;p&gt;A check is being applied named &lt;code class="highlighter-rouge"&gt;_is_modular&lt;/code&gt; which verifies that only above
-mentioned type equation should return True.&lt;/p&gt;
-
-&lt;h3 id="working-of-_solve_modular"&gt;Working of &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;&lt;/h3&gt;
-&lt;p&gt;In the starting of it there is a check if domain is a subset of Integers.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;domain.is_subset(S.Integers)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Only domain of integers and it subset are being considered while solving
-these equations.
-Now after this it separates out a modterm and the rest term on either
-sides by this code.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;modterm = list(f.atoms(Mod))[0]
-rhs = -(S.One)*(f.subs(modterm, S.Zero))
-if f.as_coefficients_dict()[modterm].is_negative:
-    # f.as_coefficient(modterm) was returning None don't know why
-    # checks if coefficient of modterm is negative in main equation.
-    rhs *= -(S.One)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now the equation is being inverted with the helper routine &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt;
-like this.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;n = Dummy('n', integer=True)
-f_x, g_n = _invert_modular(modterm, rhs, n, symbol)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;I am defining n in &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; because &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; contains
-recursive calls to itself so if define the n there then it was going to have
-many instances which of no use. Thats y I am defining it in &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Now after the equation is inverted now solution finding takes place.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if f_x is modterm and g_n is rhs:
-        return unsolved_result
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;First of all if &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; fails to invert then a ConditionSet is being
-returned.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;    if f_x is symbol:
-        if domain is not S.Integers:
-            return domain.intersect(g_n)
-        return g_n
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;And if &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; is fully able to invert the equation then only domain
-intersection needs to takes place. &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; inverts the equation
-considering S.Integers as its default domain.&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;    if isinstance(g_n, ImageSet):
-        lamda_expr = g_n.lamda.expr
-        lamda_vars = g_n.lamda.variables
-        base_set = g_n.base_set
-        sol_set = _solveset(f_x - lamda_expr, symbol, S.Integers)
-        if isinstance(sol_set, FiniteSet):
-            tmp_sol = EmptySet()
-            for sol in sol_set:
-                tmp_sol += ImageSet(Lambda(lamda_vars, sol), base_set)
-            sol_set = tmp_sol
-        return domain.intersect(sol_set)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;In this case when g_n is an ImageSet of n and f_x is not symbol so the
-equation is being solved by calling &lt;code class="highlighter-rouge"&gt;_solveset&lt;/code&gt; (this will not lead to
-recursion because equation to be entered is free from Mod) and then
-the domain intersection takes place.&lt;/p&gt;
-
-&lt;h3 id="what-does-_invert_modular-do"&gt;What does &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; do?&lt;/h3&gt;
-&lt;p&gt;This function helps to convert the equation &lt;code class="highlighter-rouge"&gt;A - Mod(B, C) = 0&lt;/code&gt; to a
-form (f_x, g_n).
-First of all it checks the possible instances of invertible cases if not then
-it returns the equation as it is.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;a, m = modterm.args
-if not isinstance(a, (Dummy, Symbol, Add, Mul, Pow)):
-        return modterm, rhs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now here is the check for complex arguments and returns the equation as it is
-if somewhere it finds I.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if rhs.is_real is False or any(term.is_real is False \
-            for term in list(_term_factors(a))):
-        # Check for complex arguments
-        return modterm, rhs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now after this we check of emptyset as a solution by checking range of both
-sides of equation.
-As modterm can have values between [0, m - 1] and if rhs is out of this range
-then emptySet is being returned.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if (abs(rhs) - abs(m)).is_positive or (abs(rhs) - abs(m)) is S.Zero:
-        # if rhs has value greater than value of m.
-        return symbol, EmptySet()
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now the equation haveing these types are being returned as the following&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if a is symbol:
-        return symbol, ImageSet(Lambda(n, m*n + rhs), S.Integers)
-
-    if a.is_Add:
-        # g + h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.Zero:
-            return _invert_modular(Mod(h, m), (rhs - Mod(g, m)) % m, n, symbol)
-
-    if a.is_Mul:
-        # g*h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.One:
-            return _invert_modular(Mod(h, m), (rhs*invert(g, m)) % m, n, symbol)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;The more peculiar case is of &lt;code class="highlighter-rouge"&gt;a.is_Pow&lt;/code&gt; which is handled as following.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if a.is_Pow:
-        # base**expo = a
-        base, expo = a.args
-        if expo.has(symbol) and not base.has(symbol):
-            # remainder -&amp;gt; solution independent of n of equation.
-            # m, rhs are made coprime by dividing igcd(m, rhs)
-            try:
-                remainder = discrete_log(m / igcd(m, rhs), rhs, a.base)
-            except ValueError: # log does not exist
-                return modterm, rhs
-            # period -&amp;gt; coefficient of n in the solution and also referred as
-            # the least period of expo in which it is repeats itself.
-            # (a**(totient(m)) - 1) divides m. Here is link of theoram:
-            # (https://en.wikipedia.org/wiki/Euler's_theorem)
-            period = totient(m)
-            for p in divisors(period):
-                # there might a lesser period exist than totient(m).
-                if pow(a.base, p, m / igcd(m, a.base)) == 1:
-                    period = p
-                    break
-            return expo, ImageSet(Lambda(n, period*n + remainder), S.Naturals0)
-        elif base.has(symbol) and not expo.has(symbol):
-            remainder_list = nthroot_mod(rhs, expo, m, all_roots=True)
-            if remainder_list is None:
-                return symbol, EmptySet()
-            g_n = EmptySet()
-            for rem in remainder_list:
-                g_n += ImageSet(Lambda(n, m*n + rem), S.Integers)
-            return base, g_n
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Two cases are being created based of a.is_Pow&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;x**a&lt;/li&gt;
-  &lt;li&gt;a**x&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;x**a -  It is being handled by the helper function &lt;code class="highlighter-rouge"&gt;nthroot_mod&lt;/code&gt; which returns
-        required solution. I am not going into very mch detail for more
-        information you can read the documentation of nthroot_mod.&lt;/p&gt;
-
-&lt;p&gt;a**x - For this &lt;code class="highlighter-rouge"&gt;totient&lt;/code&gt; is being used in the picture whose meaning can be
-       find on this &lt;a href="https://en.wikipedia.org/wiki/Euler's_theorem"&gt;Wikipedia&lt;/a&gt;
-       page. And then its divisors are being checked to find the least period
-       of solutions.&lt;/p&gt;
-
-&lt;p&gt;Hope I am able to clear out everything!!&lt;/p&gt;
-
-&lt;p&gt;Code improvement takes time!!&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
