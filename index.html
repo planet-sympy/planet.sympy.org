@@ -93,7 +93,7 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-6eefe67f feed-" id="item-aaf7d342">
+		    <div class="box" class="item feed-6eefe67f feed-" id="item-578d3d9e">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -149,43 +149,43 @@
 						<p>I spent this week working on the implementation of the <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> class.</p>
 
 <h3 id="modifying-api-of-parametricregion">Modifying API of ParametricRegion</h3>
-<p>When I was writing the test cases, I realized that API of the ParametricRegion could be improved. Instead of passing limits as dictionary, tuples can be used. 
-So I modified the API of the ParametricRegion class. The new API is closer to the API of the <code class="language-plaintext highlighter-rouge">integral</code> class and more intuitve.  I made a separate <a href="https://github.com/sympy/sympy/pull/19580">PR</a> for this change to make it easy for reviewers.</p>
+<p>When I was writing the test cases, I realized that the API of the ParametricRegion could be improved. Instead of passing limits as a dictionary, tuples can be used. 
+So I modified the API of the ParametricRegion class. The new API is closer to the API of the <code class="language-plaintext highlighter-rouge">integral</code> class and more intuitive.  I made a separate <a href="https://github.com/sympy/sympy/pull/19580">PR</a> for this change to make it easy for reviewers.</p>
 
 <p>Example of the new API:</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ParametricRegion</span><span class="p">(</span> <span class="p">(</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span> <span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 </code></pre></div></div>
 
 <h3 id="handling-scalar-fields-with-no-base-scalars">Handling scalar fields with no base scalars</h3>
-<p>As discussed in previous posts, we decided to not associate a coordinate system with the parametric region. Instead, we assume that the parametricregion is defined in the coordinate system of the field of which the integral is being calculated. We calucate the position vector and normal vector of the parametric region using the base scalars and vectors of the fields. This works fine for most cases. But when the field does not contain any any base scalar or vector in its expression, we cannot extract the coordinate system from the field.</p>
+<p>As discussed in previous posts, we decided to not associate a coordinate system with the parametric region. Instead, we assume that the parametricregion is defined in the coordinate system of the field of which the integral is being calculated. We calculate the position vector and normal vector of the parametric region using the base scalars and vectors of the fields. This works fine for most cases. But when the field does not contain any base scalar or vector in its expression, we cannot extract the coordinate system from the field.</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ParametricIntegral</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="n">circle</span><span class="p">)</span>
 <span class="c1"># We cannot determine the coordinate system from the field. 
 # To calculate the line integral, we need to find the derivative of the position vector.
 # This is not possible until we know the base vector of the field
 </span></code></pre></div></div>
-<p>To handle this situation, I assign a coordinate system C to the region. This does not affect the result in any way as the result is independent of it. It just allows the existing algotithm to work in this case.</p>
+<p>To handle this situation, I assign a coordinate system C to the region. This does not affect the result in any way as the result is independent of it. It just allows the existing algorithm to work in this case.</p>
 
 <h3 id="separate-class-for-vector-and-scalar-fields">Separate class for vector and scalar fields</h3>
-<p>Francesco suggested to make separate classes based on the nature of the field: vector and scalar. I am open to this idea. But I think it will be more easy and intuitive for the users if they can use the same class to calculate the integral. I do not think they are different enough from a user&#8217;s perspective to have a separate interface.</p>
+<p>Francesco suggested making separate classes based on the nature of the field: vector and scalar. I am open to this idea. But I think it will be more easy and intuitive for the users if they can use the same class to calculate the integral. I do not think they are different enough from a user&#8217;s perspective to have a separate interface.</p>
 
-<p>Maybe we can have a function <code class="language-plaintext highlighter-rouge">vectorintegrate</code> which returns the object of <code class="language-plaintext highlighter-rouge">ParametricVectorIntegral</code> or <code class="language-plaintext highlighter-rouge">ParametricScalarIntegral</code> depending on the nature of the field. Infact, this can work for other type of integrals too. Suppose we implement a class <code class="language-plaintext highlighter-rouge">ImplicitIntegral</code> to calculate the integral over an implicit region. The <code class="language-plaintext highlighter-rouge">vectorintegrate</code> function can then return an object of <code class="language-plaintext highlighter-rouge">ImplicitIntegral</code> object by identifying the region is defined implicitly. I think this will be great. I will have more discussion with Francesco on this aspect.</p>
+<p>Maybe we can have a function <code class="language-plaintext highlighter-rouge">vectorintegrate</code> which returns the object of <code class="language-plaintext highlighter-rouge">ParametricVectorIntegral</code> or <code class="language-plaintext highlighter-rouge">ParametricScalarIntegral</code> depending on the nature of the field. This can work for other types of integrals too. Suppose we implement a class <code class="language-plaintext highlighter-rouge">ImplicitIntegral</code> to calculate the integral over an implicit region. The <code class="language-plaintext highlighter-rouge">vectorintegrate</code> function can then return an object of <code class="language-plaintext highlighter-rouge">ImplicitIntegral</code> object by identifying the region is defined implicitly. I think this will be great. I will have more discussion with Francesco on this aspect.</p>
 
 <h3 id="topological-sort-of-parameters">Topological sort of parameters</h3>
-<p>When evaluating double integral, the result some times depend upon the order in which the integral is evalauted. If the bounds of one parameter <code class="language-plaintext highlighter-rouge">u</code> depends on another parameter <code class="language-plaintext highlighter-rouge">v</code>, we should integrate first with respect to <code class="language-plaintext highlighter-rouge">u</code> and then <code class="language-plaintext highlighter-rouge">v</code>.</p>
+<p>When evaluating double integral, the result some times depend upon the order in which the integral is evaluated. If the bounds of one parameter <code class="language-plaintext highlighter-rouge">u</code> depend on another parameter <code class="language-plaintext highlighter-rouge">v</code>, we should integrate first with respect to <code class="language-plaintext highlighter-rouge">u</code> and then <code class="language-plaintext highlighter-rouge">v</code>.</p>
 
-<p>For example, consider the problem of evaluating the area of triangle.</p>
+<p>For example, consider the problem of evaluating the area of the triangle.</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">T</span> <span class="o">=</span> <span class="n">ParametricRegion</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">10</span> <span class="o">-</span> <span class="mi">5</span><span class="o">*</span><span class="n">x</span><span class="p">))</span>
 </code></pre></div></div>
-<p>The area of the triangle is 10 units and should be indepenent of the order parameters are specified at the time of object intiliaztion. But the double integral depends on the order of integration.</p>
+<p>The area of the triangle is 10 units and should be independent of the order parameters are specified at the time of object initialization. But the double integral depends on the order of integration.</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; integrate(1, (x, 0, 2), (y, 10 - 5*x))
 20 - 10*x
 &gt;&gt;&gt; integrate(1, (y, 0, 10 - 5*x), (x, 0, 2))
 10
 </code></pre></div></div>
-<p>So it is necessary that parameters are passed to <code class="language-plaintext highlighter-rouge">integrate</code> in the correct order. To overcome this issue, we topologically sort the parameters. SymPy already had function to perform toplogically sort in its utilities module. I implemented a function which generates the graph and passes it to <code class="language-plaintext highlighter-rouge">topological_sort</code> function. This made my work easy.</p>
+<p>So parameters must be passed to <code class="language-plaintext highlighter-rouge">integrate</code> in the correct order. To overcome this issue, we topologically sort the parameters. SymPy already had a function to perform topologically sort in its utilities module. I implemented a function that generates the graph and passes it to the <code class="language-plaintext highlighter-rouge">topological_sort</code> function. This made my work easy.</p>
 
 <h3 id="long-computation-time-of-integrals">Long computation time of Integrals</h3>
-<p>Some integrals are taking too long to compute. When base scalars in the field are replaced by their parametric equavalents, the expression of the field becomes large. Further, the integrand is the dot product of the field with a vector or product of field and the magnitude of the vector. The integrate function takes about 20-30 seconds to calculate the integral. I think this behaviour is due to the expression of integrand growing structurally despite it being simple.</p>
+<p>Some integrals are taking too long to compute. When base scalars in the field are replaced by their parametric equivalents, the expression of the field becomes large. Further, the integrand is the dot product of the field with a vector or product of the field and the magnitude of the vector. The integrate function takes about 20-30 seconds to calculate the integral. I think this behavior is due to the expression of integrand growing structurally despite it being simple.</p>
 
 <p>For example,</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt;solidsphere = ParametricRegion((r*sin(phi)*cos(theta), r*sin(phi)*sin(theta), r*cos(phi)),\
@@ -194,13 +194,13 @@ So I modified the API of the ParametricRegion class. The new API is closer to th
 </code></pre></div></div>
 <p>In this case, the parametric field when replaced with parametersr become <code class="language-plaintext highlighter-rouge">r**2*sin(phi)**2*sin(theta)**2 + r**2*sin(phi)**2*cos(theta)**2</code> although it can be easily simplified to <code class="language-plaintext highlighter-rouge">r**2*sin(phi)</code>.</p>
 
-<p>SymPy has a function called <code class="language-plaintext highlighter-rouge">simplify</code>. <code class="language-plaintext highlighter-rouge">simplify</code> attempt to apply various methods to simplify an expression. When the integrand is simplified using it before passing to integrate, the result is return almost immediately. Francesco rightly pointed out that simplify is computationally expensive and we can try to some specific simplification. I will look into it.</p>
+<p>SymPy has a function called <code class="language-plaintext highlighter-rouge">simplify</code>. <code class="language-plaintext highlighter-rouge">simplify</code> attempts to apply various methods to simplify an expression. When the integrand is simplified using it before passing to integrate, the result is returned almost immediately. Francesco rightly pointed out that simplify is computationally expensive and we can try to some specific simplification. I will look into it.</p>
 
 <h3 id="failing-test-cases">Failing test cases</h3>
-<p>Some test case are failing because of integrate function returning results in different forms. The results are mathematically equivalent but different in terms of structure. I found this strange. I do not think this has do with hashing. I still have not figured out this problem.</p>
+<p>Some test cases are failing because of integrate function returning results in different forms. The results are mathematically equivalent but different in terms of structure. I found this strange. I do not think this has to do with hashing. I still have not figured out this problem.</p>
 
 <h3 id="next-weeks-goal">Next week&#8217;s goal</h3>
-<p>Hopefully, I will complete the work on the ParamatricIntegral and get it merged. We can then start discusissing about representing implicit regions.</p>
+<p>Hopefully, I will complete the work on the ParamatricIntegral and get it merged. We can then start discussing about representing implicit regions.</p>
 
 <p></p>
 <div class="comment__form" id="respond">
@@ -246,7 +246,7 @@ So I modified the API of the ParametricRegion class. The new API is closer to th
 </div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-6eefe67f feed-" id="item-5e38e2ec">
+		    <div class="box" class="item feed-6eefe67f feed-" id="item-1ed79d24">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -299,10 +299,10 @@ So I modified the API of the ParametricRegion class. The new API is closer to th
 				</div>
 				<div class="row">
 					<div class="col-md-12 col-xs-12 descript">
-						<p>Part of this week was spent in getting the <a href="https://github.com/sympy/sympy/pull/19472">PR</a> for <code class="language-plaintext highlighter-rouge">ParametricRegion</code> merged. I made some fixes to get the failing tests pass. I also added the docstring.</p>
+						<p>Part of this week was spent in getting the <a href="https://github.com/sympy/sympy/pull/19472">PR</a> for <code class="language-plaintext highlighter-rouge">ParametricRegion</code> merged. I made some fixes to get the failing tests to pass. I also added the docstring.</p>
 
 <h3 id="parametricintegral">ParametricIntegral</h3>
-<p>I started <a href="https://github.com/sympy/sympy/pull/19539">working</a> on the <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> class. <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> class returns the integral of a scalar or vector field over a region defined parametrically. It should be able to calculate line, surface or volume integral depending on the nature of the parametric region. To identify the nature of the region, <code class="language-plaintext highlighter-rouge">dimensions</code> property needs to be added in the <code class="language-plaintext highlighter-rouge">ParametricRegion</code> class.</p>
+<p>I started <a href="https://github.com/sympy/sympy/pull/19539">working</a> on the <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> class. <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> class returns the integral of a scalar or vector field over a region defined parametrically. It should be able to calculate line, surface, or volume integral depending on the nature of the parametric region. To identify the nature of the region, the <code class="language-plaintext highlighter-rouge">dimensions</code> property needs to be added in the <code class="language-plaintext highlighter-rouge">ParametricRegion</code> class.</p>
 
 <p>I started with writing the test cases to avoid my previous mistake of working on the implementation before deciding the API. 
 The API of the ParametricIntegral class:</p>
@@ -318,20 +318,20 @@ The API of the ParametricIntegral class:</p>
 <span class="mi">8</span><span class="o">*</span><span class="n">pi</span>
 </code></pre></div></div>
 <p>I initially thought to make it a subclass of <code class="language-plaintext highlighter-rouge">Integral</code> as the <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> is a kind of integral. But there was no reuse of any code from <code class="language-plaintext highlighter-rouge">Integral</code> in the    <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> so decided against it.<br />
-A rough sketch of the algorthim to calculate integral is descirbed below:</p>
+A rough sketch of the algorithm to calculate integral is described below:</p>
 <ol>
-  <li>Replace the base scalars in the field with their definition in terms of parameters and obtain the parametric represenation of field.</li>
+  <li>Replace the base scalars in the field with their definition in terms of parameters and obtain the parametric representation of the field.</li>
   <li>Form the position vector of the region using definition tuple and base vectors determined from the field.</li>
-  <li>Depending on the type of region, calculate the derivative of position vector or find the normal vector or calculate dV using Jacobain.</li>
-  <li>Calculate the integrand using dot product or multiplication with parametric field.</li>
-  <li>Use <code class="language-plaintext highlighter-rouge">integrate</code> functuon to calculate the integral.</li>
-  <li>If the <code class="language-plaintext highlighter-rouge">integrate</code> function is able to evaluate the integral, return it otherwise return an object of the <code class="language-plaintext highlighter-rouge">ParametricRegion</code> class.</li>
+  <li>Depending on the type of region, calculate the derivative of the position vector, or find the normal vector or calculate dV using Jacobian.</li>
+  <li>Calculate the integrand using dot product or multiplication with the parametric field.</li>
+  <li>Use the <code class="language-plaintext highlighter-rouge">integrate</code> function to calculate the integral.</li>
+  <li>If the <code class="language-plaintext highlighter-rouge">integrate</code> function can evaluate the integral, return it otherwise return an object of the <code class="language-plaintext highlighter-rouge">ParametricRegion</code> class.</li>
 </ol>
 
-<p>We also had <a href="https://github.com/sympy/sympy/issues/19320#issuecomment-643234256">discussion</a> on whether swapping the upper and lower limit has any affect on the result of a vector integral. For multiple integrals, the sign of the result changes when the upper and lower bound of a parameter are interchanged. I do not think we came to any conclusion. But this wont matter for integrals over parametric regions as the bounds are directly defined by the user.</p>
+<p>We also had <a href="https://github.com/sympy/sympy/issues/19320#issuecomment-643234256">discussion</a> on whether swapping the upper and lower limit has any affect on the result of a vector integral. For multiple integrals, the sign of the result changes when the upper and lower bound of a parameter are interchanged. I do not think we came to any conclusion. But this won&#8217;t matter for integrals over parametric regions as the bounds are directly defined by the user.</p>
 
 <h3 id="next-weeks-goal">Next week&#8217;s goal</h3>
-<p>I will start working on the implementation of <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> class. I am also trying to get more involved in SymPy outside of my GSoC project. I hope I can become a contributing member of the community.</p>
+<p>I will start working on the implementation of the <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> class. I am also trying to get more involved in SymPy outside of my GSoC project. I hope I can become a contributing member of the community.</p>
 
 <p></p>
 <div class="comment__form" id="respond">
@@ -3674,236 +3674,236 @@ or write to the SymPy mailing list.</p></div>
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.com/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://abhinav28071999.github.io/">Abhinav Anand</a></td>
 <td><a class="xmlbutton" href="https://abhinav28071999.github.io/feed.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
 <td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://divyanshu132.github.io//">Divyanshu Thakur</a></td>
 <td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://friyaz.github.io">Faisal's Blog</a></td>
 <td><a class="xmlbutton" href="https://friyaz.github.io/feed.sympy.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arighnaiitg.github.io">GSoC Days</a></td>
 <td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sc0rpi0n101.github.io/categories/gsoc/">GSoC on Sc0rpi0n's Journey</a></td>
 <td><a class="xmlbutton" href="https://sc0rpi0n101.github.io/categories/gsoc/index.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss</td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ritesh99rakesh.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td>https://www.kangzhiq.com/tag/sympy/feed/</td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
 <td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://namannimmo10.github.io/emerald/">My-GSoC-blog</a></td>
 <td><a class="xmlbutton" href="https://namannimmo10.github.io/emerald/atom.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sachin-4099.github.io//">Sachin Agarwal</a></td>
 <td><a class="xmlbutton" href="https://sachin-4099.github.io/feed.sympy.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://www.shubhamjha.com/">Shubham&#8217;s Blog</a></td>
 <td><a class="xmlbutton" href="https://shubhamjha.com/sympy_feed.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
 <td><a class="xmlbutton" href="http://sidhantnagpal.com/rss-gsoc.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://smit-create.github.io/Smit-create.github.io/">Smit-create</a></td>
 <td><a class="xmlbutton" href="https://smit-create.github.io/feed.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>17:26, Sunday, 21 June</td>
-<td>17:41, Sunday, 21 June</td>
+<td>17:46, Sunday, 21 June</td>
+<td>18:01, Sunday, 21 June</td>
 </tr>
 </table>
 
