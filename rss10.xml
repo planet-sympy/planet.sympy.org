@@ -7,6 +7,182 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">http://friyaz.github.io/blog/GSoC-2020-Week-3</guid>
+      <author>Faisal Riyaz (friyaz)</author>
+      <title>Faisal Riyaz (friyaz): GSoC 2020 Week-3</title>
+      <pubDate>Sun, 21 Jun 2020 00:00:00 GMT</pubDate>
+      <link>http://friyaz.github.io/blog/GSoC-2020-Week-3</link>
+      <description>&lt;p&gt;I spent this week working on the implementation of the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; class.&lt;/p&gt;
+
+&lt;h3 id="modifying-api-of-parametricregion"&gt;Modifying API of ParametricRegion&lt;/h3&gt;
+&lt;p&gt;When I was writing the test cases, I realized that API of the ParametricRegion could be improved. Instead of passing limits as dictionary, tuples can be used. 
+So I modified the API of the ParametricRegion class. The new API is closer to the API of the &lt;code class="language-plaintext highlighter-rouge"&gt;integral&lt;/code&gt; class and more intuitve.  I made a separate &lt;a href="https://github.com/sympy/sympy/pull/19580"&gt;PR&lt;/a&gt; for this change to make it easy for reviewers.&lt;/p&gt;
+
+&lt;p&gt;Example of the new API:&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id="handling-scalar-fields-with-no-base-scalars"&gt;Handling scalar fields with no base scalars&lt;/h3&gt;
+&lt;p&gt;As discussed in previous posts, we decided to not associate a coordinate system with the parametric region. Instead, we assume that the parametricregion is defined in the coordinate system of the field of which the integral is being calculated. We calucate the position vector and normal vector of the parametric region using the base scalars and vectors of the fields. This works fine for most cases. But when the field does not contain any any base scalar or vector in its expression, we cannot extract the coordinate system from the field.&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;ParametricIntegral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;150&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;circle&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;# We cannot determine the coordinate system from the field. 
+# To calculate the line integral, we need to find the derivative of the position vector.
+# This is not possible until we know the base vector of the field
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;To handle this situation, I assign a coordinate system C to the region. This does not affect the result in any way as the result is independent of it. It just allows the existing algotithm to work in this case.&lt;/p&gt;
+
+&lt;h3 id="separate-class-for-vector-and-scalar-fields"&gt;Separate class for vector and scalar fields&lt;/h3&gt;
+&lt;p&gt;Francesco suggested to make separate classes based on the nature of the field: vector and scalar. I am open to this idea. But I think it will be more easy and intuitive for the users if they can use the same class to calculate the integral. I do not think they are different enough from a user&amp;#8217;s perspective to have a separate interface.&lt;/p&gt;
+
+&lt;p&gt;Maybe we can have a function &lt;code class="language-plaintext highlighter-rouge"&gt;vectorintegrate&lt;/code&gt; which returns the object of &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricVectorIntegral&lt;/code&gt; or &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricScalarIntegral&lt;/code&gt; depending on the nature of the field. Infact, this can work for other type of integrals too. Suppose we implement a class &lt;code class="language-plaintext highlighter-rouge"&gt;ImplicitIntegral&lt;/code&gt; to calculate the integral over an implicit region. The &lt;code class="language-plaintext highlighter-rouge"&gt;vectorintegrate&lt;/code&gt; function can then return an object of &lt;code class="language-plaintext highlighter-rouge"&gt;ImplicitIntegral&lt;/code&gt; object by identifying the region is defined implicitly. I think this will be great. I will have more discussion with Francesco on this aspect.&lt;/p&gt;
+
+&lt;h3 id="topological-sort-of-parameters"&gt;Topological sort of parameters&lt;/h3&gt;
+&lt;p&gt;When evaluating double integral, the result some times depend upon the order in which the integral is evalauted. If the bounds of one parameter &lt;code class="language-plaintext highlighter-rouge"&gt;u&lt;/code&gt; depends on another parameter &lt;code class="language-plaintext highlighter-rouge"&gt;v&lt;/code&gt;, we should integrate first with respect to &lt;code class="language-plaintext highlighter-rouge"&gt;u&lt;/code&gt; and then &lt;code class="language-plaintext highlighter-rouge"&gt;v&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;For example, consider the problem of evaluating the area of triangle.&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;T&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;The area of the triangle is 10 units and should be indepenent of the order parameters are specified at the time of object intiliaztion. But the double integral depends on the order of integration.&lt;/p&gt;
+&lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; integrate(1, (x, 0, 2), (y, 10 - 5*x))
+20 - 10*x
+&amp;gt;&amp;gt;&amp;gt; integrate(1, (y, 0, 10 - 5*x), (x, 0, 2))
+10
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;So it is necessary that parameters are passed to &lt;code class="language-plaintext highlighter-rouge"&gt;integrate&lt;/code&gt; in the correct order. To overcome this issue, we topologically sort the parameters. SymPy already had function to perform toplogically sort in its utilities module. I implemented a function which generates the graph and passes it to &lt;code class="language-plaintext highlighter-rouge"&gt;topological_sort&lt;/code&gt; function. This made my work easy.&lt;/p&gt;
+
+&lt;h3 id="long-computation-time-of-integrals"&gt;Long computation time of Integrals&lt;/h3&gt;
+&lt;p&gt;Some integrals are taking too long to compute. When base scalars in the field are replaced by their parametric equavalents, the expression of the field becomes large. Further, the integrand is the dot product of the field with a vector or product of field and the magnitude of the vector. The integrate function takes about 20-30 seconds to calculate the integral. I think this behaviour is due to the expression of integrand growing structurally despite it being simple.&lt;/p&gt;
+
+&lt;p&gt;For example,&lt;/p&gt;
+&lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt;solidsphere = ParametricRegion((r*sin(phi)*cos(theta), r*sin(phi)*sin(theta), r*cos(phi)),\
+                                (r, 0, 2), (theta, 0, 2*pi), (phi, 0, pi))
+&amp;gt;&amp;gt;&amp;gt; ParametricIntegral(C.x**2 + C.y**2, solidsphere)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;In this case, the parametric field when replaced with parametersr become &lt;code class="language-plaintext highlighter-rouge"&gt;r**2*sin(phi)**2*sin(theta)**2 + r**2*sin(phi)**2*cos(theta)**2&lt;/code&gt; although it can be easily simplified to &lt;code class="language-plaintext highlighter-rouge"&gt;r**2*sin(phi)&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;SymPy has a function called &lt;code class="language-plaintext highlighter-rouge"&gt;simplify&lt;/code&gt;. &lt;code class="language-plaintext highlighter-rouge"&gt;simplify&lt;/code&gt; attempt to apply various methods to simplify an expression. When the integrand is simplified using it before passing to integrate, the result is return almost immediately. Francesco rightly pointed out that simplify is computationally expensive and we can try to some specific simplification. I will look into it.&lt;/p&gt;
+
+&lt;h3 id="failing-test-cases"&gt;Failing test cases&lt;/h3&gt;
+&lt;p&gt;Some test case are failing because of integrate function returning results in different forms. The results are mathematically equivalent but different in terms of structure. I found this strange. I do not think this has do with hashing. I still have not figured out this problem.&lt;/p&gt;
+
+&lt;h3 id="next-weeks-goal"&gt;Next week&amp;#8217;s goal&lt;/h3&gt;
+&lt;p&gt;Hopefully, I will complete the work on the ParamatricIntegral and get it merged. We can then start discusissing about representing implicit regions.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
+&lt;div class="comment__form" id="respond"&gt;
+    &lt;h2 class="title"&gt;Leave a comment &lt;small&gt;&lt;a href="https://friyaz.github.io/blog/GSoC-2020-Week-3#respond" id="cancel-comment-reply-link" rel="nofollow" style="display: none;"&gt;Cancel reply&lt;/a&gt;&lt;/small&gt;&lt;/h2&gt;
+    &lt;form action="https://staticmann.herokuapp.com/v2/entry/friyaz/friyaz.github.io/master/comments" class="js-form" id="comment-form" method="post"&gt;
+      &lt;div class="form__group"&gt;
+        &lt;label for="comment-form-name"&gt;Name
+          &lt;input id="comment-form-name" name="fields[name]" required="" type="text" /&gt;
+        &lt;/label&gt;
+        &lt;label for="comment-form-email"&gt;E-mail
+          &lt;input id="comment-form-email" name="fields[email]" required="" type="email" /&gt;
+        &lt;/label&gt;
+      &lt;/div&gt;
+      &lt;div class="notice"&gt;
+          Your email address is used to display your &lt;a href="https://en.gravatar.com"&gt;Gravatar&lt;/a&gt;, if applicable.
+          Your email address will not be displayed publicly or shared with anyone else.
+      &lt;/div&gt;
+      &lt;div class="form__group"&gt;
+        &lt;label for="comment-form-message"&gt;Comment
+          &lt;textarea id="comment-form-message" name="fields[message]" required="" rows="6" type="text"&gt;&lt;/textarea&gt;
+        &lt;/label&gt;
+      &lt;/div&gt;
+      &lt;input name="options[origin]" type="hidden" value="http://friyaz.github.io/blog/GSoC-2020-Week-3#comments" /&gt;
+      &lt;input id="comment-replying-to" name="options[parent]" type="hidden" value="" /&gt;
+      &lt;input id="comment-post-id" name="options[slug]" type="hidden" value="GSoC-2020-Week-3" /&gt;
+      &lt;input name="options[reCaptcha][siteKey]" type="hidden" value="" /&gt;
+      &lt;input name="options[reCaptcha][secret]" type="hidden" value="" /&gt;
+      &lt;input name="options[subscribe]" type="hidden" value="email" /&gt;
+      &lt;div class="g-recaptcha form__group"&gt;&lt;/div&gt;
+      &lt;button id="comment-form-submit" type="submit"&gt;Send comment&lt;/button&gt;
+    &lt;/form&gt;
+    &lt;div class="hidden js-notice notice"&gt;
+      &lt;p class="js-notice-text"&gt;&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;p&gt;
+  &lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://friyaz.github.io/blog/GSoC-2020-Week-2</guid>
+      <author>Faisal Riyaz (friyaz)</author>
+      <title>Faisal Riyaz (friyaz): GSoC 2020 Week-2</title>
+      <pubDate>Sun, 21 Jun 2020 00:00:00 GMT</pubDate>
+      <link>http://friyaz.github.io/blog/GSoC-2020-Week-2</link>
+      <description>&lt;p&gt;Part of this week was spent in getting the &lt;a href="https://github.com/sympy/sympy/pull/19472"&gt;PR&lt;/a&gt; for &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricRegion&lt;/code&gt; merged. I made some fixes to get the failing tests pass. I also added the docstring.&lt;/p&gt;
+
+&lt;h3 id="parametricintegral"&gt;ParametricIntegral&lt;/h3&gt;
+&lt;p&gt;I started &lt;a href="https://github.com/sympy/sympy/pull/19539"&gt;working&lt;/a&gt; on the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; class. &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; class returns the integral of a scalar or vector field over a region defined parametrically. It should be able to calculate line, surface or volume integral depending on the nature of the parametric region. To identify the nature of the region, &lt;code class="language-plaintext highlighter-rouge"&gt;dimensions&lt;/code&gt; property needs to be added in the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricRegion&lt;/code&gt; class.&lt;/p&gt;
+
+&lt;p&gt;I started with writing the test cases to avoid my previous mistake of working on the implementation before deciding the API. 
+The API of the ParametricIntegral class:&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;ParametricIntegral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;parametricregion&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Some examples:&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;curve&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)})&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;ParametricIntegral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;curve&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;semisphere&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;phi&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;phi&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;phi&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt;\
+                            &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;phi&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)})&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;ParametricIntegral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;semisphere&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;I initially thought to make it a subclass of &lt;code class="language-plaintext highlighter-rouge"&gt;Integral&lt;/code&gt; as the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; is a kind of integral. But there was no reuse of any code from &lt;code class="language-plaintext highlighter-rouge"&gt;Integral&lt;/code&gt; in the    &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; so decided against it.&lt;br /&gt;
+A rough sketch of the algorthim to calculate integral is descirbed below:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Replace the base scalars in the field with their definition in terms of parameters and obtain the parametric represenation of field.&lt;/li&gt;
+  &lt;li&gt;Form the position vector of the region using definition tuple and base vectors determined from the field.&lt;/li&gt;
+  &lt;li&gt;Depending on the type of region, calculate the derivative of position vector or find the normal vector or calculate dV using Jacobain.&lt;/li&gt;
+  &lt;li&gt;Calculate the integrand using dot product or multiplication with parametric field.&lt;/li&gt;
+  &lt;li&gt;Use &lt;code class="language-plaintext highlighter-rouge"&gt;integrate&lt;/code&gt; functuon to calculate the integral.&lt;/li&gt;
+  &lt;li&gt;If the &lt;code class="language-plaintext highlighter-rouge"&gt;integrate&lt;/code&gt; function is able to evaluate the integral, return it otherwise return an object of the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricRegion&lt;/code&gt; class.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;We also had &lt;a href="https://github.com/sympy/sympy/issues/19320#issuecomment-643234256"&gt;discussion&lt;/a&gt; on whether swapping the upper and lower limit has any affect on the result of a vector integral. For multiple integrals, the sign of the result changes when the upper and lower bound of a parameter are interchanged. I do not think we came to any conclusion. But this wont matter for integrals over parametric regions as the bounds are directly defined by the user.&lt;/p&gt;
+
+&lt;h3 id="next-weeks-goal"&gt;Next week&amp;#8217;s goal&lt;/h3&gt;
+&lt;p&gt;I will start working on the implementation of &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; class. I am also trying to get more involved in SymPy outside of my GSoC project. I hope I can become a contributing member of the community.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
+&lt;div class="comment__form" id="respond"&gt;
+    &lt;h2 class="title"&gt;Leave a comment &lt;small&gt;&lt;a href="https://friyaz.github.io/blog/GSoC-2020-Week-2#respond" id="cancel-comment-reply-link" rel="nofollow" style="display: none;"&gt;Cancel reply&lt;/a&gt;&lt;/small&gt;&lt;/h2&gt;
+    &lt;form action="https://staticmann.herokuapp.com/v2/entry/friyaz/friyaz.github.io/master/comments" class="js-form" id="comment-form" method="post"&gt;
+      &lt;div class="form__group"&gt;
+        &lt;label for="comment-form-name"&gt;Name
+          &lt;input id="comment-form-name" name="fields[name]" required="" type="text" /&gt;
+        &lt;/label&gt;
+        &lt;label for="comment-form-email"&gt;E-mail
+          &lt;input id="comment-form-email" name="fields[email]" required="" type="email" /&gt;
+        &lt;/label&gt;
+      &lt;/div&gt;
+      &lt;div class="notice"&gt;
+          Your email address is used to display your &lt;a href="https://en.gravatar.com"&gt;Gravatar&lt;/a&gt;, if applicable.
+          Your email address will not be displayed publicly or shared with anyone else.
+      &lt;/div&gt;
+      &lt;div class="form__group"&gt;
+        &lt;label for="comment-form-message"&gt;Comment
+          &lt;textarea id="comment-form-message" name="fields[message]" required="" rows="6" type="text"&gt;&lt;/textarea&gt;
+        &lt;/label&gt;
+      &lt;/div&gt;
+      &lt;input name="options[origin]" type="hidden" value="http://friyaz.github.io/blog/GSoC-2020-Week-2#comments" /&gt;
+      &lt;input id="comment-replying-to" name="options[parent]" type="hidden" value="" /&gt;
+      &lt;input id="comment-post-id" name="options[slug]" type="hidden" value="GSoC-2020-Week-2" /&gt;
+      &lt;input name="options[reCaptcha][siteKey]" type="hidden" value="" /&gt;
+      &lt;input name="options[reCaptcha][secret]" type="hidden" value="" /&gt;
+      &lt;input name="options[subscribe]" type="hidden" value="email" /&gt;
+      &lt;div class="g-recaptcha form__group"&gt;&lt;/div&gt;
+      &lt;button id="comment-form-submit" type="submit"&gt;Send comment&lt;/button&gt;
+    &lt;/form&gt;
+    &lt;div class="hidden js-notice notice"&gt;
+      &lt;p class="js-notice-text"&gt;&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;p&gt;
+  &lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/06/21/phase_1</guid>
       <author>Smit Lunagariya (Smit-create)</author>
       <title>Smit Lunagariya (Smit-create): Phase-1-Highlights</title>
@@ -1705,105 +1881,6 @@ or write to the SymPy mailing list.&lt;/p&gt;&lt;/div&gt;</description>
       <link>https://sc0rpi0n101.github.io/2019/08/week-11-the-other-parser/</link>
       <description>&lt;p&gt;Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week we&amp;rsquo;re talking about the C parser.
  The Fortran Parser The C Parser Documentation Travis Build  The Fortran Parser The Fortran Parser is complete. The Pull Request has also been merged. The parser is merged in master and will be a part of the next SymPy release. You can check out the source code for the Parser at the Pull Request.</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://www.shubhamjha.com/posts/GSoC-Week-12-(The-Final-Week)</guid>
-      <author>Shubham Kumar Jha (ShubhamKJha)</author>
-      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 12 (The Final Week)</title>
-      <pubDate>Tue, 20 Aug 2019 18:30:00 GMT</pubDate>
-      <link>https://www.shubhamjha.com/posts/GSoC-Week-12-(The-Final-Week)/</link>
-      <description>&lt;p&gt;The last week of coding period is officially over. A summary of the work done during this week is:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/17379"&gt;#17379&lt;/a&gt; is now complete and currently under review. I will try to get it merged within this week.&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/17392"&gt;#17392&lt;/a&gt; still needs work. I will try to put a closure to this by the end of week.&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/17440"&gt;#17440&lt;/a&gt; was started. It attempts to add a powerful (but optional) SAT solving engine to SymPy (&lt;a href="https://pypi.org/project/pycosat/"&gt;pycosat&lt;/a&gt;). The performance gain for SAT solver is also subtle here: Using this
-    &lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;from sympy import *
-from sympy.abc import x
-r = random_poly(x, 100, -100, 100)
-ans = ask(Q.positive(r), Q.positive(x))
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;The performance is like&lt;/p&gt;
-    &lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;# In master
- |  `- 0.631 check_satisfiability  sympy/assumptions/satask.py:30
- |     `- 0.607 satisfiable  sympy/logic/inference.py:38
- |        `- 0.607 dpll_satisfiable  sympy/logic/algorithms/dpll2.py:21
-# With pycosat
- |  `- 0.122 check_satisfiability  sympy/assumptions/satask.py:30
- |     `- 0.098 satisfiable  sympy/logic/inference.py:39
- |        `- 0.096 pycosat_satisfiable  sympy/logic/algorithms/pycosat_wrapper.py:11
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;It is finished and under review now.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Also, with the end of GSoC 2019, final evaluations have started. I will be writing a final report to the whole project by the end of this week.&lt;/p&gt;
-
-&lt;p&gt;So far it has been a great and enriching experience for me. It was my first attempt at GSoC and I am lucky to get such an exposure. I acknowledge that I started with an abstract idea of the project but I now understand both the need and the code of &lt;code class="language-plaintext highlighter-rouge"&gt;New Assumptions&lt;/code&gt; pretty well (thanks to &lt;a href="https://github.com/asmeurer"&gt;Aaron&lt;/a&gt; who wrote the most of it). The system is still in its early phases and needs a lot more work. I am happy to be a part of it and I will be available to work on it.&lt;/p&gt;
-
-&lt;p&gt;This is the last weekly report but I will still be contributing to SymPy and open source in general. I will try to write more of such experiences through this portal. Till then, Good bye and thank you!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=113</guid>
-      <author>Ishan Joshi (ishanaj)</author>
-      <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-12 &#x2013; The Final wrap-up</title>
-      <pubDate>Tue, 20 Aug 2019 17:10:27 GMT</pubDate>
-      <link>https://ishanaj.wordpress.com/2019/08/20/gsoc19-week-12-the-final-wrap-up/</link>
-      <description>&lt;p&gt;This was the last week of the coding
-period. With not much of work left, the goal was to wrap-up the PR&amp;#8217;s.&lt;/p&gt;
-
-
-
-&lt;p&gt;The week started with the merge of &amp;nbsp;&lt;a href="https://github.com/sympy/sympy/pull/17001"&gt;PR #17001&lt;/a&gt; which implemented a method &lt;strong&gt;cut_section()&lt;/strong&gt; in the polygon class, in order to get two new polygons when a polygon is cut via a line. After this a new method &lt;strong&gt;first_moment_of_area()&lt;/strong&gt; was added in &lt;a href="https://github.com/sympy/sympy/pull/17153"&gt;PR #17153&lt;/a&gt;. This method used &lt;strong&gt;cut_section()&lt;/strong&gt; for its implementation. Tests for the same were added in this PR. Also the existing documentation was improved. I also renamed the &lt;strong&gt;polar_modulus()&lt;/strong&gt; function to &lt;strong&gt;polar_second_moment_of_area() &lt;/strong&gt;which was a more general term as compared to the previous name. This PR also got &lt;strong&gt;merged&lt;/strong&gt; later on.&lt;/p&gt;
-
-
-
-&lt;p&gt;Now, we are left with two more PR&amp;#8217;s to go.
-&lt;a href="https://github.com/sympy/sympy/pull/17122"&gt;PR #17122&lt;/a&gt; (Column
-Buckling) and &lt;a href="https://github.com/sympy/sympy/pull/17345"&gt;PR #17345&lt;/a&gt;
-(Beam diagram). The column buckling probably requires a little more
-documentation. I will surely look into it and add some more explanations and references
-to it. Also, the beam diagram PR has been completed and documented. A few more
-discussions to be done on its working and we will be ready with it.&lt;span id="more-113"&gt;&lt;/span&gt;&lt;/p&gt;
-
-
-
-&lt;p&gt;I believe that by the end of this week
-both of these will finally get a merge.&lt;/p&gt;
-
-
-
-&lt;p&gt;Another task that remains is the implementation of the &lt;a href="https://github.com/sympy/sympy/issues/17302"&gt;Truss class&lt;/a&gt;. Some rigorous debate and discussion is still needed to be done before we start its implementation. Once we agree on the implementation needs and API it won&amp;#8217;t be a difficult task to write it through.&lt;/p&gt;
-
-
-
-&lt;p&gt;Also, since the final evaluations have
-started I will be writing the project report which I have to submit before the
-next week ends.&lt;/p&gt;
-
-
-
-&lt;p&gt;Since officially the coding period ends here, there would be no ToDo&amp;#8217;s for the next week, just the final wrapping up and will surely try to complete the work that is still left.&lt;/p&gt;
-
-
-
-&lt;p&gt;Will keep you updated!&lt;/p&gt;
-
-
-
-&lt;p&gt;Thanks! &lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

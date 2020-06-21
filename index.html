@@ -93,6 +93,290 @@
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-6eefe67f feed-" id="item-aaf7d342">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/friyaz.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Faisal Riyaz (friyaz) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://friyaz.github.io/blog/GSoC-2020-Week-3">00:00, Sunday, 21 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://friyaz.github.io/blog/GSoC-2020-Week-3">Faisal Riyaz (friyaz): GSoC 2020 Week-3</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/friyaz.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Faisal Riyaz (friyaz) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://friyaz.github.io/blog/GSoC-2020-Week-3">00:00, Sunday, 21 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://friyaz.github.io/blog/GSoC-2020-Week-3">GSoC 2020 Week-3</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>I spent this week working on the implementation of the <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> class.</p>
+
+<h3 id="modifying-api-of-parametricregion">Modifying API of ParametricRegion</h3>
+<p>When I was writing the test cases, I realized that API of the ParametricRegion could be improved. Instead of passing limits as dictionary, tuples can be used. 
+So I modified the API of the ParametricRegion class. The new API is closer to the API of the <code class="language-plaintext highlighter-rouge">integral</code> class and more intuitve.  I made a separate <a href="https://github.com/sympy/sympy/pull/19580">PR</a> for this change to make it easy for reviewers.</p>
+
+<p>Example of the new API:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ParametricRegion</span><span class="p">(</span> <span class="p">(</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span> <span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h3 id="handling-scalar-fields-with-no-base-scalars">Handling scalar fields with no base scalars</h3>
+<p>As discussed in previous posts, we decided to not associate a coordinate system with the parametric region. Instead, we assume that the parametricregion is defined in the coordinate system of the field of which the integral is being calculated. We calucate the position vector and normal vector of the parametric region using the base scalars and vectors of the fields. This works fine for most cases. But when the field does not contain any any base scalar or vector in its expression, we cannot extract the coordinate system from the field.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ParametricIntegral</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="n">circle</span><span class="p">)</span>
+<span class="c1"># We cannot determine the coordinate system from the field. 
+# To calculate the line integral, we need to find the derivative of the position vector.
+# This is not possible until we know the base vector of the field
+</span></code></pre></div></div>
+<p>To handle this situation, I assign a coordinate system C to the region. This does not affect the result in any way as the result is independent of it. It just allows the existing algotithm to work in this case.</p>
+
+<h3 id="separate-class-for-vector-and-scalar-fields">Separate class for vector and scalar fields</h3>
+<p>Francesco suggested to make separate classes based on the nature of the field: vector and scalar. I am open to this idea. But I think it will be more easy and intuitive for the users if they can use the same class to calculate the integral. I do not think they are different enough from a user&#8217;s perspective to have a separate interface.</p>
+
+<p>Maybe we can have a function <code class="language-plaintext highlighter-rouge">vectorintegrate</code> which returns the object of <code class="language-plaintext highlighter-rouge">ParametricVectorIntegral</code> or <code class="language-plaintext highlighter-rouge">ParametricScalarIntegral</code> depending on the nature of the field. Infact, this can work for other type of integrals too. Suppose we implement a class <code class="language-plaintext highlighter-rouge">ImplicitIntegral</code> to calculate the integral over an implicit region. The <code class="language-plaintext highlighter-rouge">vectorintegrate</code> function can then return an object of <code class="language-plaintext highlighter-rouge">ImplicitIntegral</code> object by identifying the region is defined implicitly. I think this will be great. I will have more discussion with Francesco on this aspect.</p>
+
+<h3 id="topological-sort-of-parameters">Topological sort of parameters</h3>
+<p>When evaluating double integral, the result some times depend upon the order in which the integral is evalauted. If the bounds of one parameter <code class="language-plaintext highlighter-rouge">u</code> depends on another parameter <code class="language-plaintext highlighter-rouge">v</code>, we should integrate first with respect to <code class="language-plaintext highlighter-rouge">u</code> and then <code class="language-plaintext highlighter-rouge">v</code>.</p>
+
+<p>For example, consider the problem of evaluating the area of triangle.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">T</span> <span class="o">=</span> <span class="n">ParametricRegion</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">10</span> <span class="o">-</span> <span class="mi">5</span><span class="o">*</span><span class="n">x</span><span class="p">))</span>
+</code></pre></div></div>
+<p>The area of the triangle is 10 units and should be indepenent of the order parameters are specified at the time of object intiliaztion. But the double integral depends on the order of integration.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; integrate(1, (x, 0, 2), (y, 10 - 5*x))
+20 - 10*x
+&gt;&gt;&gt; integrate(1, (y, 0, 10 - 5*x), (x, 0, 2))
+10
+</code></pre></div></div>
+<p>So it is necessary that parameters are passed to <code class="language-plaintext highlighter-rouge">integrate</code> in the correct order. To overcome this issue, we topologically sort the parameters. SymPy already had function to perform toplogically sort in its utilities module. I implemented a function which generates the graph and passes it to <code class="language-plaintext highlighter-rouge">topological_sort</code> function. This made my work easy.</p>
+
+<h3 id="long-computation-time-of-integrals">Long computation time of Integrals</h3>
+<p>Some integrals are taking too long to compute. When base scalars in the field are replaced by their parametric equavalents, the expression of the field becomes large. Further, the integrand is the dot product of the field with a vector or product of field and the magnitude of the vector. The integrate function takes about 20-30 seconds to calculate the integral. I think this behaviour is due to the expression of integrand growing structurally despite it being simple.</p>
+
+<p>For example,</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt;solidsphere = ParametricRegion((r*sin(phi)*cos(theta), r*sin(phi)*sin(theta), r*cos(phi)),\
+                                (r, 0, 2), (theta, 0, 2*pi), (phi, 0, pi))
+&gt;&gt;&gt; ParametricIntegral(C.x**2 + C.y**2, solidsphere)
+</code></pre></div></div>
+<p>In this case, the parametric field when replaced with parametersr become <code class="language-plaintext highlighter-rouge">r**2*sin(phi)**2*sin(theta)**2 + r**2*sin(phi)**2*cos(theta)**2</code> although it can be easily simplified to <code class="language-plaintext highlighter-rouge">r**2*sin(phi)</code>.</p>
+
+<p>SymPy has a function called <code class="language-plaintext highlighter-rouge">simplify</code>. <code class="language-plaintext highlighter-rouge">simplify</code> attempt to apply various methods to simplify an expression. When the integrand is simplified using it before passing to integrate, the result is return almost immediately. Francesco rightly pointed out that simplify is computationally expensive and we can try to some specific simplification. I will look into it.</p>
+
+<h3 id="failing-test-cases">Failing test cases</h3>
+<p>Some test case are failing because of integrate function returning results in different forms. The results are mathematically equivalent but different in terms of structure. I found this strange. I do not think this has do with hashing. I still have not figured out this problem.</p>
+
+<h3 id="next-weeks-goal">Next week&#8217;s goal</h3>
+<p>Hopefully, I will complete the work on the ParamatricIntegral and get it merged. We can then start discusissing about representing implicit regions.</p>
+
+<p></p>
+<div class="comment__form" id="respond">
+    <h2 class="title">Leave a comment <small><a href="https://friyaz.github.io/blog/GSoC-2020-Week-3#respond" id="cancel-comment-reply-link" rel="nofollow" style="display: none;">Cancel reply</a></small></h2>
+    <form action="https://staticmann.herokuapp.com/v2/entry/friyaz/friyaz.github.io/master/comments" class="js-form" id="comment-form" method="post">
+      <div class="form__group">
+        <label for="comment-form-name">Name
+          <input id="comment-form-name" name="fields[name]" required="" type="text" />
+        </label>
+        <label for="comment-form-email">E-mail
+          <input id="comment-form-email" name="fields[email]" required="" type="email" />
+        </label>
+      </div>
+      <div class="notice">
+          Your email address is used to display your <a href="https://en.gravatar.com">Gravatar</a>, if applicable.
+          Your email address will not be displayed publicly or shared with anyone else.
+      </div>
+      <div class="form__group">
+        <label for="comment-form-message">Comment
+          <textarea id="comment-form-message" name="fields[message]" required="" rows="6" type="text"></textarea>
+        </label>
+      </div>
+      <input name="options[origin]" type="hidden" value="http://friyaz.github.io/blog/GSoC-2020-Week-3#comments" />
+      <input id="comment-replying-to" name="options[parent]" type="hidden" value="" />
+      <input id="comment-post-id" name="options[slug]" type="hidden" value="GSoC-2020-Week-3" />
+      <input name="options[reCaptcha][siteKey]" type="hidden" value="" />
+      <input name="options[reCaptcha][secret]" type="hidden" value="" />
+      <input name="options[subscribe]" type="hidden" value="email" />
+      <div class="g-recaptcha form__group"></div>
+      <button id="comment-form-submit" type="submit">Send comment</button>
+    </form>
+    <div class="hidden js-notice notice">
+      <p class="js-notice-text"></p>
+    </div>
+  </div>
+<p>
+  </p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-6eefe67f feed-" id="item-5e38e2ec">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/friyaz.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Faisal Riyaz (friyaz) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://friyaz.github.io/blog/GSoC-2020-Week-2">00:00, Sunday, 21 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://friyaz.github.io/blog/GSoC-2020-Week-2">Faisal Riyaz (friyaz): GSoC 2020 Week-2</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/friyaz.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Faisal Riyaz (friyaz) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://friyaz.github.io/blog/GSoC-2020-Week-2">00:00, Sunday, 21 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://friyaz.github.io/blog/GSoC-2020-Week-2">GSoC 2020 Week-2</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Part of this week was spent in getting the <a href="https://github.com/sympy/sympy/pull/19472">PR</a> for <code class="language-plaintext highlighter-rouge">ParametricRegion</code> merged. I made some fixes to get the failing tests pass. I also added the docstring.</p>
+
+<h3 id="parametricintegral">ParametricIntegral</h3>
+<p>I started <a href="https://github.com/sympy/sympy/pull/19539">working</a> on the <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> class. <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> class returns the integral of a scalar or vector field over a region defined parametrically. It should be able to calculate line, surface or volume integral depending on the nature of the parametric region. To identify the nature of the region, <code class="language-plaintext highlighter-rouge">dimensions</code> property needs to be added in the <code class="language-plaintext highlighter-rouge">ParametricRegion</code> class.</p>
+
+<p>I started with writing the test cases to avoid my previous mistake of working on the implementation before deciding the API. 
+The API of the ParametricIntegral class:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ParametricIntegral</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">parametricregion</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Some examples:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">curve</span> <span class="o">=</span> <span class="n">ParametricRegion</span><span class="p">((</span><span class="mi">3</span><span class="o">*</span><span class="n">t</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="p">{</span><span class="n">t</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)})</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">ParametricIntegral</span><span class="p">(</span><span class="n">C</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">curve</span><span class="p">)</span>
+<span class="mi">5</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">semisphere</span> <span class="o">=</span> <span class="n">ParametricRegion</span><span class="p">((</span><span class="n">theta</span><span class="p">,</span> <span class="n">pi</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">2</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">2</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)),</span>\
+                            <span class="p">{</span><span class="n">theta</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="p">),</span> <span class="n">phi</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)})</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">ParametricIntegral</span><span class="p">(</span><span class="n">C</span><span class="p">.</span><span class="n">z</span><span class="p">,</span> <span class="n">semisphere</span><span class="p">)</span>
+<span class="mi">8</span><span class="o">*</span><span class="n">pi</span>
+</code></pre></div></div>
+<p>I initially thought to make it a subclass of <code class="language-plaintext highlighter-rouge">Integral</code> as the <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> is a kind of integral. But there was no reuse of any code from <code class="language-plaintext highlighter-rouge">Integral</code> in the    <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> so decided against it.<br />
+A rough sketch of the algorthim to calculate integral is descirbed below:</p>
+<ol>
+  <li>Replace the base scalars in the field with their definition in terms of parameters and obtain the parametric represenation of field.</li>
+  <li>Form the position vector of the region using definition tuple and base vectors determined from the field.</li>
+  <li>Depending on the type of region, calculate the derivative of position vector or find the normal vector or calculate dV using Jacobain.</li>
+  <li>Calculate the integrand using dot product or multiplication with parametric field.</li>
+  <li>Use <code class="language-plaintext highlighter-rouge">integrate</code> functuon to calculate the integral.</li>
+  <li>If the <code class="language-plaintext highlighter-rouge">integrate</code> function is able to evaluate the integral, return it otherwise return an object of the <code class="language-plaintext highlighter-rouge">ParametricRegion</code> class.</li>
+</ol>
+
+<p>We also had <a href="https://github.com/sympy/sympy/issues/19320#issuecomment-643234256">discussion</a> on whether swapping the upper and lower limit has any affect on the result of a vector integral. For multiple integrals, the sign of the result changes when the upper and lower bound of a parameter are interchanged. I do not think we came to any conclusion. But this wont matter for integrals over parametric regions as the bounds are directly defined by the user.</p>
+
+<h3 id="next-weeks-goal">Next week&#8217;s goal</h3>
+<p>I will start working on the implementation of <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> class. I am also trying to get more involved in SymPy outside of my GSoC project. I hope I can become a contributing member of the community.</p>
+
+<p></p>
+<div class="comment__form" id="respond">
+    <h2 class="title">Leave a comment <small><a href="https://friyaz.github.io/blog/GSoC-2020-Week-2#respond" id="cancel-comment-reply-link" rel="nofollow" style="display: none;">Cancel reply</a></small></h2>
+    <form action="https://staticmann.herokuapp.com/v2/entry/friyaz/friyaz.github.io/master/comments" class="js-form" id="comment-form" method="post">
+      <div class="form__group">
+        <label for="comment-form-name">Name
+          <input id="comment-form-name" name="fields[name]" required="" type="text" />
+        </label>
+        <label for="comment-form-email">E-mail
+          <input id="comment-form-email" name="fields[email]" required="" type="email" />
+        </label>
+      </div>
+      <div class="notice">
+          Your email address is used to display your <a href="https://en.gravatar.com">Gravatar</a>, if applicable.
+          Your email address will not be displayed publicly or shared with anyone else.
+      </div>
+      <div class="form__group">
+        <label for="comment-form-message">Comment
+          <textarea id="comment-form-message" name="fields[message]" required="" rows="6" type="text"></textarea>
+        </label>
+      </div>
+      <input name="options[origin]" type="hidden" value="http://friyaz.github.io/blog/GSoC-2020-Week-2#comments" />
+      <input id="comment-replying-to" name="options[parent]" type="hidden" value="" />
+      <input id="comment-post-id" name="options[slug]" type="hidden" value="GSoC-2020-Week-2" />
+      <input name="options[reCaptcha][siteKey]" type="hidden" value="" />
+      <input name="options[reCaptcha][secret]" type="hidden" value="" />
+      <input name="options[subscribe]" type="hidden" value="email" />
+      <div class="g-recaptcha form__group"></div>
+      <button id="comment-form-submit" type="submit">Send comment</button>
+    </form>
+    <div class="hidden js-notice notice">
+      <p class="js-notice-text"></p>
+    </div>
+  </div>
+<p>
+  </p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-7c867291 feed-" id="item-38186b37">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -3363,216 +3647,6 @@ or write to the SymPy mailing list.</p></div>
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">August 20, 2019</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-9908f80c feed-" id="item-82a033f8">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/shubhamkjha.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://www.shubhamjha.com/posts/GSoC-Week-12-(The-Final-Week)/">18:30, Tuesday, 20 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://www.shubhamjha.com/posts/GSoC-Week-12-(The-Final-Week)/">Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 12 (The Final Week)</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/shubhamkjha.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://www.shubhamjha.com/posts/GSoC-Week-12-(The-Final-Week)/">18:30, Tuesday, 20 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://www.shubhamjha.com/posts/GSoC-Week-12-(The-Final-Week)/">GSoC 2019: Week 12 (The Final Week)</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>The last week of coding period is officially over. A summary of the work done during this week is:</p>
-
-<ul>
-  <li><a href="https://github.com/sympy/sympy/pull/17379">#17379</a> is now complete and currently under review. I will try to get it merged within this week.</li>
-  <li><a href="https://github.com/sympy/sympy/pull/17392">#17392</a> still needs work. I will try to put a closure to this by the end of week.</li>
-  <li><a href="https://github.com/sympy/sympy/pull/17440">#17440</a> was started. It attempts to add a powerful (but optional) SAT solving engine to SymPy (<a href="https://pypi.org/project/pycosat/">pycosat</a>). The performance gain for SAT solver is also subtle here: Using this
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
-2
-3
-4
-</pre></td><td class="rouge-code"><pre>from sympy import *
-from sympy.abc import x
-r = random_poly(x, 100, -100, 100)
-ans = ask(Q.positive(r), Q.positive(x))
-</pre></td></tr></tbody></table></code></pre></div>    </div>
-    <p>The performance is like</p>
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
-2
-3
-4
-5
-6
-7
-8
-</pre></td><td class="rouge-code"><pre># In master
- |  `- 0.631 check_satisfiability  sympy/assumptions/satask.py:30
- |     `- 0.607 satisfiable  sympy/logic/inference.py:38
- |        `- 0.607 dpll_satisfiable  sympy/logic/algorithms/dpll2.py:21
-# With pycosat
- |  `- 0.122 check_satisfiability  sympy/assumptions/satask.py:30
- |     `- 0.098 satisfiable  sympy/logic/inference.py:39
- |        `- 0.096 pycosat_satisfiable  sympy/logic/algorithms/pycosat_wrapper.py:11
-</pre></td></tr></tbody></table></code></pre></div>    </div>
-    <p>It is finished and under review now.</p>
-  </li>
-</ul>
-
-<p>Also, with the end of GSoC 2019, final evaluations have started. I will be writing a final report to the whole project by the end of this week.</p>
-
-<p>So far it has been a great and enriching experience for me. It was my first attempt at GSoC and I am lucky to get such an exposure. I acknowledge that I started with an abstract idea of the project but I now understand both the need and the code of <code class="language-plaintext highlighter-rouge">New Assumptions</code> pretty well (thanks to <a href="https://github.com/asmeurer">Aaron</a> who wrote the most of it). The system is still in its early phases and needs a lot more work. I am happy to be a part of it and I will be available to work on it.</p>
-
-<p>This is the last weekly report but I will still be contributing to SymPy and open source in general. I will try to write more of such experiences through this portal. Till then, Good bye and thank you!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-eb3e3c3b feed-" id="item-caadfadf">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/ishanaj.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Ishan Joshi (ishanaj) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://ishanaj.wordpress.com/2019/08/20/gsoc19-week-12-the-final-wrap-up/">17:10, Tuesday, 20 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/08/20/gsoc19-week-12-the-final-wrap-up/">Ishan Joshi (ishanaj): GSoC&#8217;19: Week-12 &#8211; The Final wrap-up</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/ishanaj.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Ishan Joshi (ishanaj) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://ishanaj.wordpress.com/2019/08/20/gsoc19-week-12-the-final-wrap-up/">17:10, Tuesday, 20 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/08/20/gsoc19-week-12-the-final-wrap-up/">GSoC&#8217;19: Week-12 &#8211; The Final wrap-up</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This was the last week of the coding
-period. With not much of work left, the goal was to wrap-up the PR&#8217;s.</p>
-
-
-
-<p>The week started with the merge of &nbsp;<a href="https://github.com/sympy/sympy/pull/17001">PR #17001</a> which implemented a method <strong>cut_section()</strong> in the polygon class, in order to get two new polygons when a polygon is cut via a line. After this a new method <strong>first_moment_of_area()</strong> was added in <a href="https://github.com/sympy/sympy/pull/17153">PR #17153</a>. This method used <strong>cut_section()</strong> for its implementation. Tests for the same were added in this PR. Also the existing documentation was improved. I also renamed the <strong>polar_modulus()</strong> function to <strong>polar_second_moment_of_area() </strong>which was a more general term as compared to the previous name. This PR also got <strong>merged</strong> later on.</p>
-
-
-
-<p>Now, we are left with two more PR&#8217;s to go.
-<a href="https://github.com/sympy/sympy/pull/17122">PR #17122</a> (Column
-Buckling) and <a href="https://github.com/sympy/sympy/pull/17345">PR #17345</a>
-(Beam diagram). The column buckling probably requires a little more
-documentation. I will surely look into it and add some more explanations and references
-to it. Also, the beam diagram PR has been completed and documented. A few more
-discussions to be done on its working and we will be ready with it.<span id="more-113"></span></p>
-
-
-
-<p>I believe that by the end of this week
-both of these will finally get a merge.</p>
-
-
-
-<p>Another task that remains is the implementation of the <a href="https://github.com/sympy/sympy/issues/17302">Truss class</a>. Some rigorous debate and discussion is still needed to be done before we start its implementation. Once we agree on the implementation needs and API it won&#8217;t be a difficult task to write it through.</p>
-
-
-
-<p>Also, since the final evaluations have
-started I will be writing the project report which I have to submit before the
-next week ends.</p>
-
-
-
-<p>Since officially the coding period ends here, there would be no ToDo&#8217;s for the next week, just the final wrapping up and will surely try to complete the work that is still left.</p>
-
-
-
-<p>Will keep you updated!</p>
-
-
-
-<p>Thanks! </p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3600,236 +3674,236 @@ next week ends.</p>
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.com/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://abhinav28071999.github.io/">Abhinav Anand</a></td>
 <td><a class="xmlbutton" href="https://abhinav28071999.github.io/feed.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
 <td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://divyanshu132.github.io//">Divyanshu Thakur</a></td>
 <td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://friyaz.github.io">Faisal's Blog</a></td>
 <td><a class="xmlbutton" href="https://friyaz.github.io/feed.sympy.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arighnaiitg.github.io">GSoC Days</a></td>
 <td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sc0rpi0n101.github.io/categories/gsoc/">GSoC on Sc0rpi0n's Journey</a></td>
 <td><a class="xmlbutton" href="https://sc0rpi0n101.github.io/categories/gsoc/index.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss</td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ritesh99rakesh.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td>https://www.kangzhiq.com/tag/sympy/feed/</td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
 <td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://namannimmo10.github.io/emerald/">My-GSoC-blog</a></td>
 <td><a class="xmlbutton" href="https://namannimmo10.github.io/emerald/atom.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sachin-4099.github.io//">Sachin Agarwal</a></td>
 <td><a class="xmlbutton" href="https://sachin-4099.github.io/feed.sympy.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://www.shubhamjha.com/">Shubham&#8217;s Blog</a></td>
 <td><a class="xmlbutton" href="https://shubhamjha.com/sympy_feed.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
 <td><a class="xmlbutton" href="http://sidhantnagpal.com/rss-gsoc.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://smit-create.github.io/Smit-create.github.io/">Smit-create</a></td>
 <td><a class="xmlbutton" href="https://smit-create.github.io/feed.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>09:46, Sunday, 21 June</td>
-<td>10:01, Sunday, 21 June</td>
+<td>10:06, Sunday, 21 June</td>
+<td>10:21, Sunday, 21 June</td>
 </tr>
 </table>
 
