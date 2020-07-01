@@ -7,6 +7,34 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-6</guid>
+      <author>Sachin Agarwal (sachin-4099)</author>
+      <title>Sachin Agarwal (sachin-4099): GSoC 2020 - Week 6</title>
+      <pubDate>Sun, 28 Jun 2020 00:00:00 GMT</pubDate>
+      <link>https://sachin-4099.github.io//GSoC-2020-Week-6</link>
+      <description>&lt;p&gt;Key &lt;code class="language-plaintext highlighter-rouge"&gt;highlights&lt;/code&gt; of this week&amp;#8217;s work are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/19646"&gt;Fixed RecursionError and Timeout in limit evaluations&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;The &lt;code class="language-plaintext highlighter-rouge"&gt;Recursion Errors&lt;/code&gt; in limit evaluations were mainly due to the fact that the indeterminant form of &lt;code class="language-plaintext highlighter-rouge"&gt;1**oo&lt;/code&gt; was not handled accurately in the &lt;code class="language-plaintext highlighter-rouge"&gt;mrv()&lt;/code&gt; function of the
+&lt;code class="language-plaintext highlighter-rouge"&gt;Gruntz algorithm&lt;/code&gt;. So, some minor changes were required to fix those.&lt;/p&gt;
+
+        &lt;p&gt;The major issue was to handle those cases which were timing out. On deep digging, we identified that the 
+&lt;code class="language-plaintext highlighter-rouge"&gt;cancel()&lt;/code&gt; function of &lt;code class="language-plaintext highlighter-rouge"&gt;polytools.py&lt;/code&gt; was the reason. Thus, we decided to completely transform the &lt;code class="language-plaintext highlighter-rouge"&gt;cancel()&lt;/code&gt; function to speed up its algorithm. 
+Now after this major modification, many testcases were failing as the &lt;code class="language-plaintext highlighter-rouge"&gt;cancel()&lt;/code&gt; function plays an important role in simplifying evaluations and 
+is thus used at many places across the codebase. Therefore, a lot of time was spent in debugging and rectifying these testcases.&lt;/p&gt;
+
+        &lt;p&gt;Finally we were able to merge this, enhancing the limit evaluation capabilities of &lt;code class="language-plaintext highlighter-rouge"&gt;SymPy&lt;/code&gt;.&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/06/28/week_5</guid>
       <author>Smit Lunagariya (Smit-create)</author>
       <title>Smit Lunagariya (Smit-create): Week 5-GSoC 2020</title>
@@ -1369,232 +1397,6 @@ Hypothesis would give a very precise bound on the distribution of prime
 numbers. Also, the non-trivial zeros of $\zeta(s)$ are, in some sense, the
 "spectrum" of the prime numbers, meaning they exactly encode the position of
 every prime on the number line.&lt;/p&gt;&lt;/div&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=122</guid>
-      <author>Ishan Joshi (ishanaj)</author>
-      <title>Ishan Joshi (ishanaj): Everything about SymPy&#x2019;s Column module</title>
-      <pubDate>Thu, 28 Nov 2019 19:56:42 GMT</pubDate>
-      <link>https://ishanaj.wordpress.com/2019/11/29/everything-about-sympys-column-module/</link>
-      <description>&lt;p&gt;The Column class implemented in &lt;a href="https://github.com/sympy/sympy/pull/17122"&gt;PR #17122&lt;/a&gt; enables the
-continuum mechanics module of SymPy to deal with column buckling related
-calculations. The Column module can calculate the moment equation, deflection
-equation, slope equation and the critical load for a column defined by a user.&lt;/p&gt;
-
-
-
-&lt;p&gt;&lt;strong&gt;Example use-case of Column class:&lt;/strong&gt;&lt;/p&gt;
-
-
-&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
-&amp;gt;&amp;gt;&amp;gt; from sympy.physics.continuum_mechanics.column import Column
-&amp;gt;&amp;gt;&amp;gt; from sympy import Symbol, symbols
-&amp;gt;&amp;gt;&amp;gt; E, I, P = symbols('E, I, P', positive=True)
-&amp;gt;&amp;gt;&amp;gt; c = Column(3, E, I, 78000, top="pinned", bottom="pinned")
-&amp;gt;&amp;gt;&amp;gt; c.end_conditions
-{'bottom': 'pinned', 'top': 'pinned'}
-&amp;gt;&amp;gt;&amp;gt; c.boundary_conditions
-{'deflection': [(0, 0), (3, 0)], 'slope': [(0, 0)]}
-&amp;gt;&amp;gt;&amp;gt; c.moment()
-78000*y(x)
-&amp;gt;&amp;gt;&amp;gt; c.solve_slope_deflection()
-&amp;gt;&amp;gt;&amp;gt; c.deflection()
-C1*sin(20*sqrt(195)*x/(sqrt(E)*sqrt(I)))
-&amp;gt;&amp;gt;&amp;gt; c.slope()
-20*sqrt(195)*C1*cos(20*sqrt(195)*x/(sqrt(E)*sqrt(I)))/(sqrt(E)*sqrt(I))
-&amp;gt;&amp;gt;&amp;gt; c.critical_load()
-pi**2*E*I/9
-&lt;/pre&gt;
-
-
-
-&lt;h1&gt;&lt;strong&gt;The Column class&lt;/strong&gt;&lt;/h1&gt;
-
-
-
-&lt;p&gt;The Column class is non-mutable,&lt;span id="more-122"&gt;&lt;/span&gt; which means unlike the Beam class, a user cannot change the attributes of the class once they are defined along with the object definition. Therefore to change the attribute values one will have to define a new object.&lt;/p&gt;
-
-
-
-&lt;h3&gt;&lt;strong&gt;Reasons for creating a non-mutable class&lt;/strong&gt;&lt;/h3&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt; From a backward-compatibility perspective, it is always possible to  adopt a different plan and add mutability later but not the other way  around. &lt;/li&gt;&lt;li&gt;Most things are immutable in SymPy which is useful for caching etc. Matrix is an example where allowing mutability has lead to many problems that are now impossible to fix without breaking backwards compatibility.&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;h2&gt;&lt;strong&gt;Working of the column class:&lt;/strong&gt;&lt;/h2&gt;
-
-
-
-&lt;p&gt;
-The &lt;strong&gt;governing equation&lt;/strong&gt; for column buckling is:&lt;/p&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh3.googleusercontent.com/qfv6QbVnotFKUPebBoLgBNPjNz5uhN6g2-mbfBzDTR13Cb5z4BkAM7RHGerTtvqEzMzjQFL8r44iYeIVTm0OpYX6f0QWn2rCuz1qxKNVnvM6LHnTX9mfJ9pyBzPmBaFGZPrdiy-p" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;p&gt;If we determine the the &lt;strong&gt;moment equation&lt;/strong&gt; of the column ,on which the buckling load is applied, and place it in the above equation,  we might be able to get the deflection by further solving the differential equation for &lt;strong&gt;y&lt;/strong&gt;. &lt;/p&gt;
-
-
-
-&lt;p&gt;&lt;strong&gt;Step-1: To determine the internal moment.&lt;/strong&gt;&lt;/p&gt;
-
-
-
-&lt;p&gt;This is simply done by assuming deflection at any arbitrary cross section at a distance&lt;strong&gt; x&lt;/strong&gt; from the bottom as &lt;strong&gt;y &lt;/strong&gt;and then multiplying this by the load &lt;strong&gt;P&lt;/strong&gt; and for eccentric load another moment of magnitude &lt;strong&gt;P*e&lt;/strong&gt; is added to the moment.&lt;/p&gt;
-
-
-
-&lt;figure class="wp-block-image size-large"&gt;&lt;img alt="" class="wp-image-129" src="https://ishanaj.files.wordpress.com/2019/11/image-2.png?w=641" /&gt;&lt;/figure&gt;
-
-
-
-&lt;p&gt;&lt;strong&gt;Simple load&lt;/strong&gt; &lt;strong&gt;is given by&lt;/strong&gt;:&amp;#160;&lt;/p&gt;
-
-
-
-&lt;figure class="wp-block-image"&gt;&lt;img alt="" src="https://lh3.googleusercontent.com/mY4nhR2YWfTEITzlL8LFRGnPq2KXPcwbyAGajOWtTkMEBYtTKGya0n4r62RolTLImOGjXazs0RqAjOyAy3K94vrM4G_xZxRKV-GBdG2uULX9qap7xPsgI6ahIY4-tXbx1zYH2LNR" /&gt;&lt;/figure&gt;
-
-
-
-&lt;p&gt;&lt;strong&gt;Eccentric load is given by:&amp;#160;&lt;/strong&gt;&lt;/p&gt;
-
-
-
-&lt;figure class="wp-block-image"&gt;&lt;img alt="" src="https://lh3.googleusercontent.com/vIfQDO151xRZO2hcDi9pSPeyafqlYmTUBnr_zszHjiZiv07cOA6xnuu__5EslONxpPtQFY5RaUGLXefgY0AtHip6Y6LgANv3XZ1uo790QctxO-Q5qTledCkiTuKzmpaMzJ5LBt-e" /&gt;&lt;/figure&gt;
-
-
-
-&lt;p&gt;&lt;strong&gt;Step-2: &lt;/strong&gt;This moment can then be substituted in the governing equation and the resulting differential equation can be solved using SymPy&amp;#8217;s &lt;strong&gt;dsolve()&lt;/strong&gt; for the &lt;strong&gt;deflection y&lt;/strong&gt;.&lt;/p&gt;
-
-
-
-&lt;h2&gt;&lt;strong&gt;Applying different end-conditions&lt;/strong&gt;&lt;/h2&gt;
-
-
-
-&lt;p&gt;The above steps considers a simple example of a column pinned at both of its ends. But the end-condition of the column can vary, which will cause the moment equation to to vary.&lt;/p&gt;
-
-
-
-&lt;p&gt;Currently &lt;strong&gt;four&lt;/strong&gt; basic supports are implemented:&amp;#160; Pinned-pinned, fixed-fixed, fixed-pinned, one pinned-other free.&lt;/p&gt;
-
-
-
-&lt;p&gt;Depending on the supports the moment due to applied load would change as:&lt;/p&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Pinned-Pinned:&lt;/strong&gt;&amp;nbsp; no change in moment&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh5.googleusercontent.com/1rNjrJP3SC6q80sWh9m5-EAj80_YLYSmCECNYMqGh0n24r7EAqP5D8b-joCrvjhV0pnoQeD5EWrcStUufFj8zgHGSIMkk-lrnRPfkxYIJP42RIzh6pCNxthuEP83wWDdhAAZ8I30" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter is-resized"&gt;&lt;img alt="" height="218" src="https://lh4.googleusercontent.com/ki5Fbllhkj2xCcEJiRQxPyuTDlJnQGPfjcvk2GNjnJq5tNd83--zKWRKMck4v9TRx7SINESjNxcmdsXaXh6Le1-fBp8pQLY7pVTy-H_o895Ts_813cFmjlQDfbp34i3RJ3Qvb9RR" width="217" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Fixed-fixed&lt;/strong&gt;: reaction moment M is included&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh6.googleusercontent.com/76IEGW9i83Am9oy_YQC7xm2BVGnEw_BcgM_bQxUgnVdWY4hBpgIIbhE4bG0C8FLpNYpajyoi7F_z8g4uVLfEZOfjv3dQBQ9fvLnIFVZUJvsIaleRSUVA7B1vrQsBj5FY3Ln3H6sx" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh3.googleusercontent.com/8jXG4tyFMgAzJOanpHqj-d_f37-OkFrntfuhulynED1JjhNT6h_UkHmcAtDyN3Rem95uYIoKuhHUkslItdgIictxZC8dS_6mA9xbW-YxcDgMtyJ-L46UExUNH8VR8octca5v7RWa" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Fixed-pinned:&lt;/strong&gt;&amp;nbsp;&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh5.googleusercontent.com/zphyPG-BZaoTYFrhY1NVWVza7oBX85d-K3HIDXF02bpcG_3gMsA8zMD-T6UO1X7GX4ssJYeok9IFCILq18GZMDkztjLdA_IA_Otq-qSM30Us22gwqPjPwPnhubYPG3jwtwzq0yML" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;p&gt;Here &lt;strong&gt;M&lt;/strong&gt; is the restraint moment at &lt;strong&gt;B (&lt;/strong&gt;which is fixed&lt;strong&gt;). &lt;/strong&gt;To counter this, another moment is considered by applying a horizontal force &lt;strong&gt;F&lt;/strong&gt; at point A.&lt;/p&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh5.googleusercontent.com/2Wlvbp1qFbq2p9uf057TCNM7StusOl0J5VAFU-qMQ0BhKTDDdtvP_l-tPgSkC9vmmsAaJd3QR8sEddl_z4LsAqo5FBKEvQNVF6eEssYdex61ENPUb4qWf6nFV7OkZV1Hy5ftDCdJ" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;&lt;strong&gt;One pinned- other free:&lt;/strong&gt;&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh6.googleusercontent.com/8vG470fp-wb2CzGMHfR5_chDnr4SqLGM0pAaRXXLSiDklpxXlcCoVOAh8q4dc97ZjWF3GM5-HvPGO1RzRhevUpDxl-cM6pHhztiTxJY-P7Ft04bfciVYK-FnzYJTZr4TvNqqX_wJ" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh3.googleusercontent.com/eoHyQWUNWNOTFDsofRof215piNvdk9OqETpA4YQWRlp904vpTx69eKRxW12NdAHGxTBNRs63oyP87cMT36DE5judlZWoVeh_7zpP7Vxq5MZ_RkUieecAZGgxSm8Hj5RpKrZIk87g" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;h2&gt; &lt;strong&gt;Solving for slope and critical load&lt;/strong&gt;&lt;/h2&gt;
-
-
-
-&lt;p&gt;Once we get the deflection equation we can solve for the slope by differentiating the deflection equation with respect to &lt;strong&gt;x&lt;/strong&gt;. This is done by SymPy&amp;#8217;s &lt;strong&gt;diff()&lt;/strong&gt; function&lt;/p&gt;
-
-
-&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
-self._slope = self._deflection.diff(x)
-&lt;/pre&gt;
-
-
-
-&lt;h2&gt;&lt;strong&gt;Critical load&lt;/strong&gt;&lt;/h2&gt;
-
-
-
-&lt;p&gt;Critical load for single bow buckling condition can be easily determined by the substituting the boundary conditions in the deflection equation and solving it for &lt;strong&gt;P&lt;/strong&gt; i.e the load.&lt;/p&gt;
-
-
-
-&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Even if the user provides the applied load, during the entire calculation, we consider the  load to be &lt;strong&gt;P&lt;/strong&gt;. Whenever the &lt;strong&gt;moment()&lt;/strong&gt;, &lt;strong&gt;slope(), deflection(),&lt;/strong&gt; &lt;strong&gt;etc&lt;/strong&gt;. methods are called the variable &lt;strong&gt;P &lt;/strong&gt;is replaced with the users value. This is done so that it is easier for us to calculate the critical load in the end.&lt;/p&gt;
-
-
-&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
-defl_eqs = []
-# taking last two bounndary conditions which are actually
-# the initial boundary conditions.
-for point, value in self._boundary_conditions['deflection'][-2:]:
-    defl_eqs.append(self._deflection.subs(x, point) - value)
-
-# C1, C2 already solved, solve for P
-self._critical_load = solve(defl_eqs, P, dict=True)[0][P]
-&lt;/pre&gt;
-
-
-
-&lt;p&gt;The case of the pinned-pinned end condition is a bit tricky.  On solving the differential equation via &lt;strong&gt;dsolve()&lt;/strong&gt;, the deflection comes out to be zero. This problem has been described in &lt;a href="https://ishanaj.wordpress.com/2019/07/08/gsoc19-week-6-completing-the-column-class/#more-56"&gt;this&lt;/a&gt; blog. Its calculation is handled a bit differently in the &lt;a href="https://github.com/sympy/sympy/pull/17122/files#diff-00c8ee080a295764f42be4b0e448935dR225"&gt;code&lt;/a&gt;. Instead of directly solving it via &lt;strong&gt;dsolve()&lt;/strong&gt;, it is solved in steps, and the trivial solutions are removed. This technique not only solves for the deflection of the column, but simultaneously also calculates the critical load it can bear.&lt;/p&gt;
-
-
-
-&lt;p&gt;Although this may be considered as a hack to the problem. I think in future it would be better if &lt;strong&gt;dsolve()&lt;/strong&gt; gets the ability to remove the trivial solutions. But this seems to be better as of now.&lt;/p&gt;
-
-
-
-&lt;p&gt;A problem that still persists is the calculation of critical load for pinned-fixed end condition. Currently, it has been made as an XFAIL, since to resolve that either &lt;strong&gt;solve()&lt;/strong&gt; or &lt;strong&gt;solveset() &lt;/strong&gt;has to return the solution in the required form. An &lt;a href="https://github.com/sympy/sympy/issues/17162"&gt;issue &lt;/a&gt;has been raised on GitHub, regarding the same.&lt;/p&gt;
-
-
-
-&lt;p&gt;Hope that gives a crisp idea about the functioning of SymPy&amp;#8217;s Column module.&lt;/p&gt;
-
-
-
-&lt;p&gt;Thanks!&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
