@@ -23,6 +23,55 @@
       <description>&lt;p&gt;Self-Initializing Quadratic Sieve</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-7</guid>
+      <author>Sachin Agarwal (sachin-4099)</author>
+      <title>Sachin Agarwal (sachin-4099): GSoC 2020 - Week 7</title>
+      <pubDate>Sun, 05 Jul 2020 00:00:00 GMT</pubDate>
+      <link>https://sachin-4099.github.io//GSoC-2020-Week-7</link>
+      <description>&lt;p&gt;Key &lt;code class="language-plaintext highlighter-rouge"&gt;highlights&lt;/code&gt; of this week&amp;#8217;s work are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/19680"&gt;Improved the limit evaluations of Power objects&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;This PR improves the limit evaluations of Power objects.
+We first check if the limit expression is a &lt;code class="language-plaintext highlighter-rouge"&gt;Power object&lt;/code&gt; and then accordingly evaluate the limit depending on different cases.
+First of all, we express &lt;code class="language-plaintext highlighter-rouge"&gt;b**e&lt;/code&gt; in the form of &lt;code class="language-plaintext highlighter-rouge"&gt;exp(e*log(b))&lt;/code&gt;. After this, we check if &lt;code class="language-plaintext highlighter-rouge"&gt;e*log(b)&lt;/code&gt; is &lt;code class="language-plaintext highlighter-rouge"&gt;meromorphic&lt;/code&gt; and accordingly evaluate the final result.
+This check helps us to handle the trivial cases in the beginning itself.&lt;/p&gt;
+
+        &lt;p&gt;Now, if &lt;code class="language-plaintext highlighter-rouge"&gt;e*log(b)&lt;/code&gt; is not meromorphic, then we separately evaluate the limit of the base and the exponent.
+This helps us to determine the &lt;code class="language-plaintext highlighter-rouge"&gt;indeterminant form&lt;/code&gt; of the limit expression if present. 
+As we know, there are 3 indeterminate forms corresponding to power objects: &lt;code class="language-plaintext highlighter-rouge"&gt;0**0&lt;/code&gt;, &lt;code class="language-plaintext highlighter-rouge"&gt;oo**0&lt;/code&gt;, and &lt;code class="language-plaintext highlighter-rouge"&gt;1**oo&lt;/code&gt;, which need to be handled carefully.
+If there is no indeterminate form present, then no further evaluations are required. Otherwise, we handle all the three cases separately and correctly evaluate the final result.&lt;/p&gt;
+
+        &lt;p&gt;We also added some code to improve the evaluation of limits having &lt;code class="language-plaintext highlighter-rouge"&gt;Abs()&lt;/code&gt; expressions.
+For every &lt;code class="language-plaintext highlighter-rouge"&gt;Abs()&lt;/code&gt; term present in the limit expression, we replace it simply by its argument or the negative of its argument, depending on
+whether the value of the limit of the argument is greater than zero or less than zero for the given limit variable.&lt;/p&gt;
+
+        &lt;p&gt;Finally, we were able to merge this after resolving some failing testcases.
+&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/19697"&gt;Fixed limit evaluations involving error functions&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;The incorrect limit evaluations of &lt;code class="language-plaintext highlighter-rouge"&gt;error functions&lt;/code&gt; were mainly because the &lt;code class="language-plaintext highlighter-rouge"&gt;tractable&lt;/code&gt; rewrite was wrong and did not handle all the possible cases.
+For a proper rewrite, it was required that the limit variable be passed to the corresponding rewrite method.
+This is because, to define a correct rewrite we had to evaluate the limit of the argument of the &lt;code class="language-plaintext highlighter-rouge"&gt;error function&lt;/code&gt;, for the passed limit variable.
+Thus, we added a default argument &lt;code class="language-plaintext highlighter-rouge"&gt;limitvar&lt;/code&gt; to all the &lt;code class="language-plaintext highlighter-rouge"&gt;tractable rewrite&lt;/code&gt; methods and resolved this issue.
+While debugging, we also noticed that the &lt;code class="language-plaintext highlighter-rouge"&gt;_eval_as_leading_term&lt;/code&gt; method of error function was wrong, hence it was also fixed.&lt;/p&gt;
+
+        &lt;p&gt;Finally, we were able to merge this after resolving some failing testcases.&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/07/05/week_6</guid>
       <author>Smit Lunagariya (Smit-create)</author>
       <title>Smit Lunagariya (Smit-create): Week 6-GSoC 2020</title>
@@ -814,14 +863,6 @@ Thus, replacing the &lt;code class="language-plaintext highlighter-rouge"&gt;xre
 &lt;p&gt;Since I have been contributing to SymPy for the past 8-9 months, it was easier for me to blend into the community.&lt;/p&gt;
 
 &lt;p&gt;Now, as everything has gone as planned, I have decided to make a head start and begin with the implementation of my project.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/05/17/community_period</guid>
-      <author>Smit Lunagariya (Smit-create)</author>
-      <title>Smit Lunagariya (Smit-create): Community Bonding Period-GSoC 2020</title>
-      <pubDate>Sun, 17 May 2020 00:00:00 GMT</pubDate>
-      <link>https://smit-create.github.io/Smit-create.github.io/2020/05/17/community_period.html</link>
-      <description>&lt;p&gt;This is the first official blog associated with GSoC 2020. I will be sharing the experience of the Community Bonding Period and work during this period after selection.</description>
     </item>
   </channel>
 </rss>
