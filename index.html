@@ -89,6 +89,369 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">July 13, 2020</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-6eefe67f feed-" id="item-d5f65099">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/friyaz.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Faisal Riyaz (friyaz) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://friyaz.github.io/blog/GSoC-2020-Week-6">00:00, Monday, 13 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://friyaz.github.io/blog/GSoC-2020-Week-6">Faisal Riyaz (friyaz): GSoC 2020 Week-6</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/friyaz.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Faisal Riyaz (friyaz) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://friyaz.github.io/blog/GSoC-2020-Week-6">00:00, Monday, 13 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://friyaz.github.io/blog/GSoC-2020-Week-6">GSoC 2020 Week-6</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>This week, I spent most of my time reading about algorithms to parametrize algebraic curves and surfaces.</p>
+
+<h3 id="parametrization-of-algebraic-curves-and-surfaces">Parametrization of algebraic curves and surfaces</h3>
+<p>In many cases, it is easiar to define a region using an implicit equation over its parametric form. For example, a sphere can be defined with the implict eqution x<sup>2</sup> + y<sup>2</sup> + z<sup>2</sup> = 4. Its parametric equation although easy to determine are tedious to write.</p>
+
+<p>To integrate over implicitly defined regions, it is necessary to determine its parametric representation. I found the <a href="http://graphics.stanford.edu/courses/cs348a-20-winter/Handouts/a228715.pdf">report</a> on conversion methods between parametric and implicit curves from Christopher M. Hoffmann very useful. It lists several algorithms for curves and surfaces of different nature.</p>
+
+<p>Every plane parametric curve can be expressed as an implicit curve. Some, but not all implicit curves can be expressed as parametric curves. Similarly, we can state of algebraic surfaces. Every plane parametric surface can be expressed as an implicit surface. Some, but not all implicit surfaces can be expressed as parametric surfaces.</p>
+
+<h3 id="conic-sections">Conic sections</h3>
+<p>One of the algorithm to parametrize conics is given below:</p>
+<ol>
+  <li>Fix a point p on the conic. Consider the pencil of lines through p. Formulate the line equations.</li>
+  <li>Substitute for y in the conic equation, solve for x(t).</li>
+  <li>Use the fine equations to determine y(t).</li>
+</ol>
+
+<p>The difficult part is to find a point on the conic. For the first implementation, I just iterated over a few points and selected the point which satisfied the equation. I need to implement an algorithm that can find a point on the curve.</p>
+
+<p>The parametric equations determined by the algoithm are large and complex expressions. The <code class="language-plaintext highlighter-rouge">vector_integrate</code> function in most cases is taking too much time to calculate the integral. I tried fixing this using simplification functions in SymPy like trigsimp and expand_trig. The problem still persist.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;&gt;&gt;</span> <span class="n">ellipse</span> <span class="o">=</span> <span class="n">ImplicitRegion</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mi">4</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mi">16</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">parametric_region_list</span><span class="p">(</span><span class="n">ellipse</span><span class="p">)</span>
+<span class="p">[</span><span class="n">ParametricRegion</span><span class="p">((</span><span class="mi">8</span><span class="o">*</span><span class="n">tan</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">tan</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span><span class="p">),</span> <span class="o">-</span><span class="mi">4</span> <span class="o">+</span> <span class="mi">8</span><span class="o">*</span><span class="n">tan</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">tan</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)),</span> <span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">pi</span><span class="p">))]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">vector_integrate</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">ellipse</span><span class="p">)</span>
+<span class="c1">### It gets stuck
+</span></code></pre></div></div>
+
+<p>The algorithm does not work for curves of higher algebraic degree like cubics.</p>
+
+<h3 id="monoids">Monoids</h3>
+<p>A monoid is an algebraic curve of degree n that has a point of multiplicity n -1. All conics and singular cubics are monoids. Parametrizing a monoid is easy if the special point is known.</p>
+
+<p>To parametrize a monoid, we need to determine a singular point of n - 1 multiplicity. The singular points are those points on the curve where both partial derivatives vanish. A singular point (xo, yo) of a Curve C is said to be of multiplicity n if all the partial derivatives off to order n - 1 vanish there. This <a href="https://www.semanticscholar.org/paper/Singular-Points-of-Algebraic-Curves-Sakkalis-Farouki/2f8a3e9620c8a5c754f8baaf297af3eff1e6b1f1">paper</a> describes an algorithm to calculate such a point but the algorithm is not trivial.</p>
+
+<h3 id="next-weeks-goal">Next week&#8217;s goal</h3>
+<p>My goal is to complete the work on parametrizing conics. If I can find a simple algorithm to determine the singular point of the required multiplicity, I will start working on it.</p>
+
+<p></p>
+<div class="comment__form" id="respond">
+    <h2 class="title">Leave a comment <small><a href="https://friyaz.github.io/blog/GSoC-2020-Week-6#respond" id="cancel-comment-reply-link" rel="nofollow" style="display: none;">Cancel reply</a></small></h2>
+    <form action="https://staticmann.herokuapp.com/v2/entry/friyaz/friyaz.github.io/master/comments" class="js-form" id="comment-form" method="post">
+      <div class="form__group">
+        <label for="comment-form-name">Name
+          <input id="comment-form-name" name="fields[name]" required="" type="text" />
+        </label>
+        <label for="comment-form-email">E-mail
+          <input id="comment-form-email" name="fields[email]" required="" type="email" />
+        </label>
+      </div>
+      <div class="notice">
+          Your email address is used to display your <a href="https://en.gravatar.com">Gravatar</a>, if applicable.
+          Your email address will not be displayed publicly or shared with anyone else.
+      </div>
+      <div class="form__group">
+        <label for="comment-form-message">Comment
+          <textarea id="comment-form-message" name="fields[message]" required="" rows="6" type="text"></textarea>
+        </label>
+      </div>
+      <input name="options[origin]" type="hidden" value="http://friyaz.github.io/blog/GSoC-2020-Week-6#comments" />
+      <input id="comment-replying-to" name="options[parent]" type="hidden" value="" />
+      <input id="comment-post-id" name="options[slug]" type="hidden" value="GSoC-2020-Week-6" />
+      <input name="options[reCaptcha][siteKey]" type="hidden" value="" />
+      <input name="options[reCaptcha][secret]" type="hidden" value="" />
+      <input name="options[subscribe]" type="hidden" value="email" />
+      <div class="g-recaptcha form__group"></div>
+      <button id="comment-form-submit" type="submit">Send comment</button>
+    </form>
+    <div class="hidden js-notice notice">
+      <p class="js-notice-text"></p>
+    </div>
+  </div>
+<p>
+  </p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-6eefe67f feed-" id="item-29adc8ca">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/friyaz.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Faisal Riyaz (friyaz) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://friyaz.github.io/blog/GSoC-2020-Week-5">00:00, Monday, 13 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://friyaz.github.io/blog/GSoC-2020-Week-5">Faisal Riyaz (friyaz): GSoC 2020 Week-5</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/friyaz.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Faisal Riyaz (friyaz) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://friyaz.github.io/blog/GSoC-2020-Week-5">00:00, Monday, 13 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://friyaz.github.io/blog/GSoC-2020-Week-5">GSoC 2020 Week-5</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>My goal for this week was to add support of integration over objects of geometry module.</p>
+
+<h3 id="integrating-over-objects-of-geometry-module">Integrating over objects of geometry module</h3>
+<p>In my GSoC proposal, I mentioned implementing classes to represent commonly used regions. It will allow a user to easily define regions without bothering about its parametric representation. SymPy&#8217;s geometry module has classes to represent commonly used geometric entities like line, circle, and parabola. Francesco told me it would be better to add support to use these classes instead. The integral takes place over the boundary of the geometric entity, not over the area or volume enclosed.</p>
+
+<p>My first approach was to add a function <code class="language-plaintext highlighter-rouge">parametric_region</code> to the classes of geometry module. Francesco suggested not to modify the geometry module as this would make it dependent on vector module. We decided to implement a function <code class="language-plaintext highlighter-rouge">parametric_region</code> to return a <code class="language-plaintext highlighter-rouge">ParametricRegion</code> of objects of geometry module.</p>
+
+<p>I learned about the singledispatch decorater of python. It is used to create overloaded functions.<br />
+Polygons cannot be represented as a single <code class="language-plaintext highlighter-rouge">ParametricRegion</code> object. Each side of a polygon has its separate parametric representation. To resolve this, we decided to return a list of ParametricRegion objects.</p>
+
+<p>My next step was to modify <code class="language-plaintext highlighter-rouge">vector_integrate</code> to support objects of geometry module. This was easy and involved calling the <code class="language-plaintext highlighter-rouge">parametric_region_list</code> function and integrating each <code class="language-plaintext highlighter-rouge">ParametricRegion</code> object.</p>
+
+<p>The <a href="https://github.com/sympy/sympy/pull/19650/files">PR</a> for the work has been merged. Note that we still do not have any way to create regions like disc and cone without their parametric representation. To support such regions, I think we need to add new classes to the geometry module.</p>
+
+<h3 id="next-weeks-goal">Next week&#8217;s goal</h3>
+<p>I plan to work on implementing a class to represent implicitly defined regions.</p>
+
+<p></p>
+<div class="comment__form" id="respond">
+    <h2 class="title">Leave a comment <small><a href="https://friyaz.github.io/blog/GSoC-2020-Week-5#respond" id="cancel-comment-reply-link" rel="nofollow" style="display: none;">Cancel reply</a></small></h2>
+    <form action="https://staticmann.herokuapp.com/v2/entry/friyaz/friyaz.github.io/master/comments" class="js-form" id="comment-form" method="post">
+      <div class="form__group">
+        <label for="comment-form-name">Name
+          <input id="comment-form-name" name="fields[name]" required="" type="text" />
+        </label>
+        <label for="comment-form-email">E-mail
+          <input id="comment-form-email" name="fields[email]" required="" type="email" />
+        </label>
+      </div>
+      <div class="notice">
+          Your email address is used to display your <a href="https://en.gravatar.com">Gravatar</a>, if applicable.
+          Your email address will not be displayed publicly or shared with anyone else.
+      </div>
+      <div class="form__group">
+        <label for="comment-form-message">Comment
+          <textarea id="comment-form-message" name="fields[message]" required="" rows="6" type="text"></textarea>
+        </label>
+      </div>
+      <input name="options[origin]" type="hidden" value="http://friyaz.github.io/blog/GSoC-2020-Week-5#comments" />
+      <input id="comment-replying-to" name="options[parent]" type="hidden" value="" />
+      <input id="comment-post-id" name="options[slug]" type="hidden" value="GSoC-2020-Week-5" />
+      <input name="options[reCaptcha][siteKey]" type="hidden" value="" />
+      <input name="options[reCaptcha][secret]" type="hidden" value="" />
+      <input name="options[subscribe]" type="hidden" value="email" />
+      <div class="g-recaptcha form__group"></div>
+      <button id="comment-form-submit" type="submit">Send comment</button>
+    </form>
+    <div class="hidden js-notice notice">
+      <p class="js-notice-text"></p>
+    </div>
+  </div>
+<p>
+  </p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-6eefe67f feed-" id="item-c3345e37">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/friyaz.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Faisal Riyaz (friyaz) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="http://friyaz.github.io/blog/GSoC-2020-Week-4">00:00, Monday, 13 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="http://friyaz.github.io/blog/GSoC-2020-Week-4">Faisal Riyaz (friyaz): GSoC 2020 Week-4</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/friyaz.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Faisal Riyaz (friyaz) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="http://friyaz.github.io/blog/GSoC-2020-Week-4">00:00, Monday, 13 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="http://friyaz.github.io/blog/GSoC-2020-Week-4">GSoC 2020 Week-4</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>The first phase of GSoC is over. We can now integrate the scalar or vector field over a parametrically defined region.</p>
+
+<p>The <a href="https://github.com/sympy/sympy/pull/19539">PR</a> for <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> class has been merged. In my <a href="https://friyaz.github.io/blog/GSoC-2020-Week-3">last post</a>, I mentioned about a weird error. It turns out that I was importing <code class="language-plaintext highlighter-rouge">pi</code> as a symbol instead of as a number. Due to this, the expressions were returned unevaluated causing tests to fail.</p>
+
+<h2 id="the-route-ahead">The route ahead</h2>
+<p>I had a detailed discussion with Francesco about the route ahead. My plan has drifted from my proposal because we have decided not to implement new classes for special regions like circles and spheres. The geometry module already has classes to represent some of these regions. We have decided to use these classes.</p>
+
+<p>Francesco reminded me that we have to complete the documentation of these changes. I was planning to complete the documentation in the last phase. But I will try completing it soon as I may forget some details.</p>
+
+<p>We also discussed adding support to perform integral transformation using Stoke&#8217;s and Green&#8217;s theorem. In many cases, such transformation can be useful but adding them may be outside the scope of this project.</p>
+
+<p>I have convinced Francesco on adding classes to represent implicitly defined regions. It might be the most difficult part of the project but hopefully, it will be useful to SymPy users.</p>
+<h3 id="next-weeks-goal">Next week&#8217;s goal</h3>
+<p>My next week&#8217;s goal is to make a PR for adding suppor to integrate over objects of the geometry module.</p>
+
+<p></p>
+<div class="comment__form" id="respond">
+    <h2 class="title">Leave a comment <small><a href="https://friyaz.github.io/blog/GSoC-2020-Week-4#respond" id="cancel-comment-reply-link" rel="nofollow" style="display: none;">Cancel reply</a></small></h2>
+    <form action="https://staticmann.herokuapp.com/v2/entry/friyaz/friyaz.github.io/master/comments" class="js-form" id="comment-form" method="post">
+      <div class="form__group">
+        <label for="comment-form-name">Name
+          <input id="comment-form-name" name="fields[name]" required="" type="text" />
+        </label>
+        <label for="comment-form-email">E-mail
+          <input id="comment-form-email" name="fields[email]" required="" type="email" />
+        </label>
+      </div>
+      <div class="notice">
+          Your email address is used to display your <a href="https://en.gravatar.com">Gravatar</a>, if applicable.
+          Your email address will not be displayed publicly or shared with anyone else.
+      </div>
+      <div class="form__group">
+        <label for="comment-form-message">Comment
+          <textarea id="comment-form-message" name="fields[message]" required="" rows="6" type="text"></textarea>
+        </label>
+      </div>
+      <input name="options[origin]" type="hidden" value="http://friyaz.github.io/blog/GSoC-2020-Week-4#comments" />
+      <input id="comment-replying-to" name="options[parent]" type="hidden" value="" />
+      <input id="comment-post-id" name="options[slug]" type="hidden" value="GSoC-2020-Week-4" />
+      <input name="options[reCaptcha][siteKey]" type="hidden" value="" />
+      <input name="options[reCaptcha][secret]" type="hidden" value="" />
+      <input name="options[subscribe]" type="hidden" value="email" />
+      <div class="g-recaptcha form__group"></div>
+      <button id="comment-form-submit" type="submit">Send comment</button>
+    </form>
+    <div class="hidden js-notice notice">
+      <p class="js-notice-text"></p>
+    </div>
+  </div>
+<p>
+  </p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">July 12, 2020</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -2412,223 +2775,6 @@ Thus, we had to rectify the <code class="language-plaintext highlighter-rouge">_
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">May 24, 2020</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-f8f36e61 feed-" id="item-65ac633b">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/sachin-4099.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Sachin Agarwal (sachin-4099) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://sachin-4099.github.io//GSoC-2020-Week-1">00:00, Sunday, 24 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://sachin-4099.github.io//GSoC-2020-Week-1">Sachin Agarwal (sachin-4099): GSoC 2020 - Week 1</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/sachin-4099.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Sachin Agarwal (sachin-4099) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://sachin-4099.github.io//GSoC-2020-Week-1">00:00, Sunday, 24 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://sachin-4099.github.io//GSoC-2020-Week-1">GSoC 2020 - Week 1</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Key <code class="language-plaintext highlighter-rouge">highlights</code> of this week&#8217;s work are:</p>
-
-<ul>
-  <li>
-    <p><strong><a href="https://github.com/sympy/sympy/pull/19292">Fixed incorrect limit evaluations caused due to different assumptions of the limit variable</a></strong></p>
-
-    <ul>
-      <li>In this issue, due to different assumptions of the limit variable, the output was coming out to be different and incorrect for the same limit expression.
-On digging deep into this issue, we observed that the assumption <code class="language-plaintext highlighter-rouge">integer = True</code> was common between all the incorrectly evaluated limit expressions.
-Thus, we concluded that the <code class="language-plaintext highlighter-rouge">Gruntz algorithm</code> is not able to correctly evaluate those expressions where the limit variable possesses <code class="language-plaintext highlighter-rouge">integer = True</code> property.
-So, in order to get all the correct mathematical behaviour from the expression, we decided to define a dummy variable lacking <code class="language-plaintext highlighter-rouge">integer = True</code> property. 
-After which, we simply had to substitute the limit variable with this dummy variable for these type of limit expressions to resolve the issue.
-<br /><br /></li>
-    </ul>
-  </li>
-  <li>
-    <p><strong><a href="https://github.com/sympy/sympy/pull/19297">Fixed incorrect limit evaluations caused due to bug in rewriting</a></strong></p>
-
-    <ul>
-      <li>At first, this issue seemed tough to resolve because we were unable to find the source of the error. But then, we decided to examine each expression which is generated during evaluation.
-This helped us to observe that <code class="language-plaintext highlighter-rouge">rewriting</code> of the expression was taking place incorrectly and we shifted our focus towards the <code class="language-plaintext highlighter-rouge">rewrite()</code> function.
-Afterwards, it was pretty evident that the <code class="language-plaintext highlighter-rouge">xreplace()</code> function utilised for rewriting is not sufficient, as it did not find everything that needs to replaced.
-Thus, replacing the <code class="language-plaintext highlighter-rouge">xreplace()</code> function with the <code class="language-plaintext highlighter-rouge">subs()</code> function helped us to resolve this issue.</li>
-    </ul>
-  </li>
-</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7c867291 feed-" id="item-f9535d07">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Smit Lunagariya (Smit-create) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/05/24/week_1.html">00:00, Sunday, 24 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/05/24/week_1.html">Smit Lunagariya (Smit-create): Week 1-GSoC 2020</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Smit Lunagariya (Smit-create) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/05/24/week_1.html">00:00, Sunday, 24 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/05/24/week_1.html">Week 1-GSoC 2020</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This blog discribes the first official implementation week of the program. One of the advantage of Community Bonding period, I experienced during this week was that it saves a lot of time of designing new APIs. Since, it was all decided earlier on the APIs in the previous week, it made easy to maintain the timeline and add significant features.
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">May 20, 2020</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-967171ba feed-" id="item-3101df2c">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/abhinav28071999.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Abhinav Anand (abhinav28071999) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://abhinav28071999.github.io/Gsoc-Sympy/">00:00, Wednesday, 20 May UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://abhinav28071999.github.io/Gsoc-Sympy/">Abhinav Anand (abhinav28071999): Google Summer of Code 2020 with Sympy!</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/abhinav28071999.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Abhinav Anand (abhinav28071999) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://abhinav28071999.github.io/Gsoc-Sympy/">00:00, Wednesday, 20 May UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://abhinav28071999.github.io/Gsoc-Sympy/">Google Summer of Code 2020 with Sympy!</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>I will be spending this summer with Sympy in Gsoc. In this post i want to share my journey over the past 4 months.
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2656,236 +2802,236 @@ Thus, replacing the <code class="language-plaintext highlighter-rouge">xreplace(
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.com/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://abhinav28071999.github.io/">Abhinav Anand</a></td>
 <td><a class="xmlbutton" href="https://abhinav28071999.github.io/feed.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
 <td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://parsoyaarihant.github.io/blog/">Arihant Parsoya</a></td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://divyanshu132.github.io//">Divyanshu Thakur</a></td>
 <td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://friyaz.github.io">Faisal's Blog</a></td>
 <td><a class="xmlbutton" href="https://friyaz.github.io/feed.sympy.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arighnaiitg.github.io">GSoC Days</a></td>
 <td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sc0rpi0n101.github.io/categories/gsoc/">GSoC on Sc0rpi0n's Journey</a></td>
 <td><a class="xmlbutton" href="https://sc0rpi0n101.github.io/categories/gsoc/index.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss</td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ritesh99rakesh.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td>https://www.kangzhiq.com/tag/sympy/feed/</td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
 <td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://namannimmo10.github.io/emerald/">My-GSoC-blog</a></td>
 <td><a class="xmlbutton" href="https://namannimmo10.github.io/emerald/atom.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sachin-4099.github.io//">Sachin Agarwal</a></td>
 <td><a class="xmlbutton" href="https://sachin-4099.github.io/feed.sympy.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://www.shubhamjha.com/">Shubham&#8217;s Blog</a></td>
 <td><a class="xmlbutton" href="https://shubhamjha.com/sympy_feed.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
 <td><a class="xmlbutton" href="http://sidhantnagpal.com/rss-gsoc.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://smit-create.github.io/Smit-create.github.io/">Smit-create</a></td>
 <td><a class="xmlbutton" href="https://smit-create.github.io/feed.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>10:26, Monday, 13 July</td>
-<td>10:41, Monday, 13 July</td>
+<td>10:46, Monday, 13 July</td>
+<td>11:01, Monday, 13 July</td>
 </tr>
 </table>
 
