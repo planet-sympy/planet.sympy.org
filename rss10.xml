@@ -7,6 +7,14 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/08/09/week_11</guid>
+      <author>Smit Lunagariya (Smit-create)</author>
+      <title>Smit Lunagariya (Smit-create): Week 11-GSoC 2020</title>
+      <pubDate>Sun, 09 Aug 2020 00:00:00 GMT</pubDate>
+      <link>https://smit-create.github.io/Smit-create.github.io/2020/08/09/week_11.html</link>
+      <description>&lt;p&gt;This blog describes the 11th week of the program. Some of the key highlights of this week are:</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/08/02/week_10</guid>
       <author>Smit Lunagariya (Smit-create)</author>
       <title>Smit Lunagariya (Smit-create): Week 10-GSoC 2020</title>
@@ -822,63 +830,6 @@ At last, this issue was resolved and we ended up adding an extremely optimised i
       <pubDate>Sun, 31 May 2020 00:00:00 GMT</pubDate>
       <link>https://namannimmo10.github.io/emerald//community_period</link>
       <description>&lt;p&gt;On May 4, I got an email from Google that my proposal with &lt;a href="https://github.com/sympy/sympy"&gt;SymPy&lt;/a&gt; has been accepted! Seriously, that was the best day of my life. I have learned a lot from this open source community from the past 6 months, and I hope to continue that.&lt;/p&gt; &lt;p&gt;The community...</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-2</guid>
-      <author>Sachin Agarwal (sachin-4099)</author>
-      <title>Sachin Agarwal (sachin-4099): GSoC 2020 - Week 2</title>
-      <pubDate>Sun, 31 May 2020 00:00:00 GMT</pubDate>
-      <link>https://sachin-4099.github.io//GSoC-2020-Week-2</link>
-      <description>&lt;p&gt;Key &lt;code class="language-plaintext highlighter-rouge"&gt;highlights&lt;/code&gt; of this week&amp;#8217;s work are:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/19369"&gt;Fixed _eval_nseries() of Mul&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-
-    &lt;ul&gt;
-      &lt;li&gt;
-        &lt;p&gt;This was a long pending issue. 
-Previously, in the codebase the &lt;code class="language-plaintext highlighter-rouge"&gt;series expansion of a product&lt;/code&gt; was computed as the &lt;code class="language-plaintext highlighter-rouge"&gt;product of expansions of the factors&lt;/code&gt;. 
-This approach was correct only when the &lt;code class="language-plaintext highlighter-rouge"&gt;leading term of each series&lt;/code&gt; is a &lt;code class="language-plaintext highlighter-rouge"&gt;constant&lt;/code&gt; but not in general.&lt;/p&gt;
-
-        &lt;p&gt;For example, to compute the expansion of &lt;code class="language-plaintext highlighter-rouge"&gt;f(x)/x**10&lt;/code&gt; at &lt;code class="language-plaintext highlighter-rouge"&gt;x = 0&lt;/code&gt; to order &lt;code class="language-plaintext highlighter-rouge"&gt;O(x**10)&lt;/code&gt; it is necessary to compute the series expansion 
-of the function &lt;code class="language-plaintext highlighter-rouge"&gt;f(x)&lt;/code&gt; to order &lt;code class="language-plaintext highlighter-rouge"&gt;O(x**20)&lt;/code&gt; and thus, computing till order &lt;code class="language-plaintext highlighter-rouge"&gt;O(x**10)&lt;/code&gt; would not suffice.&lt;/p&gt;
-
-        &lt;p&gt;The strategy we implemented to resolve this issue was:&lt;/p&gt;
-
-        &lt;ul&gt;
-          &lt;li&gt;Compute the order &lt;code class="language-plaintext highlighter-rouge"&gt;n0&lt;/code&gt; of the &lt;code class="language-plaintext highlighter-rouge"&gt;leading term of the product&lt;/code&gt; as the &lt;code class="language-plaintext highlighter-rouge"&gt;sum of the orders&lt;/code&gt; of the &lt;code class="language-plaintext highlighter-rouge"&gt;leading terms of the factors&lt;/code&gt;.&lt;/li&gt;
-          &lt;li&gt;For each factor, compute &lt;code class="language-plaintext highlighter-rouge"&gt;n - n0&lt;/code&gt; terms of its series expansion (starting from its &lt;code class="language-plaintext highlighter-rouge"&gt;leading term of order n1&lt;/code&gt; and &lt;code class="language-plaintext highlighter-rouge"&gt;ending at order n - n0 + n1&lt;/code&gt;).&lt;/li&gt;
-          &lt;li&gt;Multiply the expansions (&lt;code class="language-plaintext highlighter-rouge"&gt;truncating at terms of order n&lt;/code&gt;).&lt;/li&gt;
-        &lt;/ul&gt;
-
-        &lt;p&gt;I enjoyed implementing all this because at every step we had to ensure that we are not compromising with the efficiency of the code. 
-Finally, this issue was resolved and we ended up adding an extremely optimised implementation of the function to the codebase.
-&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/19432"&gt;Used is_meromorphic() function to speed up limit evaluations&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-
-    &lt;ul&gt;
-      &lt;li&gt;
-        &lt;p&gt;In this PR, we made use of the &lt;code class="language-plaintext highlighter-rouge"&gt;is_meromorphic()&lt;/code&gt; function of SymPy to speed up limit evaluations for certain type of cases.&lt;/p&gt;
-
-        &lt;p&gt;A function is said to be &lt;code class="language-plaintext highlighter-rouge"&gt;meromorphic&lt;/code&gt; at a point, if at that point the &lt;code class="language-plaintext highlighter-rouge"&gt;limit of the function exists but is infinite&lt;/code&gt;. 
-In these cases, the value of the limit can usually be determined with the help of the &lt;code class="language-plaintext highlighter-rouge"&gt;series expansion of that function&lt;/code&gt; and 
-thus, there is no need to invoke the &lt;code class="language-plaintext highlighter-rouge"&gt;Gruntz algorithm&lt;/code&gt;.&lt;/p&gt;
-
-        &lt;p&gt;While working on the implementation of this functionality, we required the &lt;code class="language-plaintext highlighter-rouge"&gt;leading term&lt;/code&gt; of the &lt;code class="language-plaintext highlighter-rouge"&gt;series expansion of the function in the limit expression at the point at which the limit needs to be evaluated&lt;/code&gt;.&lt;/p&gt;
-
-        &lt;p&gt;But we came across a weird situation, where for some functions, we got &lt;code class="language-plaintext highlighter-rouge"&gt;Complex Infinity&lt;/code&gt; as the &lt;code class="language-plaintext highlighter-rouge"&gt;leading term&lt;/code&gt;.
-Thus, we had to rectify the &lt;code class="language-plaintext highlighter-rouge"&gt;_eval_as_leading_term()&lt;/code&gt; methods of these functions (done in a separate &lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/19461"&gt;PR&lt;/a&gt;&lt;/strong&gt;).&lt;/p&gt;
-
-        &lt;p&gt;After resolving this issue, we succeeded in adding the required functionality and hence, increased the efficiency of the limit evaluation algorithm of SymPy.&lt;/p&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;</description>
     </item>
   </channel>
 </rss>
