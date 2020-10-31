@@ -7,6 +7,125 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://iamit.in/blog/upgrading-sympy-gamma</guid>
+      <author>Amit Kumar (aktech)</author>
+      <title>Amit Kumar (aktech): Porting SymPy Gamma to Google App Engine Python 3</title>
+      <pubDate>Fri, 30 Oct 2020 18:30:00 GMT</pubDate>
+      <link>https://iamit.in/blog/sympy-gamma-gae-python3/</link>
+      <description>&lt;p&gt;This summer I had plenty of time during COVID-19 lockdown and I was looking at
+&lt;a href="https://sympygamma.com/"&gt;SymPy Gamma&lt;/a&gt;.&lt;/p&gt;
+
+&lt;center&gt;&lt;img src="https://iamit.in/assets/sympy-gamma-port/sympy_gamma_demo.gif" width="700" /&gt;&lt;/center&gt;
+
+&lt;h2 id="sympy-gamma"&gt;Sympy Gamma&lt;/h2&gt;
+
+&lt;p&gt;SymPy Gamma is a web application that executes mathematical expressions
+via natural language input from the user, after parsing them as SymPy
+expressions it displays the result with additional related computations.
+It is inspired from the idea of &lt;a href="http://www.wolframalpha.com/"&gt;WolframAlpha&lt;/a&gt; which is based on the
+commercial Computer Algebra System named &lt;a href="https://en.wikipedia.org/wiki/Mathematica"&gt;&amp;#8220;Mathematica&amp;#8221;&lt;/a&gt;.&lt;/p&gt;
+
+&lt;center&gt;&lt;img src="https://iamit.in/assets/wolfram-alpha-logo.svg" width="300" /&gt;&lt;/center&gt;
+
+&lt;p&gt;I have always been impressed by it ever since I first found about it.
+While playing with it during this summer, I realised that it runs on Google
+App Engine&amp;#8217;s Python 2.7 runtime. It is powered by SymPy, an open source
+computer algebra system.&lt;/p&gt;
+
+&lt;center&gt;&lt;img align="center" src="https://iamit.in/assets/Sympy_logo.svg" width="150" /&gt;&lt;/center&gt;
+
+&lt;h2 id="the-problem"&gt;The Problem&lt;/h2&gt;
+
+&lt;p&gt;Despite being widely used around the world (about ~14K users everyday,
+as seen from Google Analytics), there hasn&amp;#8217;t been a lot of development
+in the past 5 years. Due to this the current infrastructure
+was stuck on &lt;a href="https://en.wikipedia.org/wiki/Google_App_Engine"&gt;Google App Engine&lt;/a&gt;&amp;#8217;s Python 2 runtime which obviously does
+not support Python 3.&lt;/p&gt;
+
+&lt;p&gt;This also prevented it to use the latest version of SymPy. The SymPy
+version (~0.7.6) it was using was last updated 6 years ago. This made
+SymPy Gamma urgent need to upgradation. At the time of writing this blog,
+SymPy Gamma is running on Google App Engine&amp;#8217;s latest runtime and latest
+version of SymPy.&lt;/p&gt;
+
+&lt;h2 id="solution-and-process"&gt;Solution and Process&lt;/h2&gt;
+
+&lt;p&gt;It was a fun project and was interesting to see how Google cloud offering has evolved
+from Google App Engine to Google Cloud Platform. The old App engine did
+seem like a minimal cloud offering launched by Google in an attempt to
+ship something early and quickly. It reminded me of my first cloud project
+in college (&lt;a href="https://github.com/aktech/dturmscrap"&gt;dturmscrap&lt;/a&gt;), which I
+deployed to Google App Engine, back in 2015.&lt;/p&gt;
+
+&lt;p&gt;I used Github projects to track the whole project, all the work done for this
+can be seen &lt;a href="https://github.com/sympy/sympy_gamma/projects/1"&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id="-git-log"&gt;$ Git Log&lt;/h2&gt;
+
+&lt;p&gt;Here is a summary of what was achieved:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/135"&gt;PR 135&lt;/a&gt;: Migrating Django to a slightly higher version,
+this was the first blood just to make sure everything was working. I upgraded it to the latest version of
+Django that was supported on Python 2 runtime. This also exposed the broken CI, which was fixed in this.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/137"&gt;PR 137&lt;/a&gt;: This upgraded the CI infrastructure to use Google Cloud SDK
+for deployment, the previous method was discontinued.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/140"&gt;PR 140&lt;/a&gt;: Upgrading the Database backend to use Cloud NDB instead
+of the legacy App Engine NDB.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/148"&gt;PR 148&lt;/a&gt;: Since we change the database backend, we needed something for
+testing locally, this was done by using Google Cloud Datastore emulator locally.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/149"&gt;PR 149&lt;/a&gt;: The installation and setup of the project was quite a challenge.
+Installing and keeping track of the versions of a number of application was non-trivial. This Pull request dockerized
+the project and made the development setup trivial and it all boiled down to just one command.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/152"&gt;PR 152&lt;/a&gt;: The login feature was previously implemented using the user API
+of the Google App Engine&amp;#8217;s Python2 runtime, which was not available in Python 3 runtime. We removed the login feature as it
+was not used by many and was too much effort to setup OAuth for login.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/153"&gt;PR 153&lt;/a&gt;: Now was the time to slowly move towards Python 3 by making the
+code compatible with both 2 and 3. It was achieved via &lt;a href="https://python-modernize.readthedocs.io/en/latest/"&gt;python-modernize&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/154"&gt;PR 154&lt;/a&gt;: We then made the migration to Python 3.7 runtime and removed submodules
+and introduced a &lt;code class="language-plaintext highlighter-rouge"&gt;requirements.txt&lt;/code&gt; for installing dependencies.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/154"&gt;PR 159&lt;/a&gt;: The above change made it possible to upgrade SymPy to latest version,
+which was 1.6 at that time.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/154"&gt;PR 165&lt;/a&gt;: The last piece of the puzzle was upgrading Django itself, so we upgraded
+it to the latest version, which was Django 3.0.8.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id="next-steps"&gt;Next Steps&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;At the time of writing this Google has released the Python 3.8 runtime, it would nice to further upgrade it now.&lt;/li&gt;
+  &lt;li&gt;The test coverage can be increased.&lt;/li&gt;
+  &lt;li&gt;The code can be refactored to be more readable and approachable for new contributors.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Thanks to Google for properly &lt;a href="https://cloud.google.com/appengine/docs/standard/python/migrate-to-python3"&gt;documenting the process&lt;/a&gt;,
+which made the transition much easier.&lt;/p&gt;
+
+&lt;p&gt;Thanks to &lt;a href="https://numfocus.org/"&gt;NumFocus&lt;/a&gt;, without them this project would not have been possible. Also thanks to
+&lt;a href="https://github.com/certik"&gt;Ondrej Certik&lt;/a&gt; and &lt;a href="http://github.com/asmeurer"&gt;Aaron Meurer&lt;/a&gt; for their advice and support
+throughout the project.&lt;/p&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://friyaz.github.io/blog/GSoC-Final_Report</guid>
       <author>Faisal Riyaz (friyaz)</author>
       <title>Faisal Riyaz (friyaz): GSoC Final Report</title>
@@ -1101,83 +1220,6 @@ So I modified the API of the ParametricRegion class. The new API is closer to th
       &lt;input name="options[origin]" type="hidden" value="http://friyaz.github.io/blog/GSoC-2020-Week-3#comments" /&gt;
       &lt;input id="comment-replying-to" name="options[parent]" type="hidden" value="" /&gt;
       &lt;input id="comment-post-id" name="options[slug]" type="hidden" value="GSoC-2020-Week-3" /&gt;
-      &lt;input name="options[reCaptcha][siteKey]" type="hidden" value="" /&gt;
-      &lt;input name="options[reCaptcha][secret]" type="hidden" value="" /&gt;
-      &lt;input name="options[subscribe]" type="hidden" value="email" /&gt;
-      &lt;div class="g-recaptcha form__group"&gt;&lt;/div&gt;
-      &lt;button id="comment-form-submit" type="submit"&gt;Send comment&lt;/button&gt;
-    &lt;/form&gt;
-    &lt;div class="hidden js-notice notice"&gt;
-      &lt;p class="js-notice-text"&gt;&lt;/p&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;p&gt;
-  &lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://friyaz.github.io/blog/GSoC-2020-Week-2</guid>
-      <author>Faisal Riyaz (friyaz)</author>
-      <title>Faisal Riyaz (friyaz): GSoC 2020 Week-2</title>
-      <pubDate>Sun, 21 Jun 2020 00:00:00 GMT</pubDate>
-      <link>http://friyaz.github.io/blog/GSoC-2020-Week-2</link>
-      <description>&lt;p&gt;Part of this week was spent in getting the &lt;a href="https://github.com/sympy/sympy/pull/19472"&gt;PR&lt;/a&gt; for &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricRegion&lt;/code&gt; merged. I made some fixes to get the failing tests to pass. I also added the docstring.&lt;/p&gt;
-
-&lt;h3 id="parametricintegral"&gt;ParametricIntegral&lt;/h3&gt;
-&lt;p&gt;I started &lt;a href="https://github.com/sympy/sympy/pull/19539"&gt;working&lt;/a&gt; on the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; class. &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; class returns the integral of a scalar or vector field over a region defined parametrically. It should be able to calculate line, surface, or volume integral depending on the nature of the parametric region. To identify the nature of the region, the &lt;code class="language-plaintext highlighter-rouge"&gt;dimensions&lt;/code&gt; property needs to be added in the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricRegion&lt;/code&gt; class.&lt;/p&gt;
-
-&lt;p&gt;I started with writing the test cases to avoid my previous mistake of working on the implementation before deciding the API. 
-The API of the ParametricIntegral class:&lt;/p&gt;
-&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;ParametricIntegral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;parametricregion&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Some examples:&lt;/p&gt;
-&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;curve&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)})&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;ParametricIntegral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;curve&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;semisphere&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;phi&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;phi&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;phi&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt;\
-                            &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;phi&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)})&lt;/span&gt;
-&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;ParametricIntegral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;semisphere&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;I initially thought to make it a subclass of &lt;code class="language-plaintext highlighter-rouge"&gt;Integral&lt;/code&gt; as the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; is a kind of integral. But there was no reuse of any code from &lt;code class="language-plaintext highlighter-rouge"&gt;Integral&lt;/code&gt; in the    &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; so decided against it.&lt;br /&gt;
-A rough sketch of the algorithm to calculate integral is described below:&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Replace the base scalars in the field with their definition in terms of parameters and obtain the parametric representation of the field.&lt;/li&gt;
-  &lt;li&gt;Form the position vector of the region using definition tuple and base vectors determined from the field.&lt;/li&gt;
-  &lt;li&gt;Depending on the type of region, calculate the derivative of the position vector, or find the normal vector or calculate dV using Jacobian.&lt;/li&gt;
-  &lt;li&gt;Calculate the integrand using dot product or multiplication with the parametric field.&lt;/li&gt;
-  &lt;li&gt;Use the &lt;code class="language-plaintext highlighter-rouge"&gt;integrate&lt;/code&gt; function to calculate the integral.&lt;/li&gt;
-  &lt;li&gt;If the &lt;code class="language-plaintext highlighter-rouge"&gt;integrate&lt;/code&gt; function can evaluate the integral, return it otherwise return an object of the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricRegion&lt;/code&gt; class.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;We also had &lt;a href="https://github.com/sympy/sympy/issues/19320#issuecomment-643234256"&gt;discussion&lt;/a&gt; on whether swapping the upper and lower limit has any affect on the result of a vector integral. For multiple integrals, the sign of the result changes when the upper and lower bound of a parameter are interchanged. I do not think we came to any conclusion. But this won&amp;#8217;t matter for integrals over parametric regions as the bounds are directly defined by the user.&lt;/p&gt;
-
-&lt;h3 id="next-weeks-goal"&gt;Next week&amp;#8217;s goal&lt;/h3&gt;
-&lt;p&gt;I will start working on the implementation of the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; class. I am also trying to get more involved in SymPy outside of my GSoC project. I hope I can become a contributing member of the community.&lt;/p&gt;
-
-&lt;p&gt;&lt;/p&gt;
-&lt;div class="comment__form" id="respond"&gt;
-    &lt;h2 class="title"&gt;Leave a comment &lt;small&gt;&lt;a href="https://friyaz.github.io/blog/GSoC-2020-Week-2#respond" id="cancel-comment-reply-link" rel="nofollow" style="display: none;"&gt;Cancel reply&lt;/a&gt;&lt;/small&gt;&lt;/h2&gt;
-    &lt;form action="https://staticmann.herokuapp.com/v2/entry/friyaz/friyaz.github.io/master/comments" class="js-form" id="comment-form" method="post"&gt;
-      &lt;div class="form__group"&gt;
-        &lt;label for="comment-form-name"&gt;Name
-          &lt;input id="comment-form-name" name="fields[name]" required="" type="text" /&gt;
-        &lt;/label&gt;
-        &lt;label for="comment-form-email"&gt;E-mail
-          &lt;input id="comment-form-email" name="fields[email]" required="" type="email" /&gt;
-        &lt;/label&gt;
-      &lt;/div&gt;
-      &lt;div class="notice"&gt;
-          Your email address is used to display your &lt;a href="https://en.gravatar.com"&gt;Gravatar&lt;/a&gt;, if applicable.
-          Your email address will not be displayed publicly or shared with anyone else.
-      &lt;/div&gt;
-      &lt;div class="form__group"&gt;
-        &lt;label for="comment-form-message"&gt;Comment
-          &lt;textarea id="comment-form-message" name="fields[message]" required="" rows="6" type="text"&gt;&lt;/textarea&gt;
-        &lt;/label&gt;
-      &lt;/div&gt;
-      &lt;input name="options[origin]" type="hidden" value="http://friyaz.github.io/blog/GSoC-2020-Week-2#comments" /&gt;
-      &lt;input id="comment-replying-to" name="options[parent]" type="hidden" value="" /&gt;
-      &lt;input id="comment-post-id" name="options[slug]" type="hidden" value="GSoC-2020-Week-2" /&gt;
       &lt;input name="options[reCaptcha][siteKey]" type="hidden" value="" /&gt;
       &lt;input name="options[reCaptcha][secret]" type="hidden" value="" /&gt;
       &lt;input name="options[subscribe]" type="hidden" value="email" /&gt;
