@@ -7,6 +7,100 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://asmeurer.com/blog/posts/switching-to-utterances-comments/</guid>
+      <author>Aaron Meurer (asmeurer)</author>
+      <title>Aaron Meurer (asmeurer): Switching to Utterances Comments</title>
+      <pubDate>Thu, 03 Jun 2021 03:57:49 GMT</pubDate>
+      <link>https://asmeurer.com/blog/posts/switching-to-utterances-comments/</link>
+      <description>&lt;div&gt;&lt;p&gt;I've ditched Disqus as the comment system on this blog. I am now using
+&lt;a href="https://utteranc.es/"&gt;Utterances&lt;/a&gt;. Utterances is an open source comment
+system that is backed by GitHub issues. Basically, every post has a
+corresponding issue opened on GitHub, and the comments on the post are the
+comments on the issue. Utterances automatically places the comments at the
+bottom of the post. For example, &lt;a href="https://asmeurer.com/blog/posts/switching-to-utterances-comments/"&gt;here&lt;/a&gt; is the issue corresponding to this
+post.&lt;/p&gt;
+&lt;p&gt;I didn't like Disqus mostly because it serves ads and tracking. Even though I
+had opted out from as much of it as I could in the Disqus settings, it still
+loads tracking scripts on every page. I run &lt;a href="https://github.com/gorhill/uBlock"&gt;uBlock
+Origin&lt;/a&gt; always, and it's a bit hypocritical
+if my own side has things that are blocked by it. In some cases I can't avoid
+it (as far as I know), like when I embed a YouTube video, but it definitely
+shouldn't be on every post.&lt;/p&gt;
+&lt;p&gt;Utterances is a very nice alternative. I has lots of advantages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Comments are not self-hosted. GitHub hosts them. Since you need a GitHub
+account to comment, this should make comment spam a non-issue.&lt;/li&gt;
+&lt;li&gt;Comments support full Markdown.&lt;/li&gt;
+&lt;li&gt;Users can edit their comments.&lt;/li&gt;
+&lt;li&gt;I can edit and fully moderate all comments.&lt;/li&gt;
+&lt;li&gt;Users log in with a federated system that proves their identity.&lt;/li&gt;
+&lt;li&gt;It's completely open source and free to use.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Exporting Disqus Comments&lt;/h3&gt;
+&lt;p&gt;Some of my old posts had Disqus comments, which I wanted to preserve somehow.
+Here is guide on how I did that, since it wasn't as straightforward as I would
+have hoped.&lt;/p&gt;
+&lt;p&gt;The first step is to export your Disqus comments. It's very difficult to
+actually find the place in the Disqus site where you do this, but I finally
+found the URL https://disqus.com/admin/discussions/export/. The export takes
+some time to complete (for me it took about half an hour). When it finished,
+Disqus will email you an XML file with all your comments. Note that the file
+contains all comments for all sites you have ever set up with Disqus. For me,
+it also included all the comments on my old &lt;a href="http://asmeurersympy.wordpress.com/"&gt;Wordpress
+blog&lt;/a&gt;, as well as posts for draft blog
+posts that I never ended up publishing. It also contained all comments that
+were marked as spam, so you will need to remember to filter those.&lt;/p&gt;
+&lt;p&gt;I decided that since I only have a handful of posts with Disqus comments, I
+would just write a script to process them all and manually print them out,
+which I will then manually enter in to the Utterances comment system for those
+posts.&lt;/p&gt;
+&lt;p&gt;I wrote a script, which you can find &lt;a href="https://asmeurer.com/blog/posts/switching-to-utterances-comments/"&gt;here&lt;/a&gt; to process the comments.
+Disqus does provides an
+&lt;a href="https://disqus.com/api/schemas/1.0/disqus.xsd"&gt;XML schema&lt;/a&gt; for the XML. I
+used a library called
+&lt;a href="https://xsdata.readthedocs.io/en/latest/index.html"&gt;xsData&lt;/a&gt;, which lets you
+take an XML scheme and generate Python dataclasses corresponding to it, which
+make manipulating the parsed XML much easier than the standard library xml
+library. The script outputs text like&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;========== Comments from https://asmeurer.github.io/blog/posts/what-happens-when-you-mess-with-hashing-in-python/ ==========
+
+    **Comment from bjd2385 on 2016-08-28 12:33:12+00:00:**
+
+    &amp;lt;p&amp;gt;Very interesting post. I was just looking into hash functions (I've never formally learned what the topic entails), and since I'm most familiar with Python this post explained quite a bit, especially your early mathematical points.&amp;lt;/p&amp;gt;
+
+    **Comment from Mark Lawrence on 2016-10-03 20:26:54+00:00:**
+
+    &amp;lt;p&amp;gt;At what point does Python 3 force the override of __hash__ if you've defined __eq__?  E.g when would your&amp;lt;/p&amp;gt;&amp;lt;p&amp;gt;AlwaysEqual class fail?&amp;lt;/p&amp;gt;
+
+    **Replies:**
+
+        **Comment from asmeurer on 2016-10-03 20:38:13+00:00:**
+
+        &amp;lt;p&amp;gt;That's a good catch. I originally wrote this post in Python 2. The example does indeed fail in Python 3. More specifically, if you override __eq__, Python 3 automatically sets __hash__ to None. I'll update the post to make this more clear.&amp;lt;/p&amp;gt;
+
+    **Comment from Erick Mendon&amp;#231;a on 2017-07-30 03:23:55+00:00:**
+
+    &amp;lt;p&amp;gt;Great article! We must really pay attention to these details when implementing custom hashes.&amp;lt;/p&amp;gt;
+
+    **Comment from Ignacio on 2017-10-07 22:31:56+00:00:**
+
+    &amp;lt;p&amp;gt;Thanks a lot for this post! Clarified a lot of concepts.&amp;lt;/p&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;which I then manually copied to each post's Utterances page on GitHub.&lt;/p&gt;
+&lt;p&gt;Feel free to adapt &lt;a href="https://asmeurer.com/blog/posts/switching-to-utterances-comments/"&gt;my script&lt;/a&gt; if you find yourself in a similar situation.&lt;/p&gt;
+&lt;h3&gt;Utterances Comments&lt;/h3&gt;
+&lt;p&gt;Feel free to use the comments on this page to play around with the commenting
+system.&lt;/p&gt;
+&lt;p&gt;Note that to comment, there are two options. You can log in on this page,
+which will let you type your comment in the box below. This requires giving
+the Utterances bot access to your GitHub account. Alternately, if you don't
+want to give a bot access, you can just go directly to the GitHub issue page
+and comment there. I am currently in the process of figuring out how to add
+some boilerplate to each page that makes this clear (see
+&lt;a href="https://github.com/utterance/utterances/issues/355"&gt;this&lt;/a&gt;). If anyone has any
+suggestions on how to do this, let me know.&lt;/p&gt;&lt;/div&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://iamit.in/blog/upgrading-sympy-gamma</guid>
       <author>Amit Kumar (aktech)</author>
       <title>Amit Kumar (aktech): Porting SymPy Gamma to Google App Engine Python 3</title>
@@ -1005,73 +1099,6 @@ is thus used at many places across the codebase. Therefore, a lot of time was sp
       <pubDate>Tue, 23 Jun 2020 00:00:00 GMT</pubDate>
       <link>https://namannimmo10.github.io/emerald//week_4</link>
       <description>&lt;p&gt;With this, the fourth week and phase 1 of GSoC 2020 is over. Here I will give you a brief summary of my progress this week.&lt;/p&gt; &lt;p&gt;The initial days were spent mostly on modifying unit tests for &lt;code class="language-plaintext highlighter-rouge"&gt;Series&lt;/code&gt; and &lt;code class="language-plaintext highlighter-rouge"&gt;Parallel&lt;/code&gt; classes which I added in the...</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://friyaz.github.io/blog/GSoC-2020-Week-3</guid>
-      <author>Faisal Riyaz (friyaz)</author>
-      <title>Faisal Riyaz (friyaz): GSoC 2020 Week-3</title>
-      <pubDate>Sun, 21 Jun 2020 00:00:00 GMT</pubDate>
-      <link>http://friyaz.github.io/blog/GSoC-2020-Week-3</link>
-      <description>&lt;p&gt;I spent this week working on the implementation of the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; class.&lt;/p&gt;
-
-&lt;h3 id="modifying-api-of-parametricregion"&gt;Modifying API of ParametricRegion&lt;/h3&gt;
-&lt;p&gt;When I was writing the test cases, I realized that the API of the ParametricRegion could be improved. Instead of passing limits as a dictionary, tuples can be used. 
-So I modified the API of the ParametricRegion class. The new API is closer to the API of the &lt;code class="language-plaintext highlighter-rouge"&gt;integral&lt;/code&gt; class and more intuitive.  I made a separate &lt;a href="https://github.com/sympy/sympy/pull/19580"&gt;PR&lt;/a&gt; for this change to make it easy for reviewers.&lt;/p&gt;
-
-&lt;p&gt;Example of the new API:&lt;/p&gt;
-&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id="handling-scalar-fields-with-no-base-scalars"&gt;Handling scalar fields with no base scalars&lt;/h3&gt;
-&lt;p&gt;As discussed in previous posts, we decided to not associate a coordinate system with the parametric region. Instead, we assume that the parametricregion is defined in the coordinate system of the field of which the integral is being calculated. We calculate the position vector and normal vector of the parametric region using the base scalars and vectors of the fields. This works fine for most cases. But when the field does not contain any base scalar or vector in its expression, we cannot extract the coordinate system from the field.&lt;/p&gt;
-&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;ParametricIntegral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;150&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;circle&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="c1"&gt;# We cannot determine the coordinate system from the field. 
-# To calculate the line integral, we need to find the derivative of the position vector.
-# This is not possible until we know the base vector of the field
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;To handle this situation, I assign a coordinate system C to the region. This does not affect the result in any way as the result is independent of it. It just allows the existing algorithm to work in this case.&lt;/p&gt;
-
-&lt;h3 id="separate-class-for-vector-and-scalar-fields"&gt;Separate class for vector and scalar fields&lt;/h3&gt;
-&lt;p&gt;Francesco suggested making separate classes based on the nature of the field: vector and scalar. I am open to this idea. But I think it will be more easy and intuitive for the users if they can use the same class to calculate the integral. I do not think they are different enough from a user&amp;#8217;s perspective to have a separate interface.&lt;/p&gt;
-
-&lt;p&gt;Maybe we can have a function &lt;code class="language-plaintext highlighter-rouge"&gt;vectorintegrate&lt;/code&gt; which returns the object of &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricVectorIntegral&lt;/code&gt; or &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricScalarIntegral&lt;/code&gt; depending on the nature of the field. This can work for other types of integrals too. Suppose we implement a class &lt;code class="language-plaintext highlighter-rouge"&gt;ImplicitIntegral&lt;/code&gt; to calculate the integral over an implicit region. The &lt;code class="language-plaintext highlighter-rouge"&gt;vectorintegrate&lt;/code&gt; function can then return an object of &lt;code class="language-plaintext highlighter-rouge"&gt;ImplicitIntegral&lt;/code&gt; object by identifying the region is defined implicitly. I think this will be great. I will have more discussion with Francesco on this aspect.&lt;/p&gt;
-
-&lt;h3 id="topological-sort-of-parameters"&gt;Topological sort of parameters&lt;/h3&gt;
-&lt;p&gt;When evaluating double integral, the result some times depend upon the order in which the integral is evaluated. If the bounds of one parameter &lt;code class="language-plaintext highlighter-rouge"&gt;u&lt;/code&gt; depend on another parameter &lt;code class="language-plaintext highlighter-rouge"&gt;v&lt;/code&gt;, we should integrate first with respect to &lt;code class="language-plaintext highlighter-rouge"&gt;u&lt;/code&gt; and then &lt;code class="language-plaintext highlighter-rouge"&gt;v&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;For example, consider the problem of evaluating the area of the triangle.&lt;/p&gt;
-&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;T&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;The area of the triangle is 10 units and should be independent of the order parameters are specified at the time of object initialization. But the double integral depends on the order of integration.&lt;/p&gt;
-&lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; integrate(1, (x, 0, 2), (y, 10 - 5*x))
-20 - 10*x
-&amp;gt;&amp;gt;&amp;gt; integrate(1, (y, 0, 10 - 5*x), (x, 0, 2))
-10
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;So parameters must be passed to &lt;code class="language-plaintext highlighter-rouge"&gt;integrate&lt;/code&gt; in the correct order. To overcome this issue, we topologically sort the parameters. SymPy already had a function to perform topologically sort in its utilities module. I implemented a function that generates the graph and passes it to the &lt;code class="language-plaintext highlighter-rouge"&gt;topological_sort&lt;/code&gt; function. This made my work easy.&lt;/p&gt;
-
-&lt;h3 id="long-computation-time-of-integrals"&gt;Long computation time of Integrals&lt;/h3&gt;
-&lt;p&gt;Some integrals are taking too long to compute. When base scalars in the field are replaced by their parametric equivalents, the expression of the field becomes large. Further, the integrand is the dot product of the field with a vector or product of the field and the magnitude of the vector. The integrate function takes about 20-30 seconds to calculate the integral. I think this behavior is due to the expression of integrand growing structurally despite it being simple.&lt;/p&gt;
-
-&lt;p&gt;For example,&lt;/p&gt;
-&lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt;solidsphere = ParametricRegion((r*sin(phi)*cos(theta), r*sin(phi)*sin(theta), r*cos(phi)),\
-                                (r, 0, 2), (theta, 0, 2*pi), (phi, 0, pi))
-&amp;gt;&amp;gt;&amp;gt; ParametricIntegral(C.x**2 + C.y**2, solidsphere)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;In this case, the parametric field when replaced with parametersr become &lt;code class="language-plaintext highlighter-rouge"&gt;r**2*sin(phi)**2*sin(theta)**2 + r**2*sin(phi)**2*cos(theta)**2&lt;/code&gt; although it can be easily simplified to &lt;code class="language-plaintext highlighter-rouge"&gt;r**2*sin(phi)&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;SymPy has a function called &lt;code class="language-plaintext highlighter-rouge"&gt;simplify&lt;/code&gt;. &lt;code class="language-plaintext highlighter-rouge"&gt;simplify&lt;/code&gt; attempts to apply various methods to simplify an expression. When the integrand is simplified using it before passing to integrate, the result is returned almost immediately. Francesco rightly pointed out that simplify is computationally expensive and we can try to some specific simplification. I will look into it.&lt;/p&gt;
-
-&lt;h3 id="failing-test-cases"&gt;Failing test cases&lt;/h3&gt;
-&lt;p&gt;Some test cases are failing because of integrate function returning results in different forms. The results are mathematically equivalent but different in terms of structure. I found this strange. I do not think this has to do with hashing. I still have not figured out this problem.&lt;/p&gt;
-
-&lt;h3 id="next-weeks-goal"&gt;Next week&amp;#8217;s goal&lt;/h3&gt;
-&lt;p&gt;Hopefully, I will complete the work on the ParamatricIntegral and get it merged. We can then start discussing about representing implicit regions.&lt;/p&gt;
-
-&lt;div class="notice"&gt;
-    &lt;h4&gt;Comments are closed&lt;/h4&gt;
-    If you have a question concerning the content of this page, please feel free to &lt;a href="https://friyaz.github.io/contact/"&gt;contact me&lt;/a&gt;.&lt;/p&gt;--&gt;
-  &lt;/div&gt;</description>
     </item>
   </channel>
 </rss>

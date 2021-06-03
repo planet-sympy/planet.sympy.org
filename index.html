@@ -89,6 +89,157 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">June 03, 2021</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-9097e2d0 feed-" id="item-45d5682c">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/asmeurer.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Aaron Meurer (asmeurer) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://asmeurer.com/blog/posts/switching-to-utterances-comments/">03:57, Thursday, 03 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://asmeurer.com/blog/posts/switching-to-utterances-comments/">Aaron Meurer (asmeurer): Switching to Utterances Comments</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/asmeurer.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Aaron Meurer (asmeurer) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://asmeurer.com/blog/posts/switching-to-utterances-comments/">03:57, Thursday, 03 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://asmeurer.com/blog/posts/switching-to-utterances-comments/">Switching to Utterances Comments</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<div><p>I've ditched Disqus as the comment system on this blog. I am now using
+<a href="https://utteranc.es/">Utterances</a>. Utterances is an open source comment
+system that is backed by GitHub issues. Basically, every post has a
+corresponding issue opened on GitHub, and the comments on the post are the
+comments on the issue. Utterances automatically places the comments at the
+bottom of the post. For example, <a href="https://asmeurer.com/blog/posts/switching-to-utterances-comments/">here</a> is the issue corresponding to this
+post.</p>
+<p>I didn't like Disqus mostly because it serves ads and tracking. Even though I
+had opted out from as much of it as I could in the Disqus settings, it still
+loads tracking scripts on every page. I run <a href="https://github.com/gorhill/uBlock">uBlock
+Origin</a> always, and it's a bit hypocritical
+if my own side has things that are blocked by it. In some cases I can't avoid
+it (as far as I know), like when I embed a YouTube video, but it definitely
+shouldn't be on every post.</p>
+<p>Utterances is a very nice alternative. I has lots of advantages:</p>
+<ul>
+<li>Comments are not self-hosted. GitHub hosts them. Since you need a GitHub
+account to comment, this should make comment spam a non-issue.</li>
+<li>Comments support full Markdown.</li>
+<li>Users can edit their comments.</li>
+<li>I can edit and fully moderate all comments.</li>
+<li>Users log in with a federated system that proves their identity.</li>
+<li>It's completely open source and free to use.</li>
+</ul>
+<h3>Exporting Disqus Comments</h3>
+<p>Some of my old posts had Disqus comments, which I wanted to preserve somehow.
+Here is guide on how I did that, since it wasn't as straightforward as I would
+have hoped.</p>
+<p>The first step is to export your Disqus comments. It's very difficult to
+actually find the place in the Disqus site where you do this, but I finally
+found the URL https://disqus.com/admin/discussions/export/. The export takes
+some time to complete (for me it took about half an hour). When it finished,
+Disqus will email you an XML file with all your comments. Note that the file
+contains all comments for all sites you have ever set up with Disqus. For me,
+it also included all the comments on my old <a href="http://asmeurersympy.wordpress.com/">Wordpress
+blog</a>, as well as posts for draft blog
+posts that I never ended up publishing. It also contained all comments that
+were marked as spam, so you will need to remember to filter those.</p>
+<p>I decided that since I only have a handful of posts with Disqus comments, I
+would just write a script to process them all and manually print them out,
+which I will then manually enter in to the Utterances comment system for those
+posts.</p>
+<p>I wrote a script, which you can find <a href="https://asmeurer.com/blog/posts/switching-to-utterances-comments/">here</a> to process the comments.
+Disqus does provides an
+<a href="https://disqus.com/api/schemas/1.0/disqus.xsd">XML schema</a> for the XML. I
+used a library called
+<a href="https://xsdata.readthedocs.io/en/latest/index.html">xsData</a>, which lets you
+take an XML scheme and generate Python dataclasses corresponding to it, which
+make manipulating the parsed XML much easier than the standard library xml
+library. The script outputs text like</p>
+<pre><code>========== Comments from https://asmeurer.github.io/blog/posts/what-happens-when-you-mess-with-hashing-in-python/ ==========
+
+    **Comment from bjd2385 on 2016-08-28 12:33:12+00:00:**
+
+    &lt;p&gt;Very interesting post. I was just looking into hash functions (I've never formally learned what the topic entails), and since I'm most familiar with Python this post explained quite a bit, especially your early mathematical points.&lt;/p&gt;
+
+    **Comment from Mark Lawrence on 2016-10-03 20:26:54+00:00:**
+
+    &lt;p&gt;At what point does Python 3 force the override of __hash__ if you've defined __eq__?  E.g when would your&lt;/p&gt;&lt;p&gt;AlwaysEqual class fail?&lt;/p&gt;
+
+    **Replies:**
+
+        **Comment from asmeurer on 2016-10-03 20:38:13+00:00:**
+
+        &lt;p&gt;That's a good catch. I originally wrote this post in Python 2. The example does indeed fail in Python 3. More specifically, if you override __eq__, Python 3 automatically sets __hash__ to None. I'll update the post to make this more clear.&lt;/p&gt;
+
+    **Comment from Erick Mendon&#231;a on 2017-07-30 03:23:55+00:00:**
+
+    &lt;p&gt;Great article! We must really pay attention to these details when implementing custom hashes.&lt;/p&gt;
+
+    **Comment from Ignacio on 2017-10-07 22:31:56+00:00:**
+
+    &lt;p&gt;Thanks a lot for this post! Clarified a lot of concepts.&lt;/p&gt;
+</code></pre>
+<p>which I then manually copied to each post's Utterances page on GitHub.</p>
+<p>Feel free to adapt <a href="https://asmeurer.com/blog/posts/switching-to-utterances-comments/">my script</a> if you find yourself in a similar situation.</p>
+<h3>Utterances Comments</h3>
+<p>Feel free to use the comments on this page to play around with the commenting
+system.</p>
+<p>Note that to comment, there are two options. You can log in on this page,
+which will let you type your comment in the box below. This requires giving
+the Utterances bot access to your GitHub account. Alternately, if you don't
+want to give a bot access, you can just go directly to the GitHub issue page
+and comment there. I am currently in the process of figuring out how to add
+some boilerplate to each page that makes this clear (see
+<a href="https://github.com/utterance/utterances/issues/355">this</a>). If anyone has any
+suggestions on how to do this, let me know.</p></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">October 30, 2020</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -2726,130 +2877,6 @@ is thus used at many places across the codebase. Therefore, a lot of time was sp
 		</div>
 	</div>
 </div></div>
-<div class="day">
-<h2 class="dayform">June 21, 2020</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-6eefe67f feed-" id="item-0182acc9">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/friyaz.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Faisal Riyaz (friyaz) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="http://friyaz.github.io/blog/GSoC-2020-Week-3">00:00, Sunday, 21 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="http://friyaz.github.io/blog/GSoC-2020-Week-3">Faisal Riyaz (friyaz): GSoC 2020 Week-3</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/friyaz.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Faisal Riyaz (friyaz) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="http://friyaz.github.io/blog/GSoC-2020-Week-3">00:00, Sunday, 21 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="http://friyaz.github.io/blog/GSoC-2020-Week-3">GSoC 2020 Week-3</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>I spent this week working on the implementation of the <code class="language-plaintext highlighter-rouge">ParametricIntegral</code> class.</p>
-
-<h3 id="modifying-api-of-parametricregion">Modifying API of ParametricRegion</h3>
-<p>When I was writing the test cases, I realized that the API of the ParametricRegion could be improved. Instead of passing limits as a dictionary, tuples can be used. 
-So I modified the API of the ParametricRegion class. The new API is closer to the API of the <code class="language-plaintext highlighter-rouge">integral</code> class and more intuitive.  I made a separate <a href="https://github.com/sympy/sympy/pull/19580">PR</a> for this change to make it easy for reviewers.</p>
-
-<p>Example of the new API:</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ParametricRegion</span><span class="p">(</span> <span class="p">(</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span> <span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-</code></pre></div></div>
-
-<h3 id="handling-scalar-fields-with-no-base-scalars">Handling scalar fields with no base scalars</h3>
-<p>As discussed in previous posts, we decided to not associate a coordinate system with the parametric region. Instead, we assume that the parametricregion is defined in the coordinate system of the field of which the integral is being calculated. We calculate the position vector and normal vector of the parametric region using the base scalars and vectors of the fields. This works fine for most cases. But when the field does not contain any base scalar or vector in its expression, we cannot extract the coordinate system from the field.</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ParametricIntegral</span><span class="p">(</span><span class="mi">150</span><span class="p">,</span> <span class="n">circle</span><span class="p">)</span>
-<span class="c1"># We cannot determine the coordinate system from the field. 
-# To calculate the line integral, we need to find the derivative of the position vector.
-# This is not possible until we know the base vector of the field
-</span></code></pre></div></div>
-<p>To handle this situation, I assign a coordinate system C to the region. This does not affect the result in any way as the result is independent of it. It just allows the existing algorithm to work in this case.</p>
-
-<h3 id="separate-class-for-vector-and-scalar-fields">Separate class for vector and scalar fields</h3>
-<p>Francesco suggested making separate classes based on the nature of the field: vector and scalar. I am open to this idea. But I think it will be more easy and intuitive for the users if they can use the same class to calculate the integral. I do not think they are different enough from a user&#8217;s perspective to have a separate interface.</p>
-
-<p>Maybe we can have a function <code class="language-plaintext highlighter-rouge">vectorintegrate</code> which returns the object of <code class="language-plaintext highlighter-rouge">ParametricVectorIntegral</code> or <code class="language-plaintext highlighter-rouge">ParametricScalarIntegral</code> depending on the nature of the field. This can work for other types of integrals too. Suppose we implement a class <code class="language-plaintext highlighter-rouge">ImplicitIntegral</code> to calculate the integral over an implicit region. The <code class="language-plaintext highlighter-rouge">vectorintegrate</code> function can then return an object of <code class="language-plaintext highlighter-rouge">ImplicitIntegral</code> object by identifying the region is defined implicitly. I think this will be great. I will have more discussion with Francesco on this aspect.</p>
-
-<h3 id="topological-sort-of-parameters">Topological sort of parameters</h3>
-<p>When evaluating double integral, the result some times depend upon the order in which the integral is evaluated. If the bounds of one parameter <code class="language-plaintext highlighter-rouge">u</code> depend on another parameter <code class="language-plaintext highlighter-rouge">v</code>, we should integrate first with respect to <code class="language-plaintext highlighter-rouge">u</code> and then <code class="language-plaintext highlighter-rouge">v</code>.</p>
-
-<p>For example, consider the problem of evaluating the area of the triangle.</p>
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">T</span> <span class="o">=</span> <span class="n">ParametricRegion</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">10</span> <span class="o">-</span> <span class="mi">5</span><span class="o">*</span><span class="n">x</span><span class="p">))</span>
-</code></pre></div></div>
-<p>The area of the triangle is 10 units and should be independent of the order parameters are specified at the time of object initialization. But the double integral depends on the order of integration.</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; integrate(1, (x, 0, 2), (y, 10 - 5*x))
-20 - 10*x
-&gt;&gt;&gt; integrate(1, (y, 0, 10 - 5*x), (x, 0, 2))
-10
-</code></pre></div></div>
-<p>So parameters must be passed to <code class="language-plaintext highlighter-rouge">integrate</code> in the correct order. To overcome this issue, we topologically sort the parameters. SymPy already had a function to perform topologically sort in its utilities module. I implemented a function that generates the graph and passes it to the <code class="language-plaintext highlighter-rouge">topological_sort</code> function. This made my work easy.</p>
-
-<h3 id="long-computation-time-of-integrals">Long computation time of Integrals</h3>
-<p>Some integrals are taking too long to compute. When base scalars in the field are replaced by their parametric equivalents, the expression of the field becomes large. Further, the integrand is the dot product of the field with a vector or product of the field and the magnitude of the vector. The integrate function takes about 20-30 seconds to calculate the integral. I think this behavior is due to the expression of integrand growing structurally despite it being simple.</p>
-
-<p>For example,</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt;solidsphere = ParametricRegion((r*sin(phi)*cos(theta), r*sin(phi)*sin(theta), r*cos(phi)),\
-                                (r, 0, 2), (theta, 0, 2*pi), (phi, 0, pi))
-&gt;&gt;&gt; ParametricIntegral(C.x**2 + C.y**2, solidsphere)
-</code></pre></div></div>
-<p>In this case, the parametric field when replaced with parametersr become <code class="language-plaintext highlighter-rouge">r**2*sin(phi)**2*sin(theta)**2 + r**2*sin(phi)**2*cos(theta)**2</code> although it can be easily simplified to <code class="language-plaintext highlighter-rouge">r**2*sin(phi)</code>.</p>
-
-<p>SymPy has a function called <code class="language-plaintext highlighter-rouge">simplify</code>. <code class="language-plaintext highlighter-rouge">simplify</code> attempts to apply various methods to simplify an expression. When the integrand is simplified using it before passing to integrate, the result is returned almost immediately. Francesco rightly pointed out that simplify is computationally expensive and we can try to some specific simplification. I will look into it.</p>
-
-<h3 id="failing-test-cases">Failing test cases</h3>
-<p>Some test cases are failing because of integrate function returning results in different forms. The results are mathematically equivalent but different in terms of structure. I found this strange. I do not think this has to do with hashing. I still have not figured out this problem.</p>
-
-<h3 id="next-weeks-goal">Next week&#8217;s goal</h3>
-<p>Hopefully, I will complete the work on the ParamatricIntegral and get it merged. We can then start discussing about representing implicit regions.</p>
-
-<div class="notice">
-    <h4>Comments are closed</h4>
-    If you have a question concerning the content of this page, please feel free to <a href="https://friyaz.github.io/contact/">contact me</a>.</p>-->
-  </div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -2877,236 +2904,236 @@ So I modified the API of the ParametricRegion class. The new API is closer to th
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ravicharann.github.io/blog/"></a></td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://asmeurer.com/blog/">Aaron Meurer's Blog</a></td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://iamit.in/blog">Amit Kumar</a></td>
 <td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
 <td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://divyanshu132.github.io//">Divyanshu Thakur</a></td>
 <td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://friyaz.github.io">Faisal's Blog</a></td>
 <td><a class="xmlbutton" href="https://friyaz.github.io/feed.sympy.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arighnaiitg.github.io">GSoC Days</a></td>
 <td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sc0rpi0n101.github.io/categories/gsoc/">GSoC on Sc0rpi0n's Journey</a></td>
 <td><a class="xmlbutton" href="https://sc0rpi0n101.github.io/categories/gsoc/index.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://abhinav28071999.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://abhinav28071999.github.io/feed.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ritesh99rakesh.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td>https://parsoyaarihant.github.io/blog/feed.xml</td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td>https://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td>https://www.kangzhiq.com/tag/sympy/feed/</td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
 <td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://namannimmo10.github.io/emerald/">My-GSoC-blog</a></td>
 <td><a class="xmlbutton" href="https://namannimmo.me/emerald/atom.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sachin-4099.github.io//">Sachin Agarwal</a></td>
 <td><a class="xmlbutton" href="https://sachin-4099.github.io/feed.sympy.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://www.shubhamjha.com/">Shubham&#8217;s Blog</a></td>
 <td><a class="xmlbutton" href="http://shubhamjha.in/sympy_feed.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
 <td><a class="xmlbutton" href="https://sidhantnagpal.com/rss-gsoc.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://smit-create.github.io/Smit-create.github.io/">Smit-create</a></td>
 <td><a class="xmlbutton" href="https://smit-create.github.io/feed.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://sumith1896.github.io//">Sumith</a></td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>05:26, Thursday, 03 June</td>
-<td>05:41, Thursday, 03 June</td>
+<td>05:46, Thursday, 03 June</td>
+<td>06:01, Thursday, 03 June</td>
 </tr>
 </table>
 
