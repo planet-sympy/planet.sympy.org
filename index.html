@@ -89,6 +89,182 @@
 
     <div class="container">
          <div class="day">
+<h2 class="dayform">October 30, 2020</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-a7c7d19d feed-" id="item-f8e24f8d">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/aktech.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Amit Kumar (aktech) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://iamit.in/blog/sympy-gamma-gae-python3/">18:30, Friday, 30 October UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://iamit.in/blog/sympy-gamma-gae-python3/">Amit Kumar (aktech): Porting SymPy Gamma to Google App Engine Python 3</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/aktech.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Amit Kumar (aktech) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://iamit.in/blog/sympy-gamma-gae-python3/">18:30, Friday, 30 October UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://iamit.in/blog/sympy-gamma-gae-python3/">Porting SymPy Gamma to Google App Engine Python 3</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>This summer I had plenty of time during COVID-19 lockdown and I was looking at
+<a href="https://sympygamma.com/">SymPy Gamma</a>.</p>
+
+<center><img src="https://iamit.in/assets/sympy-gamma-port/sympy_gamma_demo.gif" width="700" /></center>
+
+<h2 id="sympy-gamma">Sympy Gamma</h2>
+
+<p>SymPy Gamma is a web application that executes mathematical expressions
+via natural language input from the user, after parsing them as SymPy
+expressions it displays the result with additional related computations.
+It is inspired from the idea of <a href="http://www.wolframalpha.com/">WolframAlpha</a> which is based on the
+commercial Computer Algebra System named <a href="https://en.wikipedia.org/wiki/Mathematica">&#8220;Mathematica&#8221;</a>.</p>
+
+<center><img src="https://iamit.in/assets/wolfram-alpha-logo.svg" width="300" /></center>
+
+<p>I have always been impressed by it ever since I first found about it.
+While playing with it during this summer, I realised that it runs on Google
+App Engine&#8217;s Python 2.7 runtime. It is powered by SymPy, an open source
+computer algebra system.</p>
+
+<center><img align="center" src="https://iamit.in/assets/Sympy_logo.svg" width="150" /></center>
+
+<h2 id="the-problem">The Problem</h2>
+
+<p>Despite being widely used around the world (about ~14K users everyday,
+as seen from Google Analytics), there hasn&#8217;t been a lot of development
+in the past 5 years. Due to this the current infrastructure
+was stuck on <a href="https://en.wikipedia.org/wiki/Google_App_Engine">Google App Engine</a>&#8217;s Python 2 runtime which obviously does
+not support Python 3.</p>
+
+<p>This also prevented it to use the latest version of SymPy. The SymPy
+version (~0.7.6) it was using was last updated 6 years ago. This made
+SymPy Gamma in urgent need for upgradation. At the time of writing this blog,
+SymPy Gamma is running on Google App Engine&#8217;s latest runtime and latest
+version of SymPy.</p>
+
+<h2 id="solution-and-process">Solution and Process</h2>
+
+<p>It was a fun project and was interesting to see how Google cloud offering has evolved
+from Google App Engine to Google Cloud Platform. The old App engine did
+seem like a minimal cloud offering launched by Google in an attempt to
+ship something early and quickly. It reminded me of my first cloud project
+in college (<a href="https://github.com/aktech/dturmscrap">dturmscrap</a>), which I
+deployed to Google App Engine, back in 2015.</p>
+
+<p>I used Github projects to track the whole project, all the work done for this
+can be seen <a href="https://github.com/sympy/sympy_gamma/projects/1">here</a>.</p>
+
+<h2 id="-git-log">$ Git Log</h2>
+
+<p>Here is a summary of what was achieved:</p>
+
+<ul>
+  <li>
+    <p><a href="https://github.com/sympy/sympy_gamma/pull/135">PR 135</a>: Migrating Django to a slightly higher version,
+this was the first blood just to make sure everything was working. I upgraded it to the latest version of
+Django that was supported on Python 2 runtime. This also exposed the broken CI, which was fixed in this.</p>
+  </li>
+  <li>
+    <p><a href="https://github.com/sympy/sympy_gamma/pull/137">PR 137</a>: This upgraded the CI infrastructure to use Google Cloud SDK
+for deployment, the previous method was discontinued.</p>
+  </li>
+  <li>
+    <p><a href="https://github.com/sympy/sympy_gamma/pull/140">PR 140</a>: Upgrading the Database backend to use Cloud NDB instead
+of the legacy App Engine NDB.</p>
+  </li>
+  <li>
+    <p><a href="https://github.com/sympy/sympy_gamma/pull/148">PR 148</a>: Since we change the database backend, we needed something for
+testing locally, this was done by using Google Cloud Datastore emulator locally.</p>
+  </li>
+  <li>
+    <p><a href="https://github.com/sympy/sympy_gamma/pull/149">PR 149</a>: The installation and setup of the project was quite a challenge.
+Installing and keeping track of the versions of a number of application was non-trivial. This Pull request dockerized
+the project and made the development setup trivial and it all boiled down to just one command.</p>
+  </li>
+  <li>
+    <p><a href="https://github.com/sympy/sympy_gamma/pull/152">PR 152</a>: The login feature was previously implemented using the user API
+of the Google App Engine&#8217;s Python2 runtime, which was not available in Python 3 runtime. We removed the login feature as it
+was not used by many and was too much effort to setup OAuth for login.</p>
+  </li>
+  <li>
+    <p><a href="https://github.com/sympy/sympy_gamma/pull/153">PR 153</a>: Now was the time to slowly move towards Python 3 by making the
+code compatible with both 2 and 3. It was achieved via <a href="https://python-modernize.readthedocs.io/en/latest/">python-modernize</a>.</p>
+  </li>
+  <li>
+    <p><a href="https://github.com/sympy/sympy_gamma/pull/154">PR 154</a>: We then made the migration to Python 3.7 runtime and removed submodules
+and introduced a <code class="language-plaintext highlighter-rouge">requirements.txt</code> for installing dependencies.</p>
+  </li>
+  <li>
+    <p><a href="https://github.com/sympy/sympy_gamma/pull/154">PR 159</a>: The above change made it possible to upgrade SymPy to latest version,
+which was 1.6 at that time.</p>
+  </li>
+  <li>
+    <p><a href="https://github.com/sympy/sympy_gamma/pull/154">PR 165</a>: The last piece of the puzzle was upgrading Django itself, so we upgraded
+it to the latest version, which was Django 3.0.8.</p>
+  </li>
+</ul>
+
+<h4 id="next-steps">Next Steps</h4>
+
+<ul>
+  <li>At the time of writing this Google has released the Python 3.8 runtime, it would nice to further upgrade it now.</li>
+  <li>The test coverage can be increased.</li>
+  <li>The code can be refactored to be more readable and approachable for new contributors.</li>
+</ul>
+
+<p>Thanks to Google for properly <a href="https://cloud.google.com/appengine/docs/standard/python/migrate-to-python3">documenting the process</a>,
+which made the transition much easier.</p>
+
+<p>Thanks to <a href="https://numfocus.org/">NumFocus</a>, without them this project would not have been possible. Also thanks to
+<a href="https://github.com/certik">Ondrej Certik</a> and <a href="http://github.com/asmeurer">Aaron Meurer</a> for their advice and support
+throughout the project.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
 <h2 class="dayform">August 29, 2020</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -2624,6 +2800,109 @@ self._critical_load = solve(defl_eqs, P, dict=True)[0][P]
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-512275ca feed-" id="item-fdd83de5">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shubhamkjha.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://www.shubhamjha.com/posts/GSoC-Week-12-(The-Final-Week)/">18:30, Tuesday, 20 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://www.shubhamjha.com/posts/GSoC-Week-12-(The-Final-Week)/">Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 12 (The Final Week)</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shubhamkjha.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://www.shubhamjha.com/posts/GSoC-Week-12-(The-Final-Week)/">18:30, Tuesday, 20 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://www.shubhamjha.com/posts/GSoC-Week-12-(The-Final-Week)/">GSoC 2019: Week 12 (The Final Week)</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>The last week of coding period is officially over. A summary of the work done during this week is:</p>
+
+<ul>
+  <li><a href="https://github.com/sympy/sympy/pull/17379">#17379</a> is now complete and currently under review. I will try to get it merged within this week.</li>
+  <li><a href="https://github.com/sympy/sympy/pull/17392">#17392</a> still needs work. I will try to put a closure to this by the end of week.</li>
+  <li><a href="https://github.com/sympy/sympy/pull/17440">#17440</a> was started. It attempts to add a powerful (but optional) SAT solving engine to SymPy (<a href="https://pypi.org/project/pycosat/">pycosat</a>). The performance gain for SAT solver is also subtle here: Using this
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre>from sympy import *
+from sympy.abc import x
+r = random_poly(x, 100, -100, 100)
+ans = ask(Q.positive(r), Q.positive(x))
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+    <p>The performance is like</p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre># In master
+ |  `- 0.631 check_satisfiability  sympy/assumptions/satask.py:30
+ |     `- 0.607 satisfiable  sympy/logic/inference.py:38
+ |        `- 0.607 dpll_satisfiable  sympy/logic/algorithms/dpll2.py:21
+# With pycosat
+ |  `- 0.122 check_satisfiability  sympy/assumptions/satask.py:30
+ |     `- 0.098 satisfiable  sympy/logic/inference.py:39
+ |        `- 0.096 pycosat_satisfiable  sympy/logic/algorithms/pycosat_wrapper.py:11
+</pre></td></tr></tbody></table></code></pre></div>    </div>
+    <p>It is finished and under review now.</p>
+  </li>
+</ul>
+
+<p>Also, with the end of GSoC 2019, final evaluations have started. I will be writing a final report to the whole project by the end of this week.</p>
+
+<p>So far it has been a great and enriching experience for me. It was my first attempt at GSoC and I am lucky to get such an exposure. I acknowledge that I started with an abstract idea of the project but I now understand both the need and the code of <code class="language-plaintext highlighter-rouge">New Assumptions</code> pretty well (thanks to <a href="https://github.com/asmeurer">Aaron</a> who wrote the most of it). The system is still in its early phases and needs a lot more work. I am happy to be a part of it and I will be available to work on it.</p>
+
+<p>This is the last weekly report but I will still be contributing to SymPy and open source in general. I will try to write more of such experiences through this portal. Till then, Good bye and thank you!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-eb3e3c3b feed-" id="item-caadfadf">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
@@ -2725,92 +3004,29 @@ next week ends.</p>
 			</div>
 		</div>
 	</div>
-</div><div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-d75afba2 feed-" id="item-26f4e320">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Arighna.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Arighna Chakrabarty (arighnaiitg) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://arighnaiitg.github.io/2019-08-20-gsoc-week12/">07:00, Tuesday, 20 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://arighnaiitg.github.io/2019-08-20-gsoc-week12/">Arighna Chakrabarty (arighnaiitg): GSoC Week 12 !!</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Arighna.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Arighna Chakrabarty (arighnaiitg) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://arighnaiitg.github.io/2019-08-20-gsoc-week12/">07:00, Tuesday, 20 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://arighnaiitg.github.io/2019-08-20-gsoc-week12/">GSoC Week 12 !!</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Week 12 ends.. - 
-          So, finally after a long summer GSoC has come to an end!! It has been a great experience, and something which I will cherish for the rest of my life. I would like to thank my mentor Sartaj, who has been guiding me through the thick and thin of times....
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
 </div></div>
 <div class="day">
-<h2 class="dayform">August 19, 2019</h2>
+<h2 class="dayform">August 13, 2019</h2>
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-a7ab14f6 feed-" id="item-fcedd60d">
+		    <div class="box" class="item feed-eb3e3c3b feed-" id="item-562b106a">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
 			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
 			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/divyanshu132.jpg"/> 
+				    				 <img src="hackergotchi/ishanaj.jpg"/> 
 				    				
 				    			</div>
 			    			</td>
 			    			<td style="vertical-align:bottom;">
 			    				<div class="row" style="margin-top:15px;">
 					    			<div class="col-md-8">
-							    		<a href="">Divyanshu Thakur (divyanshu132) </a>
+							    		<a href="">Ishan Joshi (ishanaj) </a>
 							    	</div>
 							    	<div class="col-md-4 dtdate">
-							    		<a href="https://divyanshu132.github.io//gsoc-week-12">00:00, Monday, 19 August UTC</a>
+							    		<a href="https://ishanaj.wordpress.com/2019/08/13/gsoc19-week-11-heading-to-the-final-week/">17:26, Tuesday, 13 August UTC</a>
 							    	</div>
 							    </div>
 			    			</td>
@@ -2819,510 +3035,115 @@ next week ends.</p>
 			    			<td style="vertical-align:bottom;">
 			    				<div class="row">
 							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://divyanshu132.github.io//gsoc-week-12">Divyanshu Thakur (divyanshu132): GSoC 2019 - Week 11 and 12 - Phase-III Completion</a></h4>
+							    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/08/13/gsoc19-week-11-heading-to-the-final-week/">Ishan Joshi (ishanaj): GSoC&#8217;19: Week-11- Heading to the final week</a></h4>
 							    	</div>
 							    </div>
 			    			</td>
 			    		</tr>
 			    	</table>
 			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/divyanshu132.jpg"/> 
+			    		 <img src="hackergotchi/ishanaj.jpg"/> 
 			    		
 			    	</div>
 			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
 			    		<div class="row">
 			    			<div class="col-md-8">
-					    		<a href="">Divyanshu Thakur (divyanshu132) </a>
+					    		<a href="">Ishan Joshi (ishanaj) </a>
 					    	</div>
 					    	<div class="col-md-4 dtdate">
-					    		<a href="https://divyanshu132.github.io//gsoc-week-12">00:00, Monday, 19 August UTC</a>
+					    		<a href="https://ishanaj.wordpress.com/2019/08/13/gsoc19-week-11-heading-to-the-final-week/">17:26, Tuesday, 13 August UTC</a>
 					    	</div>
 					    </div>
 					    <div class="row">
 					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://divyanshu132.github.io//gsoc-week-12">GSoC 2019 - Week 11 and 12 - Phase-III Completion</a></h4>
+					    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/08/13/gsoc19-week-11-heading-to-the-final-week/">GSoC&#8217;19: Week-11- Heading to the final week</a></h4>
 					    	</div>
 					    </div>
 				    </div-->
 				</div>
 				<div class="row">
 					<div class="col-md-12 col-xs-12 descript">
-						<p>We&#8217;ve reached to the end of GSoC 2019, end to the really productive and wonderful summer. In the last two weeks I worked on documenting polycyclic groups which got merged as well, here is the PR <a href="https://github.com/sympy/sympy/pull/17399">sympy/sympy#17399</a>.</p>
+						<p>With the end of this week the <strong>draw()</strong> function has been completely implemented. The work on <a href="https://github.com/sympy/sympy/pull/17345">PR #17345</a> has been completed along with the documentations.</p>
 
-<p>Also, the PR on Induced-pcgs and exponent vector for polycyclic subgroups got merged <a href="https://github.com/sympy/sympy/pull/17317">sympy/sympy#17317</a>.</p>
 
-<p>Let&#8217;s have a look at some of the highlights of documentation.</p>
 
-<ul>
-  <li>The parameters of both the classes(<code class="highlighter-rouge">PolycyclicGroup</code> and <code class="highlighter-rouge">Collector</code>) has been discussed in detail.</li>
-  <li>Conditions for a word to be collected or uncollected is highlighted.</li>
-  <li>Computation of polycyclic presentation has been explained in detail highlighting the sequence in which presentation is computed with the corresponding pcgs and and polycyclic series elements used.</li>
-  <li>Other methods like <code class="highlighter-rouge">subword_index</code>, <code class="highlighter-rouge">exponent_vector</code>, <code class="highlighter-rouge">depth</code>, etc are also documented.</li>
-</ul>
+<p>As mentioned in the previous blog this PR was an attempt to make the <strong>draw()</strong> function use SymPy&#8217;s own plot() rather than importing matplotlib externally to plot the diagram. The idea was to plot the load equation which is in terms of singularity function. This would directly plot uniformly distributed load, uniformly varying load and other higher order loads except for point loads and moment loads.<br /> The task was now to plot the remaining parts of the diagram which were:</p>
 
-<p>An example is provided for every functionality.
-For more details one can visit:
-<a href="https://docs.sympy.org/dev/modules/combinatorics/pc_groups.html">https://docs.sympy.org/dev/modules/combinatorics/pc_groups.html</a></p>
 
-<p>Now, I&#8217;m supposed to prepare a final report presenting all the work done. Will update with report next week.
-In addition to the report preparation I&#8217;ll try to add <code class="highlighter-rouge">Parameters</code> section in the <code class="highlighter-rouge">docstrings</code> for various classes and methods of <code class="highlighter-rouge">pc_groups</code>.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">August 18, 2019</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-b30d7457 feed-" id="item-de3b8eb8">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/jmig5776.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Jogi Miglani (jmig5776) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://jmig5776.github.io//gsoc-final-report">00:00, Sunday, 18 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-final-report">Jogi Miglani (jmig5776): Final report for GSoC 2019 (Week 12)</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/jmig5776.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Jogi Miglani (jmig5776) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://jmig5776.github.io//gsoc-final-report">00:00, Sunday, 18 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-final-report">Final report for GSoC 2019 (Week 12)</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>It&#8217;s finally the last week of the Google Summer of Code 2019. Before I start
-discussing my work over the summer I would like to highlight my general
-experience with the GSoC program.</p>
 
-<p>GSoC gives students all over the world the opportunity to connect and
-collaborate with some of the best programmers involved in open source from
-around the world. I found the programme tremendusly enriching both in terms of
-the depth in which I got to explore some of the areas involved in my project
-and also gave me exxposure to some areas I had no previous idea about.
-The role of a mentor in GSoC is the most important and I consider myself
-very lucky to have got Yathartha Anirudh Joshi and Amit Kumar as my mentors.
-Amit and Yathartha has been tremendously encouraging and helpful throughout the summer.
-I would also like to mention the importance of the entire community involved,
-just being part of the SymPy community.</p>
+<ul><li>A rectangle for drawing the beam</li><li>Arrows for point loads</li><li>Markers for moment loads and supports </li><li>Colour filling to fill colour in inside the higher order loads (order &gt;=0).<span id="more-105"></span></li></ul>
 
-<h3 id="work-completed">Work Completed</h3>
 
-<p>Here is a list of PRs which were opened during the span of GSoC:</p>
 
-<ol>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/pull/16976">#16796 Added <code class="highlighter-rouge">_solve_modular</code> for handling equations a - Mod(b, c) = 0 where only b is expr</a></p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/pull/16890">#16890 Fixing lambert in bivariate to give all real solutions</a></p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/pull/16960">#16960 (Don&#8217;t Merge)(Prototype) Adding abs while converting equation to log form to get solved by <code class="highlighter-rouge">_lambert</code></a></p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/pull/17043">#17043 Feature power_list to return all powers of a variable present in f</a></p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/pull/17079">#17079 Defining ImageSet Union</a></p>
-  </li>
-</ol>
+<p>Instead of making temporary hacks to implement these, I went a step further to give the plotting module some additional functionalities. Apart from helping in implementing the <strong>draw()</strong> function, &nbsp;this would also enhance the plotting module.</p>
 
-<p>Here is a list of PRs merged:</p>
 
-<ol>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/pull/16976">#16796 Added <code class="highlighter-rouge">_solve_modular</code> for handling equations a - Mod(b, c) = 0 where only b is expr</a></p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/pull/16890">#16890 Fixing lambert in bivariate to give all real solutions</a></p>
-  </li>
-</ol>
 
-<p>Here is all the brief description about the PRs merged:</p>
+<p>The basic idea was to have some additional keyworded arguments in the <strong>plot()</strong> function. Every keyworded argument would be a list of dictionaries where each dictionary would represent the arguments (or parameters) that would have been passed in the corresponding matplotlib functions.</p>
 
-<ol>
-  <li><a href="https://github.com/sympy/sympy/pull/16976">#16796 Added <code class="highlighter-rouge">_solve_modular</code> for handling equations a - Mod(b, c) = 0 where only b is expr</a></li>
-</ol>
 
-<p>In this PR a new solver <code class="highlighter-rouge">_solve_modular</code> was made for solving modular equations.</p>
 
-<h3 id="what-type-of-equations-to-be-considered-and-what-domain">What type of equations to be considered and what domain?</h3>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A - Mod(B, C) = 0
+<p>These are the functions of matplotlib that can now be accessed using <strong>sympy&#8217;s plot()</strong>, along with where there are used in our current situation:</p>
 
-    A -&gt; This can or cannot be a function specifically(Linear, nth degree single
-         Pow, a**f_x and Add and Mul) of symbol.(But currently its not a
-        function of x)
-    B -&gt; This is surely a function of symbol.
-    C -&gt; It is an integer.
-And domain should be a subset of S.Integers.
-</code></pre></div></div>
-<h3 id="filtering-out-equations">Filtering out equations</h3>
-<p>A check is being applied named <code class="highlighter-rouge">_is_modular</code> which verifies that only above
-mentioned type equation should return True.</p>
 
-<h3 id="working-of-_solve_modular">Working of <code class="highlighter-rouge">_solve_modular</code></h3>
-<p>In the starting of it there is a check if domain is a subset of Integers.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>domain.is_subset(S.Integers)
-</code></pre></div></div>
-<p>Only domain of integers and it subset are being considered while solving
-these equations.
-Now after this it separates out a modterm and the rest term on either
-sides by this code.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>modterm = list(f.atoms(Mod))[0]
-rhs = -(S.One)*(f.subs(modterm, S.Zero))
-if f.as_coefficients_dict()[modterm].is_negative:
-    # f.as_coefficient(modterm) was returning None don't know why
-    # checks if coefficient of modterm is negative in main equation.
-    rhs *= -(S.One)
-</code></pre></div></div>
-<p>Now the equation is being inverted with the helper routine <code class="highlighter-rouge">_invert_modular</code>
-like this.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>n = Dummy('n', integer=True)
-f_x, g_n = _invert_modular(modterm, rhs, n, symbol)
-</code></pre></div></div>
-<p>I am defining n in <code class="highlighter-rouge">_solve_modular</code> because <code class="highlighter-rouge">_invert_modular</code> contains
-recursive calls to itself so if define the n there then it was going to have
-many instances which of no use. Thats y I am defining it in <code class="highlighter-rouge">_solve_modular</code>.</p>
 
-<p>Now after the equation is inverted now solution finding takes place.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if f_x is modterm and g_n is rhs:
-        return unsolved_result
-</code></pre></div></div>
-<p>First of all if <code class="highlighter-rouge">_invert_modular</code> fails to invert then a ConditionSet is being
-returned.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    if f_x is symbol:
-        if domain is not S.Integers:
-            return domain.intersect(g_n)
-        return g_n
-</code></pre></div></div>
-<p>And if <code class="highlighter-rouge">_invert_modular</code> is fully able to invert the equation then only domain
-intersection needs to takes place. <code class="highlighter-rouge">_invert_modular</code> inverts the equation
-considering S.Integers as its default domain.</p>
+<ul><li><a href="https://matplotlib.org/api/_as_gen/matplotlib.patches.Rectangle.html">matplotlib.patches.Rectangle</a>&nbsp;-to draw the beam</li><li><a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.annotate.html">matplotlib.pyplot.annotate</a>&nbsp;&#8211; to draw arrows of load</li><li><a href="https://matplotlib.org/3.1.1/api/markers_api.html">matplotlib.markers</a>&#8211; to draw supports and moment loads</li><li><a href="https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.fill_between.html">fill_between()</a> &#8211; to fill an area with color</li></ul>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    if isinstance(g_n, ImageSet):
-        lamda_expr = g_n.lamda.expr
-        lamda_vars = g_n.lamda.variables
-        base_set = g_n.base_set
-        sol_set = _solveset(f_x - lamda_expr, symbol, S.Integers)
-        if isinstance(sol_set, FiniteSet):
-            tmp_sol = EmptySet()
-            for sol in sol_set:
-                tmp_sol += ImageSet(Lambda(lamda_vars, sol), base_set)
-            sol_set = tmp_sol
-        return domain.intersect(sol_set)
-</code></pre></div></div>
-<p>In this case when g_n is an ImageSet of n and f_x is not symbol so the
-equation is being solved by calling <code class="highlighter-rouge">_solveset</code> (this will not lead to
-recursion because equation to be entered is free from Mod) and then
-the domain intersection takes place.</p>
 
-<h3 id="what-does-_invert_modular-do">What does <code class="highlighter-rouge">_invert_modular</code> do?</h3>
-<p>This function helps to convert the equation <code class="highlighter-rouge">A - Mod(B, C) = 0</code> to a
-form (f_x, g_n).
-First of all it checks the possible instances of invertible cases if not then
-it returns the equation as it is.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a, m = modterm.args
-if not isinstance(a, (Dummy, Symbol, Add, Mul, Pow)):
-        return modterm, rhs
-</code></pre></div></div>
-<p>Now here is the check for complex arguments and returns the equation as it is
-if somewhere it finds I.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if rhs.is_real is False or any(term.is_real is False \
-            for term in list(_term_factors(a))):
-        # Check for complex arguments
-        return modterm, rhs
-</code></pre></div></div>
-<p>Now after this we check of emptyset as a solution by checking range of both
-sides of equation.
-As modterm can have values between [0, m - 1] and if rhs is out of this range
-then emptySet is being returned.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if (abs(rhs) - abs(m)).is_positive or (abs(rhs) - abs(m)) is S.Zero:
-        # if rhs has value greater than value of m.
-        return symbol, EmptySet()
-</code></pre></div></div>
-<p>Now the equation haveing these types are being returned as the following</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if a is symbol:
-        return symbol, ImageSet(Lambda(n, m*n + rhs), S.Integers)
 
-    if a.is_Add:
-        # g + h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.Zero:
-            return _invert_modular(Mod(h, m), (rhs - Mod(g, m)) % m, n, symbol)
+<p>Another thing which is worth mentioning is that to use <strong>fill_between() </strong>we would require numpy&#8217;s <strong>arange()</strong> for sure. Although it might be better if we could avoid using an external module directly, but I guess this is unavoidable for now. </p>
 
-    if a.is_Mul:
-        # g*h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.One:
-            return _invert_modular(Mod(h, m), (rhs*invert(g, m)) % m, n, symbol)
-</code></pre></div></div>
-<p>The more peculiar case is of <code class="highlighter-rouge">a.is_Pow</code> which is handled as following.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if a.is_Pow:
-        # base**expo = a
-        base, expo = a.args
-        if expo.has(symbol) and not base.has(symbol):
-            # remainder -&gt; solution independent of n of equation.
-            # m, rhs are made coprime by dividing igcd(m, rhs)
-            try:
-                remainder = discrete_log(m / igcd(m, rhs), rhs, a.base)
-            except ValueError: # log does not exist
-                return modterm, rhs
-            # period -&gt; coefficient of n in the solution and also referred as
-            # the least period of expo in which it is repeats itself.
-            # (a**(totient(m)) - 1) divides m. Here is link of theoram:
-            # (https://en.wikipedia.org/wiki/Euler's_theorem)
-            period = totient(m)
-            for p in divisors(period):
-                # there might a lesser period exist than totient(m).
-                if pow(a.base, p, m / igcd(m, a.base)) == 1:
-                    period = p
-                    break
-            return expo, ImageSet(Lambda(n, period*n + remainder), S.Naturals0)
-        elif base.has(symbol) and not expo.has(symbol):
-            remainder_list = nthroot_mod(rhs, expo, m, all_roots=True)
-            if remainder_list is None:
-                return symbol, EmptySet()
-            g_n = EmptySet()
-            for rem in remainder_list:
-                g_n += ImageSet(Lambda(n, m*n + rem), S.Integers)
-            return base, g_n
-</code></pre></div></div>
-<p>Two cases are being created based of a.is_Pow</p>
-<ol>
-  <li>x**a</li>
-  <li>a**x</li>
-</ol>
 
-<p>x**a -  It is being handled by the helper function <code class="highlighter-rouge">nthroot_mod</code> which returns
-        required solution. I am not going into very mch detail for more
-        information you can read the documentation of nthroot_mod.</p>
 
-<p>a**x - For this <code class="highlighter-rouge">totient</code> is being used in the picture whose meaning can be
-       find on this <a href="https://en.wikipedia.org/wiki/Euler's_theorem">Wikipedia</a>
-       page. And then its divisors are being checked to find the least period
-       of solutions.</p>
+<p>Also, I have added an option for the user to scale the plot and get a pictorial view of it in case where the plotting with the exact dimensions doesn&#8217;t produce a decent diagram. For eg. If the magnitude of the load (order &gt;= 0) is relatively higher to other applied loads or to the length of the beam, the load plot might get out of the final plot window. </p>
 
-<ol>
-  <li><a href="https://github.com/sympy/sympy/pull/16890">#16890 Fixing lambert in bivariate to give all real solutions</a></li>
-</ol>
 
-<p>This PR went through many up and downs and nearly made to the most commented PR.
-And with the help of @smichr it was successfully merged. It mainly solved the
-bug for not returning all solutions of lambert.</p>
 
-<h2 id="explaining-the-function-_solve_lambert-main-function-to-solve-lambert-equations">Explaining the function <code class="highlighter-rouge">_solve_lambert</code> (main function to solve lambert equations)</h2>
+<p>Here is an example:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Input - f, symbol, gens
-OutPut - Solution of f = 0 if its lambert type expression else NotImplementedError
-</code></pre></div></div>
-<p>This function separates out cases as below based on the main function present in
-the main equation.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>For the first ones:
-1a1) B**B = R != 0 (when 0, there is only a solution if the base is 0,
-                   but if it is, the exp is 0 and 0**0=1
-                   comes back as B*log(B) = log(R)
-1a2) B*(a + b*log(B))**p = R or with monomial expanded or with whole
-                            thing expanded comes back unchanged
-   log(B) + p*log(a + b*log(B)) = log(R)
-   lhs is Mul:
-       expand log of both sides to give:
-       log(B) + log(log(B)) = log(log(R))
-1b) d*log(a*B + b) + c*B = R
-   lhs is Add:
-       isolate c*B and expand log of both sides:
-       log(c) + log(B) = log(R - d*log(a*B + b))
-</code></pre></div></div>
-<p>If the equation are of type 1a1, 1a2 and 1b then the mainlog of the equation is
-taken into concern as the deciding factor lies in the main logarithmic term of equation.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>For the next two,
-   collect on main exp
-   2a) (b*B + c)*exp(d*B + g) = R
-       lhs is mul:
-           log to give
-           log(b*B + c) + d*B = log(R) - g
-   2b) -b*B + g*exp(d*B + h) = R
-       lhs is add:
-           add b*B
-           log and rearrange
-           log(R + b*B) - d*B = log(g) + h
-</code></pre></div></div>
-<p>If the equation are of type 2a and 2b then the mainexp of the equation is
-taken into concern as the deciding factor lies in the main exponential term of equation.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>3) d*p**(a*B + b) + c*B = R
-   collect on main pow
-   log(R - c*B) - a*B*log(p) = log(d) + b*log(p)
-</code></pre></div></div>
-<p>If the equation are of type 3 then the mainpow of the equation is
-taken into concern as the deciding factor lies in the main power term of equation.</p>
 
-<p>Eventually from all of the three cases the equation is meant to be converted to this form:-</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x, a..f) = a*log(b*X + c) + d*X - f = 0 which has the
-solution,  X = -c/b + (a/d)*W(d/(a*b)*exp(c*d/a/b)*exp(f/a)).
-</code></pre></div></div>
-<p>And the solution calculation process is done by <code class="highlighter-rouge">_lambert</code> function.</p>
+<pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate">
+&gt;&gt;&gt; R1, R2 = symbols('R1, R2')
+&gt;&gt;&gt; E, I = symbols('E, I')
 
-<p>Everything seems flawless?? You might be thinking no modification is required. Lets
-see what loopholes are there in it.</p>
+&gt;&gt;&gt; b1 = Beam(50, 20, 30)
 
-<h2 id="what-does-pr-16890-do">What does PR <a href="https://github.com/sympy/sympy/pull/16890">#16890</a> do?</h2>
+&gt;&gt;&gt; b1.apply_load(10, 2, -1)
+&gt;&gt;&gt; b1.apply_load(R1, 10, -1)
+&gt;&gt;&gt; b1.apply_load(R2, 30, -1)
+&gt;&gt;&gt; b1.apply_load(90, 5, 0, 23)
+&gt;&gt;&gt; b1.apply_load(10, 30, 1, 50)
+&gt;&gt;&gt; b1.apply_support(50, "pin")
+&gt;&gt;&gt; b1.apply_support(0, "fixed")
+&gt;&gt;&gt; b1.apply_support(20, "roller")
+# case 1 on the left
+&gt;&gt;&gt; p = b1.draw()
+&gt;&gt;&gt; p.show()
 
-<p>There are basically two flaws present with the this approach.</p>
-<ol>
-  <li>Not considering all branches of equation while taking log both sides.</li>
-  <li>Calculation of roots should consider all roots in case having rational power.</li>
-</ol>
+# case 2 on the right
+&gt;&gt;&gt; p1 = b1.draw(pictorial=True)
+&gt;&gt;&gt; p1.show()
+</pre>
 
-<h3 id="1-not-considering-all-branches-of-equation-while-taking-log-both-sides">1. Not considering all branches of equation while taking log both sides.</h3>
 
-<p>Let us consider this equation to be solved by <code class="highlighter-rouge">_solve_lambert</code> function.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-1/x**2 + exp(x/2)/2 = 0
-</code></pre></div></div>
-<p>So what the old <code class="highlighter-rouge">_solve_lambert</code> do is to convert this equation to following.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2*log(x) + x/2 = 0
-</code></pre></div></div>
-<p>and calculates its roots from <code class="highlighter-rouge">_lambert</code>.
-But it missed this branch of equation while taking log on main equation.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2*log(-x) + x/2 = 0
-</code></pre></div></div>
-<p>Yeah you can reproduce the original equation from this equation.So basically the problem
-was that it missed the branches of equation while taking log. And when does the
-main equation have more than one branch?? The terms having even powers of variable x
-leads to two different branches of equation.</p>
 
-<p>So how it is solved?
-What I has done is that before actually gets into solving I preprocess the main equation
-and if it has more than one branches of equation while converting taking log then I consider
-all the equations generated from them.(with the help of <code class="highlighter-rouge">_solve_even_degree_expr</code>)</p>
+<figure class="wp-block-image size-large"><img alt="" class="wp-image-107" src="https://ishanaj.files.wordpress.com/2019/08/screenshot-10-08-2019-23_04_45.png" /></figure>
 
-<p>How I preprocess the equation?
-So what I do is I replace all the even powers of x present with even powers of t(dummy variable).</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Code for targeted replacement
-lhs = lhs.replace(
-            lambda i:  # find symbol**even
-                i.is_Pow and i.base == symbol and i.exp.is_even,
-            lambda i:  # replace t**even
-                t**i.exp)
-Example:-
-Main equation -&gt; -1/x**2 + exp(x/2)/2 = 0
-After replacement -&gt; -1/t**2 + exp(x/2)/2 = 0
-</code></pre></div></div>
-<p>Now I take logarithms on both sides and simplify it.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>After simplifying -&gt; 2*log(t) + x/2 = 0
-</code></pre></div></div>
-<p>Now I call function <code class="highlighter-rouge">_solve_even_degree_expr</code> to replace the t with +/-x to generate two equations.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Replacing t with +/-x
-1. 2*log(x) + x/2 = 0
-2. 2*log(-x) + x/2 = 0
-</code></pre></div></div>
-<p>And consider the solutions of both of the equations to return all lambert real solutions
-of <code class="highlighter-rouge">-1/x**2 + exp(x/2)/2 = 0</code>.</p>
 
-<p>Hope you could understand the logic behind this work.</p>
 
-<h3 id="2-calculation-of-roots-should-consider-all-roots-in-case-having-rational-power">2. Calculation of roots should consider all roots in case having rational power.</h3>
+<h2><strong>Next Week:</strong></h2>
 
-<p>This flaw is in the calculation of roots in function <code class="highlighter-rouge">_lambert</code>.
-Earlier the function_lambert has the working like :-</p>
 
-<ol>
-  <li>Find all the values of a, b, c, d, e in the required loagrithmic equation</li>
-  <li>Then it defines a solution of the form
-    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-c/b + (a/d)*l where l = LambertW(d/(a*b)*exp(c*d/a/b)*exp(-f/a), k)
-</code></pre></div>    </div>
-    <p>and then it included that solution.
-I agree everything seems flawless here. but try to see the step where we are defining l.</p>
-  </li>
-</ol>
 
-<p>Let us suppose a hypothetical algorithm just like algorithm used in <code class="highlighter-rouge">_lambert</code>
-in which equation to be solved is</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x**3 - 1 = 0
-</code></pre></div></div>
-<p>and in which we define solution of the form</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x = exp(I*2*pi/n) where n is the power of x in equation
-</code></pre></div></div>
-<p>so the algorithm will give solution</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x = exp(I*2*pi/3) # but expected was [1, exp(I*2*pi/3), exp(-I*2*pi/3)]
-</code></pre></div></div>
-<p>which can be found by finding all solutions of</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x**n - exp(2*I*pi) = 0
-</code></pre></div></div>
-<p>by a different correct algorithm. Thats y it was wrong.
-The above algorithm would have given correct values for <code class="highlighter-rouge">x - 1 = 0</code>.</p>
+<ul><li>Getting leftover PR&#8217;s merged</li><li>Initiating implementation of Truss class</li></ul>
 
-<p>And the question in your mind may arise that why only exp() because the
-possiblity of having more than one roots is in exp(), because if the algorithm
-would have been like <code class="highlighter-rouge">x = a</code>, where a is some real constant then there is not
-any possiblity of further roots rather than solution like <code class="highlighter-rouge">x = a**(1/n)</code>.
-And its been done in code like this:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>code
-num, den = ((c*d-b*f)/a/b).as_numer_denom()
-p, den = den.as_coeff_Mul()
-e = exp(num/den)
-t = Dummy('t')
-args = [d/(a*b)*t for t in roots(t**p - e, t).keys()]
-</code></pre></div></div>
 
-<h3 id="work-under-development">Work under development</h3>
 
-<ul>
-  <li><a href="https://github.com/sympy/sympy/pull/17079">#17079 Defining ImageSet Union</a></li>
-</ul>
+<p>Will keep you updated!</p>
 
-<p>This PR tends to define a unifying algorithm for linear relations.</p>
 
-<h3 id="future-work">Future Work</h3>
-<p>Here is a list that comprises of all the ideas (which were a part of my GSoC
-Proposal and/or thought over during the SoC) which can extend my GSoC project.</p>
 
-<ol>
-  <li>
-    <p>Integrating helper solvers within solveset: linsolve, solve_decomposition, nonlinsolve</p>
-  </li>
-  <li>
-    <p>Handle nested trigonometric equations.</p>
-  </li>
-</ol>
+<p>Thanks!</p>
 					</div>
 				</div>
 			</div>
@@ -3356,236 +3177,236 @@ Proposal and/or thought over during the SoC) which can extend my GSoC project.</
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
+</tr>
+<tr class="feedsrow">
+<td><a href="https://ravicharann.github.io/blog/"></a></td>
+<td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
-<td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
-<td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td><a href="https://iamit.in/blog">Amit Kumar</a></td>
+<td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
-<td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
-<td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://divyanshu132.github.io//">Divyanshu Thakur</a></td>
-<td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://arighnaiitg.github.io">GSoC Days</a></td>
-<td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td><a href="https://szymag.github.io/">GSoC Report</a></td>
+<td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td>http://abhinav28071999.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://abhinav28071999.github.io/feed.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ritesh99rakesh.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
-<td>http://shubhamjha.in/sympy_feed.xml</td>
-<td><a class="xmlbutton" href="http://shubhamjha.in/sympy_feed.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>http://srajangarg.github.io/feed.xml</td>
+<td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sumith1896.github.io/feeds/feed.sympy.xml</td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
+</tr>
+<tr class="feedsrow">
+<td>https://anpandey.github.io/atom-sympy.xml</td>
+<td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
+</tr>
+<tr class="feedsrow">
+<td>https://arighnaiitg.github.io/feed.xml</td>
+<td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
+</tr>
+<tr class="feedsrow">
+<td>https://bjodah.github.io/blog/rss.xml</td>
+<td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
+</tr>
+<tr class="feedsrow">
+<td>https://divyanshu132.github.io/feed.sympy.xml</td>
+<td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://friyaz.github.io/feed.sympy.xml</td>
 <td><a class="xmlbutton" href="https://friyaz.github.io/feed.sympy.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
-<td>https://iamit.in/blog/feeds/sympy.xml</td>
-<td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>https://jmig5776.github.io/feed.sympy.xml</td>
+<td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
-<td>https://namannimmo.me/emerald/atom.xml</td>
-<td><a class="xmlbutton" href="https://namannimmo.me/emerald/atom.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>https://namannimmo10.github.io/emerald/atom.xml</td>
+<td><a class="xmlbutton" href="https://namannimmo10.github.io/emerald/atom.xml">XML</a></td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://parsoyaarihant.github.io/blog/feed.xml</td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
-<td>https://ravicharann.github.io/blog/feed.xml</td>
-<td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
-</tr>
-<tr class="feedsrow">
-<td>https://sc0rpi0n.me/categories/gsoc/index.xml</td>
-<td><a class="xmlbutton" href="https://sc0rpi0n.me/categories/gsoc/index.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
-</tr>
-<tr class="feedsrow">
-<td>https://shekharrajak.github.io/feed.xml</td>
-<td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
-</tr>
-<tr class="feedsrow">
-<td>https://sidhantnagpal.github.io/rss-gsoc.xml</td>
-<td><a class="xmlbutton" href="https://sidhantnagpal.github.io/rss-gsoc.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
-</tr>
-<tr class="feedsrow">
-<td>https://szymag.github.io/feed.xml</td>
-<td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>https://sc0rpi0n101.github.io/categories/gsoc/index.xml</td>
+<td><a class="xmlbutton" href="https://sc0rpi0n101.github.io/categories/gsoc/index.xml">XML</a></td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://valglad.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://www.asmeurer.com/blog/rss.xml</td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://www.kangzhiq.com/tag/sympy/feed/</td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
-</tr>
-<tr class="feedsrow">
-<td>https://yathartha22.github.io/feed.sympy.xml</td>
-<td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
-<td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
 <td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sachin-4099.github.io//">Sachin Agarwal</a></td>
 <td><a class="xmlbutton" href="https://sachin-4099.github.io/feed.sympy.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
+</tr>
+<tr class="feedsrow">
+<td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
+<td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
+</tr>
+<tr class="feedsrow">
+<td><a href="https://www.shubhamjha.com/">Shubham&#8217;s Blog</a></td>
+<td><a class="xmlbutton" href="http://shubhamjha.in/sympy_feed.xml">XML</a></td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
+</tr>
+<tr class="feedsrow">
+<td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
+<td><a class="xmlbutton" href="https://sidhantnagpal.github.io/rss-gsoc.xml">XML</a></td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://smit-create.github.io/Smit-create.github.io/">Smit-create</a></td>
 <td><a class="xmlbutton" href="https://smit-create.github.io/feed.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
 <td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
-<td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>14:02, Thursday, 23 September</td>
-<td>14:17, Thursday, 23 September</td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
+</tr>
+<tr class="feedsrow">
+<td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
+<td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
+<td>15:01, Thursday, 23 September</td>
+<td>15:16, Thursday, 23 September</td>
 </tr>
 </table>
 
