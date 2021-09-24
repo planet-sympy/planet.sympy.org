@@ -7,6 +7,250 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <guid isPermaLink="false">https://asmeurer.com/blog/posts/switching-to-utterances-comments/</guid>
+      <author>Aaron Meurer (asmeurer)</author>
+      <title>Aaron Meurer (asmeurer): Switching to Utterances Comments</title>
+      <pubDate>Thu, 03 Jun 2021 03:57:49 GMT</pubDate>
+      <link>https://asmeurer.com/blog/posts/switching-to-utterances-comments/</link>
+      <description>&lt;div&gt;&lt;p&gt;I've ditched Disqus as the comment system on this blog. I am now using
+&lt;a href="https://utteranc.es/"&gt;Utterances&lt;/a&gt;. Utterances is an open source comment
+system that is backed by GitHub issues. Basically, every post has a
+corresponding issue opened on GitHub, and the comments on the post are the
+comments on the issue. Utterances automatically places the comments at the
+bottom of the post. For example,
+&lt;a href="https://github.com/asmeurer/blog/issues/18"&gt;here&lt;/a&gt; is the issue corresponding
+to this post.&lt;/p&gt;
+&lt;p&gt;I didn't like Disqus mostly because it serves ads and tracking. Even though I
+had opted out from as much of it as I could in the Disqus settings, it still
+loads tracking scripts on every page. I run &lt;a href="https://github.com/gorhill/uBlock"&gt;uBlock
+Origin&lt;/a&gt; always, and it's a bit hypocritical
+if my own side has things that are blocked by it. In some cases I can't avoid
+it (as far as I know), like when I embed a YouTube video, but it definitely
+shouldn't be on every post.&lt;/p&gt;
+&lt;p&gt;Utterances is a very nice alternative. I has lots of advantages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Comments are not self-hosted. GitHub hosts them. Since you need a GitHub
+account to comment, this should make comment spam a non-issue.&lt;/li&gt;
+&lt;li&gt;Comments support full Markdown.&lt;/li&gt;
+&lt;li&gt;Users can edit their comments.&lt;/li&gt;
+&lt;li&gt;I can edit and fully moderate all comments.&lt;/li&gt;
+&lt;li&gt;Users log in with a federated system that proves their identity.&lt;/li&gt;
+&lt;li&gt;Email subscription to posts.&lt;/li&gt;
+&lt;li&gt;No ads or tracking.&lt;/li&gt;
+&lt;li&gt;It's completely open source and free to use.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If you use &lt;a href="https://getnikola.com/"&gt;Nikola&lt;/a&gt; like I do, it &lt;a href="https://getnikola.com/handbook.html#comments"&gt;natively supports
+Utterances&lt;/a&gt; (a feature which I
+added). Otherwise, go to the &lt;a href="https://utteranc.es/"&gt;Utterances&lt;/a&gt; and paste the
+script tag generated at the bottom into your blog template. Then install the
+&lt;a href="https://github.com/apps/utterances"&gt;Utterances app&lt;/a&gt; in your repo, and you are
+done.&lt;/p&gt;
+&lt;h3&gt;Exporting Disqus Comments&lt;/h3&gt;
+&lt;p&gt;Some of my old posts had Disqus comments, which I wanted to preserve somehow.
+Here is guide on how I did that, since it wasn't as straightforward as I would
+have hoped.&lt;/p&gt;
+&lt;p&gt;The first step is to export your Disqus comments. It's very difficult to
+actually find the place in the Disqus site where you do this, but I finally
+found the &lt;a href="https://disqus.com/admin/discussions/export/"&gt;URL&lt;/a&gt;. The export takes
+some time to complete (for me it took about half an hour). When it finished,
+Disqus will email you an XML file with all your comments. Note that the file
+contains all comments for all sites you have ever set up with Disqus. For me,
+it also included all the comments on my old &lt;a href="http://asmeurersympy.wordpress.com/"&gt;Wordpress
+blog&lt;/a&gt;, as well as posts for draft blog
+posts that I never ended up publishing. It also contained all comments that
+were marked as spam, so you will need to remember to filter those.&lt;/p&gt;
+&lt;p&gt;I decided that since I only have a handful of posts with Disqus comments, I
+would just write a script to process them all and manually print them out,
+which I will then manually enter in to the Utterances comment system for those
+posts.&lt;/p&gt;
+&lt;p&gt;I wrote a script to process the comments, which you can find
+&lt;a href="https://github.com/asmeurer/blog/blob/master/disqus-comments/export_disqus_comments.py"&gt;here&lt;/a&gt;.
+Disqus does provides an &lt;a href="https://disqus.com/api/schemas/1.0/disqus.xsd"&gt;XML
+schema&lt;/a&gt; for the XML. I used a
+library called &lt;a href="https://xsdata.readthedocs.io/en/latest/index.html"&gt;xsData&lt;/a&gt;,
+which lets you take an XML scheme and generate Python dataclasses
+corresponding to it, which make manipulating the parsed XML much easier than
+the standard library xml library. The script outputs text like&lt;/p&gt;
+&lt;pre&gt;&lt;code class="language-markdown"&gt;========== Comments from https://asmeurer.github.io/blog/posts/what-happens-when-you-mess-with-hashing-in-python/ ==========
+
+These are the original comments on this post that were made when this blog used the [Disqus blog system](https://www.asmeurer.com/blog/posts/switching-to-utterances-comments/).
+
+&amp;gt;**Comment from bjd2385 on 2016-08-28 12:33:12+00:00:**
+
+&amp;gt;&amp;lt;p&amp;gt;Very interesting post. I was just looking into hash functions (I've never formally learned what the topic entails), and since I'm most familiar with Python this post explained quite a bit, especially your early mathematical points.&amp;lt;/p&amp;gt;
+
+&amp;gt;**Comment from Mark Lawrence on 2016-10-03 20:26:54+00:00:**
+
+&amp;gt;&amp;lt;p&amp;gt;At what point does Python 3 force the override of __hash__ if you've defined __eq__?  E.g when would your&amp;lt;/p&amp;gt;&amp;lt;p&amp;gt;AlwaysEqual class fail?&amp;lt;/p&amp;gt;
+
+&amp;gt;**Replies:**
+
+&amp;gt;&amp;gt;**Comment from asmeurer on 2016-10-03 20:38:13+00:00:**
+
+&amp;gt;&amp;gt;&amp;lt;p&amp;gt;That's a good catch. I originally wrote this post in Python 2. The example does indeed fail in Python 3. More specifically, if you override __eq__, Python 3 automatically sets __hash__ to None. I'll update the post to make this more clear.&amp;lt;/p&amp;gt;
+
+&amp;gt;**Comment from Erick Mendon&amp;#231;a on 2017-07-30 03:23:55+00:00:**
+
+&amp;gt;&amp;lt;p&amp;gt;Great article! We must really pay attention to these details when implementing custom hashes.&amp;lt;/p&amp;gt;
+
+&amp;gt;**Comment from Ignacio on 2017-10-07 22:31:56+00:00:**
+
+&amp;gt;&amp;lt;p&amp;gt;Thanks a lot for this post! Clarified a lot of concepts.&amp;lt;/p&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;which I then manually copied to each post's Utterances page on GitHub.&lt;/p&gt;
+&lt;p&gt;Feel free to adapt &lt;a href="https://github.com/asmeurer/blog/blob/master/disqus-comments/export_disqus_comments.py"&gt;my
+script&lt;/a&gt;
+if you find yourself in a similar situation.&lt;/p&gt;
+&lt;h3&gt;Utterances Comments&lt;/h3&gt;
+&lt;p&gt;Feel free to use the comments on this page to play around with the commenting
+system.&lt;/p&gt;
+&lt;p&gt;Note that to comment, there are two options. You can log in on this page,
+which will let you type your comment in the box below. This requires giving
+the Utterances bot access to your GitHub account. Alternately, if you don't
+want to give a bot access, you can just go directly to the GitHub issue page
+and comment there. I am currently in the process of figuring out how to add
+some boilerplate to each page that makes this clear (see &lt;a href="https://github.com/utterance/utterances/issues/355"&gt;this Utterances
+issue&lt;/a&gt;). If anyone has any
+suggestions on how to do this, let me know. For now, I am just going to
+manually add a statement about this as the first comment on each post.&lt;/p&gt;&lt;/div&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://friyaz.github.io/blog/GSoC-Final_Report</guid>
+      <author>Faisal Riyaz (friyaz)</author>
+      <title>Faisal Riyaz (friyaz): GSoC Final Report</title>
+      <pubDate>Mon, 31 Aug 2020 00:00:00 GMT</pubDate>
+      <link>http://friyaz.github.io/blog/GSoC-Final_Report</link>
+      <description>&lt;p&gt;This report summarizes the work done in my GSoC 2020 project, &lt;strong&gt;Implementation of Vector Integration&lt;/strong&gt; with SymPy.  Blog posts with step by step development of the project are available at &lt;a href="https://friyaz.github.io"&gt;friyaz.github.io&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id="about-me"&gt;About Me&lt;/h2&gt;
+&lt;p&gt;I am Faisal Riyaz and I have completed my third year of B.Tech in Computer Engineering student from Aligarh Muslim University.&lt;/p&gt;
+
+&lt;h2 id="overview"&gt;Overview&lt;/h2&gt;
+&lt;p&gt;The goal of the project is to add functions and class structure to support the integration of scalar and vector fields over curves, surfaces, and volumes. My mentors were &lt;a href="https://github.com/Upabjojr"&gt;Francesco Bonazzi&lt;/a&gt; (Primary) and &lt;a href="https://github.com/divyanshu132"&gt;Divyanshu Thakur&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id="work-completed"&gt;Work Completed&lt;/h2&gt;
+&lt;p&gt;Here is a list of PRs which were opened during the span of GSoC:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;(Merged) &lt;a href="https://github.com/sympy/sympy/pull/19472"&gt;#19472&lt;/a&gt;: Adds &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricRegion&lt;/code&gt; class to represent parametrically defined regions.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;(Merged) &lt;a href="https://github.com/sympy/sympy/pull/19539"&gt;#19539&lt;/a&gt;: Adds &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; class to represent integral of scalar or vector field over a parametrically defined region.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;(Merged) &lt;a href="https://github.com/sympy/sympy/pull/19580"&gt;#19580&lt;/a&gt;: Modified API of &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricRegion&lt;/code&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;(Merged) &lt;a href="https://github.com/sympy/sympy/pull/19650"&gt;#19650&lt;/a&gt;: Added support to integrate over objects of geometry module.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;(Merged) &lt;a href="https://github.com/sympy/sympy/pull/19681"&gt;#19681&lt;/a&gt;: Added &lt;code class="language-plaintext highlighter-rouge"&gt;ImplicitRegion&lt;/code&gt; class to represent implicitly defined regions.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;(Megred) &lt;a href="https://github.com/sympy/sympy/pull/19807"&gt;#19807&lt;/a&gt;: Implemented the algorithm for rational parametrization of conics.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;(Merged) &lt;a href="https://github.com/sympy/sympy/pull/20000"&gt;#20000&lt;/a&gt;: Added API of newly added classes to sympy&amp;#8217;s documentation.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;(Open) &lt;a href="https://github.com/sympy/sympy/pull/19883"&gt;#19883&lt;/a&gt;: Allow &lt;code class="language-plaintext highlighter-rouge"&gt;vector_integrate&lt;/code&gt; to handle &lt;code class="language-plaintext highlighter-rouge"&gt;ImplicitRegion&lt;/code&gt; objects.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;(Open) &lt;a href="https://github.com/sympy/sympy/pull/20021"&gt;#20021&lt;/a&gt;: Add usage examples.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We had an important discussion regarding our initial approach and possible problems on issue &lt;a href="https://github.com/sympy/sympy/issues/19320"&gt;#19320&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="defining-regions-with-their-parametric-equations"&gt;Defining Regions with their parametric equations&lt;/h3&gt;
+&lt;p&gt;The &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricRegion&lt;/code&gt; class is used to represent a parametric region in space.&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy.vector&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;CoordSys3D&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vector_integrate&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy.abc&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;phi&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Eq&lt;/span&gt;
+
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;C&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;CoordSys3D&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'C'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;circle&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;disc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;box&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;cone&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;vector_integrate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;circle&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;vector_integrate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;disc&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="mi"&gt;64&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;vector_integrate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;box&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Integral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Integral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;j&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;doit&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;j&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;vector_integrate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cone&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h3 id="integration-over-objects-of-geometry-module"&gt;Integration over objects of &lt;code class="language-plaintext highlighter-rouge"&gt;geometry&lt;/code&gt; module&lt;/h3&gt;
+&lt;p&gt;Many regions like circle are commonly encountered in problems of vector calculus. the geometry module of SymPy already had classes for some of these regions. The function&lt;code class="language-plaintext highlighter-rouge"&gt;parametric_region_list&lt;/code&gt; was added to determine the parametric representation of such classes. &lt;code class="language-plaintext highlighter-rouge"&gt;vector_integrate&lt;/code&gt; can directly integrate objects of Point, Curve, Ellipse, Segment and Polygon class of &lt;code class="language-plaintext highlighter-rouge"&gt;geometry&lt;/code&gt; module.&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy.geometry&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;Point&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Segment&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Polygon&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Segment&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Segment&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Point&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;Point&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;triangle&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Polygon&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;circle2&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Circle&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Point&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;vector_integrate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;42&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;vector_integrate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;circle2&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;72&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;vector_integrate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;triangle&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h3 id="implictly-defined-regions"&gt;Implictly defined Regions&lt;/h3&gt;
+&lt;p&gt;In many cases, it is difficult to determine the parametric representation of a region. Instead, the region is defined using its implicit equation. To represent implicitly defined regions, we implemented the &lt;code class="language-plaintext highlighter-rouge"&gt;ImplicitRegion&lt;/code&gt; class.&lt;/p&gt;
+
+&lt;p&gt;But to integrate over a region, we need to determine its parametric representation. the &lt;code class="language-plaintext highlighter-rouge"&gt;rationl_parametrization&lt;/code&gt;  method was added to &lt;code class="language-plaintext highlighter-rouge"&gt;ImplicitRegion&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy.vector&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;ImplicitRegion&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;circle3&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ImplicitRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;parabola&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ImplicitRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;ellipse&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ImplicitRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;16&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;rect_hyperbola&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ImplicitRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;sphere&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ImplicitRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;Eq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;circle3&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rational_parametrization&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;parabola&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rational_parametrization&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;6&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;rect_hyperbola&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rational_parametrization&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;ellipse&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rational_parametrization&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;16&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;16&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;sphere&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rational_parametrization&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;After PR &lt;a href="https://github.com/sympy/sympy/pull/19883"&gt;#19883&lt;/a&gt; gets merged, &lt;code class="language-plaintext highlighter-rouge"&gt;vector_integrate&lt;/code&gt; can directly work upon &lt;code class="language-plaintext highlighter-rouge"&gt;ImplicitRegion&lt;/code&gt; objects.&lt;/p&gt;
+
+&lt;h2 id="future-work"&gt;Future Work&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;In vector calculus, many regions cannot be defined using a single implicit equation. Instead, inequality or a combination of the implicit equation and conditional equations is required. For Example, a disc can only be represented using an inequality &lt;code class="language-plaintext highlighter-rouge"&gt;ImplicitRegion(x**2 + y**2 &amp;lt; 9)&lt;/code&gt; and a semicircle can be represented as &lt;code class="language-plaintext highlighter-rouge"&gt;ImplicitRegion(x**2 + y**2 -4) &amp;amp; (y &amp;lt; 0))&lt;/code&gt;. Support for such implicit regions needs to be added.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;The parametrization obtained using the &lt;code class="language-plaintext highlighter-rouge"&gt;rational_parametrization&lt;/code&gt; method in most cases is a large expression. SymPy&amp;#8217;s &lt;code class="language-plaintext highlighter-rouge"&gt;Integral&lt;/code&gt; is unable to work over such expressions. It takes too long and often does not returns a result. We need to either simplify the parametric equations obtained or fix Integral to handle them.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Adding the support to plot objects of &lt;code class="language-plaintext highlighter-rouge"&gt;ParamRegion&lt;/code&gt; and &lt;code class="language-plaintext highlighter-rouge"&gt;ImplicitRegion&lt;/code&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id="conclusion"&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;This summer has been a great learning experience. Writing a functionality, testing, debugging it has given me good experience in test-driven development. I think I realized many of the goals that I described in my proposal, though there were some major differences in the plan and actual implementation. Personally, I hoped I could have done better. I could not work much on the project during the last phase due to the start of the academic year.&lt;/p&gt;
+
+&lt;p&gt;I would like to thank &lt;a href="https://github.com/Upabjojr"&gt;Francesco&lt;/a&gt; for his valuable suggestions and being readily available for discussions. He was always very friendly and helpful. I would love to work more with him. &lt;a href="https://github.com/sylee957"&gt;S.Y Lee&lt;/a&gt; also provided useful suggestions.&lt;/p&gt;
+
+&lt;p&gt;Special thanks to &lt;a href="https://risc.jku.at/m/johann-mitteramskogler/"&gt;Johann Mitteramskogler&lt;/a&gt;, Professor &lt;a href="https://scholar.google.at/citations?user=IAz1bNgAAAAJ&amp;amp;hl=es"&gt;Sonia Perez Diaz&lt;/a&gt;, and Professor &lt;a href="https://dblp.org/pid/87/7718.html"&gt;Sonia L.Rueda&lt;/a&gt;. They personally helped me in finding the algorithm for determining the rational parametrization of conics.&lt;/p&gt;
+
+&lt;p&gt;SymPy is an amazing project with a great community. I would mostly stick around after the GSoC period as well and continue contributing to SymPy, hopefully, exploring the other modules as well.&lt;/p&gt;
+
+&lt;div class="notice"&gt;
+    &lt;h4&gt;Comments are closed&lt;/h4&gt;
+    If you have a question concerning the content of this page, please feel free to &lt;a href="https://friyaz.github.io/contact/"&gt;contact me&lt;/a&gt;.&lt;/p&gt;--&gt;
+  &lt;/div&gt;</description>
+    </item>
+    <item>
       <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Final-Report</guid>
       <author>Sachin Agarwal (sachin-4099)</author>
       <title>Sachin Agarwal (sachin-4099): GSoC 2020 - Final Report</title>
@@ -338,12 +582,12 @@
 Finally, this brings us to the end of &lt;code class="language-plaintext highlighter-rouge"&gt;Google Summer of Code&lt;/code&gt; and I am really thankful to the &lt;code class="language-plaintext highlighter-rouge"&gt;SymPy&lt;/code&gt; Community and my mentor &lt;code class="language-plaintext highlighter-rouge"&gt;Kalevi Suominen&lt;/code&gt; for always helping and supporting me.&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://namannimmo10.github.io/emerald//week_12</guid>
-      <author>Naman Gera (namannimmo10)</author>
-      <title>Naman Gera (namannimmo10): Week 12 - GSoC 2020</title>
-      <pubDate>Tue, 25 Aug 2020 00:00:00 GMT</pubDate>
-      <link>https://namannimmo10.github.io/emerald//week_12</link>
-      <description>&lt;p&gt;This is the final blog post highlighting the work done in the final week of Google Summer of Code program 2020.&lt;/p&gt; &lt;p&gt;Merged PRs for this week:&lt;/p&gt; &lt;ul&gt; &lt;li&gt; &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/19896"&gt;PR-19896&lt;/a&gt;: This PR added some other useful methods in the &lt;code class="language-plaintext highlighter-rouge"&gt;TransferFunction&lt;/code&gt; class. It was a part of the &amp;#8220;other&amp;#8221;...</description>
+      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/08/24/final_report</guid>
+      <author>Smit Lunagariya (Smit-create)</author>
+      <title>Smit Lunagariya (Smit-create): Final Report-GSoC 2020</title>
+      <pubDate>Mon, 24 Aug 2020 00:00:00 GMT</pubDate>
+      <link>https://smit-create.github.io/Smit-create.github.io/2020/08/24/final_report.html</link>
+      <description>&lt;p&gt;GSoC 2020 Report Smit Lunagariya: Improving and Extending stats module</description>
     </item>
     <item>
       <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-11</guid>
@@ -378,12 +622,12 @@ get evaluated using the &lt;code class="language-plaintext highlighter-rouge"&gt
 &lt;/ul&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://namannimmo10.github.io/emerald//week_11</guid>
-      <author>Naman Gera (namannimmo10)</author>
-      <title>Naman Gera (namannimmo10): Week 11 - GSoC 2020</title>
-      <pubDate>Tue, 18 Aug 2020 00:00:00 GMT</pubDate>
-      <link>https://namannimmo10.github.io/emerald//week_11</link>
-      <description>&lt;p&gt;Week 11 was spent mostly on applying suggestions from code review in the Transfer function matrix PR (&lt;a href="https://github.com/sympy/sympy/pull/19761"&gt;19761&lt;/a&gt;). Prior to week 11, I was mostly involved in implementing a bunch of functionality but couldn&amp;#8217;t add a good set of unit tests for that. So, I added tests for construction...</description>
+      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/08/16/week_12</guid>
+      <author>Smit Lunagariya (Smit-create)</author>
+      <title>Smit Lunagariya (Smit-create): Week 12-GSoC 2020</title>
+      <pubDate>Sun, 16 Aug 2020 00:00:00 GMT</pubDate>
+      <link>https://smit-create.github.io/Smit-create.github.io/2020/08/16/week_12.html</link>
+      <description>&lt;p&gt;This is the final blog of the official program highlighting the final week. Some of the key discussions were:</description>
     </item>
     <item>
       <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-10</guid>
@@ -404,12 +648,12 @@ get evaluated using the &lt;code class="language-plaintext highlighter-rouge"&gt
 &lt;/ul&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://namannimmo10.github.io/emerald//week_9,10</guid>
-      <author>Naman Gera (namannimmo10)</author>
-      <title>Naman Gera (namannimmo10): Week 9 &amp; 10 - GSoC 2020</title>
-      <pubDate>Tue, 11 Aug 2020 00:00:00 GMT</pubDate>
-      <link>https://namannimmo10.github.io/emerald//week_9,10</link>
-      <description>&lt;p&gt;This blog post describes my progress in Weeks 9 and 10 of Google Summer of Code 2020.&lt;/p&gt; &lt;p&gt;I ended up week 8 by making changes in the &lt;code class="language-plaintext highlighter-rouge"&gt;Parallel&lt;/code&gt; class to make support for MIMO transfer function interconnection.&lt;/p&gt; &lt;h1 id="week-9"&gt;Week 9&lt;/h1&gt; &lt;p&gt;I decided to do the similar thing for...</description>
+      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/08/09/week_11</guid>
+      <author>Smit Lunagariya (Smit-create)</author>
+      <title>Smit Lunagariya (Smit-create): Week 11-GSoC 2020</title>
+      <pubDate>Sun, 09 Aug 2020 00:00:00 GMT</pubDate>
+      <link>https://smit-create.github.io/Smit-create.github.io/2020/08/09/week_11.html</link>
+      <description>&lt;p&gt;This blog describes the 11th week of the program. Some of the key highlights of this week are:</description>
     </item>
     <item>
       <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-9</guid>
@@ -439,20 +683,130 @@ We also added a piece of code to &lt;code class="language-plaintext highlighter-
 &lt;/ul&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://namannimmo10.github.io/emerald//week_8</guid>
-      <author>Naman Gera (namannimmo10)</author>
-      <title>Naman Gera (namannimmo10): Week 8 - GSoC 2020</title>
-      <pubDate>Tue, 21 Jul 2020 00:00:00 GMT</pubDate>
-      <link>https://namannimmo10.github.io/emerald//week_8</link>
-      <description>&lt;p&gt;This blog post describes my progress in week 8, the last week of Phase 2. Since we already have a SISO transfer function object available for block diagram algebra, so now, I thought of adding a MIMO transfer function object in this control systems engineering package. The way it works...</description>
+      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/08/02/week_10</guid>
+      <author>Smit Lunagariya (Smit-create)</author>
+      <title>Smit Lunagariya (Smit-create): Week 10-GSoC 2020</title>
+      <pubDate>Sun, 02 Aug 2020 00:00:00 GMT</pubDate>
+      <link>https://smit-create.github.io/Smit-create.github.io/2020/08/02/week_10.html</link>
+      <description>&lt;p&gt;This blogs describes the 10th week of the program. Some of the highlights of this week are:</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://namannimmo10.github.io/emerald//week_6,7</guid>
-      <author>Naman Gera (namannimmo10)</author>
-      <title>Naman Gera (namannimmo10): Week 6 &amp; 7 - GSoC 2020</title>
-      <pubDate>Tue, 14 Jul 2020 00:00:00 GMT</pubDate>
-      <link>https://namannimmo10.github.io/emerald//week_6,7</link>
-      <description>&lt;p&gt;Hi everyone :) Long time no see.&lt;/p&gt; &lt;p&gt;First of all, &lt;em&gt;GOOD NEWS&lt;/em&gt;: My &lt;a href="https://github.com/sympy/sympy/pull/19390"&gt;PR&lt;/a&gt; on adding a SISO transfer function object is finally merged. Yay!! A robust transfer function object is now available for Single Input Single Output (SISO) block diagram algebra.. Here is the &lt;a href="https://docs.sympy.org/dev/modules/physics/control/lti.html"&gt;documentation&lt;/a&gt;.&lt;/p&gt; &lt;p&gt;&lt;img src="/emerald/img/woohoo.png"...</description>
+      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/07/26/week_9</guid>
+      <author>Smit Lunagariya (Smit-create)</author>
+      <title>Smit Lunagariya (Smit-create): Week 9-GSoC 2020</title>
+      <pubDate>Sun, 26 Jul 2020 00:00:00 GMT</pubDate>
+      <link>https://smit-create.github.io/Smit-create.github.io/2020/07/26/week_9.html</link>
+      <description>&lt;p&gt;This blogs describes the week 9, the beginning week of the final phase. This week, I continued to work on the extension of Compound Distributions as well as completing the Matrix Distributions. Some of the highlights of this week are:</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/07/19/week_8</guid>
+      <author>Smit Lunagariya (Smit-create)</author>
+      <title>Smit Lunagariya (Smit-create): Week 8-GSoC 2020</title>
+      <pubDate>Sun, 19 Jul 2020 00:00:00 GMT</pubDate>
+      <link>https://smit-create.github.io/Smit-create.github.io/2020/07/19/week_8.html</link>
+      <description>&lt;p&gt;This blog provides the brief description of last week of the second Phase i.e. week 8. Some of the key highlights of this week are:</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://friyaz.github.io/blog/GSoC-2020-Week-6</guid>
+      <author>Faisal Riyaz (friyaz)</author>
+      <title>Faisal Riyaz (friyaz): GSoC 2020 Week-6</title>
+      <pubDate>Mon, 13 Jul 2020 00:00:00 GMT</pubDate>
+      <link>http://friyaz.github.io/blog/GSoC-2020-Week-6</link>
+      <description>&lt;p&gt;This week, I spent most of my time reading about algorithms to parametrize algebraic curves and surfaces.&lt;/p&gt;
+
+&lt;h3 id="parametrization-of-algebraic-curves-and-surfaces"&gt;Parametrization of algebraic curves and surfaces&lt;/h3&gt;
+&lt;p&gt;In many cases, it is easiar to define a region using an implicit equation over its parametric form. For example, a sphere can be defined with the implict eqution x&lt;sup&gt;2&lt;/sup&gt; + y&lt;sup&gt;2&lt;/sup&gt; + z&lt;sup&gt;2&lt;/sup&gt; = 4. Its parametric equation although easy to determine are tedious to write.&lt;/p&gt;
+
+&lt;p&gt;To integrate over implicitly defined regions, it is necessary to determine its parametric representation. I found the &lt;a href="http://graphics.stanford.edu/courses/cs348a-20-winter/Handouts/a228715.pdf"&gt;report&lt;/a&gt; on conversion methods between parametric and implicit curves from Christopher M. Hoffmann very useful. It lists several algorithms for curves and surfaces of different nature.&lt;/p&gt;
+
+&lt;p&gt;Every plane parametric curve can be expressed as an implicit curve. Some, but not all implicit curves can be expressed as parametric curves. Similarly, we can state of algebraic surfaces. Every plane parametric surface can be expressed as an implicit surface. Some, but not all implicit surfaces can be expressed as parametric surfaces.&lt;/p&gt;
+
+&lt;h3 id="conic-sections"&gt;Conic sections&lt;/h3&gt;
+&lt;p&gt;One of the algorithm to parametrize conics is given below:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Fix a point p on the conic. Consider the pencil of lines through p. Formulate the line equations.&lt;/li&gt;
+  &lt;li&gt;Substitute for y in the conic equation, solve for x(t).&lt;/li&gt;
+  &lt;li&gt;Use the fine equations to determine y(t).&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The difficult part is to find a point on the conic. For the first implementation, I just iterated over a few points and selected the point which satisfied the equation. I need to implement an algorithm that can find a point on the curve.&lt;/p&gt;
+
+&lt;p&gt;The parametric equations determined by the algoithm are large and complex expressions. The &lt;code class="language-plaintext highlighter-rouge"&gt;vector_integrate&lt;/code&gt; function in most cases is taking too much time to calculate the integral. I tried fixing this using simplification functions in SymPy like trigsimp and expand_trig. The problem still persist.&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;ellipse&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ImplicitRegion&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;16&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;parametric_region_list&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ellipse&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;tan&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tan&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;tan&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tan&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;))]&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;vector_integrate&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ellipse&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;### It gets stuck
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The algorithm does not work for curves of higher algebraic degree like cubics.&lt;/p&gt;
+
+&lt;h3 id="monoids"&gt;Monoids&lt;/h3&gt;
+&lt;p&gt;A monoid is an algebraic curve of degree n that has a point of multiplicity n -1. All conics and singular cubics are monoids. Parametrizing a monoid is easy if the special point is known.&lt;/p&gt;
+
+&lt;p&gt;To parametrize a monoid, we need to determine a singular point of n - 1 multiplicity. The singular points are those points on the curve where both partial derivatives vanish. A singular point (xo, yo) of a Curve C is said to be of multiplicity n if all the partial derivatives off to order n - 1 vanish there. This &lt;a href="https://www.semanticscholar.org/paper/Singular-Points-of-Algebraic-Curves-Sakkalis-Farouki/2f8a3e9620c8a5c754f8baaf297af3eff1e6b1f1"&gt;paper&lt;/a&gt; describes an algorithm to calculate such a point but the algorithm is not trivial.&lt;/p&gt;
+
+&lt;h3 id="next-weeks-goal"&gt;Next week&amp;#8217;s goal&lt;/h3&gt;
+&lt;p&gt;My goal is to complete the work on parametrizing conics. If I can find a simple algorithm to determine the singular point of the required multiplicity, I will start working on it.&lt;/p&gt;
+
+&lt;div class="notice"&gt;
+    &lt;h4&gt;Comments are closed&lt;/h4&gt;
+    If you have a question concerning the content of this page, please feel free to &lt;a href="https://friyaz.github.io/contact/"&gt;contact me&lt;/a&gt;.&lt;/p&gt;--&gt;
+  &lt;/div&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://friyaz.github.io/blog/GSoC-2020-Week-5</guid>
+      <author>Faisal Riyaz (friyaz)</author>
+      <title>Faisal Riyaz (friyaz): GSoC 2020 Week-5</title>
+      <pubDate>Mon, 13 Jul 2020 00:00:00 GMT</pubDate>
+      <link>http://friyaz.github.io/blog/GSoC-2020-Week-5</link>
+      <description>&lt;p&gt;My goal for this week was to add support of integration over objects of geometry module.&lt;/p&gt;
+
+&lt;h3 id="integrating-over-objects-of-geometry-module"&gt;Integrating over objects of geometry module&lt;/h3&gt;
+&lt;p&gt;In my GSoC proposal, I mentioned implementing classes to represent commonly used regions. It will allow a user to easily define regions without bothering about its parametric representation. SymPy&amp;#8217;s geometry module has classes to represent commonly used geometric entities like line, circle, and parabola. Francesco told me it would be better to add support to use these classes instead. The integral takes place over the boundary of the geometric entity, not over the area or volume enclosed.&lt;/p&gt;
+
+&lt;p&gt;My first approach was to add a function &lt;code class="language-plaintext highlighter-rouge"&gt;parametric_region&lt;/code&gt; to the classes of geometry module. Francesco suggested not to modify the geometry module as this would make it dependent on vector module. We decided to implement a function &lt;code class="language-plaintext highlighter-rouge"&gt;parametric_region&lt;/code&gt; to return a &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricRegion&lt;/code&gt; of objects of geometry module.&lt;/p&gt;
+
+&lt;p&gt;I learned about the singledispatch decorater of python. It is used to create overloaded functions.&lt;br /&gt;
+Polygons cannot be represented as a single &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricRegion&lt;/code&gt; object. Each side of a polygon has its separate parametric representation. To resolve this, we decided to return a list of ParametricRegion objects.&lt;/p&gt;
+
+&lt;p&gt;My next step was to modify &lt;code class="language-plaintext highlighter-rouge"&gt;vector_integrate&lt;/code&gt; to support objects of geometry module. This was easy and involved calling the &lt;code class="language-plaintext highlighter-rouge"&gt;parametric_region_list&lt;/code&gt; function and integrating each &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricRegion&lt;/code&gt; object.&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href="https://github.com/sympy/sympy/pull/19650/files"&gt;PR&lt;/a&gt; for the work has been merged. Note that we still do not have any way to create regions like disc and cone without their parametric representation. To support such regions, I think we need to add new classes to the geometry module.&lt;/p&gt;
+
+&lt;h3 id="next-weeks-goal"&gt;Next week&amp;#8217;s goal&lt;/h3&gt;
+&lt;p&gt;I plan to work on implementing a class to represent implicitly defined regions.&lt;/p&gt;
+
+&lt;div class="notice"&gt;
+    &lt;h4&gt;Comments are closed&lt;/h4&gt;
+    If you have a question concerning the content of this page, please feel free to &lt;a href="https://friyaz.github.io/contact/"&gt;contact me&lt;/a&gt;.&lt;/p&gt;--&gt;
+  &lt;/div&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://friyaz.github.io/blog/GSoC-2020-Week-4</guid>
+      <author>Faisal Riyaz (friyaz)</author>
+      <title>Faisal Riyaz (friyaz): GSoC 2020 Week-4</title>
+      <pubDate>Mon, 13 Jul 2020 00:00:00 GMT</pubDate>
+      <link>http://friyaz.github.io/blog/GSoC-2020-Week-4</link>
+      <description>&lt;p&gt;The first phase of GSoC is over. We can now integrate the scalar or vector field over a parametrically defined region.&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href="https://github.com/sympy/sympy/pull/19539"&gt;PR&lt;/a&gt; for &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; class has been merged. In my &lt;a href="https://friyaz.github.io/blog/GSoC-2020-Week-3"&gt;last post&lt;/a&gt;, I mentioned about a weird error. It turns out that I was importing &lt;code class="language-plaintext highlighter-rouge"&gt;pi&lt;/code&gt; as a symbol instead of as a number. Due to this, the expressions were returned unevaluated causing tests to fail.&lt;/p&gt;
+
+&lt;h2 id="the-route-ahead"&gt;The route ahead&lt;/h2&gt;
+&lt;p&gt;I had a detailed discussion with Francesco about the route ahead. My plan has drifted from my proposal because we have decided not to implement new classes for special regions like circles and spheres. The geometry module already has classes to represent some of these regions. We have decided to use these classes.&lt;/p&gt;
+
+&lt;p&gt;Francesco reminded me that we have to complete the documentation of these changes. I was planning to complete the documentation in the last phase. But I will try completing it soon as I may forget some details.&lt;/p&gt;
+
+&lt;p&gt;We also discussed adding support to perform integral transformation using Stoke&amp;#8217;s and Green&amp;#8217;s theorem. In many cases, such transformation can be useful but adding them may be outside the scope of this project.&lt;/p&gt;
+
+&lt;p&gt;I have convinced Francesco on adding classes to represent implicitly defined regions. It might be the most difficult part of the project but hopefully, it will be useful to SymPy users.&lt;/p&gt;
+&lt;h3 id="next-weeks-goal"&gt;Next week&amp;#8217;s goal&lt;/h3&gt;
+&lt;p&gt;My next week&amp;#8217;s goal is to make a PR for adding suppor to integrate over objects of the geometry module.&lt;/p&gt;
+
+&lt;div class="notice"&gt;
+    &lt;h4&gt;Comments are closed&lt;/h4&gt;
+    If you have a question concerning the content of this page, please feel free to &lt;a href="https://friyaz.github.io/contact/"&gt;contact me&lt;/a&gt;.&lt;/p&gt;--&gt;
+  &lt;/div&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-8</guid>
@@ -483,6 +837,14 @@ After spending a lot of time debugging and fixing each failing testcase, we were
 &lt;/ul&gt;
 
 &lt;p&gt;This marks the end of &lt;code class="language-plaintext highlighter-rouge"&gt;Phase-2&lt;/code&gt; of the program. I learnt a lot during these two months and gained many important things from my mentors.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/07/12/week_7</guid>
+      <author>Smit Lunagariya (Smit-create)</author>
+      <title>Smit Lunagariya (Smit-create): Week 7-GSoC 2020</title>
+      <pubDate>Sun, 12 Jul 2020 00:00:00 GMT</pubDate>
+      <link>https://smit-create.github.io/Smit-create.github.io/2020/07/12/week_7.html</link>
+      <description>&lt;p&gt;This blog describes the 7th week of the program and the 3rd week of Phase 2. Some of the key highlights on the discussions and the implementations during this week are:</description>
     </item>
     <item>
       <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-7</guid>
@@ -534,12 +896,12 @@ While debugging, we also noticed that the &lt;code class="language-plaintext hig
 &lt;/ul&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://namannimmo10.github.io/emerald//week_5</guid>
-      <author>Naman Gera (namannimmo10)</author>
-      <title>Naman Gera (namannimmo10): Week 5 - GSoC 2020</title>
-      <pubDate>Tue, 30 Jun 2020 00:00:00 GMT</pubDate>
-      <link>https://namannimmo10.github.io/emerald//week_5</link>
-      <description>&lt;p&gt;This blog post describes my progress in Week 5 of Google Summer of Code 2020!&lt;/p&gt; &lt;p&gt;I ended up Week 4 by adding unit tests and a rough draft for &lt;code class="language-plaintext highlighter-rouge"&gt;Series&lt;/code&gt; and &lt;code class="language-plaintext highlighter-rouge"&gt;Parallel&lt;/code&gt; classes. Now in this week, to complete the implementation, we decided to add another...</description>
+      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/07/05/week_6</guid>
+      <author>Smit Lunagariya (Smit-create)</author>
+      <title>Smit Lunagariya (Smit-create): Week 6-GSoC 2020</title>
+      <pubDate>Sun, 05 Jul 2020 00:00:00 GMT</pubDate>
+      <link>https://smit-create.github.io/Smit-create.github.io/2020/07/05/week_6.html</link>
+      <description>&lt;p&gt;This blog describes the 6th week of the official program and the 2nd week of Phase 2. By the end of this week, Compound Distributions framework is ready as targeted and I would now focus on the Joint Distributions in the upcoming weeks of this Phase.</description>
     </item>
     <item>
       <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-6</guid>
@@ -570,12 +932,124 @@ is thus used at many places across the codebase. Therefore, a lot of time was sp
 &lt;/ul&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://namannimmo10.github.io/emerald//week_4</guid>
-      <author>Naman Gera (namannimmo10)</author>
-      <title>Naman Gera (namannimmo10): Week 4 - GSoC 2020</title>
-      <pubDate>Tue, 23 Jun 2020 00:00:00 GMT</pubDate>
-      <link>https://namannimmo10.github.io/emerald//week_4</link>
-      <description>&lt;p&gt;With this, the fourth week and phase 1 of GSoC 2020 is over. Here I will give you a brief summary of my progress this week.&lt;/p&gt; &lt;p&gt;The initial days were spent mostly on modifying unit tests for &lt;code class="language-plaintext highlighter-rouge"&gt;Series&lt;/code&gt; and &lt;code class="language-plaintext highlighter-rouge"&gt;Parallel&lt;/code&gt; classes which I added in the...</description>
+      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/06/28/week_5</guid>
+      <author>Smit Lunagariya (Smit-create)</author>
+      <title>Smit Lunagariya (Smit-create): Week 5-GSoC 2020</title>
+      <pubDate>Sun, 28 Jun 2020 00:00:00 GMT</pubDate>
+      <link>https://smit-create.github.io/Smit-create.github.io/2020/06/28/week_5.html</link>
+      <description>&lt;p&gt;This blogs describes the week 5, the beginning week of the Phase 2. Phase 2 will be mostly focused on Compound Distributions which were stalled from 2018, and additions to Joint Distributions.</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://friyaz.github.io/blog/GSoC-2020-Week-3</guid>
+      <author>Faisal Riyaz (friyaz)</author>
+      <title>Faisal Riyaz (friyaz): GSoC 2020 Week-3</title>
+      <pubDate>Sun, 21 Jun 2020 00:00:00 GMT</pubDate>
+      <link>http://friyaz.github.io/blog/GSoC-2020-Week-3</link>
+      <description>&lt;p&gt;I spent this week working on the implementation of the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; class.&lt;/p&gt;
+
+&lt;h3 id="modifying-api-of-parametricregion"&gt;Modifying API of ParametricRegion&lt;/h3&gt;
+&lt;p&gt;When I was writing the test cases, I realized that the API of the ParametricRegion could be improved. Instead of passing limits as a dictionary, tuples can be used. 
+So I modified the API of the ParametricRegion class. The new API is closer to the API of the &lt;code class="language-plaintext highlighter-rouge"&gt;integral&lt;/code&gt; class and more intuitive.  I made a separate &lt;a href="https://github.com/sympy/sympy/pull/19580"&gt;PR&lt;/a&gt; for this change to make it easy for reviewers.&lt;/p&gt;
+
+&lt;p&gt;Example of the new API:&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id="handling-scalar-fields-with-no-base-scalars"&gt;Handling scalar fields with no base scalars&lt;/h3&gt;
+&lt;p&gt;As discussed in previous posts, we decided to not associate a coordinate system with the parametric region. Instead, we assume that the parametricregion is defined in the coordinate system of the field of which the integral is being calculated. We calculate the position vector and normal vector of the parametric region using the base scalars and vectors of the fields. This works fine for most cases. But when the field does not contain any base scalar or vector in its expression, we cannot extract the coordinate system from the field.&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;ParametricIntegral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;150&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;circle&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;# We cannot determine the coordinate system from the field. 
+# To calculate the line integral, we need to find the derivative of the position vector.
+# This is not possible until we know the base vector of the field
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;To handle this situation, I assign a coordinate system C to the region. This does not affect the result in any way as the result is independent of it. It just allows the existing algorithm to work in this case.&lt;/p&gt;
+
+&lt;h3 id="separate-class-for-vector-and-scalar-fields"&gt;Separate class for vector and scalar fields&lt;/h3&gt;
+&lt;p&gt;Francesco suggested making separate classes based on the nature of the field: vector and scalar. I am open to this idea. But I think it will be more easy and intuitive for the users if they can use the same class to calculate the integral. I do not think they are different enough from a user&amp;#8217;s perspective to have a separate interface.&lt;/p&gt;
+
+&lt;p&gt;Maybe we can have a function &lt;code class="language-plaintext highlighter-rouge"&gt;vectorintegrate&lt;/code&gt; which returns the object of &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricVectorIntegral&lt;/code&gt; or &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricScalarIntegral&lt;/code&gt; depending on the nature of the field. This can work for other types of integrals too. Suppose we implement a class &lt;code class="language-plaintext highlighter-rouge"&gt;ImplicitIntegral&lt;/code&gt; to calculate the integral over an implicit region. The &lt;code class="language-plaintext highlighter-rouge"&gt;vectorintegrate&lt;/code&gt; function can then return an object of &lt;code class="language-plaintext highlighter-rouge"&gt;ImplicitIntegral&lt;/code&gt; object by identifying the region is defined implicitly. I think this will be great. I will have more discussion with Francesco on this aspect.&lt;/p&gt;
+
+&lt;h3 id="topological-sort-of-parameters"&gt;Topological sort of parameters&lt;/h3&gt;
+&lt;p&gt;When evaluating double integral, the result some times depend upon the order in which the integral is evaluated. If the bounds of one parameter &lt;code class="language-plaintext highlighter-rouge"&gt;u&lt;/code&gt; depend on another parameter &lt;code class="language-plaintext highlighter-rouge"&gt;v&lt;/code&gt;, we should integrate first with respect to &lt;code class="language-plaintext highlighter-rouge"&gt;u&lt;/code&gt; and then &lt;code class="language-plaintext highlighter-rouge"&gt;v&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;For example, consider the problem of evaluating the area of the triangle.&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;T&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;The area of the triangle is 10 units and should be independent of the order parameters are specified at the time of object initialization. But the double integral depends on the order of integration.&lt;/p&gt;
+&lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; integrate(1, (x, 0, 2), (y, 10 - 5*x))
+20 - 10*x
+&amp;gt;&amp;gt;&amp;gt; integrate(1, (y, 0, 10 - 5*x), (x, 0, 2))
+10
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;So parameters must be passed to &lt;code class="language-plaintext highlighter-rouge"&gt;integrate&lt;/code&gt; in the correct order. To overcome this issue, we topologically sort the parameters. SymPy already had a function to perform topologically sort in its utilities module. I implemented a function that generates the graph and passes it to the &lt;code class="language-plaintext highlighter-rouge"&gt;topological_sort&lt;/code&gt; function. This made my work easy.&lt;/p&gt;
+
+&lt;h3 id="long-computation-time-of-integrals"&gt;Long computation time of Integrals&lt;/h3&gt;
+&lt;p&gt;Some integrals are taking too long to compute. When base scalars in the field are replaced by their parametric equivalents, the expression of the field becomes large. Further, the integrand is the dot product of the field with a vector or product of the field and the magnitude of the vector. The integrate function takes about 20-30 seconds to calculate the integral. I think this behavior is due to the expression of integrand growing structurally despite it being simple.&lt;/p&gt;
+
+&lt;p&gt;For example,&lt;/p&gt;
+&lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt;solidsphere = ParametricRegion((r*sin(phi)*cos(theta), r*sin(phi)*sin(theta), r*cos(phi)),\
+                                (r, 0, 2), (theta, 0, 2*pi), (phi, 0, pi))
+&amp;gt;&amp;gt;&amp;gt; ParametricIntegral(C.x**2 + C.y**2, solidsphere)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;In this case, the parametric field when replaced with parametersr become &lt;code class="language-plaintext highlighter-rouge"&gt;r**2*sin(phi)**2*sin(theta)**2 + r**2*sin(phi)**2*cos(theta)**2&lt;/code&gt; although it can be easily simplified to &lt;code class="language-plaintext highlighter-rouge"&gt;r**2*sin(phi)&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;SymPy has a function called &lt;code class="language-plaintext highlighter-rouge"&gt;simplify&lt;/code&gt;. &lt;code class="language-plaintext highlighter-rouge"&gt;simplify&lt;/code&gt; attempts to apply various methods to simplify an expression. When the integrand is simplified using it before passing to integrate, the result is returned almost immediately. Francesco rightly pointed out that simplify is computationally expensive and we can try to some specific simplification. I will look into it.&lt;/p&gt;
+
+&lt;h3 id="failing-test-cases"&gt;Failing test cases&lt;/h3&gt;
+&lt;p&gt;Some test cases are failing because of integrate function returning results in different forms. The results are mathematically equivalent but different in terms of structure. I found this strange. I do not think this has to do with hashing. I still have not figured out this problem.&lt;/p&gt;
+
+&lt;h3 id="next-weeks-goal"&gt;Next week&amp;#8217;s goal&lt;/h3&gt;
+&lt;p&gt;Hopefully, I will complete the work on the ParamatricIntegral and get it merged. We can then start discussing about representing implicit regions.&lt;/p&gt;
+
+&lt;div class="notice"&gt;
+    &lt;h4&gt;Comments are closed&lt;/h4&gt;
+    If you have a question concerning the content of this page, please feel free to &lt;a href="https://friyaz.github.io/contact/"&gt;contact me&lt;/a&gt;.&lt;/p&gt;--&gt;
+  &lt;/div&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://friyaz.github.io/blog/GSoC-2020-Week-2</guid>
+      <author>Faisal Riyaz (friyaz)</author>
+      <title>Faisal Riyaz (friyaz): GSoC 2020 Week-2</title>
+      <pubDate>Sun, 21 Jun 2020 00:00:00 GMT</pubDate>
+      <link>http://friyaz.github.io/blog/GSoC-2020-Week-2</link>
+      <description>&lt;p&gt;Part of this week was spent in getting the &lt;a href="https://github.com/sympy/sympy/pull/19472"&gt;PR&lt;/a&gt; for &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricRegion&lt;/code&gt; merged. I made some fixes to get the failing tests to pass. I also added the docstring.&lt;/p&gt;
+
+&lt;h3 id="parametricintegral"&gt;ParametricIntegral&lt;/h3&gt;
+&lt;p&gt;I started &lt;a href="https://github.com/sympy/sympy/pull/19539"&gt;working&lt;/a&gt; on the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; class. &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; class returns the integral of a scalar or vector field over a region defined parametrically. It should be able to calculate line, surface, or volume integral depending on the nature of the parametric region. To identify the nature of the region, the &lt;code class="language-plaintext highlighter-rouge"&gt;dimensions&lt;/code&gt; property needs to be added in the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricRegion&lt;/code&gt; class.&lt;/p&gt;
+
+&lt;p&gt;I started with writing the test cases to avoid my previous mistake of working on the implementation before deciding the API. 
+The API of the ParametricIntegral class:&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;ParametricIntegral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;field&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;parametricregion&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Some examples:&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;curve&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)})&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;ParametricIntegral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;curve&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sqrt&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;semisphere&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;phi&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;phi&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;phi&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt;\
+                            &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;phi&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;)})&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;ParametricIntegral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;semisphere&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;pi&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;I initially thought to make it a subclass of &lt;code class="language-plaintext highlighter-rouge"&gt;Integral&lt;/code&gt; as the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; is a kind of integral. But there was no reuse of any code from &lt;code class="language-plaintext highlighter-rouge"&gt;Integral&lt;/code&gt; in the    &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; so decided against it.&lt;br /&gt;
+A rough sketch of the algorithm to calculate integral is described below:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Replace the base scalars in the field with their definition in terms of parameters and obtain the parametric representation of the field.&lt;/li&gt;
+  &lt;li&gt;Form the position vector of the region using definition tuple and base vectors determined from the field.&lt;/li&gt;
+  &lt;li&gt;Depending on the type of region, calculate the derivative of the position vector, or find the normal vector or calculate dV using Jacobian.&lt;/li&gt;
+  &lt;li&gt;Calculate the integrand using dot product or multiplication with the parametric field.&lt;/li&gt;
+  &lt;li&gt;Use the &lt;code class="language-plaintext highlighter-rouge"&gt;integrate&lt;/code&gt; function to calculate the integral.&lt;/li&gt;
+  &lt;li&gt;If the &lt;code class="language-plaintext highlighter-rouge"&gt;integrate&lt;/code&gt; function can evaluate the integral, return it otherwise return an object of the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricRegion&lt;/code&gt; class.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;We also had &lt;a href="https://github.com/sympy/sympy/issues/19320#issuecomment-643234256"&gt;discussion&lt;/a&gt; on whether swapping the upper and lower limit has any affect on the result of a vector integral. For multiple integrals, the sign of the result changes when the upper and lower bound of a parameter are interchanged. I do not think we came to any conclusion. But this won&amp;#8217;t matter for integrals over parametric regions as the bounds are directly defined by the user.&lt;/p&gt;
+
+&lt;h3 id="next-weeks-goal"&gt;Next week&amp;#8217;s goal&lt;/h3&gt;
+&lt;p&gt;I will start working on the implementation of the &lt;code class="language-plaintext highlighter-rouge"&gt;ParametricIntegral&lt;/code&gt; class. I am also trying to get more involved in SymPy outside of my GSoC project. I hope I can become a contributing member of the community.&lt;/p&gt;
+
+&lt;div class="notice"&gt;
+    &lt;h4&gt;Comments are closed&lt;/h4&gt;
+    If you have a question concerning the content of this page, please feel free to &lt;a href="https://friyaz.github.io/contact/"&gt;contact me&lt;/a&gt;.&lt;/p&gt;--&gt;
+  &lt;/div&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-5</guid>
@@ -604,12 +1078,12 @@ Previously, either &lt;code class="language-plaintext highlighter-rouge"&gt;SymP
 &lt;/ul&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://namannimmo10.github.io/emerald//week_3</guid>
-      <author>Naman Gera (namannimmo10)</author>
-      <title>Naman Gera (namannimmo10): Week 3 - GSoC 2020</title>
-      <pubDate>Tue, 16 Jun 2020 00:00:00 GMT</pubDate>
-      <link>https://namannimmo10.github.io/emerald//week_3</link>
-      <description>&lt;p&gt;In the starting days of Week 3, I made further changes in the class level docstrings for &lt;code class="language-plaintext highlighter-rouge"&gt;TransferFunction&lt;/code&gt; after Jason and Nikhil reviewed the PR. Jason also mentioned that I had to add a new page in sympy docs which should include the purpose of adding a control...</description>
+      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/06/21/phase_1</guid>
+      <author>Smit Lunagariya (Smit-create)</author>
+      <title>Smit Lunagariya (Smit-create): Phase-1-Highlights</title>
+      <pubDate>Sun, 21 Jun 2020 00:00:00 GMT</pubDate>
+      <link>https://smit-create.github.io/Smit-create.github.io/2020/06/21/phase_1.html</link>
+      <description>&lt;p&gt;With this blog it completes the awesome month of statistical learning and coding, and the official Phase 1 of the Google Summer of Code-2020.</description>
     </item>
     <item>
       <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-4</guid>
@@ -649,12 +1123,64 @@ to produce the correct series expansion. Special care needs to be taken while ha
 &lt;p&gt;This marks the end of &lt;code class="language-plaintext highlighter-rouge"&gt;Phase-1&lt;/code&gt; of the program. I learnt a lot during this one month and gained many important things from my mentors.&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://namannimmo10.github.io/emerald//week_2</guid>
-      <author>Naman Gera (namannimmo10)</author>
-      <title>Naman Gera (namannimmo10): Week 2 - GSoC 2020</title>
-      <pubDate>Tue, 09 Jun 2020 00:00:00 GMT</pubDate>
-      <link>https://namannimmo10.github.io/emerald//week_2</link>
-      <description>&lt;p&gt;Week 2 of the coding period is now over. It was a week full of learning and a lot of challenges. I had my first meeting with Nikhil and Ishan on June 4, between 5:00 - 6:00 p.m. where we discussed a few things regarding the implementation part for this...</description>
+      <guid isPermaLink="false">http://friyaz.github.io/blog/GSoC-2020-Week-1</guid>
+      <author>Faisal Riyaz (friyaz)</author>
+      <title>Faisal Riyaz (friyaz): GSoC 2020 Week-1</title>
+      <pubDate>Thu, 11 Jun 2020 00:00:00 GMT</pubDate>
+      <link>http://friyaz.github.io/blog/GSoC-2020-Week-1</link>
+      <description>&lt;p&gt;The first week of GSoC has been completed. My goal for this week was to add ParametricRegion class. Many common regions have well known parametric representation. Calculation of Integrals on parametric regions is a common problem of vector calculus.&lt;/p&gt;
+
+&lt;p&gt;The PR for adding the ParametricRegion class is &lt;a href="https://github.com/sympy/sympy/pull/19472"&gt;#19472&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h1 id="parametricregion"&gt;ParametricRegion&lt;/h1&gt;
+&lt;p&gt;An object of ParametricRegion class represents a region in space defined in terms of parameters. If a user wants to perform integration on a region, they have to create a ParametricRegion object. This object can then be passed to other classes to perform integration.&lt;/p&gt;
+
+&lt;p&gt;The implementation part was easy. The difficulty was in deciding the API. I spent much of the week discussing the API, But it was worth it. The ParametricRegion class will most likely be used by many users so it is important for it to be simple and intuitive. I think I should have first completed writing test cases and examples.&lt;/p&gt;
+
+&lt;p&gt;The final &lt;strong&gt;API&lt;/strong&gt; of ParametricRegion class:&lt;/p&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;parameters_or_coordsys&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;definition&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;limits&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="bp"&gt;None&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Some &lt;strong&gt;Examples&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;p = ParametricRegion(t, (t, t**3), limits={t: (1, 2)})
+halfdisc = ParametricRegion((r, theta), (r*cos(theta), r* sin(theta)), {r: (-2, 2), theta: (0, pi)})
+cylinder = ParametricRegion((r, theta, z), (cos(theta), r*sin(theta), C.z), {theta: (0, 2*pi), z: (0, 4)})
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id="parameters_or_coordsys"&gt;parameters_or_coordsys&lt;/h3&gt;
+&lt;p&gt;This argument specifies the parameters of the parametric region. When there are more than one parameter, the user has to pass them as tuple. When a CoordSys3d object is passed, its base scalars are used as parameters.&lt;/p&gt;
+
+&lt;h3 id="definition"&gt;definition&lt;/h3&gt;
+&lt;p&gt;definiton tuple maps the base scalars to thier parametric representation. It is not necessary for evey base scalar to have a parametric definition.&lt;/p&gt;
+
+&lt;h3 id="coordsys3d"&gt;CoordSys3D&lt;/h3&gt;
+&lt;p&gt;A parametric representation is just defining base scalars in terms of some parameters. If the base scalars are not knowm, the region cannot be completely specified. My intial approach was to include an argument to specify the coordinate system.&lt;/p&gt;
+
+&lt;p&gt;Passing a CoordSys3D object can be non intuitive for users. In most cases, the base scalars of the parametric region are the same as that of vector/scalar field. We can avoid passing the CoordSys3D object if we assume that the base scalars of parametric region field are same.&lt;/p&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;p&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;ParametricRegion&lt;/span&gt;&lt;span class="p"&gt;((&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;cos&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;sin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt; &lt;span class="n"&gt;limits&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;theta&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;pi&lt;/span&gt;&lt;span class="p"&gt;)})&lt;/span&gt;
+&lt;span class="n"&gt;Integral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;# C.x = r*cos(theta),  C.y = r*sin(theta), C.z = C.z
+&lt;/span&gt;&lt;span class="n"&gt;Integral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;R&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;R&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;R&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="c1"&gt;# R.x = r*cos(theta),  R.y = r*sin(theta), R.z = R.z
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;There can be a situation where SymPy cannot determine the coordinate system of the field. In such situations, we can raise a ValueError. For example:&lt;/p&gt;
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;span class="n"&gt;Integral&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;R&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;C&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id="limits"&gt;limits&lt;/h3&gt;
+&lt;p&gt;Most parametric region have bounds on the parameters. Note that it is not necessary for every parameter to have an upper and lower bound.&lt;/p&gt;
+
+&lt;p&gt;There can be many methods for a user to define bounds of parametric region. We decied to use a dictionary which we named limits. The keys of the dictionary are parameters and the values are tuples (lower bound, upper bound). Another approach is to use a nested bound tuple. Every subtuple will represent the bounds of a parameter.&lt;/p&gt;
+
+&lt;h3 id="next-weeks-goal"&gt;Next week&amp;#8217;s goal&lt;/h3&gt;
+&lt;p&gt;My next week&amp;#8217;s task is to get started with ParametricIntegral class. This class will represent integral of a scalar/vector field on a parametric surface. I will first write the unit tests and examples.&lt;/p&gt;
+
+&lt;div class="notice"&gt;
+    &lt;h4&gt;Comments are closed&lt;/h4&gt;
+    If you have a question concerning the content of this page, please feel free to &lt;a href="https://friyaz.github.io/contact/"&gt;contact me&lt;/a&gt;.&lt;/p&gt;--&gt;
+  &lt;/div&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-3</guid>
@@ -700,14 +1226,6 @@ At last, this issue was resolved and we ended up adding an extremely optimised i
     &lt;/ul&gt;
   &lt;/li&gt;
 &lt;/ul&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://namannimmo10.github.io/emerald//week_1</guid>
-      <author>Naman Gera (namannimmo10)</author>
-      <title>Naman Gera (namannimmo10): Week 1 - GSoC 2020</title>
-      <pubDate>Tue, 02 Jun 2020 00:00:00 GMT</pubDate>
-      <link>https://namannimmo10.github.io/emerald//week_1</link>
-      <description>&lt;p&gt;This specific blog describes the first official week of the coding period. I actually started coding from May 21 by opening &lt;a href="https://github.com/sympy/sympy/pull/19390"&gt;#19390&lt;/a&gt;. I decided to start off the coding period by adding &lt;code class="language-plaintext highlighter-rouge"&gt;TransferFunction&lt;/code&gt; class&amp;#8230; which was basically a class for representing the LTI (Linear, time-invariant) systems in...</description>
     </item>
     <item>
       <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-2</guid>
@@ -765,425 +1283,6 @@ Thus, we had to rectify the &lt;code class="language-plaintext highlighter-rouge
     &lt;/ul&gt;
   &lt;/li&gt;
 &lt;/ul&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Week-1</guid>
-      <author>Sachin Agarwal (sachin-4099)</author>
-      <title>Sachin Agarwal (sachin-4099): GSoC 2020 - Week 1</title>
-      <pubDate>Sun, 24 May 2020 00:00:00 GMT</pubDate>
-      <link>https://sachin-4099.github.io//GSoC-2020-Week-1</link>
-      <description>&lt;p&gt;Key &lt;code class="language-plaintext highlighter-rouge"&gt;highlights&lt;/code&gt; of this week&amp;#8217;s work are:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/19292"&gt;Fixed incorrect limit evaluations caused due to different assumptions of the limit variable&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-
-    &lt;ul&gt;
-      &lt;li&gt;In this issue, due to different assumptions of the limit variable, the output was coming out to be different and incorrect for the same limit expression.
-On digging deep into this issue, we observed that the assumption &lt;code class="language-plaintext highlighter-rouge"&gt;integer = True&lt;/code&gt; was common between all the incorrectly evaluated limit expressions.
-Thus, we concluded that the &lt;code class="language-plaintext highlighter-rouge"&gt;Gruntz algorithm&lt;/code&gt; is not able to correctly evaluate those expressions where the limit variable possesses &lt;code class="language-plaintext highlighter-rouge"&gt;integer = True&lt;/code&gt; property.
-So, in order to get all the correct mathematical behaviour from the expression, we decided to define a dummy variable lacking &lt;code class="language-plaintext highlighter-rouge"&gt;integer = True&lt;/code&gt; property. 
-After which, we simply had to substitute the limit variable with this dummy variable for these type of limit expressions to resolve the issue.
-&lt;br /&gt;&lt;br /&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/19297"&gt;Fixed incorrect limit evaluations caused due to bug in rewriting&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-
-    &lt;ul&gt;
-      &lt;li&gt;At first, this issue seemed tough to resolve because we were unable to find the source of the error. But then, we decided to examine each expression which is generated during evaluation.
-This helped us to observe that &lt;code class="language-plaintext highlighter-rouge"&gt;rewriting&lt;/code&gt; of the expression was taking place incorrectly and we shifted our focus towards the &lt;code class="language-plaintext highlighter-rouge"&gt;rewrite()&lt;/code&gt; function.
-Afterwards, it was pretty evident that the &lt;code class="language-plaintext highlighter-rouge"&gt;xreplace()&lt;/code&gt; function utilised for rewriting is not sufficient, as it did not find everything that needs to replaced.
-Thus, replacing the &lt;code class="language-plaintext highlighter-rouge"&gt;xreplace()&lt;/code&gt; function with the &lt;code class="language-plaintext highlighter-rouge"&gt;subs()&lt;/code&gt; function helped us to resolve this issue.&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Community-Bonding-Period</guid>
-      <author>Sachin Agarwal (sachin-4099)</author>
-      <title>Sachin Agarwal (sachin-4099): GSoC 2020 - Community Bonding Period</title>
-      <pubDate>Sun, 17 May 2020 00:00:00 GMT</pubDate>
-      <link>https://sachin-4099.github.io//GSoC-2020-Community-Bonding-Period</link>
-      <description>&lt;p&gt;The first part of my GSoC journey was the Community Bonding Period.&lt;/p&gt;
-
-&lt;p&gt;In this period, I mainly focussed on the following things:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Setting up my blog, where I will provide weekly reports on the progress of my project, and synchronizing it with Planet SymPy.&lt;/li&gt;
-  &lt;li&gt;Setting up a public gitter channel for discussions regarding the project.&lt;/li&gt;
-  &lt;li&gt;Prioritising the issues to be solved.&lt;/li&gt;
-  &lt;li&gt;Deciding the finer details of the workflow with my mentors and working out efficient ways to solve each particular issue.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Since I have been contributing to SymPy for the past 8-9 months, it was easier for me to blend into the community.&lt;/p&gt;
-
-&lt;p&gt;Now, as everything has gone as planned, I have decided to make a head start and begin with the implementation of my project.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-with-sympy</guid>
-      <author>Sachin Agarwal (sachin-4099)</author>
-      <title>Sachin Agarwal (sachin-4099): GSoC 2020 Acceptance</title>
-      <pubDate>Thu, 07 May 2020 00:00:00 GMT</pubDate>
-      <link>https://sachin-4099.github.io//GSoC-2020-with-sympy</link>
-      <description>&lt;p&gt;&lt;img src="https://sachin-4099.github.io/public/gsoc.png" style="width: 30%; height: 30%; float: left;" /&gt;
-&lt;img src="https://sachin-4099.github.io/public/sympy.png" style="width: 25%; height: 25%; float: right; margin-right: 100px;" /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;The results of &lt;strong&gt;&lt;a href="https://summerofcode.withgoogle.com/organizations/4831132022996992/#5816442299088896"&gt;Google Summer of Code&lt;/a&gt;&lt;/strong&gt; were out on 04 May 2020 and I am pleased to share with you that my proposal with &lt;strong&gt;&lt;a href="http://sympy.org"&gt;SymPy&lt;/a&gt;&lt;/strong&gt; was accepted.&lt;/p&gt;
-
-&lt;p&gt;I would like to thank all the members of the organisation especially &lt;a href="https://github.com/jksuom"&gt;Kalevi Suominen&lt;/a&gt; for guiding me in my proposal and PR&amp;#8217;s. I am really excited to work for such an amazing organization.&lt;/p&gt;
-
-&lt;p&gt;I will be working on my project, &lt;a href="https://drive.google.com/file/d/1OgbnWLzQzaLfmmSM-fK09TCJmUzJ6tq4/view?usp=sharing"&gt;Amendments to Limit Evaluation and Series Expansion&lt;/a&gt;, during a period of 3 months spanning from June to August, under the mentorship of &lt;a href="https://github.com/jksuom"&gt;Kalevi Suominen&lt;/a&gt; and &lt;a href="https://github.com/leosartaj"&gt;Sartaj Singh&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;My primary focus will be to work on the &lt;code class="language-plaintext highlighter-rouge"&gt;series&lt;/code&gt; module and make it more robust as it is the backbone of all the limit evaluations performed by the library.&lt;/p&gt;
-
-&lt;p&gt;Looking forward for a really productive and wonderful summer ahead.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=122</guid>
-      <author>Ishan Joshi (ishanaj)</author>
-      <title>Ishan Joshi (ishanaj): Everything about SymPy&#x2019;s Column module</title>
-      <pubDate>Thu, 28 Nov 2019 19:56:42 GMT</pubDate>
-      <link>https://ishanaj.wordpress.com/2019/11/29/everything-about-sympys-column-module/</link>
-      <description>&lt;p&gt;The Column class implemented in &lt;a href="https://github.com/sympy/sympy/pull/17122"&gt;PR #17122&lt;/a&gt; enables the
-continuum mechanics module of SymPy to deal with column buckling related
-calculations. The Column module can calculate the moment equation, deflection
-equation, slope equation and the critical load for a column defined by a user.&lt;/p&gt;
-
-
-
-&lt;p&gt;&lt;strong&gt;Example use-case of Column class:&lt;/strong&gt;&lt;/p&gt;
-
-
-&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
-&amp;gt;&amp;gt;&amp;gt; from sympy.physics.continuum_mechanics.column import Column
-&amp;gt;&amp;gt;&amp;gt; from sympy import Symbol, symbols
-&amp;gt;&amp;gt;&amp;gt; E, I, P = symbols('E, I, P', positive=True)
-&amp;gt;&amp;gt;&amp;gt; c = Column(3, E, I, 78000, top="pinned", bottom="pinned")
-&amp;gt;&amp;gt;&amp;gt; c.end_conditions
-{'bottom': 'pinned', 'top': 'pinned'}
-&amp;gt;&amp;gt;&amp;gt; c.boundary_conditions
-{'deflection': [(0, 0), (3, 0)], 'slope': [(0, 0)]}
-&amp;gt;&amp;gt;&amp;gt; c.moment()
-78000*y(x)
-&amp;gt;&amp;gt;&amp;gt; c.solve_slope_deflection()
-&amp;gt;&amp;gt;&amp;gt; c.deflection()
-C1*sin(20*sqrt(195)*x/(sqrt(E)*sqrt(I)))
-&amp;gt;&amp;gt;&amp;gt; c.slope()
-20*sqrt(195)*C1*cos(20*sqrt(195)*x/(sqrt(E)*sqrt(I)))/(sqrt(E)*sqrt(I))
-&amp;gt;&amp;gt;&amp;gt; c.critical_load()
-pi**2*E*I/9
-&lt;/pre&gt;
-
-
-
-&lt;h1&gt;&lt;strong&gt;The Column class&lt;/strong&gt;&lt;/h1&gt;
-
-
-
-&lt;p&gt;The Column class is non-mutable,&lt;span id="more-122"&gt;&lt;/span&gt; which means unlike the Beam class, a user cannot change the attributes of the class once they are defined along with the object definition. Therefore to change the attribute values one will have to define a new object.&lt;/p&gt;
-
-
-
-&lt;h3&gt;&lt;strong&gt;Reasons for creating a non-mutable class&lt;/strong&gt;&lt;/h3&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt; From a backward-compatibility perspective, it is always possible to  adopt a different plan and add mutability later but not the other way  around. &lt;/li&gt;&lt;li&gt;Most things are immutable in SymPy which is useful for caching etc. Matrix is an example where allowing mutability has lead to many problems that are now impossible to fix without breaking backwards compatibility.&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;h2&gt;&lt;strong&gt;Working of the column class:&lt;/strong&gt;&lt;/h2&gt;
-
-
-
-&lt;p&gt;
-The &lt;strong&gt;governing equation&lt;/strong&gt; for column buckling is:&lt;/p&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh3.googleusercontent.com/qfv6QbVnotFKUPebBoLgBNPjNz5uhN6g2-mbfBzDTR13Cb5z4BkAM7RHGerTtvqEzMzjQFL8r44iYeIVTm0OpYX6f0QWn2rCuz1qxKNVnvM6LHnTX9mfJ9pyBzPmBaFGZPrdiy-p" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;p&gt;If we determine the the &lt;strong&gt;moment equation&lt;/strong&gt; of the column ,on which the buckling load is applied, and place it in the above equation,  we might be able to get the deflection by further solving the differential equation for &lt;strong&gt;y&lt;/strong&gt;. &lt;/p&gt;
-
-
-
-&lt;p&gt;&lt;strong&gt;Step-1: To determine the internal moment.&lt;/strong&gt;&lt;/p&gt;
-
-
-
-&lt;p&gt;This is simply done by assuming deflection at any arbitrary cross section at a distance&lt;strong&gt; x&lt;/strong&gt; from the bottom as &lt;strong&gt;y &lt;/strong&gt;and then multiplying this by the load &lt;strong&gt;P&lt;/strong&gt; and for eccentric load another moment of magnitude &lt;strong&gt;P*e&lt;/strong&gt; is added to the moment.&lt;/p&gt;
-
-
-
-&lt;figure class="wp-block-image size-large"&gt;&lt;img alt="" class="wp-image-129" src="https://ishanaj.files.wordpress.com/2019/11/image-2.png?w=641" /&gt;&lt;/figure&gt;
-
-
-
-&lt;p&gt;&lt;strong&gt;Simple load&lt;/strong&gt; &lt;strong&gt;is given by&lt;/strong&gt;:&amp;#160;&lt;/p&gt;
-
-
-
-&lt;figure class="wp-block-image"&gt;&lt;img alt="" src="https://lh3.googleusercontent.com/mY4nhR2YWfTEITzlL8LFRGnPq2KXPcwbyAGajOWtTkMEBYtTKGya0n4r62RolTLImOGjXazs0RqAjOyAy3K94vrM4G_xZxRKV-GBdG2uULX9qap7xPsgI6ahIY4-tXbx1zYH2LNR" /&gt;&lt;/figure&gt;
-
-
-
-&lt;p&gt;&lt;strong&gt;Eccentric load is given by:&amp;#160;&lt;/strong&gt;&lt;/p&gt;
-
-
-
-&lt;figure class="wp-block-image"&gt;&lt;img alt="" src="https://lh3.googleusercontent.com/vIfQDO151xRZO2hcDi9pSPeyafqlYmTUBnr_zszHjiZiv07cOA6xnuu__5EslONxpPtQFY5RaUGLXefgY0AtHip6Y6LgANv3XZ1uo790QctxO-Q5qTledCkiTuKzmpaMzJ5LBt-e" /&gt;&lt;/figure&gt;
-
-
-
-&lt;p&gt;&lt;strong&gt;Step-2: &lt;/strong&gt;This moment can then be substituted in the governing equation and the resulting differential equation can be solved using SymPy&amp;#8217;s &lt;strong&gt;dsolve()&lt;/strong&gt; for the &lt;strong&gt;deflection y&lt;/strong&gt;.&lt;/p&gt;
-
-
-
-&lt;h2&gt;&lt;strong&gt;Applying different end-conditions&lt;/strong&gt;&lt;/h2&gt;
-
-
-
-&lt;p&gt;The above steps considers a simple example of a column pinned at both of its ends. But the end-condition of the column can vary, which will cause the moment equation to to vary.&lt;/p&gt;
-
-
-
-&lt;p&gt;Currently &lt;strong&gt;four&lt;/strong&gt; basic supports are implemented:&amp;#160; Pinned-pinned, fixed-fixed, fixed-pinned, one pinned-other free.&lt;/p&gt;
-
-
-
-&lt;p&gt;Depending on the supports the moment due to applied load would change as:&lt;/p&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Pinned-Pinned:&lt;/strong&gt;&amp;nbsp; no change in moment&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh5.googleusercontent.com/1rNjrJP3SC6q80sWh9m5-EAj80_YLYSmCECNYMqGh0n24r7EAqP5D8b-joCrvjhV0pnoQeD5EWrcStUufFj8zgHGSIMkk-lrnRPfkxYIJP42RIzh6pCNxthuEP83wWDdhAAZ8I30" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter is-resized"&gt;&lt;img alt="" height="218" src="https://lh4.googleusercontent.com/ki5Fbllhkj2xCcEJiRQxPyuTDlJnQGPfjcvk2GNjnJq5tNd83--zKWRKMck4v9TRx7SINESjNxcmdsXaXh6Le1-fBp8pQLY7pVTy-H_o895Ts_813cFmjlQDfbp34i3RJ3Qvb9RR" width="217" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Fixed-fixed&lt;/strong&gt;: reaction moment M is included&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh6.googleusercontent.com/76IEGW9i83Am9oy_YQC7xm2BVGnEw_BcgM_bQxUgnVdWY4hBpgIIbhE4bG0C8FLpNYpajyoi7F_z8g4uVLfEZOfjv3dQBQ9fvLnIFVZUJvsIaleRSUVA7B1vrQsBj5FY3Ln3H6sx" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh3.googleusercontent.com/8jXG4tyFMgAzJOanpHqj-d_f37-OkFrntfuhulynED1JjhNT6h_UkHmcAtDyN3Rem95uYIoKuhHUkslItdgIictxZC8dS_6mA9xbW-YxcDgMtyJ-L46UExUNH8VR8octca5v7RWa" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;&lt;strong&gt;Fixed-pinned:&lt;/strong&gt;&amp;nbsp;&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh5.googleusercontent.com/zphyPG-BZaoTYFrhY1NVWVza7oBX85d-K3HIDXF02bpcG_3gMsA8zMD-T6UO1X7GX4ssJYeok9IFCILq18GZMDkztjLdA_IA_Otq-qSM30Us22gwqPjPwPnhubYPG3jwtwzq0yML" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;p&gt;Here &lt;strong&gt;M&lt;/strong&gt; is the restraint moment at &lt;strong&gt;B (&lt;/strong&gt;which is fixed&lt;strong&gt;). &lt;/strong&gt;To counter this, another moment is considered by applying a horizontal force &lt;strong&gt;F&lt;/strong&gt; at point A.&lt;/p&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh5.googleusercontent.com/2Wlvbp1qFbq2p9uf057TCNM7StusOl0J5VAFU-qMQ0BhKTDDdtvP_l-tPgSkC9vmmsAaJd3QR8sEddl_z4LsAqo5FBKEvQNVF6eEssYdex61ENPUb4qWf6nFV7OkZV1Hy5ftDCdJ" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;&lt;strong&gt;One pinned- other free:&lt;/strong&gt;&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh6.googleusercontent.com/8vG470fp-wb2CzGMHfR5_chDnr4SqLGM0pAaRXXLSiDklpxXlcCoVOAh8q4dc97ZjWF3GM5-HvPGO1RzRhevUpDxl-cM6pHhztiTxJY-P7Ft04bfciVYK-FnzYJTZr4TvNqqX_wJ" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;div class="wp-block-image"&gt;&lt;figure class="aligncenter"&gt;&lt;img alt="" src="https://lh3.googleusercontent.com/eoHyQWUNWNOTFDsofRof215piNvdk9OqETpA4YQWRlp904vpTx69eKRxW12NdAHGxTBNRs63oyP87cMT36DE5judlZWoVeh_7zpP7Vxq5MZ_RkUieecAZGgxSm8Hj5RpKrZIk87g" /&gt;&lt;/figure&gt;&lt;/div&gt;
-
-
-
-&lt;h2&gt; &lt;strong&gt;Solving for slope and critical load&lt;/strong&gt;&lt;/h2&gt;
-
-
-
-&lt;p&gt;Once we get the deflection equation we can solve for the slope by differentiating the deflection equation with respect to &lt;strong&gt;x&lt;/strong&gt;. This is done by SymPy&amp;#8217;s &lt;strong&gt;diff()&lt;/strong&gt; function&lt;/p&gt;
-
-
-&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
-self._slope = self._deflection.diff(x)
-&lt;/pre&gt;
-
-
-
-&lt;h2&gt;&lt;strong&gt;Critical load&lt;/strong&gt;&lt;/h2&gt;
-
-
-
-&lt;p&gt;Critical load for single bow buckling condition can be easily determined by the substituting the boundary conditions in the deflection equation and solving it for &lt;strong&gt;P&lt;/strong&gt; i.e the load.&lt;/p&gt;
-
-
-
-&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Even if the user provides the applied load, during the entire calculation, we consider the  load to be &lt;strong&gt;P&lt;/strong&gt;. Whenever the &lt;strong&gt;moment()&lt;/strong&gt;, &lt;strong&gt;slope(), deflection(),&lt;/strong&gt; &lt;strong&gt;etc&lt;/strong&gt;. methods are called the variable &lt;strong&gt;P &lt;/strong&gt;is replaced with the users value. This is done so that it is easier for us to calculate the critical load in the end.&lt;/p&gt;
-
-
-&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
-defl_eqs = []
-# taking last two bounndary conditions which are actually
-# the initial boundary conditions.
-for point, value in self._boundary_conditions['deflection'][-2:]:
-    defl_eqs.append(self._deflection.subs(x, point) - value)
-
-# C1, C2 already solved, solve for P
-self._critical_load = solve(defl_eqs, P, dict=True)[0][P]
-&lt;/pre&gt;
-
-
-
-&lt;p&gt;The case of the pinned-pinned end condition is a bit tricky.  On solving the differential equation via &lt;strong&gt;dsolve()&lt;/strong&gt;, the deflection comes out to be zero. This problem has been described in &lt;a href="https://ishanaj.wordpress.com/2019/07/08/gsoc19-week-6-completing-the-column-class/#more-56"&gt;this&lt;/a&gt; blog. Its calculation is handled a bit differently in the &lt;a href="https://github.com/sympy/sympy/pull/17122/files#diff-00c8ee080a295764f42be4b0e448935dR225"&gt;code&lt;/a&gt;. Instead of directly solving it via &lt;strong&gt;dsolve()&lt;/strong&gt;, it is solved in steps, and the trivial solutions are removed. This technique not only solves for the deflection of the column, but simultaneously also calculates the critical load it can bear.&lt;/p&gt;
-
-
-
-&lt;p&gt;Although this may be considered as a hack to the problem. I think in future it would be better if &lt;strong&gt;dsolve()&lt;/strong&gt; gets the ability to remove the trivial solutions. But this seems to be better as of now.&lt;/p&gt;
-
-
-
-&lt;p&gt;A problem that still persists is the calculation of critical load for pinned-fixed end condition. Currently, it has been made as an XFAIL, since to resolve that either &lt;strong&gt;solve()&lt;/strong&gt; or &lt;strong&gt;solveset() &lt;/strong&gt;has to return the solution in the required form. An &lt;a href="https://github.com/sympy/sympy/issues/17162"&gt;issue &lt;/a&gt;has been raised on GitHub, regarding the same.&lt;/p&gt;
-
-
-
-&lt;p&gt;Hope that gives a crisp idea about the functioning of SymPy&amp;#8217;s Column module.&lt;/p&gt;
-
-
-
-&lt;p&gt;Thanks!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/08/week-12-the-final-week/</guid>
-      <author>Nikhil Maan (Sc0rpi0n101)</author>
-      <title>Nikhil Maan (Sc0rpi0n101): Week 12: The Final Week</title>
-      <pubDate>Fri, 23 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://sc0rpi0n101.github.io/2019/08/week-12-the-final-week/</link>
-      <description>&lt;p&gt;&amp;#8220;Software is like entropy: It is difficult to grasp, weighs nothing, and obeys the Second Law of Thermodynamics; i.e., it always increases.&amp;#8221; &amp;#8212; Norman Augustine
- Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week will be the last week of coding for GSoC 2019. It is time to finish work now.
- The C Parser Travis Build Tests Documentation  The C Parser I completed the C Parser last week along with the documentation for the module.</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/08/week-11-the-other-parser/</guid>
-      <author>Nikhil Maan (Sc0rpi0n101)</author>
-      <title>Nikhil Maan (Sc0rpi0n101): Week 11: The Other Parser</title>
-      <pubDate>Thu, 22 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://sc0rpi0n101.github.io/2019/08/week-11-the-other-parser/</link>
-      <description>&lt;p&gt;Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week we&amp;rsquo;re talking about the C parser.
- The Fortran Parser The C Parser Documentation Travis Build  The Fortran Parser The Fortran Parser is complete. The Pull Request has also been merged. The parser is merged in master and will be a part of the next SymPy release. You can check out the source code for the Parser at the Pull Request.</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://www.shubhamjha.com/posts/GSoC-Week-12-(The-Final-Week)</guid>
-      <author>Shubham Kumar Jha (ShubhamKJha)</author>
-      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 12 (The Final Week)</title>
-      <pubDate>Tue, 20 Aug 2019 18:30:00 GMT</pubDate>
-      <link>https://www.shubhamjha.com/posts/GSoC-Week-12-(The-Final-Week)/</link>
-      <description>&lt;p&gt;The last week of coding period is officially over. A summary of the work done during this week is:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/17379"&gt;#17379&lt;/a&gt; is now complete and currently under review. I will try to get it merged within this week.&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/17392"&gt;#17392&lt;/a&gt; still needs work. I will try to put a closure to this by the end of week.&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/17440"&gt;#17440&lt;/a&gt; was started. It attempts to add a powerful (but optional) SAT solving engine to SymPy (&lt;a href="https://pypi.org/project/pycosat/"&gt;pycosat&lt;/a&gt;). The performance gain for SAT solver is also subtle here: Using this
-    &lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;from sympy import *
-from sympy.abc import x
-r = random_poly(x, 100, -100, 100)
-ans = ask(Q.positive(r), Q.positive(x))
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;The performance is like&lt;/p&gt;
-    &lt;div class="language-plaintext highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
-2
-3
-4
-5
-6
-7
-8
-&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;# In master
- |  `- 0.631 check_satisfiability  sympy/assumptions/satask.py:30
- |     `- 0.607 satisfiable  sympy/logic/inference.py:38
- |        `- 0.607 dpll_satisfiable  sympy/logic/algorithms/dpll2.py:21
-# With pycosat
- |  `- 0.122 check_satisfiability  sympy/assumptions/satask.py:30
- |     `- 0.098 satisfiable  sympy/logic/inference.py:39
- |        `- 0.096 pycosat_satisfiable  sympy/logic/algorithms/pycosat_wrapper.py:11
-&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;It is finished and under review now.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Also, with the end of GSoC 2019, final evaluations have started. I will be writing a final report to the whole project by the end of this week.&lt;/p&gt;
-
-&lt;p&gt;So far it has been a great and enriching experience for me. It was my first attempt at GSoC and I am lucky to get such an exposure. I acknowledge that I started with an abstract idea of the project but I now understand both the need and the code of &lt;code class="language-plaintext highlighter-rouge"&gt;New Assumptions&lt;/code&gt; pretty well (thanks to &lt;a href="https://github.com/asmeurer"&gt;Aaron&lt;/a&gt; who wrote the most of it). The system is still in its early phases and needs a lot more work. I am happy to be a part of it and I will be available to work on it.&lt;/p&gt;
-
-&lt;p&gt;This is the last weekly report but I will still be contributing to SymPy and open source in general. I will try to write more of such experiences through this portal. Till then, Good bye and thank you!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=113</guid>
-      <author>Ishan Joshi (ishanaj)</author>
-      <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-12 &#x2013; The Final wrap-up</title>
-      <pubDate>Tue, 20 Aug 2019 17:10:27 GMT</pubDate>
-      <link>https://ishanaj.wordpress.com/2019/08/20/gsoc19-week-12-the-final-wrap-up/</link>
-      <description>&lt;p&gt;This was the last week of the coding
-period. With not much of work left, the goal was to wrap-up the PR&amp;#8217;s.&lt;/p&gt;
-
-
-
-&lt;p&gt;The week started with the merge of &amp;nbsp;&lt;a href="https://github.com/sympy/sympy/pull/17001"&gt;PR #17001&lt;/a&gt; which implemented a method &lt;strong&gt;cut_section()&lt;/strong&gt; in the polygon class, in order to get two new polygons when a polygon is cut via a line. After this a new method &lt;strong&gt;first_moment_of_area()&lt;/strong&gt; was added in &lt;a href="https://github.com/sympy/sympy/pull/17153"&gt;PR #17153&lt;/a&gt;. This method used &lt;strong&gt;cut_section()&lt;/strong&gt; for its implementation. Tests for the same were added in this PR. Also the existing documentation was improved. I also renamed the &lt;strong&gt;polar_modulus()&lt;/strong&gt; function to &lt;strong&gt;polar_second_moment_of_area() &lt;/strong&gt;which was a more general term as compared to the previous name. This PR also got &lt;strong&gt;merged&lt;/strong&gt; later on.&lt;/p&gt;
-
-
-
-&lt;p&gt;Now, we are left with two more PR&amp;#8217;s to go.
-&lt;a href="https://github.com/sympy/sympy/pull/17122"&gt;PR #17122&lt;/a&gt; (Column
-Buckling) and &lt;a href="https://github.com/sympy/sympy/pull/17345"&gt;PR #17345&lt;/a&gt;
-(Beam diagram). The column buckling probably requires a little more
-documentation. I will surely look into it and add some more explanations and references
-to it. Also, the beam diagram PR has been completed and documented. A few more
-discussions to be done on its working and we will be ready with it.&lt;span id="more-113"&gt;&lt;/span&gt;&lt;/p&gt;
-
-
-
-&lt;p&gt;I believe that by the end of this week
-both of these will finally get a merge.&lt;/p&gt;
-
-
-
-&lt;p&gt;Another task that remains is the implementation of the &lt;a href="https://github.com/sympy/sympy/issues/17302"&gt;Truss class&lt;/a&gt;. Some rigorous debate and discussion is still needed to be done before we start its implementation. Once we agree on the implementation needs and API it won&amp;#8217;t be a difficult task to write it through.&lt;/p&gt;
-
-
-
-&lt;p&gt;Also, since the final evaluations have
-started I will be writing the project report which I have to submit before the
-next week ends.&lt;/p&gt;
-
-
-
-&lt;p&gt;Since officially the coding period ends here, there would be no ToDo&amp;#8217;s for the next week, just the final wrapping up and will surely try to complete the work that is still left.&lt;/p&gt;
-
-
-
-&lt;p&gt;Will keep you updated!&lt;/p&gt;
-
-
-
-&lt;p&gt;Thanks! &lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
