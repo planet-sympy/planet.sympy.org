@@ -89,832 +89,6 @@
 
     <div class="container">
          <div class="day">
-<h2 class="dayform">October 30, 2020</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-a7c7d19d feed-" id="item-f8e24f8d">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/aktech.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Amit Kumar (aktech) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://iamit.in/blog/sympy-gamma-gae-python3/">18:30, Friday, 30 October UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://iamit.in/blog/sympy-gamma-gae-python3/">Amit Kumar (aktech): Porting SymPy Gamma to Google App Engine Python 3</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/aktech.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Amit Kumar (aktech) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://iamit.in/blog/sympy-gamma-gae-python3/">18:30, Friday, 30 October UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://iamit.in/blog/sympy-gamma-gae-python3/">Porting SymPy Gamma to Google App Engine Python 3</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This summer I had plenty of time during COVID-19 lockdown and I was looking at
-<a href="https://sympygamma.com/">SymPy Gamma</a>.</p>
-
-<center><img src="https://iamit.in/assets/sympy-gamma-port/sympy_gamma_demo.gif" width="700" /></center>
-
-<h2 id="sympy-gamma">Sympy Gamma</h2>
-
-<p>SymPy Gamma is a web application that executes mathematical expressions
-via natural language input from the user, after parsing them as SymPy
-expressions it displays the result with additional related computations.
-It is inspired from the idea of <a href="http://www.wolframalpha.com/">WolframAlpha</a> which is based on the
-commercial Computer Algebra System named <a href="https://en.wikipedia.org/wiki/Mathematica">&#8220;Mathematica&#8221;</a>.</p>
-
-<center><img src="https://iamit.in/assets/wolfram-alpha-logo.svg" width="300" /></center>
-
-<p>I have always been impressed by it ever since I first found about it.
-While playing with it during this summer, I realised that it runs on Google
-App Engine&#8217;s Python 2.7 runtime. It is powered by SymPy, an open source
-computer algebra system.</p>
-
-<center><img align="center" src="https://iamit.in/assets/Sympy_logo.svg" width="150" /></center>
-
-<h2 id="the-problem">The Problem</h2>
-
-<p>Despite being widely used around the world (about ~14K users everyday,
-as seen from Google Analytics), there hasn&#8217;t been a lot of development
-in the past 5 years. Due to this the current infrastructure
-was stuck on <a href="https://en.wikipedia.org/wiki/Google_App_Engine">Google App Engine</a>&#8217;s Python 2 runtime which obviously does
-not support Python 3.</p>
-
-<p>This also prevented it to use the latest version of SymPy. The SymPy
-version (~0.7.6) it was using was last updated 6 years ago. This made
-SymPy Gamma in urgent need for upgradation. At the time of writing this blog,
-SymPy Gamma is running on Google App Engine&#8217;s latest runtime and latest
-version of SymPy.</p>
-
-<h2 id="solution-and-process">Solution and Process</h2>
-
-<p>It was a fun project and was interesting to see how Google cloud offering has evolved
-from Google App Engine to Google Cloud Platform. The old App engine did
-seem like a minimal cloud offering launched by Google in an attempt to
-ship something early and quickly. It reminded me of my first cloud project
-in college (<a href="https://github.com/aktech/dturmscrap">dturmscrap</a>), which I
-deployed to Google App Engine, back in 2015.</p>
-
-<p>I used Github projects to track the whole project, all the work done for this
-can be seen <a href="https://github.com/sympy/sympy_gamma/projects/1">here</a>.</p>
-
-<h2 id="-git-log">$ Git Log</h2>
-
-<p>Here is a summary of what was achieved:</p>
-
-<ul>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/135">PR 135</a>: Migrating Django to a slightly higher version,
-this was the first blood just to make sure everything was working. I upgraded it to the latest version of
-Django that was supported on Python 2 runtime. This also exposed the broken CI, which was fixed in this.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/137">PR 137</a>: This upgraded the CI infrastructure to use Google Cloud SDK
-for deployment, the previous method was discontinued.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/140">PR 140</a>: Upgrading the Database backend to use Cloud NDB instead
-of the legacy App Engine NDB.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/148">PR 148</a>: Since we change the database backend, we needed something for
-testing locally, this was done by using Google Cloud Datastore emulator locally.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/149">PR 149</a>: The installation and setup of the project was quite a challenge.
-Installing and keeping track of the versions of a number of application was non-trivial. This Pull request dockerized
-the project and made the development setup trivial and it all boiled down to just one command.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/152">PR 152</a>: The login feature was previously implemented using the user API
-of the Google App Engine&#8217;s Python2 runtime, which was not available in Python 3 runtime. We removed the login feature as it
-was not used by many and was too much effort to setup OAuth for login.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/153">PR 153</a>: Now was the time to slowly move towards Python 3 by making the
-code compatible with both 2 and 3. It was achieved via <a href="https://python-modernize.readthedocs.io/en/latest/">python-modernize</a>.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/154">PR 154</a>: We then made the migration to Python 3.7 runtime and removed submodules
-and introduced a <code class="language-plaintext highlighter-rouge">requirements.txt</code> for installing dependencies.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/154">PR 159</a>: The above change made it possible to upgrade SymPy to latest version,
-which was 1.6 at that time.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/154">PR 165</a>: The last piece of the puzzle was upgrading Django itself, so we upgraded
-it to the latest version, which was Django 3.0.8.</p>
-  </li>
-</ul>
-
-<h4 id="next-steps">Next Steps</h4>
-
-<ul>
-  <li>At the time of writing this Google has released the Python 3.8 runtime, it would nice to further upgrade it now.</li>
-  <li>The test coverage can be increased.</li>
-  <li>The code can be refactored to be more readable and approachable for new contributors.</li>
-</ul>
-
-<p>Thanks to Google for properly <a href="https://cloud.google.com/appengine/docs/standard/python/migrate-to-python3">documenting the process</a>,
-which made the transition much easier.</p>
-
-<p>Thanks to <a href="https://numfocus.org/">NumFocus</a>, without them this project would not have been possible. Also thanks to
-<a href="https://github.com/certik">Ondrej Certik</a> and <a href="http://github.com/asmeurer">Aaron Meurer</a> for their advice and support
-throughout the project.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">August 24, 2020</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7c867291 feed-" id="item-e1773352">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Smit Lunagariya (Smit-create) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/08/24/final_report.html">00:00, Monday, 24 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/08/24/final_report.html">Smit Lunagariya (Smit-create): Final Report-GSoC 2020</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Smit Lunagariya (Smit-create) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/08/24/final_report.html">00:00, Monday, 24 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/08/24/final_report.html">Final Report-GSoC 2020</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>GSoC 2020 Report Smit Lunagariya: Improving and Extending stats module
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">August 16, 2020</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7c867291 feed-" id="item-3b40b52a">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Smit Lunagariya (Smit-create) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/08/16/week_12.html">00:00, Sunday, 16 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/08/16/week_12.html">Smit Lunagariya (Smit-create): Week 12-GSoC 2020</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Smit Lunagariya (Smit-create) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/08/16/week_12.html">00:00, Sunday, 16 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/08/16/week_12.html">Week 12-GSoC 2020</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This is the final blog of the official program highlighting the final week. Some of the key discussions were:
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">August 09, 2020</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7c867291 feed-" id="item-53bbcca6">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Smit Lunagariya (Smit-create) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/08/09/week_11.html">00:00, Sunday, 09 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/08/09/week_11.html">Smit Lunagariya (Smit-create): Week 11-GSoC 2020</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Smit Lunagariya (Smit-create) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/08/09/week_11.html">00:00, Sunday, 09 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/08/09/week_11.html">Week 11-GSoC 2020</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This blog describes the 11th week of the program. Some of the key highlights of this week are:
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">August 02, 2020</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7c867291 feed-" id="item-e4801e97">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Smit Lunagariya (Smit-create) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/08/02/week_10.html">00:00, Sunday, 02 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/08/02/week_10.html">Smit Lunagariya (Smit-create): Week 10-GSoC 2020</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Smit Lunagariya (Smit-create) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/08/02/week_10.html">00:00, Sunday, 02 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/08/02/week_10.html">Week 10-GSoC 2020</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This blogs describes the 10th week of the program. Some of the highlights of this week are:
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">July 26, 2020</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7c867291 feed-" id="item-c239ed4e">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Smit Lunagariya (Smit-create) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/07/26/week_9.html">00:00, Sunday, 26 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/07/26/week_9.html">Smit Lunagariya (Smit-create): Week 9-GSoC 2020</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Smit Lunagariya (Smit-create) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/07/26/week_9.html">00:00, Sunday, 26 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/07/26/week_9.html">Week 9-GSoC 2020</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This blogs describes the week 9, the beginning week of the final phase. This week, I continued to work on the extension of Compound Distributions as well as completing the Matrix Distributions. Some of the highlights of this week are:
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">July 19, 2020</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7c867291 feed-" id="item-141c0fbe">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Smit Lunagariya (Smit-create) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/07/19/week_8.html">00:00, Sunday, 19 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/07/19/week_8.html">Smit Lunagariya (Smit-create): Week 8-GSoC 2020</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Smit Lunagariya (Smit-create) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/07/19/week_8.html">00:00, Sunday, 19 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/07/19/week_8.html">Week 8-GSoC 2020</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This blog provides the brief description of last week of the second Phase i.e. week 8. Some of the key highlights of this week are:
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">July 12, 2020</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7c867291 feed-" id="item-a457aac2">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Smit Lunagariya (Smit-create) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/07/12/week_7.html">00:00, Sunday, 12 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/07/12/week_7.html">Smit Lunagariya (Smit-create): Week 7-GSoC 2020</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Smit Lunagariya (Smit-create) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/07/12/week_7.html">00:00, Sunday, 12 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/07/12/week_7.html">Week 7-GSoC 2020</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This blog describes the 7th week of the program and the 3rd week of Phase 2. Some of the key highlights on the discussions and the implementations during this week are:
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">July 05, 2020</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7c867291 feed-" id="item-ba725840">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Smit Lunagariya (Smit-create) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/07/05/week_6.html">00:00, Sunday, 05 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/07/05/week_6.html">Smit Lunagariya (Smit-create): Week 6-GSoC 2020</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Smit Lunagariya (Smit-create) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/07/05/week_6.html">00:00, Sunday, 05 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/07/05/week_6.html">Week 6-GSoC 2020</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This blog describes the 6th week of the official program and the 2nd week of Phase 2. By the end of this week, Compound Distributions framework is ready as targeted and I would now focus on the Joint Distributions in the upcoming weeks of this Phase.
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">June 28, 2020</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7c867291 feed-" id="item-942d5114">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Smit Lunagariya (Smit-create) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/06/28/week_5.html">00:00, Sunday, 28 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/06/28/week_5.html">Smit Lunagariya (Smit-create): Week 5-GSoC 2020</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Smit Lunagariya (Smit-create) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/06/28/week_5.html">00:00, Sunday, 28 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/06/28/week_5.html">Week 5-GSoC 2020</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This blogs describes the week 5, the beginning week of the Phase 2. Phase 2 will be mostly focused on Compound Distributions which were stalled from 2018, and additions to Joint Distributions.
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">June 21, 2020</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-7c867291 feed-" id="item-38186b37">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Smit Lunagariya (Smit-create) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/06/21/phase_1.html">00:00, Sunday, 21 June UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/06/21/phase_1.html">Smit Lunagariya (Smit-create): Phase-1-Highlights</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Smitlunagariya.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Smit Lunagariya (Smit-create) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://smit-create.github.io/Smit-create.github.io/2020/06/21/phase_1.html">00:00, Sunday, 21 June UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://smit-create.github.io/Smit-create.github.io/2020/06/21/phase_1.html">Phase-1-Highlights</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>With this blog it completes the awesome month of statistical learning and coding, and the official Phase 1 of the Google Summer of Code-2020.
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
 <h2 class="dayform">November 28, 2019</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -1541,463 +715,6 @@ next week ends.</p>
 	</div>
 </div></div>
 <div class="day">
-<h2 class="dayform">August 18, 2019</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-b30d7457 feed-" id="item-de3b8eb8">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/jmig5776.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Jogi Miglani (jmig5776) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://jmig5776.github.io//gsoc-final-report">00:00, Sunday, 18 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-final-report">Jogi Miglani (jmig5776): Final report for GSoC 2019 (Week 12)</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/jmig5776.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Jogi Miglani (jmig5776) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://jmig5776.github.io//gsoc-final-report">00:00, Sunday, 18 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-final-report">Final report for GSoC 2019 (Week 12)</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>It&#8217;s finally the last week of the Google Summer of Code 2019. Before I start
-discussing my work over the summer I would like to highlight my general
-experience with the GSoC program.</p>
-
-<p>GSoC gives students all over the world the opportunity to connect and
-collaborate with some of the best programmers involved in open source from
-around the world. I found the programme tremendusly enriching both in terms of
-the depth in which I got to explore some of the areas involved in my project
-and also gave me exxposure to some areas I had no previous idea about.
-The role of a mentor in GSoC is the most important and I consider myself
-very lucky to have got Yathartha Anirudh Joshi and Amit Kumar as my mentors.
-Amit and Yathartha has been tremendously encouraging and helpful throughout the summer.
-I would also like to mention the importance of the entire community involved,
-just being part of the SymPy community.</p>
-
-<h3 id="work-completed">Work Completed</h3>
-
-<p>Here is a list of PRs which were opened during the span of GSoC:</p>
-
-<ol>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/pull/16976">#16796 Added <code class="highlighter-rouge">_solve_modular</code> for handling equations a - Mod(b, c) = 0 where only b is expr</a></p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/pull/16890">#16890 Fixing lambert in bivariate to give all real solutions</a></p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/pull/16960">#16960 (Don&#8217;t Merge)(Prototype) Adding abs while converting equation to log form to get solved by <code class="highlighter-rouge">_lambert</code></a></p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/pull/17043">#17043 Feature power_list to return all powers of a variable present in f</a></p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/pull/17079">#17079 Defining ImageSet Union</a></p>
-  </li>
-</ol>
-
-<p>Here is a list of PRs merged:</p>
-
-<ol>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/pull/16976">#16796 Added <code class="highlighter-rouge">_solve_modular</code> for handling equations a - Mod(b, c) = 0 where only b is expr</a></p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy/pull/16890">#16890 Fixing lambert in bivariate to give all real solutions</a></p>
-  </li>
-</ol>
-
-<p>Here is all the brief description about the PRs merged:</p>
-
-<ol>
-  <li><a href="https://github.com/sympy/sympy/pull/16976">#16796 Added <code class="highlighter-rouge">_solve_modular</code> for handling equations a - Mod(b, c) = 0 where only b is expr</a></li>
-</ol>
-
-<p>In this PR a new solver <code class="highlighter-rouge">_solve_modular</code> was made for solving modular equations.</p>
-
-<h3 id="what-type-of-equations-to-be-considered-and-what-domain">What type of equations to be considered and what domain?</h3>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A - Mod(B, C) = 0
-
-    A -&gt; This can or cannot be a function specifically(Linear, nth degree single
-         Pow, a**f_x and Add and Mul) of symbol.(But currently its not a
-        function of x)
-    B -&gt; This is surely a function of symbol.
-    C -&gt; It is an integer.
-And domain should be a subset of S.Integers.
-</code></pre></div></div>
-<h3 id="filtering-out-equations">Filtering out equations</h3>
-<p>A check is being applied named <code class="highlighter-rouge">_is_modular</code> which verifies that only above
-mentioned type equation should return True.</p>
-
-<h3 id="working-of-_solve_modular">Working of <code class="highlighter-rouge">_solve_modular</code></h3>
-<p>In the starting of it there is a check if domain is a subset of Integers.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>domain.is_subset(S.Integers)
-</code></pre></div></div>
-<p>Only domain of integers and it subset are being considered while solving
-these equations.
-Now after this it separates out a modterm and the rest term on either
-sides by this code.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>modterm = list(f.atoms(Mod))[0]
-rhs = -(S.One)*(f.subs(modterm, S.Zero))
-if f.as_coefficients_dict()[modterm].is_negative:
-    # f.as_coefficient(modterm) was returning None don't know why
-    # checks if coefficient of modterm is negative in main equation.
-    rhs *= -(S.One)
-</code></pre></div></div>
-<p>Now the equation is being inverted with the helper routine <code class="highlighter-rouge">_invert_modular</code>
-like this.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>n = Dummy('n', integer=True)
-f_x, g_n = _invert_modular(modterm, rhs, n, symbol)
-</code></pre></div></div>
-<p>I am defining n in <code class="highlighter-rouge">_solve_modular</code> because <code class="highlighter-rouge">_invert_modular</code> contains
-recursive calls to itself so if define the n there then it was going to have
-many instances which of no use. Thats y I am defining it in <code class="highlighter-rouge">_solve_modular</code>.</p>
-
-<p>Now after the equation is inverted now solution finding takes place.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if f_x is modterm and g_n is rhs:
-        return unsolved_result
-</code></pre></div></div>
-<p>First of all if <code class="highlighter-rouge">_invert_modular</code> fails to invert then a ConditionSet is being
-returned.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    if f_x is symbol:
-        if domain is not S.Integers:
-            return domain.intersect(g_n)
-        return g_n
-</code></pre></div></div>
-<p>And if <code class="highlighter-rouge">_invert_modular</code> is fully able to invert the equation then only domain
-intersection needs to takes place. <code class="highlighter-rouge">_invert_modular</code> inverts the equation
-considering S.Integers as its default domain.</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    if isinstance(g_n, ImageSet):
-        lamda_expr = g_n.lamda.expr
-        lamda_vars = g_n.lamda.variables
-        base_set = g_n.base_set
-        sol_set = _solveset(f_x - lamda_expr, symbol, S.Integers)
-        if isinstance(sol_set, FiniteSet):
-            tmp_sol = EmptySet()
-            for sol in sol_set:
-                tmp_sol += ImageSet(Lambda(lamda_vars, sol), base_set)
-            sol_set = tmp_sol
-        return domain.intersect(sol_set)
-</code></pre></div></div>
-<p>In this case when g_n is an ImageSet of n and f_x is not symbol so the
-equation is being solved by calling <code class="highlighter-rouge">_solveset</code> (this will not lead to
-recursion because equation to be entered is free from Mod) and then
-the domain intersection takes place.</p>
-
-<h3 id="what-does-_invert_modular-do">What does <code class="highlighter-rouge">_invert_modular</code> do?</h3>
-<p>This function helps to convert the equation <code class="highlighter-rouge">A - Mod(B, C) = 0</code> to a
-form (f_x, g_n).
-First of all it checks the possible instances of invertible cases if not then
-it returns the equation as it is.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a, m = modterm.args
-if not isinstance(a, (Dummy, Symbol, Add, Mul, Pow)):
-        return modterm, rhs
-</code></pre></div></div>
-<p>Now here is the check for complex arguments and returns the equation as it is
-if somewhere it finds I.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if rhs.is_real is False or any(term.is_real is False \
-            for term in list(_term_factors(a))):
-        # Check for complex arguments
-        return modterm, rhs
-</code></pre></div></div>
-<p>Now after this we check of emptyset as a solution by checking range of both
-sides of equation.
-As modterm can have values between [0, m - 1] and if rhs is out of this range
-then emptySet is being returned.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if (abs(rhs) - abs(m)).is_positive or (abs(rhs) - abs(m)) is S.Zero:
-        # if rhs has value greater than value of m.
-        return symbol, EmptySet()
-</code></pre></div></div>
-<p>Now the equation haveing these types are being returned as the following</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if a is symbol:
-        return symbol, ImageSet(Lambda(n, m*n + rhs), S.Integers)
-
-    if a.is_Add:
-        # g + h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.Zero:
-            return _invert_modular(Mod(h, m), (rhs - Mod(g, m)) % m, n, symbol)
-
-    if a.is_Mul:
-        # g*h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.One:
-            return _invert_modular(Mod(h, m), (rhs*invert(g, m)) % m, n, symbol)
-</code></pre></div></div>
-<p>The more peculiar case is of <code class="highlighter-rouge">a.is_Pow</code> which is handled as following.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if a.is_Pow:
-        # base**expo = a
-        base, expo = a.args
-        if expo.has(symbol) and not base.has(symbol):
-            # remainder -&gt; solution independent of n of equation.
-            # m, rhs are made coprime by dividing igcd(m, rhs)
-            try:
-                remainder = discrete_log(m / igcd(m, rhs), rhs, a.base)
-            except ValueError: # log does not exist
-                return modterm, rhs
-            # period -&gt; coefficient of n in the solution and also referred as
-            # the least period of expo in which it is repeats itself.
-            # (a**(totient(m)) - 1) divides m. Here is link of theoram:
-            # (https://en.wikipedia.org/wiki/Euler's_theorem)
-            period = totient(m)
-            for p in divisors(period):
-                # there might a lesser period exist than totient(m).
-                if pow(a.base, p, m / igcd(m, a.base)) == 1:
-                    period = p
-                    break
-            return expo, ImageSet(Lambda(n, period*n + remainder), S.Naturals0)
-        elif base.has(symbol) and not expo.has(symbol):
-            remainder_list = nthroot_mod(rhs, expo, m, all_roots=True)
-            if remainder_list is None:
-                return symbol, EmptySet()
-            g_n = EmptySet()
-            for rem in remainder_list:
-                g_n += ImageSet(Lambda(n, m*n + rem), S.Integers)
-            return base, g_n
-</code></pre></div></div>
-<p>Two cases are being created based of a.is_Pow</p>
-<ol>
-  <li>x**a</li>
-  <li>a**x</li>
-</ol>
-
-<p>x**a -  It is being handled by the helper function <code class="highlighter-rouge">nthroot_mod</code> which returns
-        required solution. I am not going into very mch detail for more
-        information you can read the documentation of nthroot_mod.</p>
-
-<p>a**x - For this <code class="highlighter-rouge">totient</code> is being used in the picture whose meaning can be
-       find on this <a href="https://en.wikipedia.org/wiki/Euler's_theorem">Wikipedia</a>
-       page. And then its divisors are being checked to find the least period
-       of solutions.</p>
-
-<ol>
-  <li><a href="https://github.com/sympy/sympy/pull/16890">#16890 Fixing lambert in bivariate to give all real solutions</a></li>
-</ol>
-
-<p>This PR went through many up and downs and nearly made to the most commented PR.
-And with the help of @smichr it was successfully merged. It mainly solved the
-bug for not returning all solutions of lambert.</p>
-
-<h2 id="explaining-the-function-_solve_lambert-main-function-to-solve-lambert-equations">Explaining the function <code class="highlighter-rouge">_solve_lambert</code> (main function to solve lambert equations)</h2>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Input - f, symbol, gens
-OutPut - Solution of f = 0 if its lambert type expression else NotImplementedError
-</code></pre></div></div>
-<p>This function separates out cases as below based on the main function present in
-the main equation.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>For the first ones:
-1a1) B**B = R != 0 (when 0, there is only a solution if the base is 0,
-                   but if it is, the exp is 0 and 0**0=1
-                   comes back as B*log(B) = log(R)
-1a2) B*(a + b*log(B))**p = R or with monomial expanded or with whole
-                            thing expanded comes back unchanged
-   log(B) + p*log(a + b*log(B)) = log(R)
-   lhs is Mul:
-       expand log of both sides to give:
-       log(B) + log(log(B)) = log(log(R))
-1b) d*log(a*B + b) + c*B = R
-   lhs is Add:
-       isolate c*B and expand log of both sides:
-       log(c) + log(B) = log(R - d*log(a*B + b))
-</code></pre></div></div>
-<p>If the equation are of type 1a1, 1a2 and 1b then the mainlog of the equation is
-taken into concern as the deciding factor lies in the main logarithmic term of equation.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>For the next two,
-   collect on main exp
-   2a) (b*B + c)*exp(d*B + g) = R
-       lhs is mul:
-           log to give
-           log(b*B + c) + d*B = log(R) - g
-   2b) -b*B + g*exp(d*B + h) = R
-       lhs is add:
-           add b*B
-           log and rearrange
-           log(R + b*B) - d*B = log(g) + h
-</code></pre></div></div>
-<p>If the equation are of type 2a and 2b then the mainexp of the equation is
-taken into concern as the deciding factor lies in the main exponential term of equation.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>3) d*p**(a*B + b) + c*B = R
-   collect on main pow
-   log(R - c*B) - a*B*log(p) = log(d) + b*log(p)
-</code></pre></div></div>
-<p>If the equation are of type 3 then the mainpow of the equation is
-taken into concern as the deciding factor lies in the main power term of equation.</p>
-
-<p>Eventually from all of the three cases the equation is meant to be converted to this form:-</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x, a..f) = a*log(b*X + c) + d*X - f = 0 which has the
-solution,  X = -c/b + (a/d)*W(d/(a*b)*exp(c*d/a/b)*exp(f/a)).
-</code></pre></div></div>
-<p>And the solution calculation process is done by <code class="highlighter-rouge">_lambert</code> function.</p>
-
-<p>Everything seems flawless?? You might be thinking no modification is required. Lets
-see what loopholes are there in it.</p>
-
-<h2 id="what-does-pr-16890-do">What does PR <a href="https://github.com/sympy/sympy/pull/16890">#16890</a> do?</h2>
-
-<p>There are basically two flaws present with the this approach.</p>
-<ol>
-  <li>Not considering all branches of equation while taking log both sides.</li>
-  <li>Calculation of roots should consider all roots in case having rational power.</li>
-</ol>
-
-<h3 id="1-not-considering-all-branches-of-equation-while-taking-log-both-sides">1. Not considering all branches of equation while taking log both sides.</h3>
-
-<p>Let us consider this equation to be solved by <code class="highlighter-rouge">_solve_lambert</code> function.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-1/x**2 + exp(x/2)/2 = 0
-</code></pre></div></div>
-<p>So what the old <code class="highlighter-rouge">_solve_lambert</code> do is to convert this equation to following.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2*log(x) + x/2 = 0
-</code></pre></div></div>
-<p>and calculates its roots from <code class="highlighter-rouge">_lambert</code>.
-But it missed this branch of equation while taking log on main equation.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2*log(-x) + x/2 = 0
-</code></pre></div></div>
-<p>Yeah you can reproduce the original equation from this equation.So basically the problem
-was that it missed the branches of equation while taking log. And when does the
-main equation have more than one branch?? The terms having even powers of variable x
-leads to two different branches of equation.</p>
-
-<p>So how it is solved?
-What I has done is that before actually gets into solving I preprocess the main equation
-and if it has more than one branches of equation while converting taking log then I consider
-all the equations generated from them.(with the help of <code class="highlighter-rouge">_solve_even_degree_expr</code>)</p>
-
-<p>How I preprocess the equation?
-So what I do is I replace all the even powers of x present with even powers of t(dummy variable).</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Code for targeted replacement
-lhs = lhs.replace(
-            lambda i:  # find symbol**even
-                i.is_Pow and i.base == symbol and i.exp.is_even,
-            lambda i:  # replace t**even
-                t**i.exp)
-Example:-
-Main equation -&gt; -1/x**2 + exp(x/2)/2 = 0
-After replacement -&gt; -1/t**2 + exp(x/2)/2 = 0
-</code></pre></div></div>
-<p>Now I take logarithms on both sides and simplify it.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>After simplifying -&gt; 2*log(t) + x/2 = 0
-</code></pre></div></div>
-<p>Now I call function <code class="highlighter-rouge">_solve_even_degree_expr</code> to replace the t with +/-x to generate two equations.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Replacing t with +/-x
-1. 2*log(x) + x/2 = 0
-2. 2*log(-x) + x/2 = 0
-</code></pre></div></div>
-<p>And consider the solutions of both of the equations to return all lambert real solutions
-of <code class="highlighter-rouge">-1/x**2 + exp(x/2)/2 = 0</code>.</p>
-
-<p>Hope you could understand the logic behind this work.</p>
-
-<h3 id="2-calculation-of-roots-should-consider-all-roots-in-case-having-rational-power">2. Calculation of roots should consider all roots in case having rational power.</h3>
-
-<p>This flaw is in the calculation of roots in function <code class="highlighter-rouge">_lambert</code>.
-Earlier the function_lambert has the working like :-</p>
-
-<ol>
-  <li>Find all the values of a, b, c, d, e in the required loagrithmic equation</li>
-  <li>Then it defines a solution of the form
-    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-c/b + (a/d)*l where l = LambertW(d/(a*b)*exp(c*d/a/b)*exp(-f/a), k)
-</code></pre></div>    </div>
-    <p>and then it included that solution.
-I agree everything seems flawless here. but try to see the step where we are defining l.</p>
-  </li>
-</ol>
-
-<p>Let us suppose a hypothetical algorithm just like algorithm used in <code class="highlighter-rouge">_lambert</code>
-in which equation to be solved is</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x**3 - 1 = 0
-</code></pre></div></div>
-<p>and in which we define solution of the form</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x = exp(I*2*pi/n) where n is the power of x in equation
-</code></pre></div></div>
-<p>so the algorithm will give solution</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x = exp(I*2*pi/3) # but expected was [1, exp(I*2*pi/3), exp(-I*2*pi/3)]
-</code></pre></div></div>
-<p>which can be found by finding all solutions of</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x**n - exp(2*I*pi) = 0
-</code></pre></div></div>
-<p>by a different correct algorithm. Thats y it was wrong.
-The above algorithm would have given correct values for <code class="highlighter-rouge">x - 1 = 0</code>.</p>
-
-<p>And the question in your mind may arise that why only exp() because the
-possiblity of having more than one roots is in exp(), because if the algorithm
-would have been like <code class="highlighter-rouge">x = a</code>, where a is some real constant then there is not
-any possiblity of further roots rather than solution like <code class="highlighter-rouge">x = a**(1/n)</code>.
-And its been done in code like this:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>code
-num, den = ((c*d-b*f)/a/b).as_numer_denom()
-p, den = den.as_coeff_Mul()
-e = exp(num/den)
-t = Dummy('t')
-args = [d/(a*b)*t for t in roots(t**p - e, t).keys()]
-</code></pre></div></div>
-
-<h3 id="work-under-development">Work under development</h3>
-
-<ul>
-  <li><a href="https://github.com/sympy/sympy/pull/17079">#17079 Defining ImageSet Union</a></li>
-</ul>
-
-<p>This PR tends to define a unifying algorithm for linear relations.</p>
-
-<h3 id="future-work">Future Work</h3>
-<p>Here is a list that comprises of all the ideas (which were a part of my GSoC
-Proposal and/or thought over during the SoC) which can extend my GSoC project.</p>
-
-<ol>
-  <li>
-    <p>Integrating helper solvers within solveset: linsolve, solve_decomposition, nonlinsolve</p>
-  </li>
-  <li>
-    <p>Handle nested trigonometric equations.</p>
-  </li>
-</ol>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
 <h2 class="dayform">August 13, 2019</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -2227,304 +944,8 @@ Proposal and/or thought over during the SoC) which can extend my GSoC project.</
 	</div>
 </div></div>
 <div class="day">
-<h2 class="dayform">August 11, 2019</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-b30d7457 feed-" id="item-d22f59bb">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/jmig5776.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Jogi Miglani (jmig5776) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://jmig5776.github.io//gsoc-week-11">00:00, Sunday, 11 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-week-11">Jogi Miglani (jmig5776): GSoC 2019 - Week 11</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/jmig5776.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Jogi Miglani (jmig5776) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://jmig5776.github.io//gsoc-week-11">00:00, Sunday, 11 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-week-11">GSoC 2019 - Week 11</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This was the eleventh week meeting with the GSoC mentors which was scheduled on
-Sunday 11th August, 2019 between 11:30 - 12:30 PM (IST). Me, Yathartha and Amit
-were the attendees of the meeting. <code class="highlighter-rouge">_solve_modular</code> was discussed in this meeting.</p>
-
-<p>Here is all the brief description about new solver <code class="highlighter-rouge">_solve_modular</code> for solving
-modular equations.</p>
-<h3 id="what-type-of-equations-to-be-considered-and-what-domain">What type of equations to be considered and what domain?</h3>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A - Mod(B, C) = 0
-
-    A -&gt; This can or cannot be a function specifically(Linear, nth degree single
-         Pow, a**f_x and Add and Mul) of symbol.(But currently its not a
-        function of x)
-    B -&gt; This is surely a function of symbol.
-    C -&gt; It is an integer.
-And domain should be a subset of S.Integers.
-</code></pre></div></div>
-<h3 id="filtering-out-equations">Filtering out equations</h3>
-<p>A check is being applied named <code class="highlighter-rouge">_is_modular</code> which verifies that only above
-mentioned type equation should return True.</p>
-
-<h3 id="working-of-_solve_modular">Working of <code class="highlighter-rouge">_solve_modular</code></h3>
-<p>In the starting of it there is a check if domain is a subset of Integers.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>domain.is_subset(S.Integers)
-</code></pre></div></div>
-<p>Only domain of integers and it subset are being considered while solving
-these equations.
-Now after this it separates out a modterm and the rest term on either
-sides by this code.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>modterm = list(f.atoms(Mod))[0]
-rhs = -(S.One)*(f.subs(modterm, S.Zero))
-if f.as_coefficients_dict()[modterm].is_negative:
-    # f.as_coefficient(modterm) was returning None don't know why
-    # checks if coefficient of modterm is negative in main equation.
-    rhs *= -(S.One)
-</code></pre></div></div>
-<p>Now the equation is being inverted with the helper routine <code class="highlighter-rouge">_invert_modular</code>
-like this.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>n = Dummy('n', integer=True)
-f_x, g_n = _invert_modular(modterm, rhs, n, symbol)
-</code></pre></div></div>
-<p>I am defining n in <code class="highlighter-rouge">_solve_modular</code> because <code class="highlighter-rouge">_invert_modular</code> contains
-recursive calls to itself so if define the n there then it was going to have
-many instances which of no use. Thats y I am defining it in <code class="highlighter-rouge">_solve_modular</code>.</p>
-
-<p>Now after the equation is inverted now solution finding takes place.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if f_x is modterm and g_n is rhs:
-        return unsolved_result
-</code></pre></div></div>
-<p>First of all if <code class="highlighter-rouge">_invert_modular</code> fails to invert then a ConditionSet is being
-returned.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    if f_x is symbol:
-        if domain is not S.Integers:
-            return domain.intersect(g_n)
-        return g_n
-</code></pre></div></div>
-<p>And if <code class="highlighter-rouge">_invert_modular</code> is fully able to invert the equation then only domain
-intersection needs to takes place. <code class="highlighter-rouge">_invert_modular</code> inverts the equation
-considering S.Integers as its default domain.</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    if isinstance(g_n, ImageSet):
-        lamda_expr = g_n.lamda.expr
-        lamda_vars = g_n.lamda.variables
-        base_set = g_n.base_set
-        sol_set = _solveset(f_x - lamda_expr, symbol, S.Integers)
-        if isinstance(sol_set, FiniteSet):
-            tmp_sol = EmptySet()
-            for sol in sol_set:
-                tmp_sol += ImageSet(Lambda(lamda_vars, sol), base_set)
-            sol_set = tmp_sol
-        return domain.intersect(sol_set)
-</code></pre></div></div>
-<p>In this case when g_n is an ImageSet of n and f_x is not symbol so the
-equation is being solved by calling <code class="highlighter-rouge">_solveset</code> (this will not lead to
-recursion because equation to be entered is free from Mod) and then
-the domain intersection takes place.</p>
-
-<h3 id="what-does-_invert_modular-do">What does <code class="highlighter-rouge">_invert_modular</code> do?</h3>
-<p>This function helps to convert the equation <code class="highlighter-rouge">A - Mod(B, C) = 0</code> to a
-form (f_x, g_n).
-First of all it checks the possible instances of invertible cases if not then
-it returns the equation as it is.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a, m = modterm.args
-if not isinstance(a, (Dummy, Symbol, Add, Mul, Pow)):
-        return modterm, rhs
-</code></pre></div></div>
-<p>Now here is the check for complex arguments and returns the equation as it is
-if somewhere it finds I.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if rhs.is_real is False or any(term.is_real is False \
-            for term in list(_term_factors(a))):
-        # Check for complex arguments
-        return modterm, rhs
-</code></pre></div></div>
-<p>Now after this we check of emptyset as a solution by checking range of both
-sides of equation.
-As modterm can have values between [0, m - 1] and if rhs is out of this range
-then emptySet is being returned.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if (abs(rhs) - abs(m)).is_positive or (abs(rhs) - abs(m)) is S.Zero:
-        # if rhs has value greater than value of m.
-        return symbol, EmptySet()
-</code></pre></div></div>
-<p>Now the equation haveing these types are being returned as the following</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if a is symbol:
-        return symbol, ImageSet(Lambda(n, m*n + rhs), S.Integers)
-
-    if a.is_Add:
-        # g + h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.Zero:
-            return _invert_modular(Mod(h, m), (rhs - Mod(g, m)) % m, n, symbol)
-
-    if a.is_Mul:
-        # g*h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.One:
-            return _invert_modular(Mod(h, m), (rhs*invert(g, m)) % m, n, symbol)
-</code></pre></div></div>
-<p>The more peculiar case is of <code class="highlighter-rouge">a.is_Pow</code> which is handled as following.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if a.is_Pow:
-        # base**expo = a
-        base, expo = a.args
-        if expo.has(symbol) and not base.has(symbol):
-            # remainder -&gt; solution independent of n of equation.
-            # m, rhs are made coprime by dividing igcd(m, rhs)
-            try:
-                remainder = discrete_log(m / igcd(m, rhs), rhs, a.base)
-            except ValueError: # log does not exist
-                return modterm, rhs
-            # period -&gt; coefficient of n in the solution and also referred as
-            # the least period of expo in which it is repeats itself.
-            # (a**(totient(m)) - 1) divides m. Here is link of theoram:
-            # (https://en.wikipedia.org/wiki/Euler's_theorem)
-            period = totient(m)
-            for p in divisors(period):
-                # there might a lesser period exist than totient(m).
-                if pow(a.base, p, m / igcd(m, a.base)) == 1:
-                    period = p
-                    break
-            return expo, ImageSet(Lambda(n, period*n + remainder), S.Naturals0)
-        elif base.has(symbol) and not expo.has(symbol):
-            remainder_list = nthroot_mod(rhs, expo, m, all_roots=True)
-            if remainder_list is None:
-                return symbol, EmptySet()
-            g_n = EmptySet()
-            for rem in remainder_list:
-                g_n += ImageSet(Lambda(n, m*n + rem), S.Integers)
-            return base, g_n
-</code></pre></div></div>
-<p>Two cases are being created based of a.is_Pow</p>
-<ol>
-  <li>x**a</li>
-  <li>a**x</li>
-</ol>
-
-<p>x**a -  It is being handled by the helper function <code class="highlighter-rouge">nthroot_mod</code> which returns
-        required solution. I am not going into very mch detail for more
-        information you can read the documentation of nthroot_mod.</p>
-
-<p>a**x - For this <code class="highlighter-rouge">totient</code> is being used in the picture whose meaning can be
-       find on this <a href="https://en.wikipedia.org/wiki/Euler's_theorem">Wikipedia</a>
-       page. And then its divisors are being checked to find the least period
-       of solutions.</p>
-
-<p>Hope I am able to clear out everything!!</p>
-
-<p>Code improvement takes time!!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
 <h2 class="dayform">August 06, 2019</h2>
 <div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-2b8e50f7 feed-" id="item-fb7a26ed">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/anpandey.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Ankit Pandey (anpandey) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html">00:00, Tuesday, 06 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html">Ankit Pandey (anpandey): Google Summer of Code Week 10: Matrix Wildcard Redux</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/anpandey.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Ankit Pandey (anpandey) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html">00:00, Tuesday, 06 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html">Google Summer of Code Week 10: Matrix Wildcard Redux</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>For this week, I&#8217;ve made some more minor changes to the <a href="https://github.com/sympy/sympy/pull/17299"><code>Indexed</code> pull request</a> from last week, in addition to filing a new <a href="https://github.com/sympy/sympy/pull/17347">matrix wildcard pull request</a>.</p>
-<h3 id="matrix-wildcards-again">Matrix Wildcards (again)</h3>
-<p>Since <a href="https://github.com/sympy/sympy/pull/17223">#17223</a> was merged this week, I started with an implementation of matrix wildcards that takes advantage of the functionality included in the pull request. I thought that this would be relatively straightforward, with an implementation of the <code>matches</code> method for the <code>MatrixWild</code> subclass being enough. There was one problem though: the underlying matching implementation assumes that all powers in the expression are an instance of the <code>Pow</code> class. However, this isn&#8217;t true for matrix expressions: the <code>MatPow</code> class, which represents matrix powers, is a subclass of its own. I&#8217;m not exactly sure what the reason for this is, since a quick change of <code>MatPow</code> to inherit from <code>Pow</code> doesn&#8217;t seem to break anything. I&#8217;ll probably look into this a bit more, since I think this might have something to do with the fact that Matrix exponents can also include other matrices.</p>
-<p>My solution for this was to allow temporarily allow expansion of powers by recursing through the expression tree and setting the <code>is_Pow</code> field of each matrix power to <code>True</code> and later reverting these states later. It doesn&#8217;t look pretty, but it does seem to work (you can see the code <a href="https://github.com/sympy/sympy/blob/17fb5010e36e10de156dad032d2aea376051df24/sympy/matrices/expressions/matmul.py#L178-L197">here</a>).</p>
-<h2 id="next-steps">Next Steps</h2>
-<p>I&#8217;ll try to get started with some optimizations that utilize this wildcard class once the pull request gets merged.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div><div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
 		    <div class="box" class="item feed-45d5af2d feed-" id="item-a06388b7">
@@ -2594,7 +1015,7 @@ then emptySet is being returned.</p>
 <div class="channelgroup ">
 	<div class="row">
     	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-eb3e3c3b feed-" id="item-bd0f4973">
+		    <div class="box" class="item feed-eb3e3c3b feed-" id="item-e8fdbb82">
 			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
 			    	<table class="table borderless table-condensed">
 			    		<tr>
@@ -2676,7 +1097,7 @@ the end of the tenth week, and we have entered the final phase of the project.</
 
 
 
-<div class="wp-container-614ee564e74e1 wp-block-group"><div class="wp-block-group__inner-container"><pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate">
+<div class="wp-container-614ef391d970a wp-block-group"><div class="wp-block-group__inner-container"><pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate">
 &gt;&gt;&gt; E, I = symbols('E, I')
 &gt;&gt;&gt; b = Beam(9, E, I)
 &gt;&gt;&gt; b.apply_load(-12, 9, -1)  # gets skipped
@@ -2710,102 +1131,6 @@ the end of the tenth week, and we have entered the final phase of the project.</
 
 
 <p>Thanks!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">August 04, 2019</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-b30d7457 feed-" id="item-8016c464">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/jmig5776.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Jogi Miglani (jmig5776) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://jmig5776.github.io//gsoc-week-10">00:00, Sunday, 04 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-week-10">Jogi Miglani (jmig5776): GSoC 2019 - Week 10</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/jmig5776.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Jogi Miglani (jmig5776) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://jmig5776.github.io//gsoc-week-10">00:00, Sunday, 04 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-week-10">GSoC 2019 - Week 10</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This was the tenth week meeting with the GSoC mentors which was scheduled on
-Sunday 4th August, 2019 between 1:00 - 2:00 PM (IST). Me, Yathartha
-were the attendees of the meeting.</p>
-
-<ul>
-  <li>Discussing previous week&#8217;s progress</li>
-</ul>
-
-<ol>
-  <li>
-    <p>Progress of <code class="highlighter-rouge">_solve_modular</code>:- In PR <a href="https://github.com/sympy/sympy/pull/16976">#16976</a>
-After discussing with Yathartha, I decided to change the basic model of the <code class="highlighter-rouge">_solve_modular </code>
-such that I should be able to target equations more efficiently and also the rest
-of the types of equation should return ConditionSet. Cases like <code class="highlighter-rouge">Mod(a**x, m) - rhs = 0</code>
-are special type and will be handled differently with the helper functions of ntheory module.</p>
-  </li>
-  <li>
-    <p>Progress of ImageSet Union:- In PR <a href="https://github.com/sympy/sympy/pull/17079">#17079</a>
-This PR is currently been left for review.</p>
-  </li>
-</ol>
-
-<ul>
-  <li>
-    <p>Next week goals</p>
-  </li>
-  <li>Work upon <code class="highlighter-rouge">_solve_modular</code></li>
-  <li>In the following week I will be changing the domain of solving equations to
-Integers only.</li>
-</ul>
-
-<p>Code improvement takes time!!</p>
 					</div>
 				</div>
 			</div>
@@ -3077,104 +1402,6 @@ keep you updated!</p>
 	</div>
 </div></div>
 <div class="day">
-<h2 class="dayform">July 27, 2019</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-b30d7457 feed-" id="item-ec2fba7b">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/jmig5776.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Jogi Miglani (jmig5776) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://jmig5776.github.io//gsoc-week-9">00:00, Saturday, 27 July UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-week-9">Jogi Miglani (jmig5776): GSoC 2019 - Week 9</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/jmig5776.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Jogi Miglani (jmig5776) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://jmig5776.github.io//gsoc-week-9">00:00, Saturday, 27 July UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://jmig5776.github.io//gsoc-week-9">GSoC 2019 - Week 9</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This was the eigth week meeting with the GSoC mentors which was scheduled on
-Saturday 27th July, 2019 between 1:30 - 2:30 PM (IST). Me, Yathartha and Amit
-were the attendees of the meeting.</p>
-
-<ul>
-  <li>Discussing previous week&#8217;s progress</li>
-</ul>
-
-<ol>
-  <li>
-    <p>Progress of <code class="highlighter-rouge">_solve_modular</code>:- In PR <a href="https://github.com/sympy/sympy/pull/16976">#16976</a>
-I implemented the basic design of <code class="highlighter-rouge">_solve_modular</code>. Some very good suggestion by
-Yathartha for creating <code class="highlighter-rouge">_invert_modular</code> were very helpful. Now basically the
-<code class="highlighter-rouge">_solve_modular</code> first do preprocessing and invert it and then find solution and
-in final domain intersection takes place.</p>
-  </li>
-  <li>
-    <p>Progress of ImageSet Union:- In PR <a href="https://github.com/sympy/sympy/pull/17079">#17079</a>
-I will be implementing an algorithm based on heurestics for performing ImageSet
-Union this week. Basic code is being already written for defining a function and
-only algorithm part is left which will be performed in this week.</p>
-  </li>
-</ol>
-
-<ul>
-  <li>
-    <p>Next week goals</p>
-  </li>
-  <li>
-    <p>Work upon <code class="highlighter-rouge">_solve_modular</code> and ImageSet Union PR</p>
-  </li>
-</ul>
-
-<p>Code improvement takes time!!</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
 <h2 class="dayform">July 22, 2019</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -3403,6 +1630,1405 @@ only algorithm part is left which will be performed in this week.</p>
 		</div>
 	</div>
 </div></div>
+<div class="day">
+<h2 class="dayform">July 20, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-45d5af2d feed-" id="item-85043b6b">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://sc0rpi0n101.github.io/2019/07/week-8boys-we-got-a-plan./">00:00, Saturday, 20 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/07/week-8boys-we-got-a-plan./">Nikhil Maan (Sc0rpi0n101): Week 8:Boys!! We got a Plan.</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://sc0rpi0n101.github.io/2019/07/week-8boys-we-got-a-plan./">00:00, Saturday, 20 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/07/week-8boys-we-got-a-plan./">Week 8:Boys!! We got a Plan.</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>&ldquo;Those who plan do better than those who do not plan even though they rarely stick to their plan.&ldquo;&#8213; Winston Churchill
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week I have some good news for you all. We have got a few plans to get the progress of the project rolling as the second evaluation approaches. The meeting also took place this week, so, after waiting for so long, we have some good insights from the meeting this time.
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">July 15, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-eb3e3c3b feed-" id="item-bce77c44">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/ishanaj.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Ishan Joshi (ishanaj) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://ishanaj.wordpress.com/2019/07/15/gsoc19-week-7-starting-with-the-phase-iii-draw-function/">03:02, Monday, 15 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/07/15/gsoc19-week-7-starting-with-the-phase-iii-draw-function/">Ishan Joshi (ishanaj): GSoC&#8217;19: Week-7- Starting with the phase-III draw() function</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/ishanaj.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Ishan Joshi (ishanaj) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://ishanaj.wordpress.com/2019/07/15/gsoc19-week-7-starting-with-the-phase-iii-draw-function/">03:02, Monday, 15 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/07/15/gsoc19-week-7-starting-with-the-phase-iii-draw-function/">GSoC&#8217;19: Week-7- Starting with the phase-III draw() function</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>The week was successfully completed as planned. The work on <a href="https://github.com/sympy/sympy/pull/17122">Column class</a> has been completed.</p>
+
+
+
+<p>The documentation and tests have been written and with some changes in the <strong>solve_slope_deflection()</strong> and <strong>critical_load(),</strong> the <strong>Column</strong> class is now able to handle cases with trivial solutions of the constants ( C1 &amp; C2) which made the deflection equation zero.</p>
+
+
+
+<p>Apart from this, another problem that we had with the <strong>pinned-fixed</strong> end condition, where <strong>solve()</strong> wasn&#8217;t giving the output in the required form, has temporary been handled by making an <strong>XFAIL </strong>test against it. We can work on it later. Either there has to be some changes in <strong>solve()</strong>&nbsp;so that we would be able to handle our case or we might have to figure out a way to rewrite it into the desired form.<span id="more-58"></span></p>
+
+
+
+<p>With the end of this week,&nbsp;<a href="https://github.com/sympy/sympy/pull/17122">PR #17122</a> and <a href="https://github.com/sympy/sympy/pull/17153">PR #17153</a> are complete and ready for review. I have made some changes addressing some of the reviews, and we can have further discussions on it.</p>
+
+
+
+<p>Now, also moving on to the next phase, I have done a bit of research on it. I will most probably open a discussion to have an initial discussion regarding how work will progress in this stage. This phase is regarding plotting the beam diagrams using <a href="https://matplotlib.org/">matplotlib</a>. I have also considered <strong>pyglet</strong> plotting module of SymPy, which according to the <a href="https://docs.sympy.org/latest/modules/plotting.html#plotting-geometric-entities">documentation</a> is capable of plotting geometries, but there has been some problems in this module and it doesn&#8217;t seem to be working well. I had earlier made an <a href="https://github.com/sympy/sympy/issues/16537">issue #16537</a> regarding the same, but there seems to be no improvement here.</p>
+
+
+
+<p>So, we will be discussing the rest in an issue-cum-discussion, in the upcoming week.</p>
+
+
+
+<p><strong>Next week:</strong></p>
+
+
+
+<ul><li>Working on the Stage-III</li><li>Simultaneously, discussing the leftover PR&#8217;s and trying to finish them and make a merge.</li></ul>
+
+
+
+<p>Most probably, on successful discussion and planning, I will be opening a draft work-in-progress PR for the <strong>draw()</strong> function in stage &#8211;III.</p>
+
+
+
+<p>Will keep you updated!</p>
+
+
+
+<p>Thanks!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">July 14, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-512275ca feed-" id="item-1a26c1ea">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shubhamkjha.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://www.shubhamjha.com/posts/GSoC-2019-Week-6-and-7/">18:30, Sunday, 14 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://www.shubhamjha.com/posts/GSoC-2019-Week-6-and-7/">Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 6 and 7</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shubhamkjha.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://www.shubhamjha.com/posts/GSoC-2019-Week-6-and-7/">18:30, Sunday, 14 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://www.shubhamjha.com/posts/GSoC-2019-Week-6-and-7/">GSoC 2019: Week 6 and 7</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>With this ends the seventh week of the official coding period. During the end of 6th week and the beginning of 7th week, I was mostly travelling, so I was not able to write a blog for the sixth week. Instead, I will try to summarize my work during the last two weeks here.</p>
+
+<p>For the last few weeks, I have been focused on optimizing the code of new assumptions to enhance its performance. Most of my work has been exploratory, as Aaron says &#128517;. Indeed I have dry-run, backtracked, profiled, and ran the same code with a debugger too many times to understand the slow parts and the improvements I can make here and there. Mostly the code is optimized given the class structure of SymPy. But it is also the class structure that is adding up to the performance issues. Already noted in my last blog, classes like <code class="language-plaintext highlighter-rouge">And</code> and <code class="language-plaintext highlighter-rouge">Or</code> sorts their <em>args</em>, hence take a great amount of time. But other SymPy class constructors also take significant time.</p>
+
+<p>With the success of fifth week&#8217;s attempt, I have been desperate to bring down the execution time &#128517;. Some of the attempts I have made, which are included in <a href="https://github.com/sympy/sympy/pull/17144">#17144</a>, are:</p>
+
+<ul>
+  <li>I have modified <strong>CNF</strong> class, which essentially is a low-level implementation for the <a href="https://en.wikipedia.org/wiki/Conjunctive_normal_form">cnf</a> of any boolean expression. <strong>CNF</strong> object holds a set of clauses. These clauses are themselves <code class="language-plaintext highlighter-rouge">frozenset</code> of <strong>Literal</strong> objects. <strong>Literal</strong> class is being implemented just to reduce the unnecessary creation of <code class="language-plaintext highlighter-rouge">Not</code> objects (It takes significant execution time and is called many times).</li>
+  <li>I have also modified the code of <em>sympify()</em>, it appeared to take more time than expected when the argument is a SymPy object already. Consider this, almost one-third execution time.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="n">x</span> <span class="o">=</span> <span class="n">Symbol</span><span class="p">(</span><span class="s">'x'</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">timeit</span> <span class="n">sympify</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c1"># before change
+</span><span class="mi">601</span> <span class="n">ns</span> <span class="err">&#177;</span> <span class="mf">14.6</span> <span class="n">ns</span> <span class="n">per</span> <span class="n">loop</span> <span class="p">(</span><span class="n">mean</span> <span class="err">&#177;</span> <span class="n">std</span><span class="p">.</span> <span class="n">dev</span><span class="p">.</span> <span class="n">of</span> <span class="mi">7</span> <span class="n">runs</span><span class="p">,</span> <span class="mi">1000000</span> <span class="n">loops</span> <span class="n">each</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">timeit</span> <span class="n">sympify</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c1"># after change
+</span><span class="mi">239</span> <span class="n">ns</span> <span class="err">&#177;</span> <span class="mf">11.8</span> <span class="n">ns</span> <span class="n">per</span> <span class="n">loop</span> <span class="p">(</span><span class="n">mean</span> <span class="err">&#177;</span> <span class="n">std</span><span class="p">.</span> <span class="n">dev</span><span class="p">.</span> <span class="n">of</span> <span class="mi">7</span> <span class="n">runs</span><span class="p">,</span> <span class="mi">1000000</span> <span class="n">loops</span> <span class="n">each</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<ul>
+  <li>Finally, I rewrote <code class="language-plaintext highlighter-rouge">to_cnf()</code> for <strong>CNF</strong> objects. By using mostly Python&#8217;s built-ins and removing any SymPy object construction during its execution. The performance gain is quite subtle &#128526;.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="rouge-code"><pre><span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">sympy</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">sympy.abc</span> <span class="kn">import</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&amp;</span> <span class="n">y</span> <span class="o">&amp;</span> <span class="n">z</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span> <span class="n">a</span> <span class="o">&amp;</span> <span class="n">b</span> <span class="o">&amp;</span> <span class="n">c</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">sympy.logic.boolalg</span> <span class="kn">import</span> <span class="n">CNF</span>
+
+<span class="c1"># Before
+</span><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">timeit</span> <span class="n">CNF</span><span class="p">.</span><span class="n">from_prop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="c1"># It is using to_cnf()
+</span><span class="mf">1.41</span> <span class="n">ms</span> <span class="err">&#177;</span> <span class="mi">18</span> <span class="n">&#181;s</span> <span class="n">per</span> <span class="n">loop</span> <span class="p">(</span><span class="n">mean</span> <span class="err">&#177;</span> <span class="n">std</span><span class="p">.</span> <span class="n">dev</span><span class="p">.</span> <span class="n">of</span> <span class="mi">7</span> <span class="n">runs</span><span class="p">,</span> <span class="mi">1000</span> <span class="n">loops</span> <span class="n">each</span><span class="p">)</span>
+
+<span class="c1"># after
+</span><span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">timeit</span> <span class="n">CNF</span><span class="p">.</span><span class="n">from_prop</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="c1"># It is using the new to_CNF()
+</span><span class="mf">31.5</span> <span class="n">&#181;s</span> <span class="err">&#177;</span> <span class="mf">1.48</span> <span class="n">&#181;s</span> <span class="n">per</span> <span class="n">loop</span> <span class="p">(</span><span class="n">mean</span> <span class="err">&#177;</span> <span class="n">std</span><span class="p">.</span> <span class="n">dev</span><span class="p">.</span> <span class="n">of</span> <span class="mi">7</span> <span class="n">runs</span><span class="p">,</span> <span class="mi">10000</span> <span class="n">loops</span> <span class="n">each</span><span class="p">)</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>There is definitely a limit to performance we can get with Python. But implementing most of the things in Python built-ins we can definitely make things much faster.</p>
+
+<p>For the upcoming week, I will try to complete the following:</p>
+<ul>
+  <li>The CNF objects are still not simplified. I have to implement simplification to reduce the number of clauses. These have to be fed into <code class="language-plaintext highlighter-rouge">satisfiable</code> at the end, which can benefit from lesser number of clauses.</li>
+  <li><code class="language-plaintext highlighter-rouge">rcall</code> used with <strong>sathandlers</strong> is another major portion having high execution time. I will try to work it out.</li>
+  <li>Clean up the code and make it ready for reviewing.</li>
+</ul>
+
+<p>Apart from that, I will also try to shift my focus towards the other part of my project and write some theory solvers. After all, I need to enhance the assumptions not just make it faster &#128526;.</p>
+
+<p><em>Peace</em></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">July 13, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-45d5af2d feed-" id="item-816eb42d">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://sc0rpi0n101.github.io/2019/07/week-7a-little-step-towards-consistency/">00:00, Saturday, 13 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/07/week-7a-little-step-towards-consistency/">Nikhil Maan (Sc0rpi0n101): Week 7:A Little Step Towards Consistency</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://sc0rpi0n101.github.io/2019/07/week-7a-little-step-towards-consistency/">00:00, Saturday, 13 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/07/week-7a-little-step-towards-consistency/">Week 7:A Little Step Towards Consistency</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>&#8220;It&rsquo;s not what we do once in a while that shapes our lives. It&rsquo;s what we do consistently.&#8221; &#8213; Anthony Robbins
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week I&rsquo;ve tried to be more consistent with my schedule, work and communications with the Organization. I&rsquo;ve taken a few small steps and plan to improve as I keep working.
+ Consistency!? Merging the Pull Requests?
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">July 08, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-eb3e3c3b feed-" id="item-8cabdae9">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/ishanaj.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Ishan Joshi (ishanaj) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://ishanaj.wordpress.com/2019/07/08/gsoc19-week-6-completing-the-column-class/">04:44, Monday, 08 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/07/08/gsoc19-week-6-completing-the-column-class/">Ishan Joshi (ishanaj): GSoC&#8217;19: Week-6-Completing the Column class.</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/ishanaj.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Ishan Joshi (ishanaj) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://ishanaj.wordpress.com/2019/07/08/gsoc19-week-6-completing-the-column-class/">04:44, Monday, 08 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/07/08/gsoc19-week-6-completing-the-column-class/">GSoC&#8217;19: Week-6-Completing the Column class.</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>The sixth week has ended with a lot of work to be done ahead.</p>
+
+
+
+<p>Last week the work was majorly focused on the work in progress <a href="https://github.com/sympy/sympy/pull/17122">PR #17122</a>. I have included the critical load function which makes the Column class capable of determining the critical load. Some problems still came up in solving some equations. I have made an <a href="https://github.com/sympy/sympy/issues/17162">issue</a> related to those.</p>
+
+
+
+<p>An equation similar to <strong>tan(x) &#8211; x</strong> comes up while determining the critical load for the&nbsp;<strong>pinned-fixed</strong>&nbsp;end-condition. SymPy&#8217;s <strong>solve() </strong>won&#8217;t be able to solve such an equation, and as per the solution given in the <a href="https://github.com/sympy/sympy/issues/17162">issue</a>, I think that <strong>nsolve()</strong> would surely help in this case. So I will be going ahead to solve it using the approximation returned by <strong>nsolve()</strong> to handle this condition.<span id="more-56"></span></p>
+
+
+
+<p>Another problem that I faced was determining deflection and critical load for the&nbsp;<strong>pinned-pinned</strong>&nbsp;end-condition. Here, the deflection comes out to be:</p>
+
+
+
+<p><strong>C1*sin(sqrt(P)*x/(sqrt(E)*sqrt(I)))</strong> +<strong> C2*cos(sqrt(P)*x/(sqrt(E)*sqrt(I)))</strong></p>
+
+
+
+<p>Now on solving it for constants <strong>C1</strong> and <strong>C2, </strong>using initial boundary conditions,&nbsp;both come out to be <strong>0</strong>, making the deflection <strong>zero</strong>. This implies that no buckling occurs, which is not the case.</p>
+
+
+
+<p>Even when solving it manually, this situation occurs, we deal with it by putting <strong>C2 = 0 </strong>and instead of putting <strong>C1 = 0,</strong> we consider the <strong>sin </strong>term equal to zero and then solve for <strong>P (critical load).&nbsp;</strong>So, I will be adding a few more lines of code to deal with this situation.</p>
+
+
+
+<p>Apart from working on this module, I have also opened another <a href="https://github.com/sympy/sympy/pull/17153">PR #17153</a> which implement methods&nbsp;to determine <strong>section modulus</strong> and <strong>polar modulus</strong> of any polygon (more precisely a cross-section). Initially it was a draft PR, but now the work has been completed on it. Once I get the approval, I will also be adding the same for the Ellipses module. Also, if <strong><a href="https://github.com/sympy/sympy/pull/17001">cut_section()</a> </strong>gets successfully implemented I will be adding another method to determine the first moment.</p>
+
+
+
+<p>I am pretty sure the work on <strong>Column class</strong> will be successfully completed before the end of the next week. Also, we will be heading towards the next stage which intends to plot beam diagrams using matplotlib. Till then we can have an initial discussion regarding the same.</p>
+
+
+
+<h2><strong>Next Week:</strong></h2>
+
+
+
+<ul><li>Improving the <strong>critical_load()</strong> to handle the above problems</li><li>Completing the Column class (documentation and tests)</li><li>Starting with the next phase</li></ul>
+
+
+
+<p>Will keep you updated!</p>
+
+
+
+<p>Thanks!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">July 06, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-45d5af2d feed-" id="item-82f950a7">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://sc0rpi0n101.github.io/2019/07/week-6-the-most-chaotic-week-ever/">00:00, Saturday, 06 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/07/week-6-the-most-chaotic-week-ever/">Nikhil Maan (Sc0rpi0n101): Week 6: The Most Chaotic Week Ever!!</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://sc0rpi0n101.github.io/2019/07/week-6-the-most-chaotic-week-ever/">00:00, Saturday, 06 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/07/week-6-the-most-chaotic-week-ever/">Week 6: The Most Chaotic Week Ever!!</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>&#8220;A language that doesn&rsquo;t affect the way you think about programming is not worth knowing.&#8221; &#8213; Alan J. Perlis
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week was one of the most chaotic weeks till now if not the most chaotic. I had to move places as the Uni opens next week, had the summer classes exams and had to convert the C parser to use SymPy&rsquo;s Codegen AST from Python AST all in one week.
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">July 02, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-512275ca feed-" id="item-b8bc317d">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shubhamkjha.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://www.shubhamjha.com/posts/GSoC-2019-Week-5/">18:30, Tuesday, 02 July UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://www.shubhamjha.com/posts/GSoC-2019-Week-5/">Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 5</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shubhamkjha.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://www.shubhamjha.com/posts/GSoC-2019-Week-5/">18:30, Tuesday, 02 July UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://www.shubhamjha.com/posts/GSoC-2019-Week-5/">GSoC 2019: Week 5</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>With this the fifth week of the official coding period has ended. I will try to give a brief summary of my work during this week.</p>
+
+<p>I spent most of this week learning the inner working of <strong>satask</strong> module. It took a lot of debugging to understand the on-going processes efficiently &#128517; . My major job was to reduce the unwanted slowing portions in the code. I had  <a href="https://github.com/sympy/sympy/pull/11789">#11789</a> for reference. Some of such performance reducing portions of code were:</p>
+<ul>
+  <li>A major segment of code was creating <strong>And</strong> objects unnecessarily. As suggested in <a href="https://github.com/sympy/sympy/issues/17087">#17087</a> the sorting in the <strong>And</strong> constructor takes up a significant amount of time. These have to be reduced.</li>
+  <li>Using SymPy objects is itself a bottleneck for performance. Having a system built over SymPy objects slows things down. Python&#8217;s built-in types should be used as much as possible.</li>
+  <li>A specific segment (used many times in the code) calls <code class="language-plaintext highlighter-rouge">rcall</code> over propositions. The <code class="language-plaintext highlighter-rouge">rcall</code> which is a recursive process also takes a significant of time.</li>
+  <li>Also, I have tried to pre-compile results as much as possible.</li>
+</ul>
+
+<p>With the above and some other changes, the overall performance of <code class="language-plaintext highlighter-rouge">satask</code> has improved much. I have made a PR over this <a href="https://github.com/sympy/sympy/pull/17144">#17144</a>. For an instance,</p>
+<table style="padding: 15px;">
+    <thead>
+        <th>Tests</th>
+        <th>After this PR</th>
+        <th>In master</th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>test_satask</td>
+            <td>2.39 s</td>
+            <td>36.26 s</td>
+        </tr>
+        <tr>
+            <td>assumptions/tests</td>
+            <td>16.74 s</td>
+            <td>127.21 s</td>
+        </tr>
+    </tbody>
+</table>
+<p><br />
+There is still scope for improvement in performance. In the coming week, I will try to work these out. I will also try to improve the performance of <strong>ask</strong> module.</p>
+
+<p>Also, the first evaluations are over now and I feel happy to announce that I passed it. During the first phase I learnt a lot. In last few weeks I got to explore profiling and got to understand how small segments can influence performance. Before this I felt that I already know the codebase, but in reality I had much to explore. My mentors always gave me a good starting point and a direction over the course of this phase. With the hope to work much better in the coming phases, I take your leave now &#128516; .</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">June 30, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-eb3e3c3b feed-" id="item-2ded7b55">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/ishanaj.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Ishan Joshi (ishanaj) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://ishanaj.wordpress.com/2019/07/01/gsoc19-week-5-moving-on-with-a-non-mutable-column-class/">18:52, Sunday, 30 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/07/01/gsoc19-week-5-moving-on-with-a-non-mutable-column-class/">Ishan Joshi (ishanaj): GSoC&#8217;19: Week-5 &#8211; Moving on with a Non-mutable Column class</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/ishanaj.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Ishan Joshi (ishanaj) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://ishanaj.wordpress.com/2019/07/01/gsoc19-week-5-moving-on-with-a-non-mutable-column-class/">18:52, Sunday, 30 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/07/01/gsoc19-week-5-moving-on-with-a-non-mutable-column-class/">GSoC&#8217;19: Week-5 &#8211; Moving on with a Non-mutable Column class</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>A lot of things happened this week and I am happy to inform you that <a href="https://github.com/sympy/sympy/pull/17055">PR #17055</a> has been successfully merged. The beam module now supports the cross-sectional shape of the beam as an alternative parameter to the second moment. With this, the aim of the stage-I to integrate the geometry module with beam module has been accomplished.</p>
+
+
+
+<p>Although we need to add some examples in the docs, to make it easier for the user to understand how to use this new feature.</p>
+
+
+
+<p>Coming on to stage-II, I had already, initiated a <a href="https://github.com/sympy/sympy/issues/17072">discussion</a> to finalize the API of the new Column class that is to be implemented as a part of the continuum mechanics module in this stage.<span id="more-54"></span></p>
+
+
+
+<p>We concluded that it would be much better if the Column class remains non-mutable i.e. unlike the beam class where a beam is formed in a piecewise form, the new Column class would take all its required input data during the declaration and then one can call different methods to calculate different things.</p>
+
+
+
+<p>I have made a <a href="https://github.com/sympy/sympy/pull/17122">work-in-progress PR #17122</a> implementing the Column class which performs the required buckling calculations. Currently, I have not included a method to calculate the critical load as there was a bit of problem with the form of the equation which the <strong>dsolve() </strong>returns after solving the differential equation of buckling. <a href="https://docs.sympy.org/latest/modules/solvers/ode.html" rel="noopener" target="_blank"><strong>dsolve(</strong>)</a> is SymPy&#8217;s differential equation solver.</p>
+
+
+
+<p>In general, if we solve the general equation of buckling manually, we might apply the <strong>method of undetermined coefficients</strong>, which of course even <strong>dsolve() </strong>&nbsp;is capable to apply, but it gives the answer in an exponent form, while we need it in a trigonometric form (for ease of further calculations). So after seeking different methods trying to convert this equation in terms of <strong>sin(x)</strong> and <strong>cos(x), </strong>I finally had to put that problem in the discussion, where Oscar Benjamin, gave an idea to declare the variables as positive in order to get it in terms of <strong>sin </strong>and<strong> cos.&nbsp;</strong>I tried that it works well for our case. I will have to figure out the further calculation of the critical load.</p>
+
+
+
+<p>Hopefully will be updating the code with a new method to calculate critical load, soon.</p>
+
+
+
+<p>Also, I have planned to have a method to solve the <strong>unknown reactions</strong> and <strong>reaction moments</strong>, which would use the <strong>boundary conditions</strong> to get their values.</p>
+
+
+
+<p>With all these things going on, this week we also had our first evaluations, and I am very happy to say that I have passed it. <strong>Thanks to the mentors!</strong></p>
+
+
+
+<h2><strong>&nbsp;</strong><strong>Next Week:</strong></h2>
+
+
+
+<ul><li>Completing Column class with all its methods</li><li>Adding tests and documentation.</li><li>Starting discussions for the next stage.</li></ul>
+
+
+
+<p>I will try to finish working on the Column class this weekend.</p>
+
+
+
+<p>Will keep you updated!</p>
+
+
+
+<p>Thanks!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">June 29, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-45d5af2d feed-" id="item-5ff249e1">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://sc0rpi0n101.github.io/2019/06/week-5-the-evaluation-is-here-end-of-phase-1/">00:00, Saturday, 29 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/06/week-5-the-evaluation-is-here-end-of-phase-1/">Nikhil Maan (Sc0rpi0n101): Week 5: The Evaluation is here: End of Phase 1</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://sc0rpi0n101.github.io/2019/06/week-5-the-evaluation-is-here-end-of-phase-1/">00:00, Saturday, 29 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/06/week-5-the-evaluation-is-here-end-of-phase-1/">Week 5: The Evaluation is here: End of Phase 1</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>&ldquo;On two occasions I have been asked [by members of Parliament!]: &lsquo;Pray, Mr. Babbage, if you put into the machine wrong figures, will the right answers come out ?&rsquo; I am not able rightly to apprehend the kind of confusion of ideas that could provoke such a question.&ldquo;&#8212; Charles Babbage
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week was the last week of Phase-1 and the evaluations for the first phase.
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">June 23, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-eb3e3c3b feed-" id="item-f16e01f1">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/ishanaj.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Ishan Joshi (ishanaj) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://ishanaj.wordpress.com/2019/06/24/gsoc19-week-4-starting-with-column-buckling-implementation/">18:41, Sunday, 23 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/06/24/gsoc19-week-4-starting-with-column-buckling-implementation/">Ishan Joshi (ishanaj): GSoC&#8217;19: Week-4-Starting with Column Buckling implementation</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/ishanaj.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Ishan Joshi (ishanaj) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://ishanaj.wordpress.com/2019/06/24/gsoc19-week-4-starting-with-column-buckling-implementation/">18:41, Sunday, 23 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/06/24/gsoc19-week-4-starting-with-column-buckling-implementation/">GSoC&#8217;19: Week-4-Starting with Column Buckling implementation</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Finalizing what had been discussed in <a href="https://github.com/sympy/sympy/pull/16964">PR #16964</a> for integrating geometry module with the beam module,<a href="https://github.com/sympy/sympy/pull/17055"> PR #17055</a> was opened which is now ready to go!</p>
+
+
+
+<p>There is no special function for defining the cross-section of a Beam object. A user can simply pass the geometry object as a parameter instead of the <strong>second_moment, </strong>and the corresponding second moment would be calculated internally. The example below might explain this better:<span id="more-52"></span></p>
+
+
+<pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate">
+
+&gt;&gt;&gt; b = Beam(l, E, Circle((0, 0), r))
+
+&gt;&gt;&gt; b.second_moment
+
+pi*r*Abs(r)**3/4
+
+&gt;&gt;&gt; b.cross_section
+
+Circle(Point2D(0, 0), r)
+
+</pre>
+
+
+
+<p>Further, the <strong>cross_section</strong> attribute can be changed even after the beam is created. Every time the <strong>cross_section</strong> is assigned a new value, the <strong>second_moment</strong> gets automatically updated.</p>
+
+
+
+<p>Similarly, every time the user changes the <strong>second_moment</strong> explicitly after the creation of the beam, the previous <strong>cross_section</strong> gets destroyed, or in other words, the <strong>cross_section</strong> is set to None.</p>
+
+
+<pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate">
+
+&gt;&gt;&gt; b = Beam(l, E, Circle((0, 0), r))
+
+&gt;&gt;&gt; I&#160; = Symbol(&#8216;I&#8217;)
+
+&gt;&gt;&gt; b.second_moment = I
+
+&gt;&gt;&gt; b.cross_section
+
+None
+
+&gt;&gt;&gt; b.second_moment = Polygon((0, 0), (a, 0), (a, b), (0, b))
+
+ValueError: To update cross-section geometry use `cross_section` attribute
+
+</pre>
+
+
+
+<p>The PR is complete and just needs the final approval from the mentors.</p>
+
+
+
+<p>Simultaneously, I had worked on the column buckling calculations which is a part of the stage &#8211;II.</p>
+
+
+
+<p>I have opened an <a href="https://github.com/sympy/sympy/issues/17072">issue-cum-discussion</a> for discussing its API and further implementations.</p>
+
+
+
+<p>Since the calculations of the Column Buckling are very much different from those of beam bending, we will have to make a separate class Column. The basic API and the way the calculations are supposed to go can be seen from the stage &#8211;II in the <a href="https://docs.google.com/document/d/1LOtMTr9cCrzQ8_OnKrgkZs8wFS9N9PxlR10h3aKG0jg/edit?usp=sharing">proposal</a>.</p>
+
+
+
+<p>I would be making a PR for column buckling calculations within a day or two, once some initial questions (as mentioned in the issue-cum-discussion) gets clarified.</p>
+
+
+
+<h2>Next Week:</h2>
+
+
+
+<ul><li>Finalizing the basic API and implementations of Column class</li><li>Making a PR for the above implementations</li><li>Documentation and testing</li></ul>
+
+
+
+<p>Will keep you updated!</p>
+
+
+
+<p>Thanks!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-512275ca feed-" id="item-7a76e0ca">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shubhamkjha.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://www.shubhamjha.com/posts/GSoC-2019-Week-4/">18:30, Sunday, 23 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://www.shubhamjha.com/posts/GSoC-2019-Week-4/">Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 4</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shubhamkjha.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://www.shubhamjha.com/posts/GSoC-2019-Week-4/">18:30, Sunday, 23 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://www.shubhamjha.com/posts/GSoC-2019-Week-4/">GSoC 2019: Week 4</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>With this the fourth week and the first phase of GSoC 2019 is over. Here I will give you a brief summary of my progress this week.</p>
+
+<p>I started this week by setting up my workspace for profiling the code related to new assumptions. I am using <code class="language-plaintext highlighter-rouge">pyinstrument</code> for that. The results of profiler suggests that a significant amount of time is spent in the <code class="language-plaintext highlighter-rouge">to_cnf()</code> function which converts the logical expression into their CNF counterparts, to be used by the SAT solver. Also, since this system is built over the SymPy core, a large amount of this time is spent in the core itself (See the graph <a href="https://github.com/sympy/sympy/issues/17066#issuecomment-504774120">here</a>). A possible solution to this is to use constructs at a level lower than the SymPy objects, hence removing the overheads.</p>
+
+<p>Also, as suggested in the last blog, there are various ideas proposed for improving the new assumptions mechanism. Some of them have been implemented to some extent in some PRs. Before proceeding for any new strategies, I need to look into these ideas first. I have started an <a href="https://github.com/sympy/sympy/issues/17066">issue-tree</a> to gather them.</p>
+
+<p>Over the end of the week, I also pushed my work on <code class="language-plaintext highlighter-rouge">First Order Logic</code> module at <a href="https://github.com/sympy/sympy/pull/17069">#17069</a>. This work is based on <a href="https://github.com/sympy/sympy/pull/7608">#7608</a> and extends it by adding <code class="language-plaintext highlighter-rouge">Equality</code> to it. Currently, there are test failures and some points to decide. I will try to get it done within this week.</p>
+
+<p>I spent most of this week exploring the profiling and benchmarking of code, and I learnt a lot during this. For the coming week, I will focus on speeding up the code in <code class="language-plaintext highlighter-rouge">to_cnf</code>. As suggested by Aaron, <a href="https://github.com/sympy/sympy/pull/11789">this</a> seems a good point to start with. Also, I will be working on the <code class="language-plaintext highlighter-rouge">FOL</code> module.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">June 22, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-45d5af2d feed-" id="item-acedd7fa">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://sc0rpi0n101.github.io/2019/06/week-4-the-fortran-parser-is-finally-here/">00:00, Saturday, 22 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/06/week-4-the-fortran-parser-is-finally-here/">Nikhil Maan (Sc0rpi0n101): Week 4: The Fortran Parser is finally here</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://sc0rpi0n101.github.io/2019/06/week-4-the-fortran-parser-is-finally-here/">00:00, Saturday, 22 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/06/week-4-the-fortran-parser-is-finally-here/">Week 4: The Fortran Parser is finally here</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>&ldquo;When someone says: &lsquo;I want a programming language in which I need only say what I wish done&rsquo;, give him a lollipop.&rdquo; &#8212; Alan J. Perlis in Software Metrics
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week has been relatively a little odd. The week started a little slow but slowly it turned out to be a good and productive week.
+ A Slow Start LFortran Testing Finally, The Missing Pull Request The Long Awaited Meeting What now?
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">June 16, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-512275ca feed-" id="item-4c64df3f">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shubhamkjha.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://www.shubhamjha.com/posts/GSoC-2019-Week-3/">18:30, Sunday, 16 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://www.shubhamjha.com/posts/GSoC-2019-Week-3/">Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 3</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shubhamkjha.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://www.shubhamjha.com/posts/GSoC-2019-Week-3/">18:30, Sunday, 16 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://www.shubhamjha.com/posts/GSoC-2019-Week-3/">GSoC 2019: Week 3</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>The third week of coding period has ended and as I already stated in the last blog, I couldn&#8217;t be much productive this week. Nevertheless, I tried to wrap-up some unfinished works. PR <a href="https://github.com/sympy/sympy/pull/16956">#16956</a> is ready to merge, just waiting for some last reviews. This PR needs to be supplemented with some fixes in the code of <code class="language-plaintext highlighter-rouge">Add</code> class to handle all the issues over <code class="language-plaintext highlighter-rouge">Relationals</code>. PR <a href="https://github.com/sympy/sympy/pull/16978">#16978</a> had one major failing test from the <code class="language-plaintext highlighter-rouge">stats</code> module. I tried to debug it ,but due to my unfamiliarity with that part of code I took help from <a href="https://github.com/czgdp1807">Gagandeep</a> and as his <a href="https://github.com/sympy/sympy/pull/16978#discussion_r294039337">comment</a> suggests, the result this PR is giving is correct and more intuitive. At least, one less issue to handle &#128524;.</p>
+
+<p>Over the end of the week, I shifted my focus towards <em>New Assumptions</em>. One of my major tasks for this summer is to speed up the <em>satask</em> module. As suggested by Aaron, I searched the repository for issues and PRs over this, and I found a number of such unfinished work. I would need to study these ideas and profile the results before working ahead. I would create a issue-tree over it connecting all such PRs and there respective benchmarks.</p>
+
+<p>For this week, I would focus on the above mentioned task only. Since the first phase is about to end, I would have to speed things up.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div><div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-45d5af2d feed-" id="item-fb109791">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://sc0rpi0n101.github.io/2019/06/week-3-whats-happening-where-have-i-been/">00:00, Sunday, 16 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/06/week-3-whats-happening-where-have-i-been/">Nikhil Maan (Sc0rpi0n101): Week 3: What's Happening? Where have I been?</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://sc0rpi0n101.github.io/2019/06/week-3-whats-happening-where-have-i-been/">00:00, Sunday, 16 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/06/week-3-whats-happening-where-have-i-been/">Week 3: What's Happening? Where have I been?</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>&#8220;How did it get so late so soon?&#8221; &#8213; Dr. Seuss
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and we&rsquo;re running late on everything this week. This time we will talk about some operating system stuff along with the week&rsquo;s work. I will have more blogs on operating systems and that type of stuff soon. For now, let&rsquo;s talk about what&rsquo;s happening.
+Why so Late? What about Work?
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">June 12, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-512275ca feed-" id="item-9e378194">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/shubhamkjha.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://www.shubhamjha.com/posts/GSoC-2019-Week-2/">18:30, Wednesday, 12 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://www.shubhamjha.com/posts/GSoC-2019-Week-2/">Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 2</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/shubhamkjha.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Shubham Kumar Jha (ShubhamKJha) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://www.shubhamjha.com/posts/GSoC-2019-Week-2/">18:30, Wednesday, 12 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://www.shubhamjha.com/posts/GSoC-2019-Week-2/">GSoC 2019: Week 2</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>The second week of official coding period has concluded. I will give you a brief summary of the week&#8217;s work.</p>
+
+<p>I started this week with working on PR <a href="https://github.com/sympy/sympy/pull/16956">#16956</a>, the PR is now passing tests. I will try to get it merged soon. Later this week, I tried to include <code class="language-plaintext highlighter-rouge">complex -&gt; finite</code> in the assumptions system. I started PR <a href="https://github.com/sympy/sympy/pull/16978">#16978</a> over this. This PR changes the assumptions system to work over the <code class="language-plaintext highlighter-rouge">complex -&gt; finite</code> clause. All the instances of use of <code class="language-plaintext highlighter-rouge">is_complex</code> call has to be modified. As suggested by Aaron, the <code class="language-plaintext highlighter-rouge">is_complex</code> call was changed with a disjunction of <code class="language-plaintext highlighter-rouge">is_complex</code> and <code class="language-plaintext highlighter-rouge">is_infinite</code> calls. Luckily for me, the usage of complex assumption was not much in the codebase &#128524;. Though it meant less test failures to handle, the core assumptions system (in the old system) is quite complex to understand and debug, and hence handling all the failing tests proved quite difficult. Also, I tried to work on it without including any new assumptions to the system. One important result of this is, <code class="language-plaintext highlighter-rouge">zoo.is_complex</code> returns <code class="language-plaintext highlighter-rouge">False</code> now.</p>
+
+<p>Apart from that I have worked on to sync these changes in the new assumptions system as well and I will be sending PR over it soon.</p>
+
+<p>For the coming week,</p>
+<ul>
+  <li>I will start to work on SAT solver and to speed it up. As suggested by Aaron, I will first look into the other unfinished PRs over this.</li>
+  <li>I will sync the new assumptions with the recent developments in the old system.</li>
+</ul>
+
+<p>With enough said, these PRs made me realize how much the codebase can break with small changes in the assumptions. Also, I know this post is a little bit late(because of bad health). I have some pending work over from the last week and I will try to catch speed as soon as possible.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">June 08, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-45d5af2d feed-" id="item-bcaf92b9">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://sc0rpi0n101.github.io/2019/06/week-2-a-tale-of-the-illusive-pull-request/">00:00, Saturday, 08 June UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/06/week-2-a-tale-of-the-illusive-pull-request/">Nikhil Maan (Sc0rpi0n101): Week 2: A Tale of The Illusive Pull Request</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://sc0rpi0n101.github.io/2019/06/week-2-a-tale-of-the-illusive-pull-request/">00:00, Saturday, 08 June UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/06/week-2-a-tale-of-the-illusive-pull-request/">Week 2: A Tale of The Illusive Pull Request</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>In real open source, you have the right to control your own destiny. - Linus Torvalds
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this time we will talk about the Week 2 of the coding period for GSoC 2019 and the story of the elusive pull requests which people had to wait almost the whole week for.
+The Weekend after the Meeting
+A Bad Start
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3430,236 +3056,236 @@ only algorithm part is left which will be performed in this week.</p>
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://iamit.in/blog">Amit Kumar</a></td>
-<td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
-<td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sc0rpi0n101.github.io/categories/gsoc/">GSoC on Sc0rpi0n's Journey</a></td>
 <td><a class="xmlbutton" href="https://sc0rpi0n.me/categories/gsoc/index.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>http://abhinav28071999.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://abhinav28071999.github.io/feed.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
+</tr>
+<tr class="feedsrow">
+<td>http://nishnik.github.io/feed.xml</td>
+<td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ritesh99rakesh.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>http://srajangarg.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>http://sumith1896.github.io/feeds/feed.sympy.xml</td>
 <td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
+</tr>
+<tr class="feedsrow">
+<td>https://anpandey.github.io/atom-sympy.xml</td>
+<td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://arighnaiitg.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://bjodah.github.io/blog/rss.xml</td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://divyanshu132.github.io/feed.sympy.xml</td>
 <td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://friyaz.github.io/feed.sympy.xml</td>
 <td><a class="xmlbutton" href="https://friyaz.github.io/feed.sympy.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
+</tr>
+<tr class="feedsrow">
+<td>https://gxyd.github.io/atom.xml</td>
+<td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
+</tr>
+<tr class="feedsrow">
+<td>https://iamit.in/blog/feeds/sympy.xml</td>
+<td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
+</tr>
+<tr class="feedsrow">
+<td>https://jmig5776.github.io/feed.sympy.xml</td>
+<td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://namannimmo10.github.io/emerald/atom.xml</td>
 <td><a class="xmlbutton" href="https://namannimmo10.github.io/emerald/atom.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://parsoyaarihant.github.io/blog/feed.xml</td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://ravicharann.github.io/blog/feed.xml</td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://sachin-4099.github.io/feed.sympy.xml</td>
 <td><a class="xmlbutton" href="https://sachin-4099.github.io/feed.sympy.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://sidhantnagpal.github.io/rss-gsoc.xml</td>
 <td><a class="xmlbutton" href="https://sidhantnagpal.github.io/rss-gsoc.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
+</tr>
+<tr class="feedsrow">
+<td>https://smit-create.github.io/feed.xml</td>
+<td><a class="xmlbutton" href="https://smit-create.github.io/feed.xml">XML</a></td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://szymag.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
-</tr>
-<tr class="feedsrow">
-<td>https://valglad.github.io/feed.xml</td>
-<td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://www.asmeurer.com/blog/rss.xml</td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://www.kangzhiq.com/tag/sympy/feed/</td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
-<td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
-<td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
 <td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://www.shubhamjha.com/">Shubham&#8217;s Blog</a></td>
 <td><a class="xmlbutton" href="http://shubhamjha.in/sympy_feed.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://smit-create.github.io/Smit-create.github.io/">Smit-create</a></td>
-<td><a class="xmlbutton" href="https://smit-create.github.io/feed.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
-<td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
+</tr>
+<tr class="feedsrow">
+<td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
+<td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
 <td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>09:01, Saturday, 25 September</td>
-<td>09:16, Saturday, 25 September</td>
+<td>10:01, Saturday, 25 September</td>
+<td>10:16, Saturday, 25 September</td>
 </tr>
 </table>
 

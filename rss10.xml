@@ -7,205 +7,6 @@
     <description>Planet SymPy - http://planet.sympy.org/</description>
     <atom:link href="http://planet.sympy.org/rss10.xml" rel="self" type="application/rss+xml"/>
     <item>
-      <guid isPermaLink="false">https://iamit.in/blog/upgrading-sympy-gamma</guid>
-      <author>Amit Kumar (aktech)</author>
-      <title>Amit Kumar (aktech): Porting SymPy Gamma to Google App Engine Python 3</title>
-      <pubDate>Fri, 30 Oct 2020 18:30:00 GMT</pubDate>
-      <link>https://iamit.in/blog/sympy-gamma-gae-python3/</link>
-      <description>&lt;p&gt;This summer I had plenty of time during COVID-19 lockdown and I was looking at
-&lt;a href="https://sympygamma.com/"&gt;SymPy Gamma&lt;/a&gt;.&lt;/p&gt;
-
-&lt;center&gt;&lt;img src="https://iamit.in/assets/sympy-gamma-port/sympy_gamma_demo.gif" width="700" /&gt;&lt;/center&gt;
-
-&lt;h2 id="sympy-gamma"&gt;Sympy Gamma&lt;/h2&gt;
-
-&lt;p&gt;SymPy Gamma is a web application that executes mathematical expressions
-via natural language input from the user, after parsing them as SymPy
-expressions it displays the result with additional related computations.
-It is inspired from the idea of &lt;a href="http://www.wolframalpha.com/"&gt;WolframAlpha&lt;/a&gt; which is based on the
-commercial Computer Algebra System named &lt;a href="https://en.wikipedia.org/wiki/Mathematica"&gt;&amp;#8220;Mathematica&amp;#8221;&lt;/a&gt;.&lt;/p&gt;
-
-&lt;center&gt;&lt;img src="https://iamit.in/assets/wolfram-alpha-logo.svg" width="300" /&gt;&lt;/center&gt;
-
-&lt;p&gt;I have always been impressed by it ever since I first found about it.
-While playing with it during this summer, I realised that it runs on Google
-App Engine&amp;#8217;s Python 2.7 runtime. It is powered by SymPy, an open source
-computer algebra system.&lt;/p&gt;
-
-&lt;center&gt;&lt;img align="center" src="https://iamit.in/assets/Sympy_logo.svg" width="150" /&gt;&lt;/center&gt;
-
-&lt;h2 id="the-problem"&gt;The Problem&lt;/h2&gt;
-
-&lt;p&gt;Despite being widely used around the world (about ~14K users everyday,
-as seen from Google Analytics), there hasn&amp;#8217;t been a lot of development
-in the past 5 years. Due to this the current infrastructure
-was stuck on &lt;a href="https://en.wikipedia.org/wiki/Google_App_Engine"&gt;Google App Engine&lt;/a&gt;&amp;#8217;s Python 2 runtime which obviously does
-not support Python 3.&lt;/p&gt;
-
-&lt;p&gt;This also prevented it to use the latest version of SymPy. The SymPy
-version (~0.7.6) it was using was last updated 6 years ago. This made
-SymPy Gamma in urgent need for upgradation. At the time of writing this blog,
-SymPy Gamma is running on Google App Engine&amp;#8217;s latest runtime and latest
-version of SymPy.&lt;/p&gt;
-
-&lt;h2 id="solution-and-process"&gt;Solution and Process&lt;/h2&gt;
-
-&lt;p&gt;It was a fun project and was interesting to see how Google cloud offering has evolved
-from Google App Engine to Google Cloud Platform. The old App engine did
-seem like a minimal cloud offering launched by Google in an attempt to
-ship something early and quickly. It reminded me of my first cloud project
-in college (&lt;a href="https://github.com/aktech/dturmscrap"&gt;dturmscrap&lt;/a&gt;), which I
-deployed to Google App Engine, back in 2015.&lt;/p&gt;
-
-&lt;p&gt;I used Github projects to track the whole project, all the work done for this
-can be seen &lt;a href="https://github.com/sympy/sympy_gamma/projects/1"&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id="-git-log"&gt;$ Git Log&lt;/h2&gt;
-
-&lt;p&gt;Here is a summary of what was achieved:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/135"&gt;PR 135&lt;/a&gt;: Migrating Django to a slightly higher version,
-this was the first blood just to make sure everything was working. I upgraded it to the latest version of
-Django that was supported on Python 2 runtime. This also exposed the broken CI, which was fixed in this.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/137"&gt;PR 137&lt;/a&gt;: This upgraded the CI infrastructure to use Google Cloud SDK
-for deployment, the previous method was discontinued.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/140"&gt;PR 140&lt;/a&gt;: Upgrading the Database backend to use Cloud NDB instead
-of the legacy App Engine NDB.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/148"&gt;PR 148&lt;/a&gt;: Since we change the database backend, we needed something for
-testing locally, this was done by using Google Cloud Datastore emulator locally.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/149"&gt;PR 149&lt;/a&gt;: The installation and setup of the project was quite a challenge.
-Installing and keeping track of the versions of a number of application was non-trivial. This Pull request dockerized
-the project and made the development setup trivial and it all boiled down to just one command.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/152"&gt;PR 152&lt;/a&gt;: The login feature was previously implemented using the user API
-of the Google App Engine&amp;#8217;s Python2 runtime, which was not available in Python 3 runtime. We removed the login feature as it
-was not used by many and was too much effort to setup OAuth for login.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/153"&gt;PR 153&lt;/a&gt;: Now was the time to slowly move towards Python 3 by making the
-code compatible with both 2 and 3. It was achieved via &lt;a href="https://python-modernize.readthedocs.io/en/latest/"&gt;python-modernize&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/154"&gt;PR 154&lt;/a&gt;: We then made the migration to Python 3.7 runtime and removed submodules
-and introduced a &lt;code class="language-plaintext highlighter-rouge"&gt;requirements.txt&lt;/code&gt; for installing dependencies.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/154"&gt;PR 159&lt;/a&gt;: The above change made it possible to upgrade SymPy to latest version,
-which was 1.6 at that time.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/154"&gt;PR 165&lt;/a&gt;: The last piece of the puzzle was upgrading Django itself, so we upgraded
-it to the latest version, which was Django 3.0.8.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id="next-steps"&gt;Next Steps&lt;/h4&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;At the time of writing this Google has released the Python 3.8 runtime, it would nice to further upgrade it now.&lt;/li&gt;
-  &lt;li&gt;The test coverage can be increased.&lt;/li&gt;
-  &lt;li&gt;The code can be refactored to be more readable and approachable for new contributors.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Thanks to Google for properly &lt;a href="https://cloud.google.com/appengine/docs/standard/python/migrate-to-python3"&gt;documenting the process&lt;/a&gt;,
-which made the transition much easier.&lt;/p&gt;
-
-&lt;p&gt;Thanks to &lt;a href="https://numfocus.org/"&gt;NumFocus&lt;/a&gt;, without them this project would not have been possible. Also thanks to
-&lt;a href="https://github.com/certik"&gt;Ondrej Certik&lt;/a&gt; and &lt;a href="http://github.com/asmeurer"&gt;Aaron Meurer&lt;/a&gt; for their advice and support
-throughout the project.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/08/24/final_report</guid>
-      <author>Smit Lunagariya (Smit-create)</author>
-      <title>Smit Lunagariya (Smit-create): Final Report-GSoC 2020</title>
-      <pubDate>Mon, 24 Aug 2020 00:00:00 GMT</pubDate>
-      <link>https://smit-create.github.io/Smit-create.github.io/2020/08/24/final_report.html</link>
-      <description>&lt;p&gt;GSoC 2020 Report Smit Lunagariya: Improving and Extending stats module</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/08/16/week_12</guid>
-      <author>Smit Lunagariya (Smit-create)</author>
-      <title>Smit Lunagariya (Smit-create): Week 12-GSoC 2020</title>
-      <pubDate>Sun, 16 Aug 2020 00:00:00 GMT</pubDate>
-      <link>https://smit-create.github.io/Smit-create.github.io/2020/08/16/week_12.html</link>
-      <description>&lt;p&gt;This is the final blog of the official program highlighting the final week. Some of the key discussions were:</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/08/09/week_11</guid>
-      <author>Smit Lunagariya (Smit-create)</author>
-      <title>Smit Lunagariya (Smit-create): Week 11-GSoC 2020</title>
-      <pubDate>Sun, 09 Aug 2020 00:00:00 GMT</pubDate>
-      <link>https://smit-create.github.io/Smit-create.github.io/2020/08/09/week_11.html</link>
-      <description>&lt;p&gt;This blog describes the 11th week of the program. Some of the key highlights of this week are:</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/08/02/week_10</guid>
-      <author>Smit Lunagariya (Smit-create)</author>
-      <title>Smit Lunagariya (Smit-create): Week 10-GSoC 2020</title>
-      <pubDate>Sun, 02 Aug 2020 00:00:00 GMT</pubDate>
-      <link>https://smit-create.github.io/Smit-create.github.io/2020/08/02/week_10.html</link>
-      <description>&lt;p&gt;This blogs describes the 10th week of the program. Some of the highlights of this week are:</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/07/26/week_9</guid>
-      <author>Smit Lunagariya (Smit-create)</author>
-      <title>Smit Lunagariya (Smit-create): Week 9-GSoC 2020</title>
-      <pubDate>Sun, 26 Jul 2020 00:00:00 GMT</pubDate>
-      <link>https://smit-create.github.io/Smit-create.github.io/2020/07/26/week_9.html</link>
-      <description>&lt;p&gt;This blogs describes the week 9, the beginning week of the final phase. This week, I continued to work on the extension of Compound Distributions as well as completing the Matrix Distributions. Some of the highlights of this week are:</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/07/19/week_8</guid>
-      <author>Smit Lunagariya (Smit-create)</author>
-      <title>Smit Lunagariya (Smit-create): Week 8-GSoC 2020</title>
-      <pubDate>Sun, 19 Jul 2020 00:00:00 GMT</pubDate>
-      <link>https://smit-create.github.io/Smit-create.github.io/2020/07/19/week_8.html</link>
-      <description>&lt;p&gt;This blog provides the brief description of last week of the second Phase i.e. week 8. Some of the key highlights of this week are:</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/07/12/week_7</guid>
-      <author>Smit Lunagariya (Smit-create)</author>
-      <title>Smit Lunagariya (Smit-create): Week 7-GSoC 2020</title>
-      <pubDate>Sun, 12 Jul 2020 00:00:00 GMT</pubDate>
-      <link>https://smit-create.github.io/Smit-create.github.io/2020/07/12/week_7.html</link>
-      <description>&lt;p&gt;This blog describes the 7th week of the program and the 3rd week of Phase 2. Some of the key highlights on the discussions and the implementations during this week are:</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/07/05/week_6</guid>
-      <author>Smit Lunagariya (Smit-create)</author>
-      <title>Smit Lunagariya (Smit-create): Week 6-GSoC 2020</title>
-      <pubDate>Sun, 05 Jul 2020 00:00:00 GMT</pubDate>
-      <link>https://smit-create.github.io/Smit-create.github.io/2020/07/05/week_6.html</link>
-      <description>&lt;p&gt;This blog describes the 6th week of the official program and the 2nd week of Phase 2. By the end of this week, Compound Distributions framework is ready as targeted and I would now focus on the Joint Distributions in the upcoming weeks of this Phase.</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/06/28/week_5</guid>
-      <author>Smit Lunagariya (Smit-create)</author>
-      <title>Smit Lunagariya (Smit-create): Week 5-GSoC 2020</title>
-      <pubDate>Sun, 28 Jun 2020 00:00:00 GMT</pubDate>
-      <link>https://smit-create.github.io/Smit-create.github.io/2020/06/28/week_5.html</link>
-      <description>&lt;p&gt;This blogs describes the week 5, the beginning week of the Phase 2. Phase 2 will be mostly focused on Compound Distributions which were stalled from 2018, and additions to Joint Distributions.</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://smit-create.github.io/Smit-create.github.io/2020/06/21/phase_1</guid>
-      <author>Smit Lunagariya (Smit-create)</author>
-      <title>Smit Lunagariya (Smit-create): Phase-1-Highlights</title>
-      <pubDate>Sun, 21 Jun 2020 00:00:00 GMT</pubDate>
-      <link>https://smit-create.github.io/Smit-create.github.io/2020/06/21/phase_1.html</link>
-      <description>&lt;p&gt;With this blog it completes the awesome month of statistical learning and coding, and the official Phase 1 of the Google Summer of Code-2020.</description>
-    </item>
-    <item>
       <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=122</guid>
       <author>Ishan Joshi (ishanaj)</author>
       <title>Ishan Joshi (ishanaj): Everything about SymPy&#x2019;s Column module</title>
@@ -550,406 +351,6 @@ next week ends.&lt;/p&gt;
 &lt;p&gt;Thanks! &lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://jmig5776.github.io//gsoc-final-report</guid>
-      <author>Jogi Miglani (jmig5776)</author>
-      <title>Jogi Miglani (jmig5776): Final report for GSoC 2019 (Week 12)</title>
-      <pubDate>Sun, 18 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://jmig5776.github.io//gsoc-final-report</link>
-      <description>&lt;p&gt;It&amp;#8217;s finally the last week of the Google Summer of Code 2019. Before I start
-discussing my work over the summer I would like to highlight my general
-experience with the GSoC program.&lt;/p&gt;
-
-&lt;p&gt;GSoC gives students all over the world the opportunity to connect and
-collaborate with some of the best programmers involved in open source from
-around the world. I found the programme tremendusly enriching both in terms of
-the depth in which I got to explore some of the areas involved in my project
-and also gave me exxposure to some areas I had no previous idea about.
-The role of a mentor in GSoC is the most important and I consider myself
-very lucky to have got Yathartha Anirudh Joshi and Amit Kumar as my mentors.
-Amit and Yathartha has been tremendously encouraging and helpful throughout the summer.
-I would also like to mention the importance of the entire community involved,
-just being part of the SymPy community.&lt;/p&gt;
-
-&lt;h3 id="work-completed"&gt;Work Completed&lt;/h3&gt;
-
-&lt;p&gt;Here is a list of PRs which were opened during the span of GSoC:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16976"&gt;#16796 Added &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; for handling equations a - Mod(b, c) = 0 where only b is expr&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16890"&gt;#16890 Fixing lambert in bivariate to give all real solutions&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16960"&gt;#16960 (Don&amp;#8217;t Merge)(Prototype) Adding abs while converting equation to log form to get solved by &lt;code class="highlighter-rouge"&gt;_lambert&lt;/code&gt;&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17043"&gt;#17043 Feature power_list to return all powers of a variable present in f&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/17079"&gt;#17079 Defining ImageSet Union&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Here is a list of PRs merged:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16976"&gt;#16796 Added &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; for handling equations a - Mod(b, c) = 0 where only b is expr&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy/pull/16890"&gt;#16890 Fixing lambert in bivariate to give all real solutions&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Here is all the brief description about the PRs merged:&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/16976"&gt;#16796 Added &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; for handling equations a - Mod(b, c) = 0 where only b is expr&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;In this PR a new solver &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; was made for solving modular equations.&lt;/p&gt;
-
-&lt;h3 id="what-type-of-equations-to-be-considered-and-what-domain"&gt;What type of equations to be considered and what domain?&lt;/h3&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;A - Mod(B, C) = 0
-
-    A -&amp;gt; This can or cannot be a function specifically(Linear, nth degree single
-         Pow, a**f_x and Add and Mul) of symbol.(But currently its not a
-        function of x)
-    B -&amp;gt; This is surely a function of symbol.
-    C -&amp;gt; It is an integer.
-And domain should be a subset of S.Integers.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;h3 id="filtering-out-equations"&gt;Filtering out equations&lt;/h3&gt;
-&lt;p&gt;A check is being applied named &lt;code class="highlighter-rouge"&gt;_is_modular&lt;/code&gt; which verifies that only above
-mentioned type equation should return True.&lt;/p&gt;
-
-&lt;h3 id="working-of-_solve_modular"&gt;Working of &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;&lt;/h3&gt;
-&lt;p&gt;In the starting of it there is a check if domain is a subset of Integers.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;domain.is_subset(S.Integers)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Only domain of integers and it subset are being considered while solving
-these equations.
-Now after this it separates out a modterm and the rest term on either
-sides by this code.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;modterm = list(f.atoms(Mod))[0]
-rhs = -(S.One)*(f.subs(modterm, S.Zero))
-if f.as_coefficients_dict()[modterm].is_negative:
-    # f.as_coefficient(modterm) was returning None don't know why
-    # checks if coefficient of modterm is negative in main equation.
-    rhs *= -(S.One)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now the equation is being inverted with the helper routine &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt;
-like this.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;n = Dummy('n', integer=True)
-f_x, g_n = _invert_modular(modterm, rhs, n, symbol)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;I am defining n in &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; because &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; contains
-recursive calls to itself so if define the n there then it was going to have
-many instances which of no use. Thats y I am defining it in &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Now after the equation is inverted now solution finding takes place.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if f_x is modterm and g_n is rhs:
-        return unsolved_result
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;First of all if &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; fails to invert then a ConditionSet is being
-returned.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;    if f_x is symbol:
-        if domain is not S.Integers:
-            return domain.intersect(g_n)
-        return g_n
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;And if &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; is fully able to invert the equation then only domain
-intersection needs to takes place. &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; inverts the equation
-considering S.Integers as its default domain.&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;    if isinstance(g_n, ImageSet):
-        lamda_expr = g_n.lamda.expr
-        lamda_vars = g_n.lamda.variables
-        base_set = g_n.base_set
-        sol_set = _solveset(f_x - lamda_expr, symbol, S.Integers)
-        if isinstance(sol_set, FiniteSet):
-            tmp_sol = EmptySet()
-            for sol in sol_set:
-                tmp_sol += ImageSet(Lambda(lamda_vars, sol), base_set)
-            sol_set = tmp_sol
-        return domain.intersect(sol_set)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;In this case when g_n is an ImageSet of n and f_x is not symbol so the
-equation is being solved by calling &lt;code class="highlighter-rouge"&gt;_solveset&lt;/code&gt; (this will not lead to
-recursion because equation to be entered is free from Mod) and then
-the domain intersection takes place.&lt;/p&gt;
-
-&lt;h3 id="what-does-_invert_modular-do"&gt;What does &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; do?&lt;/h3&gt;
-&lt;p&gt;This function helps to convert the equation &lt;code class="highlighter-rouge"&gt;A - Mod(B, C) = 0&lt;/code&gt; to a
-form (f_x, g_n).
-First of all it checks the possible instances of invertible cases if not then
-it returns the equation as it is.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;a, m = modterm.args
-if not isinstance(a, (Dummy, Symbol, Add, Mul, Pow)):
-        return modterm, rhs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now here is the check for complex arguments and returns the equation as it is
-if somewhere it finds I.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if rhs.is_real is False or any(term.is_real is False \
-            for term in list(_term_factors(a))):
-        # Check for complex arguments
-        return modterm, rhs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now after this we check of emptyset as a solution by checking range of both
-sides of equation.
-As modterm can have values between [0, m - 1] and if rhs is out of this range
-then emptySet is being returned.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if (abs(rhs) - abs(m)).is_positive or (abs(rhs) - abs(m)) is S.Zero:
-        # if rhs has value greater than value of m.
-        return symbol, EmptySet()
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now the equation haveing these types are being returned as the following&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if a is symbol:
-        return symbol, ImageSet(Lambda(n, m*n + rhs), S.Integers)
-
-    if a.is_Add:
-        # g + h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.Zero:
-            return _invert_modular(Mod(h, m), (rhs - Mod(g, m)) % m, n, symbol)
-
-    if a.is_Mul:
-        # g*h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.One:
-            return _invert_modular(Mod(h, m), (rhs*invert(g, m)) % m, n, symbol)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;The more peculiar case is of &lt;code class="highlighter-rouge"&gt;a.is_Pow&lt;/code&gt; which is handled as following.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if a.is_Pow:
-        # base**expo = a
-        base, expo = a.args
-        if expo.has(symbol) and not base.has(symbol):
-            # remainder -&amp;gt; solution independent of n of equation.
-            # m, rhs are made coprime by dividing igcd(m, rhs)
-            try:
-                remainder = discrete_log(m / igcd(m, rhs), rhs, a.base)
-            except ValueError: # log does not exist
-                return modterm, rhs
-            # period -&amp;gt; coefficient of n in the solution and also referred as
-            # the least period of expo in which it is repeats itself.
-            # (a**(totient(m)) - 1) divides m. Here is link of theoram:
-            # (https://en.wikipedia.org/wiki/Euler's_theorem)
-            period = totient(m)
-            for p in divisors(period):
-                # there might a lesser period exist than totient(m).
-                if pow(a.base, p, m / igcd(m, a.base)) == 1:
-                    period = p
-                    break
-            return expo, ImageSet(Lambda(n, period*n + remainder), S.Naturals0)
-        elif base.has(symbol) and not expo.has(symbol):
-            remainder_list = nthroot_mod(rhs, expo, m, all_roots=True)
-            if remainder_list is None:
-                return symbol, EmptySet()
-            g_n = EmptySet()
-            for rem in remainder_list:
-                g_n += ImageSet(Lambda(n, m*n + rem), S.Integers)
-            return base, g_n
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Two cases are being created based of a.is_Pow&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;x**a&lt;/li&gt;
-  &lt;li&gt;a**x&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;x**a -  It is being handled by the helper function &lt;code class="highlighter-rouge"&gt;nthroot_mod&lt;/code&gt; which returns
-        required solution. I am not going into very mch detail for more
-        information you can read the documentation of nthroot_mod.&lt;/p&gt;
-
-&lt;p&gt;a**x - For this &lt;code class="highlighter-rouge"&gt;totient&lt;/code&gt; is being used in the picture whose meaning can be
-       find on this &lt;a href="https://en.wikipedia.org/wiki/Euler's_theorem"&gt;Wikipedia&lt;/a&gt;
-       page. And then its divisors are being checked to find the least period
-       of solutions.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/16890"&gt;#16890 Fixing lambert in bivariate to give all real solutions&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;This PR went through many up and downs and nearly made to the most commented PR.
-And with the help of @smichr it was successfully merged. It mainly solved the
-bug for not returning all solutions of lambert.&lt;/p&gt;
-
-&lt;h2 id="explaining-the-function-_solve_lambert-main-function-to-solve-lambert-equations"&gt;Explaining the function &lt;code class="highlighter-rouge"&gt;_solve_lambert&lt;/code&gt; (main function to solve lambert equations)&lt;/h2&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;Input - f, symbol, gens
-OutPut - Solution of f = 0 if its lambert type expression else NotImplementedError
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;This function separates out cases as below based on the main function present in
-the main equation.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;For the first ones:
-1a1) B**B = R != 0 (when 0, there is only a solution if the base is 0,
-                   but if it is, the exp is 0 and 0**0=1
-                   comes back as B*log(B) = log(R)
-1a2) B*(a + b*log(B))**p = R or with monomial expanded or with whole
-                            thing expanded comes back unchanged
-   log(B) + p*log(a + b*log(B)) = log(R)
-   lhs is Mul:
-       expand log of both sides to give:
-       log(B) + log(log(B)) = log(log(R))
-1b) d*log(a*B + b) + c*B = R
-   lhs is Add:
-       isolate c*B and expand log of both sides:
-       log(c) + log(B) = log(R - d*log(a*B + b))
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;If the equation are of type 1a1, 1a2 and 1b then the mainlog of the equation is
-taken into concern as the deciding factor lies in the main logarithmic term of equation.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;For the next two,
-   collect on main exp
-   2a) (b*B + c)*exp(d*B + g) = R
-       lhs is mul:
-           log to give
-           log(b*B + c) + d*B = log(R) - g
-   2b) -b*B + g*exp(d*B + h) = R
-       lhs is add:
-           add b*B
-           log and rearrange
-           log(R + b*B) - d*B = log(g) + h
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;If the equation are of type 2a and 2b then the mainexp of the equation is
-taken into concern as the deciding factor lies in the main exponential term of equation.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;3) d*p**(a*B + b) + c*B = R
-   collect on main pow
-   log(R - c*B) - a*B*log(p) = log(d) + b*log(p)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;If the equation are of type 3 then the mainpow of the equation is
-taken into concern as the deciding factor lies in the main power term of equation.&lt;/p&gt;
-
-&lt;p&gt;Eventually from all of the three cases the equation is meant to be converted to this form:-&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;f(x, a..f) = a*log(b*X + c) + d*X - f = 0 which has the
-solution,  X = -c/b + (a/d)*W(d/(a*b)*exp(c*d/a/b)*exp(f/a)).
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;And the solution calculation process is done by &lt;code class="highlighter-rouge"&gt;_lambert&lt;/code&gt; function.&lt;/p&gt;
-
-&lt;p&gt;Everything seems flawless?? You might be thinking no modification is required. Lets
-see what loopholes are there in it.&lt;/p&gt;
-
-&lt;h2 id="what-does-pr-16890-do"&gt;What does PR &lt;a href="https://github.com/sympy/sympy/pull/16890"&gt;#16890&lt;/a&gt; do?&lt;/h2&gt;
-
-&lt;p&gt;There are basically two flaws present with the this approach.&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;Not considering all branches of equation while taking log both sides.&lt;/li&gt;
-  &lt;li&gt;Calculation of roots should consider all roots in case having rational power.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id="1-not-considering-all-branches-of-equation-while-taking-log-both-sides"&gt;1. Not considering all branches of equation while taking log both sides.&lt;/h3&gt;
-
-&lt;p&gt;Let us consider this equation to be solved by &lt;code class="highlighter-rouge"&gt;_solve_lambert&lt;/code&gt; function.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;-1/x**2 + exp(x/2)/2 = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;So what the old &lt;code class="highlighter-rouge"&gt;_solve_lambert&lt;/code&gt; do is to convert this equation to following.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;2*log(x) + x/2 = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;and calculates its roots from &lt;code class="highlighter-rouge"&gt;_lambert&lt;/code&gt;.
-But it missed this branch of equation while taking log on main equation.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;2*log(-x) + x/2 = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Yeah you can reproduce the original equation from this equation.So basically the problem
-was that it missed the branches of equation while taking log. And when does the
-main equation have more than one branch?? The terms having even powers of variable x
-leads to two different branches of equation.&lt;/p&gt;
-
-&lt;p&gt;So how it is solved?
-What I has done is that before actually gets into solving I preprocess the main equation
-and if it has more than one branches of equation while converting taking log then I consider
-all the equations generated from them.(with the help of &lt;code class="highlighter-rouge"&gt;_solve_even_degree_expr&lt;/code&gt;)&lt;/p&gt;
-
-&lt;p&gt;How I preprocess the equation?
-So what I do is I replace all the even powers of x present with even powers of t(dummy variable).&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;Code for targeted replacement
-lhs = lhs.replace(
-            lambda i:  # find symbol**even
-                i.is_Pow and i.base == symbol and i.exp.is_even,
-            lambda i:  # replace t**even
-                t**i.exp)
-Example:-
-Main equation -&amp;gt; -1/x**2 + exp(x/2)/2 = 0
-After replacement -&amp;gt; -1/t**2 + exp(x/2)/2 = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now I take logarithms on both sides and simplify it.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;After simplifying -&amp;gt; 2*log(t) + x/2 = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now I call function &lt;code class="highlighter-rouge"&gt;_solve_even_degree_expr&lt;/code&gt; to replace the t with +/-x to generate two equations.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;Replacing t with +/-x
-1. 2*log(x) + x/2 = 0
-2. 2*log(-x) + x/2 = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;And consider the solutions of both of the equations to return all lambert real solutions
-of &lt;code class="highlighter-rouge"&gt;-1/x**2 + exp(x/2)/2 = 0&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Hope you could understand the logic behind this work.&lt;/p&gt;
-
-&lt;h3 id="2-calculation-of-roots-should-consider-all-roots-in-case-having-rational-power"&gt;2. Calculation of roots should consider all roots in case having rational power.&lt;/h3&gt;
-
-&lt;p&gt;This flaw is in the calculation of roots in function &lt;code class="highlighter-rouge"&gt;_lambert&lt;/code&gt;.
-Earlier the function_lambert has the working like :-&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Find all the values of a, b, c, d, e in the required loagrithmic equation&lt;/li&gt;
-  &lt;li&gt;Then it defines a solution of the form
-    &lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;-c/b + (a/d)*l where l = LambertW(d/(a*b)*exp(c*d/a/b)*exp(-f/a), k)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;and then it included that solution.
-I agree everything seems flawless here. but try to see the step where we are defining l.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Let us suppose a hypothetical algorithm just like algorithm used in &lt;code class="highlighter-rouge"&gt;_lambert&lt;/code&gt;
-in which equation to be solved is&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x**3 - 1 = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;and in which we define solution of the form&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x = exp(I*2*pi/n) where n is the power of x in equation
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;so the algorithm will give solution&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x = exp(I*2*pi/3) # but expected was [1, exp(I*2*pi/3), exp(-I*2*pi/3)]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;which can be found by finding all solutions of&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;x**n - exp(2*I*pi) = 0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;by a different correct algorithm. Thats y it was wrong.
-The above algorithm would have given correct values for &lt;code class="highlighter-rouge"&gt;x - 1 = 0&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;And the question in your mind may arise that why only exp() because the
-possiblity of having more than one roots is in exp(), because if the algorithm
-would have been like &lt;code class="highlighter-rouge"&gt;x = a&lt;/code&gt;, where a is some real constant then there is not
-any possiblity of further roots rather than solution like &lt;code class="highlighter-rouge"&gt;x = a**(1/n)&lt;/code&gt;.
-And its been done in code like this:&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;code
-num, den = ((c*d-b*f)/a/b).as_numer_denom()
-p, den = den.as_coeff_Mul()
-e = exp(num/den)
-t = Dummy('t')
-args = [d/(a*b)*t for t in roots(t**p - e, t).keys()]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id="work-under-development"&gt;Work under development&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href="https://github.com/sympy/sympy/pull/17079"&gt;#17079 Defining ImageSet Union&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;This PR tends to define a unifying algorithm for linear relations.&lt;/p&gt;
-
-&lt;h3 id="future-work"&gt;Future Work&lt;/h3&gt;
-&lt;p&gt;Here is a list that comprises of all the ideas (which were a part of my GSoC
-Proposal and/or thought over during the SoC) which can extend my GSoC project.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Integrating helper solvers within solveset: linsolve, solve_decomposition, nonlinsolve&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Handle nested trigonometric equations.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=105</guid>
       <author>Ishan Joshi (ishanaj)</author>
       <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-11- Heading to the final week</title>
@@ -1065,191 +466,6 @@ Proposal and/or thought over during the SoC) which can extend my GSoC project.&l
 &lt;p&gt;For the last week of coding, my attempt would be to complete both of these PRs and get them merged. Also, I will try to add new facts to sathandlers.&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://jmig5776.github.io//gsoc-week-11</guid>
-      <author>Jogi Miglani (jmig5776)</author>
-      <title>Jogi Miglani (jmig5776): GSoC 2019 - Week 11</title>
-      <pubDate>Sun, 11 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://jmig5776.github.io//gsoc-week-11</link>
-      <description>&lt;p&gt;This was the eleventh week meeting with the GSoC mentors which was scheduled on
-Sunday 11th August, 2019 between 11:30 - 12:30 PM (IST). Me, Yathartha and Amit
-were the attendees of the meeting. &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; was discussed in this meeting.&lt;/p&gt;
-
-&lt;p&gt;Here is all the brief description about new solver &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; for solving
-modular equations.&lt;/p&gt;
-&lt;h3 id="what-type-of-equations-to-be-considered-and-what-domain"&gt;What type of equations to be considered and what domain?&lt;/h3&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;A - Mod(B, C) = 0
-
-    A -&amp;gt; This can or cannot be a function specifically(Linear, nth degree single
-         Pow, a**f_x and Add and Mul) of symbol.(But currently its not a
-        function of x)
-    B -&amp;gt; This is surely a function of symbol.
-    C -&amp;gt; It is an integer.
-And domain should be a subset of S.Integers.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;h3 id="filtering-out-equations"&gt;Filtering out equations&lt;/h3&gt;
-&lt;p&gt;A check is being applied named &lt;code class="highlighter-rouge"&gt;_is_modular&lt;/code&gt; which verifies that only above
-mentioned type equation should return True.&lt;/p&gt;
-
-&lt;h3 id="working-of-_solve_modular"&gt;Working of &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;&lt;/h3&gt;
-&lt;p&gt;In the starting of it there is a check if domain is a subset of Integers.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;domain.is_subset(S.Integers)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Only domain of integers and it subset are being considered while solving
-these equations.
-Now after this it separates out a modterm and the rest term on either
-sides by this code.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;modterm = list(f.atoms(Mod))[0]
-rhs = -(S.One)*(f.subs(modterm, S.Zero))
-if f.as_coefficients_dict()[modterm].is_negative:
-    # f.as_coefficient(modterm) was returning None don't know why
-    # checks if coefficient of modterm is negative in main equation.
-    rhs *= -(S.One)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now the equation is being inverted with the helper routine &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt;
-like this.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;n = Dummy('n', integer=True)
-f_x, g_n = _invert_modular(modterm, rhs, n, symbol)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;I am defining n in &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; because &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; contains
-recursive calls to itself so if define the n there then it was going to have
-many instances which of no use. Thats y I am defining it in &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Now after the equation is inverted now solution finding takes place.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if f_x is modterm and g_n is rhs:
-        return unsolved_result
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;First of all if &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; fails to invert then a ConditionSet is being
-returned.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;    if f_x is symbol:
-        if domain is not S.Integers:
-            return domain.intersect(g_n)
-        return g_n
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;And if &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; is fully able to invert the equation then only domain
-intersection needs to takes place. &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; inverts the equation
-considering S.Integers as its default domain.&lt;/p&gt;
-
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;    if isinstance(g_n, ImageSet):
-        lamda_expr = g_n.lamda.expr
-        lamda_vars = g_n.lamda.variables
-        base_set = g_n.base_set
-        sol_set = _solveset(f_x - lamda_expr, symbol, S.Integers)
-        if isinstance(sol_set, FiniteSet):
-            tmp_sol = EmptySet()
-            for sol in sol_set:
-                tmp_sol += ImageSet(Lambda(lamda_vars, sol), base_set)
-            sol_set = tmp_sol
-        return domain.intersect(sol_set)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;In this case when g_n is an ImageSet of n and f_x is not symbol so the
-equation is being solved by calling &lt;code class="highlighter-rouge"&gt;_solveset&lt;/code&gt; (this will not lead to
-recursion because equation to be entered is free from Mod) and then
-the domain intersection takes place.&lt;/p&gt;
-
-&lt;h3 id="what-does-_invert_modular-do"&gt;What does &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; do?&lt;/h3&gt;
-&lt;p&gt;This function helps to convert the equation &lt;code class="highlighter-rouge"&gt;A - Mod(B, C) = 0&lt;/code&gt; to a
-form (f_x, g_n).
-First of all it checks the possible instances of invertible cases if not then
-it returns the equation as it is.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;a, m = modterm.args
-if not isinstance(a, (Dummy, Symbol, Add, Mul, Pow)):
-        return modterm, rhs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now here is the check for complex arguments and returns the equation as it is
-if somewhere it finds I.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if rhs.is_real is False or any(term.is_real is False \
-            for term in list(_term_factors(a))):
-        # Check for complex arguments
-        return modterm, rhs
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now after this we check of emptyset as a solution by checking range of both
-sides of equation.
-As modterm can have values between [0, m - 1] and if rhs is out of this range
-then emptySet is being returned.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if (abs(rhs) - abs(m)).is_positive or (abs(rhs) - abs(m)) is S.Zero:
-        # if rhs has value greater than value of m.
-        return symbol, EmptySet()
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now the equation haveing these types are being returned as the following&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if a is symbol:
-        return symbol, ImageSet(Lambda(n, m*n + rhs), S.Integers)
-
-    if a.is_Add:
-        # g + h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.Zero:
-            return _invert_modular(Mod(h, m), (rhs - Mod(g, m)) % m, n, symbol)
-
-    if a.is_Mul:
-        # g*h = a
-        g, h = a.as_independent(symbol)
-        if g is not S.One:
-            return _invert_modular(Mod(h, m), (rhs*invert(g, m)) % m, n, symbol)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;The more peculiar case is of &lt;code class="highlighter-rouge"&gt;a.is_Pow&lt;/code&gt; which is handled as following.&lt;/p&gt;
-&lt;div class="highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;if a.is_Pow:
-        # base**expo = a
-        base, expo = a.args
-        if expo.has(symbol) and not base.has(symbol):
-            # remainder -&amp;gt; solution independent of n of equation.
-            # m, rhs are made coprime by dividing igcd(m, rhs)
-            try:
-                remainder = discrete_log(m / igcd(m, rhs), rhs, a.base)
-            except ValueError: # log does not exist
-                return modterm, rhs
-            # period -&amp;gt; coefficient of n in the solution and also referred as
-            # the least period of expo in which it is repeats itself.
-            # (a**(totient(m)) - 1) divides m. Here is link of theoram:
-            # (https://en.wikipedia.org/wiki/Euler's_theorem)
-            period = totient(m)
-            for p in divisors(period):
-                # there might a lesser period exist than totient(m).
-                if pow(a.base, p, m / igcd(m, a.base)) == 1:
-                    period = p
-                    break
-            return expo, ImageSet(Lambda(n, period*n + remainder), S.Naturals0)
-        elif base.has(symbol) and not expo.has(symbol):
-            remainder_list = nthroot_mod(rhs, expo, m, all_roots=True)
-            if remainder_list is None:
-                return symbol, EmptySet()
-            g_n = EmptySet()
-            for rem in remainder_list:
-                g_n += ImageSet(Lambda(n, m*n + rem), S.Integers)
-            return base, g_n
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Two cases are being created based of a.is_Pow&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;x**a&lt;/li&gt;
-  &lt;li&gt;a**x&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;x**a -  It is being handled by the helper function &lt;code class="highlighter-rouge"&gt;nthroot_mod&lt;/code&gt; which returns
-        required solution. I am not going into very mch detail for more
-        information you can read the documentation of nthroot_mod.&lt;/p&gt;
-
-&lt;p&gt;a**x - For this &lt;code class="highlighter-rouge"&gt;totient&lt;/code&gt; is being used in the picture whose meaning can be
-       find on this &lt;a href="https://en.wikipedia.org/wiki/Euler's_theorem"&gt;Wikipedia&lt;/a&gt;
-       page. And then its divisors are being checked to find the least period
-       of solutions.&lt;/p&gt;
-
-&lt;p&gt;Hope I am able to clear out everything!!&lt;/p&gt;
-
-&lt;p&gt;Code improvement takes time!!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html</guid>
-      <author>Ankit Pandey (anpandey)</author>
-      <title>Ankit Pandey (anpandey): Google Summer of Code Week 10: Matrix Wildcard Redux</title>
-      <pubDate>Tue, 06 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html</link>
-      <description>&lt;p&gt;For this week, I&amp;#8217;ve made some more minor changes to the &lt;a href="https://github.com/sympy/sympy/pull/17299"&gt;&lt;code&gt;Indexed&lt;/code&gt; pull request&lt;/a&gt; from last week, in addition to filing a new &lt;a href="https://github.com/sympy/sympy/pull/17347"&gt;matrix wildcard pull request&lt;/a&gt;.&lt;/p&gt;
-&lt;h3 id="matrix-wildcards-again"&gt;Matrix Wildcards (again)&lt;/h3&gt;
-&lt;p&gt;Since &lt;a href="https://github.com/sympy/sympy/pull/17223"&gt;#17223&lt;/a&gt; was merged this week, I started with an implementation of matrix wildcards that takes advantage of the functionality included in the pull request. I thought that this would be relatively straightforward, with an implementation of the &lt;code&gt;matches&lt;/code&gt; method for the &lt;code&gt;MatrixWild&lt;/code&gt; subclass being enough. There was one problem though: the underlying matching implementation assumes that all powers in the expression are an instance of the &lt;code&gt;Pow&lt;/code&gt; class. However, this isn&amp;#8217;t true for matrix expressions: the &lt;code&gt;MatPow&lt;/code&gt; class, which represents matrix powers, is a subclass of its own. I&amp;#8217;m not exactly sure what the reason for this is, since a quick change of &lt;code&gt;MatPow&lt;/code&gt; to inherit from &lt;code&gt;Pow&lt;/code&gt; doesn&amp;#8217;t seem to break anything. I&amp;#8217;ll probably look into this a bit more, since I think this might have something to do with the fact that Matrix exponents can also include other matrices.&lt;/p&gt;
-&lt;p&gt;My solution for this was to allow temporarily allow expansion of powers by recursing through the expression tree and setting the &lt;code&gt;is_Pow&lt;/code&gt; field of each matrix power to &lt;code&gt;True&lt;/code&gt; and later reverting these states later. It doesn&amp;#8217;t look pretty, but it does seem to work (you can see the code &lt;a href="https://github.com/sympy/sympy/blob/17fb5010e36e10de156dad032d2aea376051df24/sympy/matrices/expressions/matmul.py#L178-L197"&gt;here&lt;/a&gt;).&lt;/p&gt;
-&lt;h2 id="next-steps"&gt;Next Steps&lt;/h2&gt;
-&lt;p&gt;I&amp;#8217;ll try to get started with some optimizations that utilize this wildcard class once the pull request gets merged.&lt;/p&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/08/week-10-the-finished-parser/</guid>
       <author>Nikhil Maan (Sc0rpi0n101)</author>
       <title>Nikhil Maan (Sc0rpi0n101): Week 10: The Finished Parser</title>
@@ -1294,7 +510,7 @@ the end of the tenth week, and we have entered the final phase of the project.&l
 
 
 
-&lt;div class="wp-container-614ee564e74e1 wp-block-group"&gt;&lt;div class="wp-block-group__inner-container"&gt;&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
+&lt;div class="wp-container-614ef391d970a wp-block-group"&gt;&lt;div class="wp-block-group__inner-container"&gt;&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
 &amp;gt;&amp;gt;&amp;gt; E, I = symbols('E, I')
 &amp;gt;&amp;gt;&amp;gt; b = Beam(9, E, I)
 &amp;gt;&amp;gt;&amp;gt; b.apply_load(-12, 9, -1)  # gets skipped
@@ -1328,45 +544,6 @@ the end of the tenth week, and we have entered the final phase of the project.&l
 
 
 &lt;p&gt;Thanks!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://jmig5776.github.io//gsoc-week-10</guid>
-      <author>Jogi Miglani (jmig5776)</author>
-      <title>Jogi Miglani (jmig5776): GSoC 2019 - Week 10</title>
-      <pubDate>Sun, 04 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://jmig5776.github.io//gsoc-week-10</link>
-      <description>&lt;p&gt;This was the tenth week meeting with the GSoC mentors which was scheduled on
-Sunday 4th August, 2019 between 1:00 - 2:00 PM (IST). Me, Yathartha
-were the attendees of the meeting.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Discussing previous week&amp;#8217;s progress&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Progress of &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;:- In PR &lt;a href="https://github.com/sympy/sympy/pull/16976"&gt;#16976&lt;/a&gt;
-After discussing with Yathartha, I decided to change the basic model of the &lt;code class="highlighter-rouge"&gt;_solve_modular &lt;/code&gt;
-such that I should be able to target equations more efficiently and also the rest
-of the types of equation should return ConditionSet. Cases like &lt;code class="highlighter-rouge"&gt;Mod(a**x, m) - rhs = 0&lt;/code&gt;
-are special type and will be handled differently with the helper functions of ntheory module.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Progress of ImageSet Union:- In PR &lt;a href="https://github.com/sympy/sympy/pull/17079"&gt;#17079&lt;/a&gt;
-This PR is currently been left for review.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Next week goals&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Work upon &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;In the following week I will be changing the domain of solving equations to
-Integers only.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Code improvement takes time!!&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">https://www.shubhamjha.com/posts/GSoC-Week-9</guid>
@@ -1460,47 +637,6 @@ keep you updated!&lt;/p&gt;
       <link>https://sc0rpi0n101.github.io/2019/07/week-9-its-the-evaluation-week/</link>
       <description>&lt;p&gt;Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this time we will be talking about the second evaluation for GSoC. The main objective of the week was to get the Fortran parser ready.
  The Fortran Parser Traivs and the Tests LFortran Evaluation!!! The meeting What Now  The Fortran Parser The Fortran parser is finally complete after shifting to using SymPy&amp;rsquo;s codegen AST. It can now parser all the stuff that the parser could do before shifting.</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">https://jmig5776.github.io//gsoc-week-9</guid>
-      <author>Jogi Miglani (jmig5776)</author>
-      <title>Jogi Miglani (jmig5776): GSoC 2019 - Week 9</title>
-      <pubDate>Sat, 27 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://jmig5776.github.io//gsoc-week-9</link>
-      <description>&lt;p&gt;This was the eigth week meeting with the GSoC mentors which was scheduled on
-Saturday 27th July, 2019 between 1:30 - 2:30 PM (IST). Me, Yathartha and Amit
-were the attendees of the meeting.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Discussing previous week&amp;#8217;s progress&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Progress of &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;:- In PR &lt;a href="https://github.com/sympy/sympy/pull/16976"&gt;#16976&lt;/a&gt;
-I implemented the basic design of &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;. Some very good suggestion by
-Yathartha for creating &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; were very helpful. Now basically the
-&lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; first do preprocessing and invert it and then find solution and
-in final domain intersection takes place.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Progress of ImageSet Union:- In PR &lt;a href="https://github.com/sympy/sympy/pull/17079"&gt;#17079&lt;/a&gt;
-I will be implementing an algorithm based on heurestics for performing ImageSet
-Union this week. Basic code is being already written for defining a function and
-only algorithm part is left which will be performed in this week.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Next week goals&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Work upon &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; and ImageSet Union PR&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Code improvement takes time!!&lt;/p&gt;</description>
     </item>
     <item>
       <guid isPermaLink="false">https://www.shubhamjha.com/posts/GSoC-Week-8</guid>
@@ -1619,6 +755,499 @@ only algorithm part is left which will be performed in this week.&lt;/p&gt;
 
 
 &lt;p&gt;Thanks!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/07/week-8boys-we-got-a-plan./</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 8:Boys!! We got a Plan.</title>
+      <pubDate>Sat, 20 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://sc0rpi0n101.github.io/2019/07/week-8boys-we-got-a-plan./</link>
+      <description>&lt;p&gt;&amp;ldquo;Those who plan do better than those who do not plan even though they rarely stick to their plan.&amp;ldquo;&amp;#8213; Winston Churchill
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week I have some good news for you all. We have got a few plans to get the progress of the project rolling as the second evaluation approaches. The meeting also took place this week, so, after waiting for so long, we have some good insights from the meeting this time.</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=58</guid>
+      <author>Ishan Joshi (ishanaj)</author>
+      <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-7- Starting with the phase-III draw() function</title>
+      <pubDate>Mon, 15 Jul 2019 03:02:10 GMT</pubDate>
+      <link>https://ishanaj.wordpress.com/2019/07/15/gsoc19-week-7-starting-with-the-phase-iii-draw-function/</link>
+      <description>&lt;p&gt;The week was successfully completed as planned. The work on &lt;a href="https://github.com/sympy/sympy/pull/17122"&gt;Column class&lt;/a&gt; has been completed.&lt;/p&gt;
+
+
+
+&lt;p&gt;The documentation and tests have been written and with some changes in the &lt;strong&gt;solve_slope_deflection()&lt;/strong&gt; and &lt;strong&gt;critical_load(),&lt;/strong&gt; the &lt;strong&gt;Column&lt;/strong&gt; class is now able to handle cases with trivial solutions of the constants ( C1 &amp;amp; C2) which made the deflection equation zero.&lt;/p&gt;
+
+
+
+&lt;p&gt;Apart from this, another problem that we had with the &lt;strong&gt;pinned-fixed&lt;/strong&gt; end condition, where &lt;strong&gt;solve()&lt;/strong&gt; wasn&amp;#8217;t giving the output in the required form, has temporary been handled by making an &lt;strong&gt;XFAIL &lt;/strong&gt;test against it. We can work on it later. Either there has to be some changes in &lt;strong&gt;solve()&lt;/strong&gt;&amp;nbsp;so that we would be able to handle our case or we might have to figure out a way to rewrite it into the desired form.&lt;span id="more-58"&gt;&lt;/span&gt;&lt;/p&gt;
+
+
+
+&lt;p&gt;With the end of this week,&amp;nbsp;&lt;a href="https://github.com/sympy/sympy/pull/17122"&gt;PR #17122&lt;/a&gt; and &lt;a href="https://github.com/sympy/sympy/pull/17153"&gt;PR #17153&lt;/a&gt; are complete and ready for review. I have made some changes addressing some of the reviews, and we can have further discussions on it.&lt;/p&gt;
+
+
+
+&lt;p&gt;Now, also moving on to the next phase, I have done a bit of research on it. I will most probably open a discussion to have an initial discussion regarding how work will progress in this stage. This phase is regarding plotting the beam diagrams using &lt;a href="https://matplotlib.org/"&gt;matplotlib&lt;/a&gt;. I have also considered &lt;strong&gt;pyglet&lt;/strong&gt; plotting module of SymPy, which according to the &lt;a href="https://docs.sympy.org/latest/modules/plotting.html#plotting-geometric-entities"&gt;documentation&lt;/a&gt; is capable of plotting geometries, but there has been some problems in this module and it doesn&amp;#8217;t seem to be working well. I had earlier made an &lt;a href="https://github.com/sympy/sympy/issues/16537"&gt;issue #16537&lt;/a&gt; regarding the same, but there seems to be no improvement here.&lt;/p&gt;
+
+
+
+&lt;p&gt;So, we will be discussing the rest in an issue-cum-discussion, in the upcoming week.&lt;/p&gt;
+
+
+
+&lt;p&gt;&lt;strong&gt;Next week:&lt;/strong&gt;&lt;/p&gt;
+
+
+
+&lt;ul&gt;&lt;li&gt;Working on the Stage-III&lt;/li&gt;&lt;li&gt;Simultaneously, discussing the leftover PR&amp;#8217;s and trying to finish them and make a merge.&lt;/li&gt;&lt;/ul&gt;
+
+
+
+&lt;p&gt;Most probably, on successful discussion and planning, I will be opening a draft work-in-progress PR for the &lt;strong&gt;draw()&lt;/strong&gt; function in stage &amp;#8211;III.&lt;/p&gt;
+
+
+
+&lt;p&gt;Will keep you updated!&lt;/p&gt;
+
+
+
+&lt;p&gt;Thanks!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://www.shubhamjha.com/posts/GSoC-2019-Week-6-and-7</guid>
+      <author>Shubham Kumar Jha (ShubhamKJha)</author>
+      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 6 and 7</title>
+      <pubDate>Sun, 14 Jul 2019 18:30:00 GMT</pubDate>
+      <link>https://www.shubhamjha.com/posts/GSoC-2019-Week-6-and-7/</link>
+      <description>&lt;p&gt;With this ends the seventh week of the official coding period. During the end of 6th week and the beginning of 7th week, I was mostly travelling, so I was not able to write a blog for the sixth week. Instead, I will try to summarize my work during the last two weeks here.&lt;/p&gt;
+
+&lt;p&gt;For the last few weeks, I have been focused on optimizing the code of new assumptions to enhance its performance. Most of my work has been exploratory, as Aaron says &amp;#128517;. Indeed I have dry-run, backtracked, profiled, and ran the same code with a debugger too many times to understand the slow parts and the improvements I can make here and there. Mostly the code is optimized given the class structure of SymPy. But it is also the class structure that is adding up to the performance issues. Already noted in my last blog, classes like &lt;code class="language-plaintext highlighter-rouge"&gt;And&lt;/code&gt; and &lt;code class="language-plaintext highlighter-rouge"&gt;Or&lt;/code&gt; sorts their &lt;em&gt;args&lt;/em&gt;, hence take a great amount of time. But other SymPy class constructors also take significant time.&lt;/p&gt;
+
+&lt;p&gt;With the success of fifth week&amp;#8217;s attempt, I have been desperate to bring down the execution time &amp;#128517;. Some of the attempts I have made, which are included in &lt;a href="https://github.com/sympy/sympy/pull/17144"&gt;#17144&lt;/a&gt;, are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;I have modified &lt;strong&gt;CNF&lt;/strong&gt; class, which essentially is a low-level implementation for the &lt;a href="https://en.wikipedia.org/wiki/Conjunctive_normal_form"&gt;cnf&lt;/a&gt; of any boolean expression. &lt;strong&gt;CNF&lt;/strong&gt; object holds a set of clauses. These clauses are themselves &lt;code class="language-plaintext highlighter-rouge"&gt;frozenset&lt;/code&gt; of &lt;strong&gt;Literal&lt;/strong&gt; objects. &lt;strong&gt;Literal&lt;/strong&gt; class is being implemented just to reduce the unnecessary creation of &lt;code class="language-plaintext highlighter-rouge"&gt;Not&lt;/code&gt; objects (It takes significant execution time and is called many times).&lt;/li&gt;
+  &lt;li&gt;I have also modified the code of &lt;em&gt;sympify()&lt;/em&gt;, it appeared to take more time than expected when the argument is a SymPy object already. Consider this, almost one-third execution time.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Symbol&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;'x'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;timeit&lt;/span&gt; &lt;span class="n"&gt;sympify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# before change
+&lt;/span&gt;&lt;span class="mi"&gt;601&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="mf"&gt;14.6&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="n"&gt;per&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt; &lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1000000&lt;/span&gt; &lt;span class="n"&gt;loops&lt;/span&gt; &lt;span class="n"&gt;each&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;timeit&lt;/span&gt; &lt;span class="n"&gt;sympify&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# after change
+&lt;/span&gt;&lt;span class="mi"&gt;239&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="mf"&gt;11.8&lt;/span&gt; &lt;span class="n"&gt;ns&lt;/span&gt; &lt;span class="n"&gt;per&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt; &lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1000000&lt;/span&gt; &lt;span class="n"&gt;loops&lt;/span&gt; &lt;span class="n"&gt;each&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Finally, I rewrote &lt;code class="language-plaintext highlighter-rouge"&gt;to_cnf()&lt;/code&gt; for &lt;strong&gt;CNF&lt;/strong&gt; objects. By using mostly Python&amp;#8217;s built-ins and removing any SymPy object construction during its execution. The performance gain is quite subtle &amp;#128526;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class="language-python highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre class="highlight"&gt;&lt;code&gt;&lt;table class="rouge-table"&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class="rouge-gutter gl"&gt;&lt;pre class="lineno"&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+&lt;/pre&gt;&lt;/td&gt;&lt;td class="rouge-code"&gt;&lt;pre&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy.abc&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="n"&gt;z&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;k&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;b&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;c&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;sympy.logic.boolalg&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;CNF&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Before
+&lt;/span&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;timeit&lt;/span&gt; &lt;span class="n"&gt;CNF&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;from_prop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# It is using to_cnf()
+&lt;/span&gt;&lt;span class="mf"&gt;1.41&lt;/span&gt; &lt;span class="n"&gt;ms&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="mi"&gt;18&lt;/span&gt; &lt;span class="n"&gt;&amp;#181;s&lt;/span&gt; &lt;span class="n"&gt;per&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt; &lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1000&lt;/span&gt; &lt;span class="n"&gt;loops&lt;/span&gt; &lt;span class="n"&gt;each&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# after
+&lt;/span&gt;&lt;span class="n"&gt;In&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;]:&lt;/span&gt; &lt;span class="n"&gt;timeit&lt;/span&gt; &lt;span class="n"&gt;CNF&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;from_prop&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="c1"&gt;# It is using the new to_CNF()
+&lt;/span&gt;&lt;span class="mf"&gt;31.5&lt;/span&gt; &lt;span class="n"&gt;&amp;#181;s&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="mf"&gt;1.48&lt;/span&gt; &lt;span class="n"&gt;&amp;#181;s&lt;/span&gt; &lt;span class="n"&gt;per&lt;/span&gt; &lt;span class="n"&gt;loop&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;mean&lt;/span&gt; &lt;span class="err"&gt;&amp;#177;&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt; &lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt; &lt;span class="n"&gt;of&lt;/span&gt; &lt;span class="mi"&gt;7&lt;/span&gt; &lt;span class="n"&gt;runs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;10000&lt;/span&gt; &lt;span class="n"&gt;loops&lt;/span&gt; &lt;span class="n"&gt;each&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;There is definitely a limit to performance we can get with Python. But implementing most of the things in Python built-ins we can definitely make things much faster.&lt;/p&gt;
+
+&lt;p&gt;For the upcoming week, I will try to complete the following:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;The CNF objects are still not simplified. I have to implement simplification to reduce the number of clauses. These have to be fed into &lt;code class="language-plaintext highlighter-rouge"&gt;satisfiable&lt;/code&gt; at the end, which can benefit from lesser number of clauses.&lt;/li&gt;
+  &lt;li&gt;&lt;code class="language-plaintext highlighter-rouge"&gt;rcall&lt;/code&gt; used with &lt;strong&gt;sathandlers&lt;/strong&gt; is another major portion having high execution time. I will try to work it out.&lt;/li&gt;
+  &lt;li&gt;Clean up the code and make it ready for reviewing.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Apart from that, I will also try to shift my focus towards the other part of my project and write some theory solvers. After all, I need to enhance the assumptions not just make it faster &amp;#128526;.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Peace&lt;/em&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/07/week-7a-little-step-towards-consistency/</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 7:A Little Step Towards Consistency</title>
+      <pubDate>Sat, 13 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://sc0rpi0n101.github.io/2019/07/week-7a-little-step-towards-consistency/</link>
+      <description>&lt;p&gt;&amp;#8220;It&amp;rsquo;s not what we do once in a while that shapes our lives. It&amp;rsquo;s what we do consistently.&amp;#8221; &amp;#8213; Anthony Robbins
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week I&amp;rsquo;ve tried to be more consistent with my schedule, work and communications with the Organization. I&amp;rsquo;ve taken a few small steps and plan to improve as I keep working.
+ Consistency!? Merging the Pull Requests?</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=56</guid>
+      <author>Ishan Joshi (ishanaj)</author>
+      <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-6-Completing the Column class.</title>
+      <pubDate>Mon, 08 Jul 2019 04:44:15 GMT</pubDate>
+      <link>https://ishanaj.wordpress.com/2019/07/08/gsoc19-week-6-completing-the-column-class/</link>
+      <description>&lt;p&gt;The sixth week has ended with a lot of work to be done ahead.&lt;/p&gt;
+
+
+
+&lt;p&gt;Last week the work was majorly focused on the work in progress &lt;a href="https://github.com/sympy/sympy/pull/17122"&gt;PR #17122&lt;/a&gt;. I have included the critical load function which makes the Column class capable of determining the critical load. Some problems still came up in solving some equations. I have made an &lt;a href="https://github.com/sympy/sympy/issues/17162"&gt;issue&lt;/a&gt; related to those.&lt;/p&gt;
+
+
+
+&lt;p&gt;An equation similar to &lt;strong&gt;tan(x) &amp;#8211; x&lt;/strong&gt; comes up while determining the critical load for the&amp;nbsp;&lt;strong&gt;pinned-fixed&lt;/strong&gt;&amp;nbsp;end-condition. SymPy&amp;#8217;s &lt;strong&gt;solve() &lt;/strong&gt;won&amp;#8217;t be able to solve such an equation, and as per the solution given in the &lt;a href="https://github.com/sympy/sympy/issues/17162"&gt;issue&lt;/a&gt;, I think that &lt;strong&gt;nsolve()&lt;/strong&gt; would surely help in this case. So I will be going ahead to solve it using the approximation returned by &lt;strong&gt;nsolve()&lt;/strong&gt; to handle this condition.&lt;span id="more-56"&gt;&lt;/span&gt;&lt;/p&gt;
+
+
+
+&lt;p&gt;Another problem that I faced was determining deflection and critical load for the&amp;nbsp;&lt;strong&gt;pinned-pinned&lt;/strong&gt;&amp;nbsp;end-condition. Here, the deflection comes out to be:&lt;/p&gt;
+
+
+
+&lt;p&gt;&lt;strong&gt;C1*sin(sqrt(P)*x/(sqrt(E)*sqrt(I)))&lt;/strong&gt; +&lt;strong&gt; C2*cos(sqrt(P)*x/(sqrt(E)*sqrt(I)))&lt;/strong&gt;&lt;/p&gt;
+
+
+
+&lt;p&gt;Now on solving it for constants &lt;strong&gt;C1&lt;/strong&gt; and &lt;strong&gt;C2, &lt;/strong&gt;using initial boundary conditions,&amp;nbsp;both come out to be &lt;strong&gt;0&lt;/strong&gt;, making the deflection &lt;strong&gt;zero&lt;/strong&gt;. This implies that no buckling occurs, which is not the case.&lt;/p&gt;
+
+
+
+&lt;p&gt;Even when solving it manually, this situation occurs, we deal with it by putting &lt;strong&gt;C2 = 0 &lt;/strong&gt;and instead of putting &lt;strong&gt;C1 = 0,&lt;/strong&gt; we consider the &lt;strong&gt;sin &lt;/strong&gt;term equal to zero and then solve for &lt;strong&gt;P (critical load).&amp;nbsp;&lt;/strong&gt;So, I will be adding a few more lines of code to deal with this situation.&lt;/p&gt;
+
+
+
+&lt;p&gt;Apart from working on this module, I have also opened another &lt;a href="https://github.com/sympy/sympy/pull/17153"&gt;PR #17153&lt;/a&gt; which implement methods&amp;nbsp;to determine &lt;strong&gt;section modulus&lt;/strong&gt; and &lt;strong&gt;polar modulus&lt;/strong&gt; of any polygon (more precisely a cross-section). Initially it was a draft PR, but now the work has been completed on it. Once I get the approval, I will also be adding the same for the Ellipses module. Also, if &lt;strong&gt;&lt;a href="https://github.com/sympy/sympy/pull/17001"&gt;cut_section()&lt;/a&gt; &lt;/strong&gt;gets successfully implemented I will be adding another method to determine the first moment.&lt;/p&gt;
+
+
+
+&lt;p&gt;I am pretty sure the work on &lt;strong&gt;Column class&lt;/strong&gt; will be successfully completed before the end of the next week. Also, we will be heading towards the next stage which intends to plot beam diagrams using matplotlib. Till then we can have an initial discussion regarding the same.&lt;/p&gt;
+
+
+
+&lt;h2&gt;&lt;strong&gt;Next Week:&lt;/strong&gt;&lt;/h2&gt;
+
+
+
+&lt;ul&gt;&lt;li&gt;Improving the &lt;strong&gt;critical_load()&lt;/strong&gt; to handle the above problems&lt;/li&gt;&lt;li&gt;Completing the Column class (documentation and tests)&lt;/li&gt;&lt;li&gt;Starting with the next phase&lt;/li&gt;&lt;/ul&gt;
+
+
+
+&lt;p&gt;Will keep you updated!&lt;/p&gt;
+
+
+
+&lt;p&gt;Thanks!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/07/week-6-the-most-chaotic-week-ever/</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 6: The Most Chaotic Week Ever!!</title>
+      <pubDate>Sat, 06 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://sc0rpi0n101.github.io/2019/07/week-6-the-most-chaotic-week-ever/</link>
+      <description>&lt;p&gt;&amp;#8220;A language that doesn&amp;rsquo;t affect the way you think about programming is not worth knowing.&amp;#8221; &amp;#8213; Alan J. Perlis
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week was one of the most chaotic weeks till now if not the most chaotic. I had to move places as the Uni opens next week, had the summer classes exams and had to convert the C parser to use SymPy&amp;rsquo;s Codegen AST from Python AST all in one week.</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://www.shubhamjha.com/posts/GSoC-2019-Week-5</guid>
+      <author>Shubham Kumar Jha (ShubhamKJha)</author>
+      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 5</title>
+      <pubDate>Tue, 02 Jul 2019 18:30:00 GMT</pubDate>
+      <link>https://www.shubhamjha.com/posts/GSoC-2019-Week-5/</link>
+      <description>&lt;p&gt;With this the fifth week of the official coding period has ended. I will try to give a brief summary of my work during this week.&lt;/p&gt;
+
+&lt;p&gt;I spent most of this week learning the inner working of &lt;strong&gt;satask&lt;/strong&gt; module. It took a lot of debugging to understand the on-going processes efficiently &amp;#128517; . My major job was to reduce the unwanted slowing portions in the code. I had  &lt;a href="https://github.com/sympy/sympy/pull/11789"&gt;#11789&lt;/a&gt; for reference. Some of such performance reducing portions of code were:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;A major segment of code was creating &lt;strong&gt;And&lt;/strong&gt; objects unnecessarily. As suggested in &lt;a href="https://github.com/sympy/sympy/issues/17087"&gt;#17087&lt;/a&gt; the sorting in the &lt;strong&gt;And&lt;/strong&gt; constructor takes up a significant amount of time. These have to be reduced.&lt;/li&gt;
+  &lt;li&gt;Using SymPy objects is itself a bottleneck for performance. Having a system built over SymPy objects slows things down. Python&amp;#8217;s built-in types should be used as much as possible.&lt;/li&gt;
+  &lt;li&gt;A specific segment (used many times in the code) calls &lt;code class="language-plaintext highlighter-rouge"&gt;rcall&lt;/code&gt; over propositions. The &lt;code class="language-plaintext highlighter-rouge"&gt;rcall&lt;/code&gt; which is a recursive process also takes a significant of time.&lt;/li&gt;
+  &lt;li&gt;Also, I have tried to pre-compile results as much as possible.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;With the above and some other changes, the overall performance of &lt;code class="language-plaintext highlighter-rouge"&gt;satask&lt;/code&gt; has improved much. I have made a PR over this &lt;a href="https://github.com/sympy/sympy/pull/17144"&gt;#17144&lt;/a&gt;. For an instance,&lt;/p&gt;
+&lt;table style="padding: 15px;"&gt;
+    &lt;thead&gt;
+        &lt;th&gt;Tests&lt;/th&gt;
+        &lt;th&gt;After this PR&lt;/th&gt;
+        &lt;th&gt;In master&lt;/th&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;test_satask&lt;/td&gt;
+            &lt;td&gt;2.39 s&lt;/td&gt;
+            &lt;td&gt;36.26 s&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;assumptions/tests&lt;/td&gt;
+            &lt;td&gt;16.74 s&lt;/td&gt;
+            &lt;td&gt;127.21 s&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;br /&gt;
+There is still scope for improvement in performance. In the coming week, I will try to work these out. I will also try to improve the performance of &lt;strong&gt;ask&lt;/strong&gt; module.&lt;/p&gt;
+
+&lt;p&gt;Also, the first evaluations are over now and I feel happy to announce that I passed it. During the first phase I learnt a lot. In last few weeks I got to explore profiling and got to understand how small segments can influence performance. Before this I felt that I already know the codebase, but in reality I had much to explore. My mentors always gave me a good starting point and a direction over the course of this phase. With the hope to work much better in the coming phases, I take your leave now &amp;#128516; .&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=54</guid>
+      <author>Ishan Joshi (ishanaj)</author>
+      <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-5 &#x2013; Moving on with a Non-mutable Column class</title>
+      <pubDate>Sun, 30 Jun 2019 18:52:29 GMT</pubDate>
+      <link>https://ishanaj.wordpress.com/2019/07/01/gsoc19-week-5-moving-on-with-a-non-mutable-column-class/</link>
+      <description>&lt;p&gt;A lot of things happened this week and I am happy to inform you that &lt;a href="https://github.com/sympy/sympy/pull/17055"&gt;PR #17055&lt;/a&gt; has been successfully merged. The beam module now supports the cross-sectional shape of the beam as an alternative parameter to the second moment. With this, the aim of the stage-I to integrate the geometry module with beam module has been accomplished.&lt;/p&gt;
+
+
+
+&lt;p&gt;Although we need to add some examples in the docs, to make it easier for the user to understand how to use this new feature.&lt;/p&gt;
+
+
+
+&lt;p&gt;Coming on to stage-II, I had already, initiated a &lt;a href="https://github.com/sympy/sympy/issues/17072"&gt;discussion&lt;/a&gt; to finalize the API of the new Column class that is to be implemented as a part of the continuum mechanics module in this stage.&lt;span id="more-54"&gt;&lt;/span&gt;&lt;/p&gt;
+
+
+
+&lt;p&gt;We concluded that it would be much better if the Column class remains non-mutable i.e. unlike the beam class where a beam is formed in a piecewise form, the new Column class would take all its required input data during the declaration and then one can call different methods to calculate different things.&lt;/p&gt;
+
+
+
+&lt;p&gt;I have made a &lt;a href="https://github.com/sympy/sympy/pull/17122"&gt;work-in-progress PR #17122&lt;/a&gt; implementing the Column class which performs the required buckling calculations. Currently, I have not included a method to calculate the critical load as there was a bit of problem with the form of the equation which the &lt;strong&gt;dsolve() &lt;/strong&gt;returns after solving the differential equation of buckling. &lt;a href="https://docs.sympy.org/latest/modules/solvers/ode.html" rel="noopener" target="_blank"&gt;&lt;strong&gt;dsolve(&lt;/strong&gt;)&lt;/a&gt; is SymPy&amp;#8217;s differential equation solver.&lt;/p&gt;
+
+
+
+&lt;p&gt;In general, if we solve the general equation of buckling manually, we might apply the &lt;strong&gt;method of undetermined coefficients&lt;/strong&gt;, which of course even &lt;strong&gt;dsolve() &lt;/strong&gt;&amp;nbsp;is capable to apply, but it gives the answer in an exponent form, while we need it in a trigonometric form (for ease of further calculations). So after seeking different methods trying to convert this equation in terms of &lt;strong&gt;sin(x)&lt;/strong&gt; and &lt;strong&gt;cos(x), &lt;/strong&gt;I finally had to put that problem in the discussion, where Oscar Benjamin, gave an idea to declare the variables as positive in order to get it in terms of &lt;strong&gt;sin &lt;/strong&gt;and&lt;strong&gt; cos.&amp;nbsp;&lt;/strong&gt;I tried that it works well for our case. I will have to figure out the further calculation of the critical load.&lt;/p&gt;
+
+
+
+&lt;p&gt;Hopefully will be updating the code with a new method to calculate critical load, soon.&lt;/p&gt;
+
+
+
+&lt;p&gt;Also, I have planned to have a method to solve the &lt;strong&gt;unknown reactions&lt;/strong&gt; and &lt;strong&gt;reaction moments&lt;/strong&gt;, which would use the &lt;strong&gt;boundary conditions&lt;/strong&gt; to get their values.&lt;/p&gt;
+
+
+
+&lt;p&gt;With all these things going on, this week we also had our first evaluations, and I am very happy to say that I have passed it. &lt;strong&gt;Thanks to the mentors!&lt;/strong&gt;&lt;/p&gt;
+
+
+
+&lt;h2&gt;&lt;strong&gt;&amp;nbsp;&lt;/strong&gt;&lt;strong&gt;Next Week:&lt;/strong&gt;&lt;/h2&gt;
+
+
+
+&lt;ul&gt;&lt;li&gt;Completing Column class with all its methods&lt;/li&gt;&lt;li&gt;Adding tests and documentation.&lt;/li&gt;&lt;li&gt;Starting discussions for the next stage.&lt;/li&gt;&lt;/ul&gt;
+
+
+
+&lt;p&gt;I will try to finish working on the Column class this weekend.&lt;/p&gt;
+
+
+
+&lt;p&gt;Will keep you updated!&lt;/p&gt;
+
+
+
+&lt;p&gt;Thanks!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/06/week-5-the-evaluation-is-here-end-of-phase-1/</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 5: The Evaluation is here: End of Phase 1</title>
+      <pubDate>Sat, 29 Jun 2019 00:00:00 GMT</pubDate>
+      <link>https://sc0rpi0n101.github.io/2019/06/week-5-the-evaluation-is-here-end-of-phase-1/</link>
+      <description>&lt;p&gt;&amp;ldquo;On two occasions I have been asked [by members of Parliament!]: &amp;lsquo;Pray, Mr. Babbage, if you put into the machine wrong figures, will the right answers come out ?&amp;rsquo; I am not able rightly to apprehend the kind of confusion of ideas that could provoke such a question.&amp;ldquo;&amp;#8212; Charles Babbage
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week was the last week of Phase-1 and the evaluations for the first phase.</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=52</guid>
+      <author>Ishan Joshi (ishanaj)</author>
+      <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-4-Starting with Column Buckling implementation</title>
+      <pubDate>Sun, 23 Jun 2019 18:41:36 GMT</pubDate>
+      <link>https://ishanaj.wordpress.com/2019/06/24/gsoc19-week-4-starting-with-column-buckling-implementation/</link>
+      <description>&lt;p&gt;Finalizing what had been discussed in &lt;a href="https://github.com/sympy/sympy/pull/16964"&gt;PR #16964&lt;/a&gt; for integrating geometry module with the beam module,&lt;a href="https://github.com/sympy/sympy/pull/17055"&gt; PR #17055&lt;/a&gt; was opened which is now ready to go!&lt;/p&gt;
+
+
+
+&lt;p&gt;There is no special function for defining the cross-section of a Beam object. A user can simply pass the geometry object as a parameter instead of the &lt;strong&gt;second_moment, &lt;/strong&gt;and the corresponding second moment would be calculated internally. The example below might explain this better:&lt;span id="more-52"&gt;&lt;/span&gt;&lt;/p&gt;
+
+
+&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
+
+&amp;gt;&amp;gt;&amp;gt; b = Beam(l, E, Circle((0, 0), r))
+
+&amp;gt;&amp;gt;&amp;gt; b.second_moment
+
+pi*r*Abs(r)**3/4
+
+&amp;gt;&amp;gt;&amp;gt; b.cross_section
+
+Circle(Point2D(0, 0), r)
+
+&lt;/pre&gt;
+
+
+
+&lt;p&gt;Further, the &lt;strong&gt;cross_section&lt;/strong&gt; attribute can be changed even after the beam is created. Every time the &lt;strong&gt;cross_section&lt;/strong&gt; is assigned a new value, the &lt;strong&gt;second_moment&lt;/strong&gt; gets automatically updated.&lt;/p&gt;
+
+
+
+&lt;p&gt;Similarly, every time the user changes the &lt;strong&gt;second_moment&lt;/strong&gt; explicitly after the creation of the beam, the previous &lt;strong&gt;cross_section&lt;/strong&gt; gets destroyed, or in other words, the &lt;strong&gt;cross_section&lt;/strong&gt; is set to None.&lt;/p&gt;
+
+
+&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
+
+&amp;gt;&amp;gt;&amp;gt; b = Beam(l, E, Circle((0, 0), r))
+
+&amp;gt;&amp;gt;&amp;gt; I&amp;#160; = Symbol(&amp;#8216;I&amp;#8217;)
+
+&amp;gt;&amp;gt;&amp;gt; b.second_moment = I
+
+&amp;gt;&amp;gt;&amp;gt; b.cross_section
+
+None
+
+&amp;gt;&amp;gt;&amp;gt; b.second_moment = Polygon((0, 0), (a, 0), (a, b), (0, b))
+
+ValueError: To update cross-section geometry use `cross_section` attribute
+
+&lt;/pre&gt;
+
+
+
+&lt;p&gt;The PR is complete and just needs the final approval from the mentors.&lt;/p&gt;
+
+
+
+&lt;p&gt;Simultaneously, I had worked on the column buckling calculations which is a part of the stage &amp;#8211;II.&lt;/p&gt;
+
+
+
+&lt;p&gt;I have opened an &lt;a href="https://github.com/sympy/sympy/issues/17072"&gt;issue-cum-discussion&lt;/a&gt; for discussing its API and further implementations.&lt;/p&gt;
+
+
+
+&lt;p&gt;Since the calculations of the Column Buckling are very much different from those of beam bending, we will have to make a separate class Column. The basic API and the way the calculations are supposed to go can be seen from the stage &amp;#8211;II in the &lt;a href="https://docs.google.com/document/d/1LOtMTr9cCrzQ8_OnKrgkZs8wFS9N9PxlR10h3aKG0jg/edit?usp=sharing"&gt;proposal&lt;/a&gt;.&lt;/p&gt;
+
+
+
+&lt;p&gt;I would be making a PR for column buckling calculations within a day or two, once some initial questions (as mentioned in the issue-cum-discussion) gets clarified.&lt;/p&gt;
+
+
+
+&lt;h2&gt;Next Week:&lt;/h2&gt;
+
+
+
+&lt;ul&gt;&lt;li&gt;Finalizing the basic API and implementations of Column class&lt;/li&gt;&lt;li&gt;Making a PR for the above implementations&lt;/li&gt;&lt;li&gt;Documentation and testing&lt;/li&gt;&lt;/ul&gt;
+
+
+
+&lt;p&gt;Will keep you updated!&lt;/p&gt;
+
+
+
+&lt;p&gt;Thanks!&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://www.shubhamjha.com/posts/GSoC-2019-Week-4</guid>
+      <author>Shubham Kumar Jha (ShubhamKJha)</author>
+      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 4</title>
+      <pubDate>Sun, 23 Jun 2019 18:30:00 GMT</pubDate>
+      <link>https://www.shubhamjha.com/posts/GSoC-2019-Week-4/</link>
+      <description>&lt;p&gt;With this the fourth week and the first phase of GSoC 2019 is over. Here I will give you a brief summary of my progress this week.&lt;/p&gt;
+
+&lt;p&gt;I started this week by setting up my workspace for profiling the code related to new assumptions. I am using &lt;code class="language-plaintext highlighter-rouge"&gt;pyinstrument&lt;/code&gt; for that. The results of profiler suggests that a significant amount of time is spent in the &lt;code class="language-plaintext highlighter-rouge"&gt;to_cnf()&lt;/code&gt; function which converts the logical expression into their CNF counterparts, to be used by the SAT solver. Also, since this system is built over the SymPy core, a large amount of this time is spent in the core itself (See the graph &lt;a href="https://github.com/sympy/sympy/issues/17066#issuecomment-504774120"&gt;here&lt;/a&gt;). A possible solution to this is to use constructs at a level lower than the SymPy objects, hence removing the overheads.&lt;/p&gt;
+
+&lt;p&gt;Also, as suggested in the last blog, there are various ideas proposed for improving the new assumptions mechanism. Some of them have been implemented to some extent in some PRs. Before proceeding for any new strategies, I need to look into these ideas first. I have started an &lt;a href="https://github.com/sympy/sympy/issues/17066"&gt;issue-tree&lt;/a&gt; to gather them.&lt;/p&gt;
+
+&lt;p&gt;Over the end of the week, I also pushed my work on &lt;code class="language-plaintext highlighter-rouge"&gt;First Order Logic&lt;/code&gt; module at &lt;a href="https://github.com/sympy/sympy/pull/17069"&gt;#17069&lt;/a&gt;. This work is based on &lt;a href="https://github.com/sympy/sympy/pull/7608"&gt;#7608&lt;/a&gt; and extends it by adding &lt;code class="language-plaintext highlighter-rouge"&gt;Equality&lt;/code&gt; to it. Currently, there are test failures and some points to decide. I will try to get it done within this week.&lt;/p&gt;
+
+&lt;p&gt;I spent most of this week exploring the profiling and benchmarking of code, and I learnt a lot during this. For the coming week, I will focus on speeding up the code in &lt;code class="language-plaintext highlighter-rouge"&gt;to_cnf&lt;/code&gt;. As suggested by Aaron, &lt;a href="https://github.com/sympy/sympy/pull/11789"&gt;this&lt;/a&gt; seems a good point to start with. Also, I will be working on the &lt;code class="language-plaintext highlighter-rouge"&gt;FOL&lt;/code&gt; module.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/06/week-4-the-fortran-parser-is-finally-here/</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 4: The Fortran Parser is finally here</title>
+      <pubDate>Sat, 22 Jun 2019 00:00:00 GMT</pubDate>
+      <link>https://sc0rpi0n101.github.io/2019/06/week-4-the-fortran-parser-is-finally-here/</link>
+      <description>&lt;p&gt;&amp;ldquo;When someone says: &amp;lsquo;I want a programming language in which I need only say what I wish done&amp;rsquo;, give him a lollipop.&amp;rdquo; &amp;#8212; Alan J. Perlis in Software Metrics
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week has been relatively a little odd. The week started a little slow but slowly it turned out to be a good and productive week.
+ A Slow Start LFortran Testing Finally, The Missing Pull Request The Long Awaited Meeting What now?</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://www.shubhamjha.com/posts/GSoC-2019-Week-3</guid>
+      <author>Shubham Kumar Jha (ShubhamKJha)</author>
+      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 3</title>
+      <pubDate>Sun, 16 Jun 2019 18:30:00 GMT</pubDate>
+      <link>https://www.shubhamjha.com/posts/GSoC-2019-Week-3/</link>
+      <description>&lt;p&gt;The third week of coding period has ended and as I already stated in the last blog, I couldn&amp;#8217;t be much productive this week. Nevertheless, I tried to wrap-up some unfinished works. PR &lt;a href="https://github.com/sympy/sympy/pull/16956"&gt;#16956&lt;/a&gt; is ready to merge, just waiting for some last reviews. This PR needs to be supplemented with some fixes in the code of &lt;code class="language-plaintext highlighter-rouge"&gt;Add&lt;/code&gt; class to handle all the issues over &lt;code class="language-plaintext highlighter-rouge"&gt;Relationals&lt;/code&gt;. PR &lt;a href="https://github.com/sympy/sympy/pull/16978"&gt;#16978&lt;/a&gt; had one major failing test from the &lt;code class="language-plaintext highlighter-rouge"&gt;stats&lt;/code&gt; module. I tried to debug it ,but due to my unfamiliarity with that part of code I took help from &lt;a href="https://github.com/czgdp1807"&gt;Gagandeep&lt;/a&gt; and as his &lt;a href="https://github.com/sympy/sympy/pull/16978#discussion_r294039337"&gt;comment&lt;/a&gt; suggests, the result this PR is giving is correct and more intuitive. At least, one less issue to handle &amp;#128524;.&lt;/p&gt;
+
+&lt;p&gt;Over the end of the week, I shifted my focus towards &lt;em&gt;New Assumptions&lt;/em&gt;. One of my major tasks for this summer is to speed up the &lt;em&gt;satask&lt;/em&gt; module. As suggested by Aaron, I searched the repository for issues and PRs over this, and I found a number of such unfinished work. I would need to study these ideas and profile the results before working ahead. I would create a issue-tree over it connecting all such PRs and there respective benchmarks.&lt;/p&gt;
+
+&lt;p&gt;For this week, I would focus on the above mentioned task only. Since the first phase is about to end, I would have to speed things up.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/06/week-3-whats-happening-where-have-i-been/</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 3: What's Happening? Where have I been?</title>
+      <pubDate>Sun, 16 Jun 2019 00:00:00 GMT</pubDate>
+      <link>https://sc0rpi0n101.github.io/2019/06/week-3-whats-happening-where-have-i-been/</link>
+      <description>&lt;p&gt;&amp;#8220;How did it get so late so soon?&amp;#8221; &amp;#8213; Dr. Seuss
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and we&amp;rsquo;re running late on everything this week. This time we will talk about some operating system stuff along with the week&amp;rsquo;s work. I will have more blogs on operating systems and that type of stuff soon. For now, let&amp;rsquo;s talk about what&amp;rsquo;s happening.
+Why so Late? What about Work?</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://www.shubhamjha.com/posts/GSoC-2019-Week-2</guid>
+      <author>Shubham Kumar Jha (ShubhamKJha)</author>
+      <title>Shubham Kumar Jha (ShubhamKJha): GSoC 2019: Week 2</title>
+      <pubDate>Wed, 12 Jun 2019 18:30:00 GMT</pubDate>
+      <link>https://www.shubhamjha.com/posts/GSoC-2019-Week-2/</link>
+      <description>&lt;p&gt;The second week of official coding period has concluded. I will give you a brief summary of the week&amp;#8217;s work.&lt;/p&gt;
+
+&lt;p&gt;I started this week with working on PR &lt;a href="https://github.com/sympy/sympy/pull/16956"&gt;#16956&lt;/a&gt;, the PR is now passing tests. I will try to get it merged soon. Later this week, I tried to include &lt;code class="language-plaintext highlighter-rouge"&gt;complex -&amp;gt; finite&lt;/code&gt; in the assumptions system. I started PR &lt;a href="https://github.com/sympy/sympy/pull/16978"&gt;#16978&lt;/a&gt; over this. This PR changes the assumptions system to work over the &lt;code class="language-plaintext highlighter-rouge"&gt;complex -&amp;gt; finite&lt;/code&gt; clause. All the instances of use of &lt;code class="language-plaintext highlighter-rouge"&gt;is_complex&lt;/code&gt; call has to be modified. As suggested by Aaron, the &lt;code class="language-plaintext highlighter-rouge"&gt;is_complex&lt;/code&gt; call was changed with a disjunction of &lt;code class="language-plaintext highlighter-rouge"&gt;is_complex&lt;/code&gt; and &lt;code class="language-plaintext highlighter-rouge"&gt;is_infinite&lt;/code&gt; calls. Luckily for me, the usage of complex assumption was not much in the codebase &amp;#128524;. Though it meant less test failures to handle, the core assumptions system (in the old system) is quite complex to understand and debug, and hence handling all the failing tests proved quite difficult. Also, I tried to work on it without including any new assumptions to the system. One important result of this is, &lt;code class="language-plaintext highlighter-rouge"&gt;zoo.is_complex&lt;/code&gt; returns &lt;code class="language-plaintext highlighter-rouge"&gt;False&lt;/code&gt; now.&lt;/p&gt;
+
+&lt;p&gt;Apart from that I have worked on to sync these changes in the new assumptions system as well and I will be sending PR over it soon.&lt;/p&gt;
+
+&lt;p&gt;For the coming week,&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;I will start to work on SAT solver and to speed it up. As suggested by Aaron, I will first look into the other unfinished PRs over this.&lt;/li&gt;
+  &lt;li&gt;I will sync the new assumptions with the recent developments in the old system.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;With enough said, these PRs made me realize how much the codebase can break with small changes in the assumptions. Also, I know this post is a little bit late(because of bad health). I have some pending work over from the last week and I will try to catch speed as soon as possible.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/06/week-2-a-tale-of-the-illusive-pull-request/</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 2: A Tale of The Illusive Pull Request</title>
+      <pubDate>Sat, 08 Jun 2019 00:00:00 GMT</pubDate>
+      <link>https://sc0rpi0n101.github.io/2019/06/week-2-a-tale-of-the-illusive-pull-request/</link>
+      <description>&lt;p&gt;In real open source, you have the right to control your own destiny. - Linus Torvalds
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this time we will talk about the Week 2 of the coding period for GSoC 2019 and the story of the elusive pull requests which people had to wait almost the whole week for.
+The Weekend after the Meeting
+A Bad Start</description>
     </item>
   </channel>
 </rss>
