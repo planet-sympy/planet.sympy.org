@@ -89,182 +89,6 @@
 
     <div class="container">
          <div class="day">
-<h2 class="dayform">October 30, 2020</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-a7c7d19d feed-" id="item-f8e24f8d">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/aktech.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Amit Kumar (aktech) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://iamit.in/blog/sympy-gamma-gae-python3/">18:30, Friday, 30 October UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://iamit.in/blog/sympy-gamma-gae-python3/">Amit Kumar (aktech): Porting SymPy Gamma to Google App Engine Python 3</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/aktech.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Amit Kumar (aktech) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://iamit.in/blog/sympy-gamma-gae-python3/">18:30, Friday, 30 October UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://iamit.in/blog/sympy-gamma-gae-python3/">Porting SymPy Gamma to Google App Engine Python 3</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>This summer I had plenty of time during COVID-19 lockdown and I was looking at
-<a href="https://sympygamma.com/">SymPy Gamma</a>.</p>
-
-<center><img src="https://iamit.in/assets/sympy-gamma-port/sympy_gamma_demo.gif" width="700" /></center>
-
-<h2 id="sympy-gamma">Sympy Gamma</h2>
-
-<p>SymPy Gamma is a web application that executes mathematical expressions
-via natural language input from the user, after parsing them as SymPy
-expressions it displays the result with additional related computations.
-It is inspired from the idea of <a href="http://www.wolframalpha.com/">WolframAlpha</a> which is based on the
-commercial Computer Algebra System named <a href="https://en.wikipedia.org/wiki/Mathematica">&#8220;Mathematica&#8221;</a>.</p>
-
-<center><img src="https://iamit.in/assets/wolfram-alpha-logo.svg" width="300" /></center>
-
-<p>I have always been impressed by it ever since I first found about it.
-While playing with it during this summer, I realised that it runs on Google
-App Engine&#8217;s Python 2.7 runtime. It is powered by SymPy, an open source
-computer algebra system.</p>
-
-<center><img align="center" src="https://iamit.in/assets/Sympy_logo.svg" width="150" /></center>
-
-<h2 id="the-problem">The Problem</h2>
-
-<p>Despite being widely used around the world (about ~14K users everyday,
-as seen from Google Analytics), there hasn&#8217;t been a lot of development
-in the past 5 years. Due to this the current infrastructure
-was stuck on <a href="https://en.wikipedia.org/wiki/Google_App_Engine">Google App Engine</a>&#8217;s Python 2 runtime which obviously does
-not support Python 3.</p>
-
-<p>This also prevented it to use the latest version of SymPy. The SymPy
-version (~0.7.6) it was using was last updated 6 years ago. This made
-SymPy Gamma in urgent need for upgradation. At the time of writing this blog,
-SymPy Gamma is running on Google App Engine&#8217;s latest runtime and latest
-version of SymPy.</p>
-
-<h2 id="solution-and-process">Solution and Process</h2>
-
-<p>It was a fun project and was interesting to see how Google cloud offering has evolved
-from Google App Engine to Google Cloud Platform. The old App engine did
-seem like a minimal cloud offering launched by Google in an attempt to
-ship something early and quickly. It reminded me of my first cloud project
-in college (<a href="https://github.com/aktech/dturmscrap">dturmscrap</a>), which I
-deployed to Google App Engine, back in 2015.</p>
-
-<p>I used Github projects to track the whole project, all the work done for this
-can be seen <a href="https://github.com/sympy/sympy_gamma/projects/1">here</a>.</p>
-
-<h2 id="-git-log">$ Git Log</h2>
-
-<p>Here is a summary of what was achieved:</p>
-
-<ul>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/135">PR 135</a>: Migrating Django to a slightly higher version,
-this was the first blood just to make sure everything was working. I upgraded it to the latest version of
-Django that was supported on Python 2 runtime. This also exposed the broken CI, which was fixed in this.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/137">PR 137</a>: This upgraded the CI infrastructure to use Google Cloud SDK
-for deployment, the previous method was discontinued.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/140">PR 140</a>: Upgrading the Database backend to use Cloud NDB instead
-of the legacy App Engine NDB.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/148">PR 148</a>: Since we change the database backend, we needed something for
-testing locally, this was done by using Google Cloud Datastore emulator locally.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/149">PR 149</a>: The installation and setup of the project was quite a challenge.
-Installing and keeping track of the versions of a number of application was non-trivial. This Pull request dockerized
-the project and made the development setup trivial and it all boiled down to just one command.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/152">PR 152</a>: The login feature was previously implemented using the user API
-of the Google App Engine&#8217;s Python2 runtime, which was not available in Python 3 runtime. We removed the login feature as it
-was not used by many and was too much effort to setup OAuth for login.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/153">PR 153</a>: Now was the time to slowly move towards Python 3 by making the
-code compatible with both 2 and 3. It was achieved via <a href="https://python-modernize.readthedocs.io/en/latest/">python-modernize</a>.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/154">PR 154</a>: We then made the migration to Python 3.7 runtime and removed submodules
-and introduced a <code class="language-plaintext highlighter-rouge">requirements.txt</code> for installing dependencies.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/154">PR 159</a>: The above change made it possible to upgrade SymPy to latest version,
-which was 1.6 at that time.</p>
-  </li>
-  <li>
-    <p><a href="https://github.com/sympy/sympy_gamma/pull/154">PR 165</a>: The last piece of the puzzle was upgrading Django itself, so we upgraded
-it to the latest version, which was Django 3.0.8.</p>
-  </li>
-</ul>
-
-<h4 id="next-steps">Next Steps</h4>
-
-<ul>
-  <li>At the time of writing this Google has released the Python 3.8 runtime, it would nice to further upgrade it now.</li>
-  <li>The test coverage can be increased.</li>
-  <li>The code can be refactored to be more readable and approachable for new contributors.</li>
-</ul>
-
-<p>Thanks to Google for properly <a href="https://cloud.google.com/appengine/docs/standard/python/migrate-to-python3">documenting the process</a>,
-which made the transition much easier.</p>
-
-<p>Thanks to <a href="https://numfocus.org/">NumFocus</a>, without them this project would not have been possible. Also thanks to
-<a href="https://github.com/certik">Ondrej Certik</a> and <a href="http://github.com/asmeurer">Aaron Meurer</a> for their advice and support
-throughout the project.</p>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
 <h2 class="dayform">August 31, 2020</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -3130,139 +2954,6 @@ self._critical_load = solve(defl_eqs, P, dict=True)[0][P]
 	</div>
 </div></div>
 <div class="day">
-<h2 class="dayform">August 23, 2019</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-45d5af2d feed-" id="item-43c9d018">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://sc0rpi0n101.github.io/2019/08/week-12-the-final-week/">00:00, Friday, 23 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/08/week-12-the-final-week/">Nikhil Maan (Sc0rpi0n101): Week 12: The Final Week</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://sc0rpi0n101.github.io/2019/08/week-12-the-final-week/">00:00, Friday, 23 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/08/week-12-the-final-week/">Week 12: The Final Week</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>&#8220;Software is like entropy: It is difficult to grasp, weighs nothing, and obeys the Second Law of Thermodynamics; i.e., it always increases.&#8221; &#8212; Norman Augustine
- Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week will be the last week of coding for GSoC 2019. It is time to finish work now.
- The C Parser Travis Build Tests Documentation  The C Parser I completed the C Parser last week along with the documentation for the module.
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
-<h2 class="dayform">August 22, 2019</h2>
-<div class="channelgroup ">
-	<div class="row">
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
-		    <div class="box" class="item feed-45d5af2d feed-" id="item-6037bc3e">
-			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
-			    	<table class="table borderless table-condensed">
-			    		<tr>
-			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
-			    				<div style="margin-right:5px;">
-				    				 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
-				    				
-				    			</div>
-			    			</td>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row" style="margin-top:15px;">
-					    			<div class="col-md-8">
-							    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
-							    	</div>
-							    	<div class="col-md-4 dtdate">
-							    		<a href="https://sc0rpi0n101.github.io/2019/08/week-11-the-other-parser/">00:00, Thursday, 22 August UTC</a>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td style="vertical-align:bottom;">
-			    				<div class="row">
-							    	<div class="col-md-12 col-xs-12">
-							    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/08/week-11-the-other-parser/">Nikhil Maan (Sc0rpi0n101): Week 11: The Other Parser</a></h4>
-							    	</div>
-							    </div>
-			    			</td>
-			    		</tr>
-			    	</table>
-			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
-			    		 <img src="hackergotchi/Nikhil_Maan.jpg"/> 
-			    		
-			    	</div>
-			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
-			    		<div class="row">
-			    			<div class="col-md-8">
-					    		<a href="">Nikhil Maan (Sc0rpi0n101) </a>
-					    	</div>
-					    	<div class="col-md-4 dtdate">
-					    		<a href="https://sc0rpi0n101.github.io/2019/08/week-11-the-other-parser/">00:00, Thursday, 22 August UTC</a>
-					    	</div>
-					    </div>
-					    <div class="row">
-					    	<div class="col-md-12 col-xs-12">
-					    		<h4><a class="boxh2" href="https://sc0rpi0n101.github.io/2019/08/week-11-the-other-parser/">Week 11: The Other Parser</a></h4>
-					    	</div>
-					    </div>
-				    </div-->
-				</div>
-				<div class="row">
-					<div class="col-md-12 col-xs-12 descript">
-						<p>Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week we&rsquo;re talking about the C parser.
- The Fortran Parser The C Parser Documentation Travis Build  The Fortran Parser The Fortran Parser is complete. The Pull Request has also been merged. The parser is merged in master and will be a part of the next SymPy release. You can check out the source code for the Parser at the Pull Request.
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div></div>
-<div class="day">
 <h2 class="dayform">August 20, 2019</h2>
 <div class="channelgroup ">
 	<div class="row">
@@ -3515,6 +3206,344 @@ In addition to the report preparation I&#8217;ll try to add <code class="highlig
 		</div>
 	</div>
 </div></div>
+<div class="day">
+<h2 class="dayform">August 13, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-eb3e3c3b feed-" id="item-562b106a">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/ishanaj.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Ishan Joshi (ishanaj) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://ishanaj.wordpress.com/2019/08/13/gsoc19-week-11-heading-to-the-final-week/">17:26, Tuesday, 13 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/08/13/gsoc19-week-11-heading-to-the-final-week/">Ishan Joshi (ishanaj): GSoC&#8217;19: Week-11- Heading to the final week</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/ishanaj.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Ishan Joshi (ishanaj) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://ishanaj.wordpress.com/2019/08/13/gsoc19-week-11-heading-to-the-final-week/">17:26, Tuesday, 13 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/08/13/gsoc19-week-11-heading-to-the-final-week/">GSoC&#8217;19: Week-11- Heading to the final week</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>With the end of this week the <strong>draw()</strong> function has been completely implemented. The work on <a href="https://github.com/sympy/sympy/pull/17345">PR #17345</a> has been completed along with the documentations.</p>
+
+
+
+<p>As mentioned in the previous blog this PR was an attempt to make the <strong>draw()</strong> function use SymPy&#8217;s own plot() rather than importing matplotlib externally to plot the diagram. The idea was to plot the load equation which is in terms of singularity function. This would directly plot uniformly distributed load, uniformly varying load and other higher order loads except for point loads and moment loads.<br /> The task was now to plot the remaining parts of the diagram which were:</p>
+
+
+
+<ul><li>A rectangle for drawing the beam</li><li>Arrows for point loads</li><li>Markers for moment loads and supports </li><li>Colour filling to fill colour in inside the higher order loads (order &gt;=0).<span id="more-105"></span></li></ul>
+
+
+
+<p>Instead of making temporary hacks to implement these, I went a step further to give the plotting module some additional functionalities. Apart from helping in implementing the <strong>draw()</strong> function, &nbsp;this would also enhance the plotting module.</p>
+
+
+
+<p>The basic idea was to have some additional keyworded arguments in the <strong>plot()</strong> function. Every keyworded argument would be a list of dictionaries where each dictionary would represent the arguments (or parameters) that would have been passed in the corresponding matplotlib functions.</p>
+
+
+
+<p>These are the functions of matplotlib that can now be accessed using <strong>sympy&#8217;s plot()</strong>, along with where there are used in our current situation:</p>
+
+
+
+<ul><li><a href="https://matplotlib.org/api/_as_gen/matplotlib.patches.Rectangle.html">matplotlib.patches.Rectangle</a>&nbsp;-to draw the beam</li><li><a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.annotate.html">matplotlib.pyplot.annotate</a>&nbsp;&#8211; to draw arrows of load</li><li><a href="https://matplotlib.org/3.1.1/api/markers_api.html">matplotlib.markers</a>&#8211; to draw supports and moment loads</li><li><a href="https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.fill_between.html">fill_between()</a> &#8211; to fill an area with color</li></ul>
+
+
+
+<p>Another thing which is worth mentioning is that to use <strong>fill_between() </strong>we would require numpy&#8217;s <strong>arange()</strong> for sure. Although it might be better if we could avoid using an external module directly, but I guess this is unavoidable for now. </p>
+
+
+
+<p>Also, I have added an option for the user to scale the plot and get a pictorial view of it in case where the plotting with the exact dimensions doesn&#8217;t produce a decent diagram. For eg. If the magnitude of the load (order &gt;= 0) is relatively higher to other applied loads or to the length of the beam, the load plot might get out of the final plot window. </p>
+
+
+
+<p>Here is an example:</p>
+
+
+<pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate">
+&gt;&gt;&gt; R1, R2 = symbols('R1, R2')
+&gt;&gt;&gt; E, I = symbols('E, I')
+
+&gt;&gt;&gt; b1 = Beam(50, 20, 30)
+
+&gt;&gt;&gt; b1.apply_load(10, 2, -1)
+&gt;&gt;&gt; b1.apply_load(R1, 10, -1)
+&gt;&gt;&gt; b1.apply_load(R2, 30, -1)
+&gt;&gt;&gt; b1.apply_load(90, 5, 0, 23)
+&gt;&gt;&gt; b1.apply_load(10, 30, 1, 50)
+&gt;&gt;&gt; b1.apply_support(50, "pin")
+&gt;&gt;&gt; b1.apply_support(0, "fixed")
+&gt;&gt;&gt; b1.apply_support(20, "roller")
+# case 1 on the left
+&gt;&gt;&gt; p = b1.draw()
+&gt;&gt;&gt; p.show()
+
+# case 2 on the right
+&gt;&gt;&gt; p1 = b1.draw(pictorial=True)
+&gt;&gt;&gt; p1.show()
+</pre>
+
+
+
+<figure class="wp-block-image size-large"><img alt="" class="wp-image-107" src="https://ishanaj.files.wordpress.com/2019/08/screenshot-10-08-2019-23_04_45.png" /></figure>
+
+
+
+<h2><strong>Next Week:</strong></h2>
+
+
+
+<ul><li>Getting leftover PR&#8217;s merged</li><li>Initiating implementation of Truss class</li></ul>
+
+
+
+<p>Will keep you updated!</p>
+
+
+
+<p>Thanks!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">August 12, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-d75afba2 feed-" id="item-a55aaa0b">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/Arighna.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Arighna Chakrabarty (arighnaiitg) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://arighnaiitg.github.io/2019-08-12-gsoc-week11/">07:00, Monday, 12 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://arighnaiitg.github.io/2019-08-12-gsoc-week11/">Arighna Chakrabarty (arighnaiitg): GSoC Week 11 !!</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/Arighna.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Arighna Chakrabarty (arighnaiitg) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://arighnaiitg.github.io/2019-08-12-gsoc-week11/">07:00, Monday, 12 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://arighnaiitg.github.io/2019-08-12-gsoc-week11/">GSoC Week 11 !!</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>Week 11 ends.. - 
+          The second last week has also come to an end. We are almost there at the end of the ride. Me and Sartaj had a meeting on 13th of August about the final leftovers to be done, and wrapping up the GSoC work successfully. Here are the works which have...
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
+<div class="day">
+<h2 class="dayform">August 05, 2019</h2>
+<div class="channelgroup ">
+	<div class="row">
+    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+		    <div class="box" class="item feed-eb3e3c3b feed-" id="item-fdbc5d80">
+			    <div class="row" style="border-bottom:1px solid #BDC3C7; margin-bottom:1%;">
+			    	<table class="table borderless table-condensed">
+			    		<tr>
+			    			<td rowspan="2" class="consizeit" style="vertical-align:middle;">
+			    				<div style="margin-right:5px;">
+				    				 <img src="hackergotchi/ishanaj.jpg"/> 
+				    				
+				    			</div>
+			    			</td>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row" style="margin-top:15px;">
+					    			<div class="col-md-8">
+							    		<a href="">Ishan Joshi (ishanaj) </a>
+							    	</div>
+							    	<div class="col-md-4 dtdate">
+							    		<a href="https://ishanaj.wordpress.com/2019/08/05/gsoc19-week-10-an-alternative-to-the-draw-function/">17:58, Monday, 05 August UTC</a>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    		<tr>
+			    			<td style="vertical-align:bottom;">
+			    				<div class="row">
+							    	<div class="col-md-12 col-xs-12">
+							    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/08/05/gsoc19-week-10-an-alternative-to-the-draw-function/">Ishan Joshi (ishanaj): GSoC&#8217;19: Week-10- An alternative to the draw() function</a></h4>
+							    	</div>
+							    </div>
+			    			</td>
+			    		</tr>
+			    	</table>
+			    	<!--div class="col-md-1 col-xs-3" style="margin-bottom:1%;">
+			    		 <img src="hackergotchi/ishanaj.jpg"/> 
+			    		
+			    	</div>
+			    	<div class="col-md-11 col-xs-9" style="margin-top:1%;">
+			    		<div class="row">
+			    			<div class="col-md-8">
+					    		<a href="">Ishan Joshi (ishanaj) </a>
+					    	</div>
+					    	<div class="col-md-4 dtdate">
+					    		<a href="https://ishanaj.wordpress.com/2019/08/05/gsoc19-week-10-an-alternative-to-the-draw-function/">17:58, Monday, 05 August UTC</a>
+					    	</div>
+					    </div>
+					    <div class="row">
+					    	<div class="col-md-12 col-xs-12">
+					    		<h4><a class="boxh2" href="https://ishanaj.wordpress.com/2019/08/05/gsoc19-week-10-an-alternative-to-the-draw-function/">GSoC&#8217;19: Week-10- An alternative to the draw() function</a></h4>
+					    	</div>
+					    </div>
+				    </div-->
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12 descript">
+						<p>This was
+the end of the tenth week, and we have entered the final phase of the project.</p>
+
+
+
+<p>For the last phase we have Truss calculations to be implemented in the continuum_mechanics module. I had initiated a discussion regarding what needs to be done and how the implementation will move forward in an <a href="https://github.com/sympy/sympy/issues/17302">issue #17302</a>. We will have to analyse a bit more about making Truss calculations symbolic and what benefits one might get in solving it symbolically. We have some good packages to compare from like <a href="https://anastruct.readthedocs.io/en/latest/?badge=latest">this</a>. I guess a bit more discussion is needed before we go ahead with it. </p>
+
+
+
+<p>Besides this, I had worked on improving the <strong>draw()</strong> function implemented in the previous week in <a href="https://github.com/sympy/sympy/pull/17240">PR #17240</a>. I modified it to use the <strong>_backend</strong> attribute for plotting the beam diagram. This could have worked until <span id="more-91"></span>I realised that using the <strong>_backend</strong> attribute doesn&#8217;t really has affect the <strong>Plot object. </strong>To understand the last statement, lets go to how <strong>sympy.plot() </strong>works.</p>
+
+
+
+<p>In simple terms, the equations that we pass through the <strong>plot()</strong> function as arguments are actually stored in<strong> _series</strong> attribute. So we can indirectly say that the basic data of the plot is stored in this attribute. But using the <strong>_backend </strong>attribute wouldn&#8217;t alter <strong>_series </strong>at all and if <strong>_series </strong>remains empty at the start it would end up storing nothing. </p>
+
+
+
+<p>But we are of course getting a decent plot at the end, so shouldn&#8217;t we probably ignore this? No, it would surely  give the plot but we won&#8217;t be getting a fully defined<strong> Plot </strong>object which we can further use with <strong>PlotGrid</strong> to get a subplot which includes all the five plots related to the beam.</p>
+
+
+
+<p>Keeping this in mind, I tried an alternative way to directly use<strong> sympy.plot() </strong>&nbsp;to give the plot. Although a bit hard and time taking to do, I have intiated this in a draft <a href="https://github.com/sympy/sympy/pull/17345">PR #17345</a>. This PR perfectly plots a rectangular beam and loads (except point and moment loads). Only things that are left here are to plot supports and arrows denoting the direction of the load.</p>
+
+
+
+<p>The example below shows how it functions: (keep in mind it just plots the basic structure of the intended beam diagram, it hasn&#8217;t been completed yet)</p>
+
+
+
+<div class="wp-container-614f1d9f944f7 wp-block-group"><div class="wp-block-group__inner-container"><pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate">
+&gt;&gt;&gt; E, I = symbols('E, I')
+&gt;&gt;&gt; b = Beam(9, E, I)
+&gt;&gt;&gt; b.apply_load(-12, 9, -1)  # gets skipped
+&gt;&gt;&gt; b.apply_load(50, 5, -2)  # gets skipped
+&gt;&gt;&gt; b.apply_load(3, 6, 1, end=8)
+&gt;&gt;&gt; b.apply_load(4, 0, 0, end=5)
+&gt;&gt;&gt; b.draw()
+</pre>
+</div></div>
+
+
+
+<figure class="wp-block-image size-large is-resized"><img alt="" class="wp-image-92" height="351" src="https://ishanaj.files.wordpress.com/2019/08/screenshot-05-08-2019-19_49_21.png" width="449" /></figure>
+
+
+
+<p>I also tried to complete the leftover PR&#8217;s in this week, but still some work is left.</p>
+
+
+
+<h2><strong>Next week:</strong></h2>
+
+
+
+<ul><li>Completing the <strong>draw() </strong>function</li><li>Documentation and testing</li><li>Starting Truss implementations</li></ul>
+
+
+
+<p>Will keep you updated!</p>
+
+
+
+<p>Thanks!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div></div>
 <br><p><a href="index1.html" class="btn btn-mat"><span class="icon-kdeArrowLeft"></span> Older blog entries</a></p>
 
         <hr class="blueline">
@@ -3542,236 +3571,236 @@ In addition to the report preparation I&#8217;ll try to add <code class="highlig
 <tr class="feedsrow">
 <td><a href="https://singhjashan.wordpress.com"></a></td>
 <td><a class="xmlbutton" href="https://singhjashan.wordpress.com/feed/">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nkhlpappu.wordpress.com">#SymPy &#8211; nkhlpappu</a></td>
 <td><a class="xmlbutton" href="https://nkhlpappu.wordpress.com/tag/sympy/feed/">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://iamit.in/blog">Amit Kumar</a></td>
-<td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://anpandey.github.io">anpandey.github.io -- SymPy</a></td>
-<td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://ashishkg0022.blogspot.com/">ashishkg0022</a></td>
 <td><a class="xmlbutton" href="http://ashishkg0022.blogspot.in/feeds/posts/default?alt=rss">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://bjodah.github.io/blog/">Bj&#246;rn I. Dahlgren's personal page</a></td>
 <td><a class="xmlbutton" href="https://bjodah.github.io/blog/rss.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://divyanshu132.github.io//">Divyanshu Thakur</a></td>
 <td><a class="xmlbutton" href="https://divyanshu132.github.io/feed.sympy.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://friyaz.github.io">Faisal's Blog</a></td>
 <td><a class="xmlbutton" href="https://friyaz.github.io/feed.sympy.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://arighnaiitg.github.io">GSoC Days</a></td>
 <td><a class="xmlbutton" href="https://arighnaiitg.github.io/feed.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://sc0rpi0n101.github.io/categories/gsoc/">GSoC on Sc0rpi0n's Journey</a></td>
-<td><a class="xmlbutton" href="https://sc0rpi0n.me/categories/gsoc/index.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://szymag.github.io/">GSoC Report</a></td>
 <td><a class="xmlbutton" href="https://szymag.github.io/feed.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>http://abhinav28071999.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://abhinav28071999.github.io/feed.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
+</tr>
+<tr class="feedsrow">
+<td>http://nishnik.github.io/feed.xml</td>
+<td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>http://ritesh99rakesh.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="http://ritesh99rakesh.github.io/feed.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>http://shubhamjha.in/sympy_feed.xml</td>
 <td><a class="xmlbutton" href="http://shubhamjha.in/sympy_feed.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
-<td>http://srajangarg.github.io/feed.xml</td>
-<td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>http://sumith1896.github.io/feeds/feed.sympy.xml</td>
+<td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
-<td>https://gxyd.github.io/atom.xml</td>
-<td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>https://anpandey.github.io/atom-sympy.xml</td>
+<td><a class="xmlbutton" href="https://anpandey.github.io/atom-sympy.xml">XML</a></td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
+</tr>
+<tr class="feedsrow">
+<td>https://iamit.in/blog/feeds/sympy.xml</td>
+<td><a class="xmlbutton" href="https://iamit.in/blog/feeds/sympy.xml">XML</a></td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
+</tr>
+<tr class="feedsrow">
+<td>https://jmig5776.github.io/feed.sympy.xml</td>
+<td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://kshitij10496.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://kshitij10496.github.io/feed.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
-<td>https://namannimmo.me/emerald/atom.xml</td>
-<td><a class="xmlbutton" href="https://namannimmo.me/emerald/atom.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>https://namannimmo10.github.io/emerald/atom.xml</td>
+<td><a class="xmlbutton" href="https://namannimmo10.github.io/emerald/atom.xml">XML</a></td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://parsoyaarihant.github.io/blog/feed.xml</td>
 <td><a class="xmlbutton" href="https://parsoyaarihant.github.io/blog/feed.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://ranjithkumar007.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://ranjithkumar007.github.io/feed.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://ravicharann.github.io/blog/feed.xml</td>
 <td><a class="xmlbutton" href="https://ravicharann.github.io/blog/feed.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
+</tr>
+<tr class="feedsrow">
+<td>https://sc0rpi0n101.github.io/categories/gsoc/index.xml</td>
+<td><a class="xmlbutton" href="https://sc0rpi0n101.github.io/categories/gsoc/index.xml">XML</a></td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
+</tr>
+<tr class="feedsrow">
+<td>https://shekharrajak.github.io/feed.xml</td>
+<td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
+</tr>
+<tr class="feedsrow">
+<td>https://sidhantnagpal.github.io/rss-gsoc.xml</td>
+<td><a class="xmlbutton" href="https://sidhantnagpal.github.io/rss-gsoc.xml">XML</a></td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://smit-create.github.io/feed.xml</td>
 <td><a class="xmlbutton" href="https://smit-create.github.io/feed.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://www.asmeurer.com/blog/rss.xml</td>
 <td><a class="xmlbutton" href="https://www.asmeurer.com/blog/rss.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td>https://www.kangzhiq.com/tag/sympy/feed/</td>
 <td><a class="xmlbutton" href="https://www.kangzhiq.com/tag/sympy/feed/">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
+</tr>
+<tr class="feedsrow">
+<td>https://yathartha22.github.io/feed.sympy.xml</td>
+<td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://isuruf.blogspot.com/">Isuru Fernando's blog</a></td>
 <td><a class="xmlbutton" href="http://isuruf.blogspot.com/feeds/posts/default">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://jbm950.github.io">James Milam</a></td>
 <td><a class="xmlbutton" href="http://jbm950.github.io/feed.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://jmig5776.github.io//">JMIG5776</a></td>
-<td><a class="xmlbutton" href="https://jmig5776.github.io/feed.sympy.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="http://nishnik.github.io/">Nishant Nikhil</a></td>
-<td><a class="xmlbutton" href="http://nishnik.github.io/feed.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://nesar2017.wordpress.com">Rubi Integrator</a></td>
 <td><a class="xmlbutton" href="https://nesar2017.wordpress.com/feed/">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sachin-4099.github.io//">Sachin Agarwal</a></td>
 <td><a class="xmlbutton" href="https://sachin-4099.github.io/feed.sympy.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://sampadblog.wordpress.com">Sampad Saha</a></td>
 <td><a class="xmlbutton" href="https://sampadblog.wordpress.com/feed/">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
-<td><a href="https://shekharrajak.github.io">Shekhar Prasad Rajak</a></td>
-<td><a class="xmlbutton" href="https://shekharrajak.github.io/feed.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td><a href="https://gxyd.github.io/">solving the x's and y's of math, programming and life</a></td>
+<td><a class="xmlbutton" href="https://gxyd.github.io/atom.xml">XML</a></td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
-<td><a href="https://sidhantnagpal.github.io">Sidhant Nagpal</a></td>
-<td><a class="xmlbutton" href="https://sidhantnagpal.github.io/rss-gsoc.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td><a href="http://srajangarg.github.io//">Srajan Garg</a></td>
+<td><a class="xmlbutton" href="http://srajangarg.github.io/feed.xml">XML</a></td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://shubhamtibra.wordpress.com">Subham Tibra</a></td>
 <td><a class="xmlbutton" href="https://shubhamtibra.wordpress.com/feed/">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="http://sumith1896.github.io//">Sumith</a></td>
-<td><a class="xmlbutton" href="http://sumith1896.github.io/feeds/feed.sympy.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://rajithsays.wordpress.com">SymEngine &#8211; Rajith says&#8230;</a></td>
 <td><a class="xmlbutton" href="https://rajithsays.wordpress.com/category/symengine/feed/">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="https://ishanaj.wordpress.com">SymPy &#8211; Ishan Joshi</a></td>
 <td><a class="xmlbutton" href="https://ishanaj.wordpress.com/category/sympy/feed/">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 <tr class="feedsrow">
 <td><a href="http://valglad.github.io/">SymPy Group Theory (GSoC 2017)</a></td>
 <td><a class="xmlbutton" href="https://valglad.github.io/feed.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
-</tr>
-<tr class="feedsrow">
-<td><a href="https://Yathartha22.github.io//">Yathartha Joshi</a></td>
-<td><a class="xmlbutton" href="https://yathartha22.github.io/feed.sympy.xml">XML</a></td>
-<td>12:01, Saturday, 25 September</td>
-<td>12:16, Saturday, 25 September</td>
+<td>13:01, Saturday, 25 September</td>
+<td>13:16, Saturday, 25 September</td>
 </tr>
 </table>
 
