@@ -115,125 +115,6 @@ suggestions on how to do this, let me know. For now, I am just going to
 manually add a statement about this as the first comment on each post.&lt;/p&gt;&lt;/div&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://iamit.in/blog/upgrading-sympy-gamma</guid>
-      <author>Amit Kumar (aktech)</author>
-      <title>Amit Kumar (aktech): Porting SymPy Gamma to Google App Engine Python 3</title>
-      <pubDate>Fri, 30 Oct 2020 18:30:00 GMT</pubDate>
-      <link>https://iamit.in/blog/sympy-gamma-gae-python3/</link>
-      <description>&lt;p&gt;This summer I had plenty of time during COVID-19 lockdown and I was looking at
-&lt;a href="https://sympygamma.com/"&gt;SymPy Gamma&lt;/a&gt;.&lt;/p&gt;
-
-&lt;center&gt;&lt;img src="https://iamit.in/assets/sympy-gamma-port/sympy_gamma_demo.gif" width="700" /&gt;&lt;/center&gt;
-
-&lt;h2 id="sympy-gamma"&gt;Sympy Gamma&lt;/h2&gt;
-
-&lt;p&gt;SymPy Gamma is a web application that executes mathematical expressions
-via natural language input from the user, after parsing them as SymPy
-expressions it displays the result with additional related computations.
-It is inspired from the idea of &lt;a href="http://www.wolframalpha.com/"&gt;WolframAlpha&lt;/a&gt; which is based on the
-commercial Computer Algebra System named &lt;a href="https://en.wikipedia.org/wiki/Mathematica"&gt;&amp;#8220;Mathematica&amp;#8221;&lt;/a&gt;.&lt;/p&gt;
-
-&lt;center&gt;&lt;img src="https://iamit.in/assets/wolfram-alpha-logo.svg" width="300" /&gt;&lt;/center&gt;
-
-&lt;p&gt;I have always been impressed by it ever since I first found about it.
-While playing with it during this summer, I realised that it runs on Google
-App Engine&amp;#8217;s Python 2.7 runtime. It is powered by SymPy, an open source
-computer algebra system.&lt;/p&gt;
-
-&lt;center&gt;&lt;img align="center" src="https://iamit.in/assets/Sympy_logo.svg" width="150" /&gt;&lt;/center&gt;
-
-&lt;h2 id="the-problem"&gt;The Problem&lt;/h2&gt;
-
-&lt;p&gt;Despite being widely used around the world (about ~14K users everyday,
-as seen from Google Analytics), there hasn&amp;#8217;t been a lot of development
-in the past 5 years. Due to this the current infrastructure
-was stuck on &lt;a href="https://en.wikipedia.org/wiki/Google_App_Engine"&gt;Google App Engine&lt;/a&gt;&amp;#8217;s Python 2 runtime which obviously does
-not support Python 3.&lt;/p&gt;
-
-&lt;p&gt;This also prevented it to use the latest version of SymPy. The SymPy
-version (~0.7.6) it was using was last updated 6 years ago. This made
-SymPy Gamma in urgent need for upgradation. At the time of writing this blog,
-SymPy Gamma is running on Google App Engine&amp;#8217;s latest runtime and latest
-version of SymPy.&lt;/p&gt;
-
-&lt;h2 id="solution-and-process"&gt;Solution and Process&lt;/h2&gt;
-
-&lt;p&gt;It was a fun project and was interesting to see how Google cloud offering has evolved
-from Google App Engine to Google Cloud Platform. The old App engine did
-seem like a minimal cloud offering launched by Google in an attempt to
-ship something early and quickly. It reminded me of my first cloud project
-in college (&lt;a href="https://github.com/aktech/dturmscrap"&gt;dturmscrap&lt;/a&gt;), which I
-deployed to Google App Engine, back in 2015.&lt;/p&gt;
-
-&lt;p&gt;I used Github projects to track the whole project, all the work done for this
-can be seen &lt;a href="https://github.com/sympy/sympy_gamma/projects/1"&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id="-git-log"&gt;$ Git Log&lt;/h2&gt;
-
-&lt;p&gt;Here is a summary of what was achieved:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/135"&gt;PR 135&lt;/a&gt;: Migrating Django to a slightly higher version,
-this was the first blood just to make sure everything was working. I upgraded it to the latest version of
-Django that was supported on Python 2 runtime. This also exposed the broken CI, which was fixed in this.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/137"&gt;PR 137&lt;/a&gt;: This upgraded the CI infrastructure to use Google Cloud SDK
-for deployment, the previous method was discontinued.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/140"&gt;PR 140&lt;/a&gt;: Upgrading the Database backend to use Cloud NDB instead
-of the legacy App Engine NDB.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/148"&gt;PR 148&lt;/a&gt;: Since we change the database backend, we needed something for
-testing locally, this was done by using Google Cloud Datastore emulator locally.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/149"&gt;PR 149&lt;/a&gt;: The installation and setup of the project was quite a challenge.
-Installing and keeping track of the versions of a number of application was non-trivial. This Pull request dockerized
-the project and made the development setup trivial and it all boiled down to just one command.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/152"&gt;PR 152&lt;/a&gt;: The login feature was previously implemented using the user API
-of the Google App Engine&amp;#8217;s Python2 runtime, which was not available in Python 3 runtime. We removed the login feature as it
-was not used by many and was too much effort to setup OAuth for login.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/153"&gt;PR 153&lt;/a&gt;: Now was the time to slowly move towards Python 3 by making the
-code compatible with both 2 and 3. It was achieved via &lt;a href="https://python-modernize.readthedocs.io/en/latest/"&gt;python-modernize&lt;/a&gt;.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/154"&gt;PR 154&lt;/a&gt;: We then made the migration to Python 3.7 runtime and removed submodules
-and introduced a &lt;code class="language-plaintext highlighter-rouge"&gt;requirements.txt&lt;/code&gt; for installing dependencies.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/154"&gt;PR 159&lt;/a&gt;: The above change made it possible to upgrade SymPy to latest version,
-which was 1.6 at that time.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href="https://github.com/sympy/sympy_gamma/pull/154"&gt;PR 165&lt;/a&gt;: The last piece of the puzzle was upgrading Django itself, so we upgraded
-it to the latest version, which was Django 3.0.8.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id="next-steps"&gt;Next Steps&lt;/h4&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;At the time of writing this Google has released the Python 3.8 runtime, it would nice to further upgrade it now.&lt;/li&gt;
-  &lt;li&gt;The test coverage can be increased.&lt;/li&gt;
-  &lt;li&gt;The code can be refactored to be more readable and approachable for new contributors.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Thanks to Google for properly &lt;a href="https://cloud.google.com/appengine/docs/standard/python/migrate-to-python3"&gt;documenting the process&lt;/a&gt;,
-which made the transition much easier.&lt;/p&gt;
-
-&lt;p&gt;Thanks to &lt;a href="https://numfocus.org/"&gt;NumFocus&lt;/a&gt;, without them this project would not have been possible. Also thanks to
-&lt;a href="https://github.com/certik"&gt;Ondrej Certik&lt;/a&gt; and &lt;a href="http://github.com/asmeurer"&gt;Aaron Meurer&lt;/a&gt; for their advice and support
-throughout the project.&lt;/p&gt;</description>
-    </item>
-    <item>
       <guid isPermaLink="false">https://sachin-4099.github.io//GSoC-2020-Final-Report</guid>
       <author>Sachin Agarwal (sachin-4099)</author>
       <title>Sachin Agarwal (sachin-4099): GSoC 2020 - Final Report</title>
@@ -2094,6 +1975,25 @@ take a moment to look at it and if you have any feedback on it, comment below
 or write to the SymPy mailing list.&lt;/p&gt;&lt;/div&gt;</description>
     </item>
     <item>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/08/week-12-the-final-week/</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 12: The Final Week</title>
+      <pubDate>Fri, 23 Aug 2019 00:00:00 GMT</pubDate>
+      <link>https://sc0rpi0n101.github.io/2019/08/week-12-the-final-week/</link>
+      <description>&lt;p&gt;&amp;#8220;Software is like entropy: It is difficult to grasp, weighs nothing, and obeys the Second Law of Thermodynamics; i.e., it always increases.&amp;#8221; &amp;#8212; Norman Augustine
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week will be the last week of coding for GSoC 2019. It is time to finish work now.
+ The C Parser Travis Build Tests Documentation  The C Parser I completed the C Parser last week along with the documentation for the module.</description>
+    </item>
+    <item>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/08/week-11-the-other-parser/</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 11: The Other Parser</title>
+      <pubDate>Thu, 22 Aug 2019 00:00:00 GMT</pubDate>
+      <link>https://sc0rpi0n101.github.io/2019/08/week-11-the-other-parser/</link>
+      <description>&lt;p&gt;Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this week we&amp;rsquo;re talking about the C parser.
+ The Fortran Parser The C Parser Documentation Travis Build  The Fortran Parser The Fortran Parser is complete. The Pull Request has also been merged. The parser is merged in master and will be a part of the next SymPy release. You can check out the source code for the Parser at the Pull Request.</description>
+    </item>
+    <item>
       <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=113</guid>
       <author>Ishan Joshi (ishanaj)</author>
       <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-12 &#x2013; The Final wrap-up</title>
@@ -2804,17 +2704,14 @@ then emptySet is being returned.&lt;/p&gt;
 &lt;p&gt;Code improvement takes time!!&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html</guid>
-      <author>Ankit Pandey (anpandey)</author>
-      <title>Ankit Pandey (anpandey): Google Summer of Code Week 10: Matrix Wildcard Redux</title>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/08/week-10-the-finished-parser/</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 10: The Finished Parser</title>
       <pubDate>Tue, 06 Aug 2019 00:00:00 GMT</pubDate>
-      <link>https://anpandey.github.io/posts/sympy/2019-08-06-week-10.html</link>
-      <description>&lt;p&gt;For this week, I&amp;#8217;ve made some more minor changes to the &lt;a href="https://github.com/sympy/sympy/pull/17299"&gt;&lt;code&gt;Indexed&lt;/code&gt; pull request&lt;/a&gt; from last week, in addition to filing a new &lt;a href="https://github.com/sympy/sympy/pull/17347"&gt;matrix wildcard pull request&lt;/a&gt;.&lt;/p&gt;
-&lt;h3 id="matrix-wildcards-again"&gt;Matrix Wildcards (again)&lt;/h3&gt;
-&lt;p&gt;Since &lt;a href="https://github.com/sympy/sympy/pull/17223"&gt;#17223&lt;/a&gt; was merged this week, I started with an implementation of matrix wildcards that takes advantage of the functionality included in the pull request. I thought that this would be relatively straightforward, with an implementation of the &lt;code&gt;matches&lt;/code&gt; method for the &lt;code&gt;MatrixWild&lt;/code&gt; subclass being enough. There was one problem though: the underlying matching implementation assumes that all powers in the expression are an instance of the &lt;code&gt;Pow&lt;/code&gt; class. However, this isn&amp;#8217;t true for matrix expressions: the &lt;code&gt;MatPow&lt;/code&gt; class, which represents matrix powers, is a subclass of its own. I&amp;#8217;m not exactly sure what the reason for this is, since a quick change of &lt;code&gt;MatPow&lt;/code&gt; to inherit from &lt;code&gt;Pow&lt;/code&gt; doesn&amp;#8217;t seem to break anything. I&amp;#8217;ll probably look into this a bit more, since I think this might have something to do with the fact that Matrix exponents can also include other matrices.&lt;/p&gt;
-&lt;p&gt;My solution for this was to allow temporarily allow expansion of powers by recursing through the expression tree and setting the &lt;code&gt;is_Pow&lt;/code&gt; field of each matrix power to &lt;code&gt;True&lt;/code&gt; and later reverting these states later. It doesn&amp;#8217;t look pretty, but it does seem to work (you can see the code &lt;a href="https://github.com/sympy/sympy/blob/17fb5010e36e10de156dad032d2aea376051df24/sympy/matrices/expressions/matmul.py#L178-L197"&gt;here&lt;/a&gt;).&lt;/p&gt;
-&lt;h2 id="next-steps"&gt;Next Steps&lt;/h2&gt;
-&lt;p&gt;I&amp;#8217;ll try to get started with some optimizations that utilize this wildcard class once the pull request gets merged.&lt;/p&gt;</description>
+      <link>https://sc0rpi0n101.github.io/2019/08/week-10-the-finished-parser/</link>
+      <description>&lt;p&gt;&amp;#8220;Software is like entropy: It is difficult to grasp, weighs nothing, and obeys the Second Law of Thermodynamics; i.e., it always increases.&amp;#8221; &amp;#8212; Norman Augustine
+ Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and we will talk all about the Fortran Parser this week. I have passed the second evaluation and Fortran Parser pull request is complete.
+ The Week Fortran Parser SymPy Expression Travis Builds The C Parser The Meeting  The Week This week began with me working on the C parser to finalize that.</description>
     </item>
     <item>
       <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=91</guid>
@@ -2851,7 +2748,7 @@ the end of the tenth week, and we have entered the final phase of the project.&l
 
 
 
-&lt;div class="wp-container-6152e7fb5f106 wp-block-group"&gt;&lt;div class="wp-block-group__inner-container"&gt;&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
+&lt;div class="wp-container-6152f6040dd7b wp-block-group"&gt;&lt;div class="wp-block-group__inner-container"&gt;&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
 &amp;gt;&amp;gt;&amp;gt; E, I = symbols('E, I')
 &amp;gt;&amp;gt;&amp;gt; b = Beam(9, E, I)
 &amp;gt;&amp;gt;&amp;gt; b.apply_load(-12, 9, -1)  # gets skipped
@@ -2996,134 +2893,13 @@ keep you updated!&lt;/p&gt;
 &lt;p&gt;Thanks!&lt;/p&gt;</description>
     </item>
     <item>
-      <guid isPermaLink="false">https://jmig5776.github.io//gsoc-week-9</guid>
-      <author>Jogi Miglani (jmig5776)</author>
-      <title>Jogi Miglani (jmig5776): GSoC 2019 - Week 9</title>
-      <pubDate>Sat, 27 Jul 2019 00:00:00 GMT</pubDate>
-      <link>https://jmig5776.github.io//gsoc-week-9</link>
-      <description>&lt;p&gt;This was the eigth week meeting with the GSoC mentors which was scheduled on
-Saturday 27th July, 2019 between 1:30 - 2:30 PM (IST). Me, Yathartha and Amit
-were the attendees of the meeting.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Discussing previous week&amp;#8217;s progress&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;Progress of &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;:- In PR &lt;a href="https://github.com/sympy/sympy/pull/16976"&gt;#16976&lt;/a&gt;
-I implemented the basic design of &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt;. Some very good suggestion by
-Yathartha for creating &lt;code class="highlighter-rouge"&gt;_invert_modular&lt;/code&gt; were very helpful. Now basically the
-&lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; first do preprocessing and invert it and then find solution and
-in final domain intersection takes place.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Progress of ImageSet Union:- In PR &lt;a href="https://github.com/sympy/sympy/pull/17079"&gt;#17079&lt;/a&gt;
-I will be implementing an algorithm based on heurestics for performing ImageSet
-Union this week. Basic code is being already written for defining a function and
-only algorithm part is left which will be performed in this week.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Next week goals&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Work upon &lt;code class="highlighter-rouge"&gt;_solve_modular&lt;/code&gt; and ImageSet Union PR&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Code improvement takes time!!&lt;/p&gt;</description>
-    </item>
-    <item>
-      <guid isPermaLink="false">http://ishanaj.wordpress.com/?p=60</guid>
-      <author>Ishan Joshi (ishanaj)</author>
-      <title>Ishan Joshi (ishanaj): GSoC&#x2019;19: Week-8- The draw() function in action</title>
-      <pubDate>Mon, 22 Jul 2019 04:50:39 GMT</pubDate>
-      <link>https://ishanaj.wordpress.com/2019/07/22/gsoc19-week-8-the-draw-function-in-action/</link>
-      <description>&lt;p&gt;The 8&lt;sup&gt;th&lt;/sup&gt; week has ended and we are now in the middle of phase &amp;#8211;III.&lt;/p&gt;
-
-
-
-&lt;p&gt;Last week was a bit of research-based, understanding &lt;strong&gt;matplotlib &lt;/strong&gt;and how it can be used to plot a beam diagram. I had a conversation with Jason Moore and Jashan where Jason shared a link of a &lt;a href="https://github.com/alfredocarella/simplebendingpractice"&gt;repository&lt;/a&gt;, which also was a bit of help as I took some hints from it for the &lt;strong&gt;draw() &lt;/strong&gt;function. After a lot of investigation and analysis, I was finally able to make a draft &lt;a href="https://github.com/sympy/sympy/pull/17240"&gt;PR # 17240&lt;/a&gt; which did the work as we intended.&lt;/p&gt;
-
-
-
-&lt;p&gt;Here is an example of how it would function:&lt;span id="more-60"&gt;&lt;/span&gt;&lt;/p&gt;
-
-
-&lt;pre class="brush: python; collapse: false; title: ; wrap-lines: false; notranslate"&gt;
-
-# This example has no prior logic involved. It just tests whether every functionality works or not
-
-&amp;gt;&amp;gt;&amp;gt; E, I = symbols('E, I')
-
-&amp;gt;&amp;gt;&amp;gt; b1 = Beam(50, E, I)
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_load(-10, 0, -1)
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_load(R1, 10, -1)
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_load(R2, 30, -1)
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_load(9, 5, 0, 23)
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_load(9, 30, 1, 50)
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_support(50, "pin")
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_support(0, "fixed")
-
-&amp;gt;&amp;gt;&amp;gt; b1.apply_support(20, "roller")
-
-&amp;gt;&amp;gt;&amp;gt; b1.draw()
-
-&lt;/pre&gt;
-
-
-
-&lt;figure class="wp-block-image size-large is-resized .single-blog-image {display: none; }"&gt;&lt;img alt="" class="wp-image-62" height="387" src="https://ishanaj.files.wordpress.com/2019/07/61594696-552b5900-ac0c-11e9-96f9-4ba257dbf92c-1.png" width="467" /&gt;&lt;/figure&gt;
-
-
-
-&lt;p&gt;Here we are using &lt;strong&gt;matplotlib&lt;/strong&gt; and &lt;strong&gt;numpy&lt;/strong&gt; by importing them as external modules. Of course, it would be better to have it done via &lt;strong&gt;SymPy&amp;#8217;s&lt;/strong&gt; own &lt;strong&gt;plot()&lt;/strong&gt;, but I think that is something we could work on in later stages as&lt;strong&gt; SymPy&amp;#8217;s plot()&lt;/strong&gt; is limited to work on equations and stuff (although on can use &lt;strong&gt;_backend &lt;/strong&gt;attribute for further functionalities). &amp;nbsp;Also to be noted here that &lt;strong&gt;SymPy&amp;#8217;s plot()&lt;/strong&gt; is not a replica of &lt;strong&gt;matplotib&amp;#8217;s plot()&lt;/strong&gt; but it makes it easier for SymPy equation to be plotted and it uses&amp;nbsp;&lt;strong&gt;matplotlib&lt;/strong&gt; to do so.&lt;/p&gt;
-
-
-
-&lt;p&gt;Following are the&lt;strong&gt; m&lt;/strong&gt;&lt;strong&gt;atplotlib&lt;/strong&gt; modules/classes used:&lt;/p&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;&lt;a href="https://matplotlib.org/api/_as_gen/matplotlib.patches.Rectangle.html"&gt;matplotlib.patches.Rectangle&lt;/a&gt;&amp;nbsp;-to draw the beam&lt;/li&gt;&lt;li&gt;&lt;a href="https://matplotlib.org/api/_as_gen/matplotlib.pyplot.annotate.html"&gt;matplotlib.pyplot.annotate&lt;/a&gt;&amp;nbsp;&amp;#8211; to draw arrows of load&lt;/li&gt;&lt;li&gt;&lt;a href="https://matplotlib.org/3.1.1/api/markers_api.html"&gt;matplotlib.markers&lt;/a&gt;&amp;#8211; to draw supports&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;p&gt;Also, considering Jason&amp;#8217;s &lt;a href="https://github.com/sympy/sympy/pull/17240#issuecomment-513577696"&gt;comment&lt;/a&gt; in the PR, I will have to work on making &lt;strong&gt;SymPy&amp;#8217;s plot()&lt;/strong&gt; to accept a singularity function, so that it would be easier to plot &lt;strong&gt;loads &lt;/strong&gt;which are indeed equations of Singularity function. This is still in consideration, so I will have to look into it and of course will have a discussion on how it is to be done.&lt;/p&gt;
-
-
-
-&lt;p&gt;Currently, I am not able to determine how to plot parabolic loads. I think this could be added later as we should currently focus on plotting simple parts and certainly work on other complexities later. But we can have a discussion on it.&lt;/p&gt;
-
-
-
-&lt;p&gt;Other PR&amp;#8217;s are still being parallelly worked on.&lt;/p&gt;
-
-
-
-&lt;h2&gt;&lt;strong&gt;Next Week:&lt;/strong&gt;&lt;/h2&gt;
-
-
-
-&lt;ul&gt;&lt;li&gt;Working on the idea of plotting singularity function via SymPy&amp;#8217;s plot()&lt;/li&gt;&lt;li&gt;Plotting parabolic loads&lt;/li&gt;&lt;li&gt;Writing documentation and tests&lt;/li&gt;&lt;/ul&gt;
-
-
-
-&lt;p&gt;Will keep you updated!&lt;/p&gt;
-
-
-
-&lt;p&gt;Thanks!&lt;/p&gt;</description>
+      <guid isPermaLink="false">https://sc0rpi0n101.github.io/2019/07/week-9-its-the-evaluation-week/</guid>
+      <author>Nikhil Maan (Sc0rpi0n101)</author>
+      <title>Nikhil Maan (Sc0rpi0n101): Week 9: It's the Evaluation Week!!</title>
+      <pubDate>Sun, 28 Jul 2019 00:00:00 GMT</pubDate>
+      <link>https://sc0rpi0n101.github.io/2019/07/week-9-its-the-evaluation-week/</link>
+      <description>&lt;p&gt;Welcome everyone, this is your host Nikhil Maan aka Sc0rpi0n101 and this time we will be talking about the second evaluation for GSoC. The main objective of the week was to get the Fortran parser ready.
+ The Fortran Parser Traivs and the Tests LFortran Evaluation!!! The meeting What Now  The Fortran Parser The Fortran parser is finally complete after shifting to using SymPy&amp;rsquo;s codegen AST. It can now parser all the stuff that the parser could do before shifting.</description>
     </item>
   </channel>
 </rss>
