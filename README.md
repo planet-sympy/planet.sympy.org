@@ -1,1 +1,1 @@
-The gh-pages branch contains the HTML sources. To add or remove your blog from the planet, edit the https://github.com/sympy/planet-sympy repo.
+This repo contains the old sources for the planet.sympy.org website. All content is now at the https://github.com/sympy/planet-sympy repository. 
